@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Commodity list</title>
+</head>
+<body>
+
+{% for commodity in commodities %}
+    <p>{{ commodity.tts_summary }} <a href="{{ commodity.get_absolute_url }}">{{ commodity.commodity_code }}</a></p>
+{% endfor %}
+
+</body>
+</html>
