@@ -1,2 +1,0 @@
-{{ object.tts_title }}
-{{ object.tts_heading_description }}
