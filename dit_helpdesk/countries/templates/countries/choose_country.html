@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>Choose your country</h3>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+            Origin country:
+            <select name="origin_country">
+            {% for country_option in country_options %}
+                {% if country_option == selected_origin_country %}
+                <option value="{{ country_option }}" selected>{{ country_option }}</option>
+                {% else %}
+                <option value="{{ country_option }}">{{ country_option }}</option>
+                {% endif %}
+            {% endfor %}
+            </select>
+            - Destination country: <b>GB</b>
+        </div>
+        <br>
+        <input name="submit" type="submit">
+    </form>
+</body>
+</html>

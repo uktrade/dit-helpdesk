@@ -1,0 +1,142 @@
+{% load static staticfiles i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        # from: https://vuejs.org/v2/examples/grid-component.html
+        table {
+          border: 2px solid #42b983;
+          border-radius: 3px;
+          background-color: #fff;
+        }
+
+        th {
+          background-color: #323959;
+          color: rgba(255,255,255,0.66);
+          cursor: pointer;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+
+        td {
+          background-color: #f9f9f9;
+        }
+
+        th, td {
+          min-width: 120px;
+          padding: 10px 20px;
+        }
+
+        th.active {
+          color: #fff;
+        }
+
+        th.active .arrow {
+          opacity: 1;
+        }
+
+        .arrow {
+          display: inline-block;
+          vertical-align: middle;
+          width: 0;
+          height: 0;
+          margin-left: 5px;
+          opacity: 0.66;
+        }
+
+        .arrow.asc {
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-bottom: 4px solid #fff;
+        }
+
+        .arrow.dsc {
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-top: 4px solid #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <p>Exporting from {{ selected_origin_country }} to the UK</p>
+
+    <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
+
+    <!--<h4>Measures:</h4>-->
+    <!--{% for measure_obj in commodity.tts_obj.get_import_measures %}-->
+        <!--<h5>-&#45;&#45; Measure Conditions: ({{ measure_obj.num_conditions }}</h5>-->
+        <!--{% for condition_obj in measure_obj.get_measure_conditions %}-->
+            <!--<p> {{ condition_obj.description }} </p>-->
+        <!--{% endfor %}-->
+    <!--{% endfor %}-->
+
+    {% verbatim %}
+    <script type="text/x-template" id="grid-template">
+      <table>
+        <thead>
+          <tr>
+            <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
+              {{ key | capitalize }}
+              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="entry in filteredData">
+            <td v-for="key in columns">
+               <span v-if="['conditions_html', 'legal_base_html', 'footnotes_html'].includes(key)">
+                   <span v-html="entry[key]"></span>
+               </span>
+               <span v-else>{{ entry[key] }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </script>
+
+    <div id="demo">
+      <demo-grid :data="gridData" :columns="gridColumns" :filter-key="searchQuery"></demo-grid>
+    </div>
+    {% endverbatim %}
+
+    <script type="text/x-template" id="measure-conditions-modal">
+      <transition name="modal-fade">
+        <div class="modal-backdrop" role="dialog">
+          <div class="modal" ref="modal">
+            <header class="modal-header">
+              <slot name="header">
+                <h2>This is the default tile!</h2>
+
+                <button type="button" class="btn-close btn-right" @click="close" aria-label="Close modal">x</button>
+              </slot>
+            </header>
+
+            <section class="modal-body">
+              <slot name="body">I'm the default body!</slot>
+            </section>
+
+            <footer class="modal-footer">
+              <slot name="footer">
+                <button type="button" class="btn btn-green" @click="close" aria-label="Close modal">Close me!</button>
+              </slot>
+            </footer>
+          </div>
+        </div>
+      </transition>
+    </script>
+    <script>
+        var commodityCode = "{{ commodity.commodity_code }}";
+        var originCountry = "{{ selected_origin_country }}";
+    </script>
+    <script src="{% static 'js/commodity_detail_table_app.js' %}"></script>
+
+</body>
+</html>
