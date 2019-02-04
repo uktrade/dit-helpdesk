@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'haystack',
     'haystackbrowser',
 
+    'core',
     'commodities',
     'countries',
     'headings',
