@@ -1,0 +1,14 @@
+
+WORK IN PROGRESS:
+----------------
+
+createdb tradehelpdesk2
+psql —user=ianhames -d tradehelpdesk2
+GRANT ALL PRIVILEGES ON DATABASE tradehelpdesk2 to postgres;
+Create venv and install requirements
+
+export PYTHONPATH=$(pwd)
+export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings
+django-admin loaddata countries_data.json
+
+

@@ -151,6 +151,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+FIXTURE_DIRS = (
+   'countries/fixtures/',
+)
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -185,21 +189,6 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'sass_processor.finders.CssFinder',
 ]
-
-
-TTS_COUNTRIES = [
-    "AL", "AF", "DZ", "AO", "AI", "AG", "BS", "BB", "BZ", "BM", "BA", "BW", "VG",
-    "BI", "CM", "CA", "KY", "CL", "CO", "KM", "CR", "CI", "CD", "DM", "EC",
-    "EG", "SV", "SZ", "FO", "FJ", "GE", "GH", "GD", "GT", "GY", "HT", "HN",
-    "IS", "IL", "JM", "JP", "JO", "KE", "XK", "LB", "LS", "LI", "MK", "MG",
-    "MW", "MU", "MX", "MD", "ME", "MS", "MA", "MZ", "NA", "NI", "NO", "PA",
-    "PG", "PE", "RW", "CS", "SC", "SG", "ZA", "KR", "KN", "VC", "SR", "CH",
-    "TZ", "TT", "TN", "TR", "TC", "UG", "UA", "VN", "ZM", "ZW",
-    # was missing these, so probably not a complete list
-    "CN", "KP"
-]
-
-#TTS_COUNTRIES = TTS_COUNTRIES[:3]
 
 # a list of (measure_type_id, measure_type_series_id) values that are relevant
 # we will ignore measures that are not in this list.

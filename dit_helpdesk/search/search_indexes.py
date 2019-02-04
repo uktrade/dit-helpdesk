@@ -1,7 +1,6 @@
 
 from haystack import indexes
 
-
 # todo: this seems to supports elasticsearch 6: https://github.com/sabricot/django-elasticsearch-dsl
 
 from headings.models import Heading

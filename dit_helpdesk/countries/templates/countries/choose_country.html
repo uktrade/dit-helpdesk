@@ -11,12 +11,8 @@
         <div>
             Origin country:
             <select name="origin_country">
-            {% for country_option in country_options %}
-                {% if country_option == selected_origin_country %}
-                <option value="{{ country_option }}" selected>{{ country_option }}</option>
-                {% else %}
-                <option value="{{ country_option }}">{{ country_option }}</option>
-                {% endif %}
+            {% for country_code, country_name  in country_options %}
+                <option value="{{ country_code }}">{{ country_name }}</option>
             {% endfor %}
             </select>
             - Destination country: <b>GB</b>

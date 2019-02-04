@@ -1,20 +1,23 @@
-from django.conf import settings
 # from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest #HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 
-from .models import Commodity
-
-TTS_COUNTRIES = settings.TTS_COUNTRIES
+from commodities.models import Commodity
+from countries.models import Country
 
 
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()
+    country_exists = False
+    if selected_country:
+        country_exists = Country.objects.filter(
+            country_code=selected_country
+        ).exists()
 
-    if (not selected_country) or selected_country not in TTS_COUNTRIES:
+    if (not selected_country) or (not country_exists):
         messages.error(request, 'Invalid originCountry')
         return redirect(reverse('choose-country'))
 
@@ -24,7 +27,6 @@ def commodity_detail(request, commodity_code):
 
     context = {
         'selected_origin_country': selected_country,
-        'country_options': TTS_COUNTRIES,
         'commodity': commodity
     }
     return render(request, 'commodities/commodity_detail.html', context)
@@ -32,8 +34,8 @@ def commodity_detail(request, commodity_code):
 
 def get_measure_table_data(request, commodity_code, origin_country):
 
-    if origin_country not in settings.TTS_COUNTRIES:
-        raise HttpResponseBadRequest('invalid originCode code')
+    if not Country.objects.filter(country_code=origin_country).exists():
+        raise HttpResponseBadRequest('invalid originCountry code')
 
     commodity = get_object_or_404(
         Commodity, commodity_code=commodity_code,
