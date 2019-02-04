@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Commodity
+from commodities.models import Commodity
 
 
 admin.site.register(Commodity)
