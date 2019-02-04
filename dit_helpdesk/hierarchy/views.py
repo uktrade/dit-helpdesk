@@ -13,7 +13,7 @@ from hierarchy.models import Section
 from headings.views import get_heading_data
 
 
-HIERARCHY_JSON_PATH = '/Users/rossrochford/code/DIT/dit-helpdesk/dit_helpdesk/hierarchy/hierarchy_cached.json'
+HIERARCHY_JSON_PATH = 'hierarchy/hierarchy_cached.json'
 HIERARCHY_CACHED = json.loads(open(HIERARCHY_JSON_PATH).read())
 
 
