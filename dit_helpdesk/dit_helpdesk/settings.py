@@ -155,6 +155,9 @@ FIXTURE_DIRS = (
    'countries/fixtures/',
 )
 
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# SESSION_COOKIE_AGE = 5 * 60
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/

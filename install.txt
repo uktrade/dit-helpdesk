@@ -2,13 +2,17 @@
 WORK IN PROGRESS:
 ----------------
 
+# create database:
 createdb tradehelpdesk2
-psql —user=ianhames -d tradehelpdesk2
+psql —user=<some_postgres_superuser> -d tradehelpdesk2
 GRANT ALL PRIVILEGES ON DATABASE tradehelpdesk2 to postgres;
-Create venv and install requirements
+
+# create virtual environment and install requirements:
+cd dit-helpdesk
+python3 -m venv venv/
+source venv/bin/activate
+pip install -r requirements.txt
 
 export PYTHONPATH=$(pwd)
 export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings
 django-admin loaddata countries_data.json
-
-
