@@ -1,24 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h3>Choose your country</h3>
-    <form action="" method="post">
+{% extends 'core/base.html' %}
+
+{% block title %}Search{% endblock title %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <a href="#" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+      <h2 class="govuk-heading-l">
+        <span class="govuk-caption-l">Question 1 of 2</span>
+        Where are you exporting from?
+      </h2>
+      <p class="govuk-body">Choose the country of origin for the products</p>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
+      <form action="" method="post">
         {% csrf_token %}
-        <div>
-            Origin country:
-            <select name="origin_country">
-            {% for country_code, country_name  in country_options %}
-                <option value="{{ country_code }}">{{ country_name }}</option>
+            <p>{{ country_options }}</p>
+
+          <select name="origin_country" id="country-picker">
+            <option value="">Select a country</option>
+            {% for country_code, country_name in country_options %}
+              <option value="{{ country_code }}">{{ country_name }}</option>
             {% endfor %}
-            </select>
-            - Destination country: <b>GB</b>
+          </select>
+        <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+      </form>
+
+      <details class="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+            Don't know which country to choose?
+          </span>
+        </summary>
+        <div class="govuk-details__text">
+          <p class="govuk-body">&hellip;</p>
         </div>
-        <br>
-        <input name="submit" type="submit">
-    </form>
-</body>
-</html>
+      </details>
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer_additions %}
+  <script type="text/javascript" src="/assets/js/accessible-autocomplete.min.js"></script>
+  <script>
+    {% comment %} accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '',
+      minLength: 2,
+      selectElement: document.getElementById('country-picker')
+    }) {% endcomment %}
+  </script>
+{% endblock footer_additions %}
