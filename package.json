@@ -7,8 +7,8 @@
     "lint:javascript": "eslint 'gulpfile.js'",
     "lint:sass": "sass-lint --config .sasslintrc './global.scss' --verbose --no-exit",
     "build:javascript": "echo \"Error: no build specified\" && exit 1",
-    "build:styles": "gulp styles",
-    "watch:styles": "gulp"
+    "build:styles": "gulp copy && gulp styles",
+    "watch:styles": "gulp copy && gulp"
   },
   "dependencies": {
     "accessible-autocomplete": "^1.6.2",

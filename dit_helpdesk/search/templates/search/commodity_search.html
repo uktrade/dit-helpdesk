@@ -3,16 +3,36 @@
 {% block title %}Search{% endblock title %}
 
 {% block content %}
-<h2>Search by keyword or commodity</h2>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <a href="#" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+
+    <h2 class="govuk-heading-l">
+      <span class="govuk-caption-l">Question 2 of 2</span>
+      Select product code
+    </h2>
 
     {% comment %}
         <!--<form action="{% url 'search-results' %}" method="get">-->
     {% endcomment %}
 
+    {% comment %} {{ request.session.origin_country }} {% endcomment %}
+
+    {% comment %} {{ country_options }} {% endcomment %}
+
+
     <form action="" method="get">
-        <input type="search" name="q">
-        <input type="submit" value="submit">
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="search">
+            Enter the name of the product or commodity code
+          </label>
+          <input class="govuk-input govuk-input--width-10" id="search" name="q" type="text">
+        </div>
+        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
+
+    <h2 class="govuk-heading-m govuk-!-margin-top-3">Browse product codes</h2>
+
     <div>
         <p>Or <a href="{% url 'hierarchy-view' %}">browse hierarchy</a></p>
     </div>
