@@ -104,3 +104,14 @@ venv.bak/
 .mypy_cache/
 
 dit_helpdesk/static_collected/
+
+# Node
+node_modules/
+
+# These are copied over from the GOV.UK Frontend.
+dit_helpdesk/static/images/
+dit_helpdesk/static/fonts/
+
+# These are compiled.
+dit_helpdesk/static/css/
+dit_helpdesk/static/js/

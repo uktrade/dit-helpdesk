@@ -1,0 +1,43 @@
+{
+  "name": "dit-helpdesk",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:javascript": "eslint 'gulpfile.js'",
+    "lint:sass": "sass-lint --config .sasslintrc './global.scss' --verbose --no-exit",
+    "build:javascript": "echo \"Error: no build specified\" && exit 1",
+    "build:styles": "gulp copy && gulp styles",
+    "watch:styles": "gulp copy && gulp"
+  },
+  "dependencies": {
+    "accessible-autocomplete": "^1.6.2",
+    "cssnano": "^4.1.8",
+    "govuk-frontend": "^2.6.0",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.0.1",
+    "gulp-cssnano": "^2.1.3",
+    "gulp-rev": "^9.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.15.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "sass-lint": "^1.12.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/dit-helpdesk.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uktrade/dit-helpdesk/issues"
+  },
+  "homepage": "https://github.com/uktrade/dit-helpdesk#readme"
+}
