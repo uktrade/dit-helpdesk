@@ -8,8 +8,8 @@ from countries.models import Country
 def choose_country_view(request):
 
     if request.method == 'POST':
-        origin_country = request.POST['origin_country'].upper()
-        if Country.objects.filter(country_code=origin_country).exists():
+        origin_country = request.POST.get('origin_country', '').strip().upper()
+        if origin_country and Country.objects.filter(country_code=origin_country).exists():
             request.session['origin_country'] = origin_country
             return redirect(reverse('search-view'))
         else:

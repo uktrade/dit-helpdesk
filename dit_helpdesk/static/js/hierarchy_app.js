@@ -64,9 +64,18 @@ const store = new Vuex.Store({
 Vue.component('item', {
   template: '#item-template',
   props: {
-    model: Object,
-    store: Object,
-    parent_node_id: String,
+    model: {
+      type: Object,
+      default: () => ({'name': ''})
+    },
+    store: {
+      type: Object,
+      default: () => ({})
+    },
+    parent_node_id: {
+        type: String,
+        default: () => ('')
+    }
   },
   data: function () {
     return {
@@ -75,10 +84,13 @@ Vue.component('item', {
   },
   computed: {
     isFolder: function () {
-      if (this.model.children === undefined || typeof this.model.children == 'undefined'){
-        console.log('undefined children:')
-        console.log(this.model)
+      if (this.model == null || Object.keys(this.model).length == 0){
+        return false
       }
+//      if (typeof this.model.children == 'undefined' || this.model.children === undefined){
+//        console.log('undefined children:')
+//        console.log(this.model)
+//      }
       return this.model.children && this.model.children.length
     }
   },

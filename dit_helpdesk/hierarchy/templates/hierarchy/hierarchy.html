@@ -28,21 +28,26 @@
 </head>
 
 <body>
+
+{% comment %}
+<span v-if="model.href">
+    <span v-if="open">
+        <a :href="model.href"><b>{{ model.name }}</b></a>
+    </span>
+    <span v-else>
+        <a :href="model.href">{{ model.name }}</a>
+    </span>
+</span>
+<span v-else>{{ model.name }}</span>
+{% endcomment %}
+
     {% verbatim %}
     <!-- item template -->
     <script type="text/x-template" id="item-template">
       <li>
         <div :class="{bold: isFolder}" @click="toggle" @dblclick="changeType">
-
-            <span v-if="model.href">
-                <span v-if="open">
-                    <a :href="model.href"><b>{{ model.name }}</b></a>
-                </span>
-                <span v-else>
-                    <a :href="model.href">{{ model.name }}</a>
-                </span>
-            </span>
-            <span v-else>{{ model.name }}</span>
+            <!-- todo: add back links (see commented out section above) -->
+            <span>{{ model.name }}</span>
 
           <span v-if="isFolder">[{{ open ? '-' : '+' }}]</span>
         </div>
