@@ -1,3 +1,4 @@
+import json
 # from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest #HttpResponseRedirect
@@ -6,6 +7,27 @@ from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
+from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
+
+
+ROO_FP = '/Users/rossrochford/code/DIT/dit-helpdesk/dit_helpdesk/core/management/commands/roo.json'
+RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
+
+
+'''
+commodities with rules of origin:
+
+0403103900
+0403101300
+0403101900
+0403103100
+0403103300
+1106309080
+1106100000
+0901110000
+0901120000
+0910911000
+'''
 
 
 def commodity_detail(request, commodity_code):
@@ -25,9 +47,29 @@ def commodity_detail(request, commodity_code):
         Commodity, commodity_code=commodity_code,
     )
 
+    heading = commodity.get_heading()
+    heading_code = heading.heading_code[:4]
+    chapter_code = heading.chapter.chapter_code[:2]
+
+    import_measures = commodity.tts_obj.get_import_measures(selected_country)
+    table_data = [
+        measure_json.get_table_row() for measure_json in import_measures
+    ]
+    #table_data.sort(key=lambda di: di['table_rank'])
+
+    roo_keys = [
+        'heading__'+heading_code, 'heading_exclusion__'+heading_code,
+        'chapter__'+chapter_code, 'chapter_exclusion__'+chapter_code
+    ]
+    roo_fragments = []
+    for key in roo_keys:
+        if key in RULES_OF_ORIGIN_DATA:
+            roo_fragments.extend(RULES_OF_ORIGIN_DATA[key])
+
     context = {
-        'selected_origin_country': selected_country,
-        'commodity': commodity
+        'selected_origin_country': selected_country, 'commodity': commodity,
+        'roo_fragments': roo_fragments, 'table_data': table_data,
+        'table_keys': COMMODITY_DETAIL_TABLE_KEYS
     }
     return render(request, 'commodities/commodity_detail.html', context)
 

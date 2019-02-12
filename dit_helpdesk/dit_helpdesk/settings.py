@@ -107,7 +107,7 @@ HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
@@ -117,12 +117,12 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432'
     }
-}'''
-
-
-DATABASES = {
-   'default': dj_database_url.config()
 }
+
+
+# DATABASES = {
+#    'default': dj_database_url.config()
+# }
 
 CACHES = {
     'default': {

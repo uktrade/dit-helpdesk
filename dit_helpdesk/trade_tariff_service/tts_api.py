@@ -195,6 +195,13 @@ def get_date(di, key):
     return parse_dt(dt_str)
 
 
+COMMODITY_DETAIL_TABLE_KEYS = [
+    'country', 'measure_description', 'conditions_html', 'measure_value',
+    'excluded_countries', 'start_end_date', 'legal_base_html', 'table_rank',
+    'footnotes_html'
+]
+
+
 class ImportMeasureJson(object):
 
     def __init__(self, di, commodity_code):
@@ -353,6 +360,10 @@ class ImportMeasureJson(object):
             'legal_base_html': self.vue__legal_base_html, 'table_rank': self.vue__table_rank,
             'footnotes_html': self.vue__footnotes_html
         }
+
+    def get_table_row(self):
+        di = self.get_vue_table_dict()
+        return [di[key] for key in COMMODITY_DETAIL_TABLE_KEYS]
 
     def get_measure_conditions(self):
         return [

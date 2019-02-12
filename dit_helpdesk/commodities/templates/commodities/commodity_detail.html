@@ -69,74 +69,50 @@
 
     <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
 
-    <!--<h4>Measures:</h4>-->
-    <!--{% for measure_obj in commodity.tts_obj.get_import_measures %}-->
-        <!--<h5>-&#45;&#45; Measure Conditions: ({{ measure_obj.num_conditions }}</h5>-->
-        <!--{% for condition_obj in measure_obj.get_measure_conditions %}-->
-            <!--<p> {{ condition_obj.description }} </p>-->
-        <!--{% endfor %}-->
-    <!--{% endfor %}-->
-
-    {% verbatim %}
-    <script type="text/x-template" id="grid-template">
-      <table>
+    <table>
         <thead>
-          <tr>
-            <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
-              {{ key | capitalize }}
-              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-              </span>
-            </th>
-          </tr>
+        <tr>
+            {% for key in table_keys %}
+            <td><b>{{ key }}</b></td>
+            {% endfor %}
+        </tr>
         </thead>
-        <tbody>
-          <tr v-for="entry in filteredData">
-            <td v-for="key in columns">
-               <span v-if="['conditions_html', 'legal_base_html', 'footnotes_html'].includes(key)">
-                   <span v-html="entry[key]"></span>
-               </span>
-               <span v-else>{{ entry[key] }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </script>
+        {% for row in table_data %}
+        <tr>
+            {% for  col in row %}
+                {% if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 %}
+                <td>{{ col | safe }}</td>
+                {% else %}
+                <td>{{ col }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
 
-    <div id="demo">
-      <demo-grid :data="gridData" :columns="gridColumns" :filter-key="searchQuery"></demo-grid>
+    {% if roo_fragments %}
+    <h3>Rules of Origin:</h3>
+    <div>
+        <table style="border: 2px solid red;">
+        <thead>
+        <tr>
+            <td><b>HS heading</b></td>
+            <td><b>Description of product</b></td>
+            <td><b>Working or processing, carried out on non-originating materials, which confers originating status</b></td>
+            <td></td>
+        </tr>
+        </thead>
+        {% for html_fragment in roo_fragments %}
+            {{ html_fragment | safe }}
+        {% endfor %}
+        </table>
     </div>
-    {% endverbatim %}
+    {% endif %}
 
-    <script type="text/x-template" id="measure-conditions-modal">
-      <transition name="modal-fade">
-        <div class="modal-backdrop" role="dialog">
-          <div class="modal" ref="modal">
-            <header class="modal-header">
-              <slot name="header">
-                <h2>This is the default tile!</h2>
-
-                <button type="button" class="btn-close btn-right" @click="close" aria-label="Close modal">x</button>
-              </slot>
-            </header>
-
-            <section class="modal-body">
-              <slot name="body">I'm the default body!</slot>
-            </section>
-
-            <footer class="modal-footer">
-              <slot name="footer">
-                <button type="button" class="btn btn-green" @click="close" aria-label="Close modal">Close me!</button>
-              </slot>
-            </footer>
-          </div>
-        </div>
-      </transition>
-    </script>
     <script>
         var commodityCode = "{{ commodity.commodity_code }}";
         var originCountry = "{{ selected_origin_country }}";
     </script>
-    <script src="{% static 'js/commodity_detail_table_app.js' %}"></script>
 
 </body>
 </html>
