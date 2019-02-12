@@ -10,7 +10,7 @@ from countries.models import Country
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 
 
-ROO_FP = '/Users/rossrochford/code/DIT/dit-helpdesk/dit_helpdesk/core/management/commands/roo.json'
+ROO_FP = 'core/management/commands/roo.json'
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 
