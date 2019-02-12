@@ -13,6 +13,9 @@ from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 ROO_FP = 'core/management/commands/roo.json'
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
+TABLE_COLUMN_TITLES = [
+    tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
+]
 
 '''
 commodities with rules of origin:
@@ -69,7 +72,7 @@ def commodity_detail(request, commodity_code):
     context = {
         'selected_origin_country': selected_country, 'commodity': commodity,
         'roo_fragments': roo_fragments, 'table_data': table_data,
-        'table_keys': COMMODITY_DETAIL_TABLE_KEYS
+        'column_titles': TABLE_COLUMN_TITLES,
     }
     return render(request, 'commodities/commodity_detail.html', context)
 
