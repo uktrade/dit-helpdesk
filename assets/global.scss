@@ -51,6 +51,8 @@
 
 @import "accessible-autocomplete/dist/accessible-autocomplete.min";
 
+@import "scrollable-tables";
+
 .autocomplete__option {
   @include govuk-typography-common;
 }

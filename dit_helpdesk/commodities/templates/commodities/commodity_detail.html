@@ -24,25 +24,27 @@
   <p class="govuk-body">Goods are subject to a <strong></strong></p>
   <p class="govuk-body">Exporting is subject to a duty of <strong>%</strong>, unless subject to other measures</p>
 
-  <table class="govuk-table">
-    <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        {% for key in table_keys %}
-          <th class="govuk-table__header" scope="col">{{ key | capfirst  }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      {% for row in table_data %}
+  <section class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-tables">
+    <table class="govuk-table table">
+      <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
+      <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          {% for  col in row %}
-            <td class="govuk-table__cell">{{ col | safe }}</td>
+          {% for key in table_keys %}
+            <th class="govuk-table__header" scope="col">{{ key | capfirst  }}</th>
           {% endfor %}
         </tr>
-      {% endfor %}
-      </tbody>
-  </table>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for row in table_data %}
+          <tr class="govuk-table__row">
+            {% for  col in row %}
+              <td class="govuk-table__cell">{{ col | safe }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  </section>
 
 
     {% if roo_fragments %}
