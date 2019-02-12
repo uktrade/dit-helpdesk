@@ -202,8 +202,8 @@ COMMODITY_DETAIL_TABLE_KEYS = [
     ('conditions_html', 'Conditions'),
     ('measure_value', 'Value'),
     ('excluded_countries', 'Excluded Countries'),
-    ('start_end_dates', 'Date'),
-    ('local_base_html', 'Legal Base'),
+    ('start_end_date', 'Date'),
+    ('legal_base_html', 'Legal Base'),
     ('footnotes_html', 'Footnotes'),
 ]
 
