@@ -196,9 +196,15 @@ def get_date(di, key):
 
 
 COMMODITY_DETAIL_TABLE_KEYS = [
-    'country', 'measure_description', 'conditions_html', 'measure_value',
-    'excluded_countries', 'start_end_date', 'legal_base_html', 'table_rank',
-    'footnotes_html'
+    # dict_key, column_title
+    ('country', 'Country'),
+    ('measure_description', 'Description'),
+    ('conditions_html', 'Conditions'),
+    ('measure_value', 'Value'),
+    ('excluded_countries', 'Excluded Countries'),
+    ('start_end_date', 'Date'),
+    ('legal_base_html', 'Legal Base'),
+    ('footnotes_html', 'Footnotes'),
 ]
 
 
@@ -363,7 +369,7 @@ class ImportMeasureJson(object):
 
     def get_table_row(self):
         di = self.get_vue_table_dict()
-        return [di[key] for key in COMMODITY_DETAIL_TABLE_KEYS]
+        return [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
 
     def get_measure_conditions(self):
         return [
