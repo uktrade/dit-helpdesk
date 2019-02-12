@@ -53,3 +53,8 @@
 .autocomplete__option {
   @include govuk-typography-common;
 }
+
+.app-commodity-code-highlight {
+  background: grey;
+  display: inline-block;
+}

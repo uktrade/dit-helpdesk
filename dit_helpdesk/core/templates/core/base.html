@@ -13,6 +13,22 @@
     <meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
 
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
+
+    <script>
+      // Sourced from https://github.com/alphagov/govuk-design-system/blob/c641c14f043ac8b84a178b4e6260c1f8129a27a8/views/partials/_tracking-head.njk
+
+      // Normalize doNotTrack implementations, see https://caniuse.com/#feat=do-not-track
+      var DO_NOT_TRACK_ENABLED = (
+        navigator.doNotTrack === '1' ||
+        navigator.doNotTrack === 'yes' || // Firefox 31 and below
+        navigator.msDoNotTrack === '1' || // IE 9 - 10
+        window.doNotTrack === '1' // IE 11 / Edge 16 and below
+      )
+      // If the user has enabled 'DoNotTrack', we should not load Google Tag Manager (and therefore, Google Analytics.)
+      if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
+        console.log('Analytics will be loaded')
+      }
+    </script>
   </head>
   <body class="govuk-template__body">
     <script>

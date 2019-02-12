@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from os.path import join as join_path
 
-import dj_database_url
+# import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -107,7 +107,7 @@ HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
@@ -117,12 +117,13 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432'
     }
-}'''
+}
 
-
+'''
 DATABASES = {
    'default': dj_database_url.config()
 }
+'''
 
 CACHES = {
     'default': {

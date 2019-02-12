@@ -1,13 +1,28 @@
+{% extends 'core/base.html' %}
 {% load static staticfiles i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+{% block content %}
+
+
+  <h2 class="govuk-heading-l">
+    <span class="govuk-caption-l">
+      Exporting from {{ selected_origin_country_name }} to the UK
+    </span>
+    Commodity information for
+      <span class="app-commodity-code-highlight--1">
+        {{ commodity_code.0 }}
+      </span>
+      <span class="app-commodity-code-highlight">
+        {{ commodity_code.1 }}
+      </span>
+      <span class="app-commodity-code-highlight">
+        {{ commodity_code.2 }}
+      </span>
+  </h2>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
-        # from: https://vuejs.org/v2/examples/grid-component.html
+        /* from: https://vuejs.org/v2/examples/grid-component.html */
         table {
           border: 2px solid #42b983;
           border-radius: 3px;
@@ -62,20 +77,19 @@
           border-top: 4px solid #fff;
         }
     </style>
-</head>
-<body>
-
-    <p>Exporting from {{ selected_origin_country }} to the UK</p>
 
     <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
 
-    <!--<h4>Measures:</h4>-->
-    <!--{% for measure_obj in commodity.tts_obj.get_import_measures %}-->
-        <!--<h5>-&#45;&#45; Measure Conditions: ({{ measure_obj.num_conditions }}</h5>-->
-        <!--{% for condition_obj in measure_obj.get_measure_conditions %}-->
-            <!--<p> {{ condition_obj.description }} </p>-->
-        <!--{% endfor %}-->
-    <!--{% endfor %}-->
+    {{commodity}}
+
+    <h4>Measures:</h4>
+
+    {% for measure_obj in commodity.tts_obj.get_import_measures %}
+        <h5>Measure Conditions: ({{ measure_obj.num_conditions }}</h5>
+        {% for condition_obj in measure_obj.get_measure_conditions %}
+            <p> {{ condition_obj.description }} </p>
+        {% endfor %}
+    {% endfor %}
 
     {% verbatim %}
     <script type="text/x-template" id="grid-template">
@@ -137,6 +151,4 @@
         var originCountry = "{{ selected_origin_country }}";
     </script>
     <script src="{% static 'js/commodity_detail_table_app.js' %}"></script>
-
-</body>
-</html>
+    {% endblock %}
