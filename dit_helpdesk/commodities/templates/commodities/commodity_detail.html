@@ -17,12 +17,34 @@
     {% endfor %}
   </h2>
 
-  <p class="govuk-body"></p>
+  <p class="govuk-body">{{ commodity.tts_title }}</p>
 
   <h3 class="govuk-heading-m">Tarrifs and quotas</h3>
   <p class="govuk-body">The commodity code for exporting is <strong>{{ commodity.commodity_code }}</strong></p>
   <p class="govuk-body">Goods are subject to a <strong></strong></p>
   <p class="govuk-body">Exporting is subject to a duty of <strong>%</strong>, unless subject to other measures</p>
+
+
+  <table>
+    <thead>
+    <tr>
+        {% for key in table_keys %}
+          <td><b>{{ key }}</b></td>
+        {% endfor %}
+    </tr>
+    </thead>
+    {% for row in table_data %}
+    <tr>
+        {% for  col in row %}
+            {% if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 %}
+            <td>{{ col | safe }}</td>
+            {% else %}
+            <td>{{ col }}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
 
   <table class="govuk-table">
     <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
@@ -49,8 +71,8 @@
   </table>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script> -->
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 
     <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
 
