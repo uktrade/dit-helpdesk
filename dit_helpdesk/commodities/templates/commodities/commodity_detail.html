@@ -24,101 +24,40 @@
   <p class="govuk-body">Goods are subject to a <strong></strong></p>
   <p class="govuk-body">Exporting is subject to a duty of <strong>%</strong>, unless subject to other measures</p>
 
-
-  <table>
-    <thead>
-    <tr>
-        {% for key in table_keys %}
-          <td><b>{{ key }}</b></td>
-        {% endfor %}
-    </tr>
-    </thead>
-    {% for row in table_data %}
-    <tr>
-        {% for  col in row %}
-            {% if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 %}
-            <td>{{ col | safe }}</td>
-            {% else %}
-            <td>{{ col }}</td>
-            {% endif %}
-        {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
-
   <table class="govuk-table">
     <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">Country</th>
-        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">Measure</th>
+        {% for key in table_keys %}
+          <th class="govuk-table__header" scope="col">{{ key | capfirst  }}</th>
+        {% endfor %}
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell">£109.80 per week</td>
-        <td class="govuk-table__cell">59.10 per week</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell">£159.80 per week</td>
-        <td class="govuk-table__cell">£89.10 per week</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell">£4,282.20</td>
-        <td class="govuk-table__cell">£2,182.20</td>
-      </tr>
-    </tbody>
+      {% for row in table_data %}
+        <tr class="govuk-table__row">
+          {% for  col in row %}
+            <td class="govuk-table__cell">{{ col | safe }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
   </table>
 
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script> -->
-    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
-
-    <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
-
-
-    <table>
-        <thead>
-        <tr>
-            {% for key in table_keys %}
-            <td><b>{{ key }}</b></td>
-            {% endfor %}
-        </tr>
-        </thead>
-        {% for row in table_data %}
-        <tr>
-            {% for  col in row %}
-                {% if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 %}
-                <td>{{ col | safe }}</td>
-                {% else %}
-                <td>{{ col }}</td>
-                {% endif %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-
     {% if roo_fragments %}
-    <h3>Rules of Origin:</h3>
-    <div>
-        <table style="border: 2px solid red;">
-        <thead>
-        <tr>
-            <td><b>HS heading</b></td>
-            <td><b>Description of product</b></td>
-            <td><b>Working or processing, carried out on non-originating materials, which confers originating status</b></td>
-            <td></td>
-        </tr>
-        </thead>
+      <table class="govuk-table">
+        <caption class="govuk-table__caption govuk-heading-m">Rules of Origin</caption>
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header"><abbr title="Harmonised System">HS</abbr> heading</th>
+          <th class="govuk-table__header">Description of product</th>
+          <th class="govuk-table__header govuk-!-width-one-half">Working or processing, carried out on non-originating materials, which confers originating status</th>
+      </tr>
+      </thead>
         {% for html_fragment in roo_fragments %}
             {{ html_fragment | safe }}
         {% endfor %}
-        </table>
-    </div>
+      </table>
     {% endif %}
-
-    <script>
-        var commodityCode = "{{ commodity.commodity_code }}";
-        var originCountry = "{{ selected_origin_country }}";
-    </script>
   {% endblock %}
