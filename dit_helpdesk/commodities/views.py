@@ -1,3 +1,6 @@
+import json
+import re
+
 # from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest #HttpResponseRedirect
@@ -6,9 +9,6 @@ from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
-
-import re
-
 
 def commodity_detail(request, commodity_code):
 

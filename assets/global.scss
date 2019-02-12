@@ -37,11 +37,12 @@
 // @import "govuk-frontend/components/radios/radios";
 // @import "govuk-frontend/components/select/select";
 @import "govuk-frontend/components/skip-link/skip-link";
-// @import "govuk-frontend/components/table/table";
+@import "govuk-frontend/components/table/table";
 // @import "govuk-frontend/components/textarea/textarea";
 // @import "govuk-frontend/components/warning-text/warning-text";
 
-// @import "govuk-frontend/utilities/all";
+// @import "govuk-frontend/utilities/clearfix";
+@import "govuk-frontend/utilities/visually-hidden";
 
 // @import "govuk-frontend/overrides/display";
 @import "govuk-frontend/overrides/spacing";
@@ -55,6 +56,19 @@
 }
 
 .app-commodity-code-highlight {
-  background: grey;
+  background: govuk-colour("grey-3");
   display: inline-block;
+  padding: .25em .25em .125em;
+
+  &--1 {
+    background-color: lighten(govuk-colour('light-purple'), 35%);
+  }
+
+  &--2 {
+    background-color: lighten(govuk-colour('light-blue'), 35%);
+  }
+
+  &--3 {
+    background-color: lighten(govuk-colour('turquoise'), 40%);
+  }
 }

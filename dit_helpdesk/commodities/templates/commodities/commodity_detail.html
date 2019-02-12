@@ -9,78 +9,52 @@
       Exporting from {{ selected_origin_country_name }} to the UK
     </span>
     Commodity information for
-      <span class="app-commodity-code-highlight--1">
-        {{ commodity_code.0 }}
+
+    {% for commodity_code_segment in commodity_code %}
+      <span class="app-commodity-code-highlight app-commodity-code-highlight--{{ forloop.counter }}">
+        {{ commodity_code_segment }}
       </span>
-      <span class="app-commodity-code-highlight">
-        {{ commodity_code.1 }}
-      </span>
-      <span class="app-commodity-code-highlight">
-        {{ commodity_code.2 }}
-      </span>
+    {% endfor %}
   </h2>
+
+  <p class="govuk-body"></p>
+
+  <h3 class="govuk-heading-m">Tarrifs and quotas</h3>
+  <p class="govuk-body">The commodity code for exporting is <strong>{{ commodity.commodity_code }}</strong></p>
+  <p class="govuk-body">Goods are subject to a <strong></strong></p>
+  <p class="govuk-body">Exporting is subject to a duty of <strong>%</strong>, unless subject to other measures</p>
+
+  <table class="govuk-table">
+    <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">Country</th>
+        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">Measure</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">£109.80 per week</td>
+        <td class="govuk-table__cell">59.10 per week</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">£159.80 per week</td>
+        <td class="govuk-table__cell">£89.10 per week</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">£4,282.20</td>
+        <td class="govuk-table__cell">£2,182.20</td>
+      </tr>
+    </tbody>
+  </table>
+
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <style>
-        /* from: https://vuejs.org/v2/examples/grid-component.html */
-        table {
-          border: 2px solid #42b983;
-          border-radius: 3px;
-          background-color: #fff;
-        }
-
-        th {
-          background-color: #323959;
-          color: rgba(255,255,255,0.66);
-          cursor: pointer;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        td {
-          background-color: #f9f9f9;
-        }
-
-        th, td {
-          min-width: 120px;
-          padding: 10px 20px;
-        }
-
-        th.active {
-          color: #fff;
-        }
-
-        th.active .arrow {
-          opacity: 1;
-        }
-
-        .arrow {
-          display: inline-block;
-          vertical-align: middle;
-          width: 0;
-          height: 0;
-          margin-left: 5px;
-          opacity: 0.66;
-        }
-
-        .arrow.asc {
-          border-left: 4px solid transparent;
-          border-right: 4px solid transparent;
-          border-bottom: 4px solid #fff;
-        }
-
-        .arrow.dsc {
-          border-left: 4px solid transparent;
-          border-right: 4px solid transparent;
-          border-top: 4px solid #fff;
-        }
-    </style>
 
     <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
 
-    {{commodity}}
+    {{ commodity }}
 
     <h4>Measures:</h4>
 
