@@ -90,3 +90,9 @@ class Commodity(models.Model):
         indent = '--- ' * tts_obj.di['number_indents']
         return indent + summary
 
+    def get_heading(self):
+        from headings.models import Heading
+        obj = self.heading or self.parent_subheading
+        while type(obj) is not Heading:
+            obj = obj.get_parent()
+        return obj

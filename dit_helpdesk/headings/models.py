@@ -30,12 +30,15 @@ class Heading(models.Model):
             return 'NO TITLE'
         return self.tts_obj.title
 
+    def __str__(self):
+        return 'Heading '+self.heading_code[:4]
+
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
         return reverse('heading-detail', kwargs=kwargs)
 
     def get_commodities_flattened(self):
-        from headins.views import get_heading_data
+        from headings.views import get_heading_data
         return get_heading_data(self, '')[2]
 
     def get_commodity_keys_flattened(self):
@@ -93,4 +96,7 @@ class SubHeading(models.Model):
         if self.tts_heading_json is None:
             return 'NO_TITLE'
         return self.tts_heading_obj.title
+
+    def get_parent(self):
+        return self.heading or self.parent_subheading
 
