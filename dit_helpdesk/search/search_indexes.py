@@ -1,10 +1,9 @@
 
 from haystack import indexes
 
+from hierarchy.models import Heading
+
 # todo: this seems to supports elasticsearch 6: https://github.com/sabricot/django-elasticsearch-dsl
-
-from headings.models import Heading
-
 
 '''
 class CommodityIndex(indexes.SearchIndex, indexes.Indexable):

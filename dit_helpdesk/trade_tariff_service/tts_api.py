@@ -108,7 +108,7 @@ class SectionJson(object):
 
     @property
     def title(self):
-        return self.di['numeral'] + ' - ' + self.di['title']
+        return self.di['title']
 
     @property
     def chapter_ids(self):
@@ -128,6 +128,10 @@ class SectionJson(object):
     @property
     def position(self):
         return self.di['position']
+
+    @property
+    def numeral(self):
+        return self.di['numeral']
 
 
 class ChapterJson(object):

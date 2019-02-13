@@ -1,13 +1,9 @@
 
-from django import forms
-from django.conf import settings
-from django.urls import reverse
-
+from django.db.models import Q
 from haystack.forms import SearchForm
 from haystack.generic_views import SearchView
+from haystack.query import SearchQuerySet
 
-# from requirements_documents.middleware import RedirectException
-# from requirements_documents.models import Commodity, SubHeading, Heading
 
 '''
 class CommoditySearchForm(SearchForm):
@@ -32,9 +28,6 @@ class CommoditySearchForm(SearchForm):
         return sqs.filter(origin_country=origin_country)
 '''
 
-from haystack.query import SearchQuerySet
-from django.db.models import Q
-
 
 class HeadingSearchForm(SearchForm):
     models = [
@@ -52,7 +45,7 @@ class HeadingSearchForm(SearchForm):
 class CommoditySearchView(SearchView):
     """ Use this to customise search form"""
 
-    template = "search/search.html"
+    template = "search/search_results.html"
     form = HeadingSearchForm
 
     def build_form(self, form_kwargs=None):

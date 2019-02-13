@@ -3,8 +3,8 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 import requests
 
-from hierarchy.models import Section, Chapter
-from headings.models import Heading
+from hierarchy.models import Section, Chapter, Heading
+
 from trade_tariff_service.tts_api import SectionJson, ChapterJson, HeadingJson
 from trade_tariff_service.util_scraper import scrape_heading_hierarchy
 
@@ -12,6 +12,7 @@ SECTION_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/sections/%s.
 
 
 def get_and_update_section(section_id):
+    section_id = int(section_id)
     section_db_obj, _ = Section.objects.get_or_create(section_id=section_id)
 
     url = SECTION_URL % section_id
@@ -22,7 +23,7 @@ def get_and_update_section(section_id):
 
     section_json_obj = SectionJson(json.loads(resp_content))
 
-    section_db_obj.tts_json = section_json_obj.di
+    section_db_obj.tts_json = resp_content  #json.dumps(section_json_obj.di)
     section_db_obj.save()
 
     return section_json_obj, section_db_obj
@@ -44,7 +45,7 @@ def get_and_update_chapter(chapter_url, section_db_obj):
     elif chapter_db_obj.section and chapter_db_obj.section != section_db_obj:
         import pdb; pdb.set_trace()  # multiple parent sections?
 
-    chapter_db_obj.tts_json = chapter_json_obj.di
+    chapter_db_obj.tts_json = resp_content #json.dumps(chapter_json_obj.di)
     chapter_db_obj.save()
 
     return chapter_json_obj, chapter_db_obj
@@ -62,11 +63,13 @@ def get_and_update_heading(heading_url, chapter_db_obj):
     heading_db_obj, created = Heading.objects.get_or_create(
         heading_code=heading_json_obj.code
     )
+
     if created:
         heading_db_obj.chapter = chapter_db_obj
     elif heading_db_obj.chapter and heading_db_obj.chapter != chapter_db_obj:
         import pdb; pdb.set_trace()  # multiple parent chapters?
-    heading_db_obj.tts_json = heading_json_obj.di
+
+    heading_db_obj.tts_json = resp_content #json.dumps(heading_json_obj.di)
     heading_db_obj.save()
 
     return heading_json_obj, heading_db_obj
