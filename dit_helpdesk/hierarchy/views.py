@@ -1,3 +1,4 @@
+import os
 import json
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,8 +8,9 @@ from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 
-HIERARCHY_JSON_PATH = 'hierarchy/hierarchy_cached.json'
-HIERARCHY_CACHED = json.loads(open(HIERARCHY_JSON_PATH).read())
+HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), 'hierarchy_cached.json')
+with open(HIERARCHY_JSON_PATH) as f:
+    HIERARCHY_CACHED = json.loads(f.read())
 
 
 def _get_expanded_context(selected_node_id):
