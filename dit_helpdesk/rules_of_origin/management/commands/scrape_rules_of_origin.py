@@ -3,11 +3,15 @@
 from collections import defaultdict
 import json
 import re
+import os
 
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 
-ROO_FP = 'rules_of_origin/management/commands/roo.json'
+ROO_FP = os.path.join(
+    settings.BASE_DIR, 'rules_of_origin/management/commands/roo.json'
+)
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 RULES = defaultdict(list)

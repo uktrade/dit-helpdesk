@@ -1,15 +1,19 @@
 import json
+import os
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.conf import settings
 from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 
+ROO_FP = os.path.join(
+    settings.BASE_DIR, 'rules_of_origin/management/commands/roo.json'
+)
 
-ROO_FP = 'rules_of_origin/management/commands/roo.json'
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 TABLE_COLUMN_TITLES = [
