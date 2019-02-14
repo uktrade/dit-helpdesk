@@ -7,10 +7,6 @@ from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 
-HIERARCHY_JSON_PATH = 'hierarchy/hierarchy_cached.json'
-HIERARCHY_CACHED = json.loads(open(HIERARCHY_JSON_PATH).read())
-
-
 def _get_expanded_context(selected_node_id):
     if selected_node_id == 'root':
         return []
@@ -98,6 +94,8 @@ def get_hierarchy_data(request):
 
 
 def get_hierarchy_data_cached(request):
+    HIERARCHY_JSON_PATH = 'hierarchy/hierarchy_cached.json'
+    HIERARCHY_CACHED = json.loads(open(HIERARCHY_JSON_PATH).read())
     return JsonResponse(HIERARCHY_CACHED)
 
 
