@@ -6,3 +6,5 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'dit_helpdesk_db.sqlite3'),
     }
 }
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '123')
