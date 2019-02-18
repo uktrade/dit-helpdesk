@@ -4,9 +4,9 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint:javascript": "eslint 'gulpfile.js'",
-    "lint:sass": "sass-lint --config .sasslintrc './global.scss' --verbose --no-exit",
-    "build:javascript": "echo \"Error: no build specified\" && exit 1",
+    "lint:javascript": "eslint 'gulpfile.js' 'assets/**/*.js'",
+    "lint:sass": "sass-lint --config .sasslintrc './assets/**/*.scss' --verbose --no-exit",
+    "build:javascript": "gulp javascripts",
     "build:styles": "gulp copy && gulp styles",
     "watch:styles": "gulp copy && gulp"
   },
