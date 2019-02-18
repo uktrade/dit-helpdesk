@@ -7,6 +7,11 @@ DATABASES = {
    'default': dj_database_url.config()
 }
 
+MIDDLEWARE = [
+   'global_login_required.GlobalLoginRequiredMiddleware'
+] + MIDDLEWARE
+
+
 '''
 DATABASES = {
     'default': {
