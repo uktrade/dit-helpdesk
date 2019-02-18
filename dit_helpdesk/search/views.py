@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -6,6 +7,7 @@ from commodities.models import Commodity
 from countries.models import Country
 
 
+@login_required
 def search_view(request):
 
     countries = Country.objects.all()

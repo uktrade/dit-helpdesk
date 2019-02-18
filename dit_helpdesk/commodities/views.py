@@ -1,19 +1,23 @@
 import json
 import re
 import datetime
+import os
 
 # from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest #HttpResponseRedirect
 from django.urls import reverse
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from commodities.models import Commodity
 from countries.models import Country
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 
+ROO_FP = os.path.join(
+    settings.BASE_DIR, 'rules_of_origin/management/commands/roo.json'
+)
 
-ROO_FP = 'core/management/commands/roo.json'
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 TABLE_COLUMN_TITLES = [
@@ -21,7 +25,7 @@ TABLE_COLUMN_TITLES = [
 ]
 
 '''
-commodities with rules of origin:
+example commodities with rules of origin:
 
 0403103900
 0403101300
@@ -35,6 +39,7 @@ commodities with rules of origin:
 0910911000
 '''
 
+@login_required
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()
@@ -75,7 +80,6 @@ def commodity_detail(request, commodity_code):
     table_data = [
         measure_json.get_table_row() for measure_json in import_measures
     ]
-    #table_data.sort(key=lambda di: di['table_rank'])
 
     roo_keys = [
         'heading__'+heading_code, 'heading_exclusion__'+heading_code,
@@ -102,6 +106,9 @@ def commodity_detail(request, commodity_code):
     return render(request, 'commodities/commodity_detail.html', context)
 
 
+'''
+old vue.js ajax call:
+
 def get_measure_table_data(request, commodity_code, origin_country):
 
     if not Country.objects.filter(country_code=origin_country).exists():
@@ -118,3 +125,4 @@ def get_measure_table_data(request, commodity_code, origin_country):
     table_data.sort(key=lambda di: di['table_rank'])
 
     return JsonResponse({'gridData': table_data})
+'''

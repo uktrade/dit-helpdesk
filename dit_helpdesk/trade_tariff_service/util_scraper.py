@@ -2,7 +2,7 @@ import json
 import requests
 
 from commodities.models import Commodity
-from headings.models import Heading, SubHeading
+from hierarchy.models import Heading, SubHeading
 
 
 COMMODITY_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
@@ -46,7 +46,7 @@ def get_or_create_commodity_w_dict(di):
         goods_nomenclature_sid=di['goods_nomenclature_sid'],
     )
     obj.tts_is_leaf = di['leaf']
-    obj.tts_heading_json = di
+    obj.tts_heading_json = json.dumps(di)
     if created:
         obj.tts_json = get_commodity_json(obj.commodity_code)
     obj.save()
@@ -59,7 +59,7 @@ def get_or_create_subheading_w_dict(di):
         goods_nomenclature_sid=di['goods_nomenclature_sid'],
     )
     abs_commodity.tts_is_leaf = di['leaf']
-    abs_commodity.tts_heading_json = di
+    abs_commodity.tts_heading_json = json.dumps(di)
     abs_commodity.save()
     return abs_commodity
 
@@ -96,4 +96,4 @@ def get_commodity_json(commodity_code):
     if resp.status_code != 200:
         print('url failed: ' + url)
         return None
-    return json.loads(resp_content)
+    return resp_content

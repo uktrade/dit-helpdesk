@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+    <h2>Search</h2>
+
+    {% if query %}
+    <form method="get" action="/search">
+        <h3>Results</h3>
+
+        {% for result in page_obj.object_list %}
+            <p>
+              {{ result.object.tts_heading_description }} - <a href="{{ result.object.get_absolute_url }}">{{ result.object.tts_title }}</a>
+            </p>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+
+        {% if page_obj.has_previous or page_obj.has_next %}
+            <div>
+                {% if page_obj.has_previous %}<a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}">{% endif %}&laquo; Previous{% if page_obj.has_previous %}</a>{% endif %}
+                |
+                {% if page_obj.has_next %}<a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">{% endif %}Next &raquo;{% if page_obj.has_next %}</a>{% endif %}
+            </div>
+        {% endif %}
+    </form>
+    {% else %}
+    <form method="get" action="/search">
+        <table>
+            <tbody>
+                <tr><th><label for="id_q">Find your commodity</label></th><td></td></tr>
+                <tr><td><input type="search" name="q" id="id_q"></td><td></td></tr>
+                <tr>
+                    <td><input type="submit" value="Search"></td><td></td>
+                </tr>
+            </tbody>
+        </table>
+        <!--<input type="hidden" name="models" value="requirements_documents.SubHeading" id="id_models_0" checked="">-->
+        <!--<input type="hidden" name="models" value="requirements_documents.commodity" id="id_models_1" checked="">-->
+        <input type="hidden" name="models" value="requirements_documents.heading" id="id_models_0" checked="">
+    </form>
+    {% endif %}
+
+{% endblock %}

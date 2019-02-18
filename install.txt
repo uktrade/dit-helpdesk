@@ -2,17 +2,31 @@
 WORK IN PROGRESS:
 ----------------
 
-# create database:
-createdb tradehelpdesk2
-psql —user=<some_postgres_superuser> -d tradehelpdesk2
-GRANT ALL PRIVILEGES ON DATABASE tradehelpdesk2 to postgres;
-
 # create virtual environment and install requirements:
 cd dit-helpdesk
 python3 -m venv venv/
 source venv/bin/activate
 pip install -r requirements.txt
 
+# development setup:
 export PYTHONPATH=$(pwd)
-export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings
+export DJANGO_BASE_DIR=$(pwd)
+export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings.dev
+
+
+# this uses the development sqlite database with prepolpulated data (located at: dit_helpdesk/dit_helpdesk_db.sqlite3)
+# Be careful when committing changes on this to github.
+# The Django superuser on this development DB is username: 'dit_helpdesk_admin', password: 'dit4life'
+
+
+# If you're working with a fresh database:
+
+# 1. Run migrations
+python manage.py migrate
+
+# 2. add countries to DB
 django-admin loaddata countries_data.json
+
+# 3. create a superuser
+python manage.py createsuperuser
+
