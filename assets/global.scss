@@ -53,3 +53,7 @@
 .autocomplete__option {
   @include govuk-typography-common;
 }
+
+.app-\!-vertical-align-top {
+  vertical-align: top;
+}

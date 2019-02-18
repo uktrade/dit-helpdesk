@@ -20,8 +20,10 @@ from commodities import views as commodity_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
+from cookies import views as cookie_views
 
 urlpatterns = [
+    path('cookies/', cookie_views.show),
     path('admin/', admin.site.urls),
     path(
         'choose_country/', country_views.choose_country_view,
@@ -40,13 +42,13 @@ urlpatterns = [
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('commodities/', views.commodity_list, name='commodity_list'),
-    
+
     #re_path(r'^search/', include('haystack.urls')),
     re_path(r'^search*?', CommoditySearchView.as_view(), name='commodity-search-view'),
 
     re_path(r'section_data/(?P<section_id>\d+)', views.get_section_data),
 
-    
+
     path(
         r'choose_country/', views.choose_country_view, name='choose-country'
     ),
@@ -60,11 +62,11 @@ urlpatterns = [
     re_path(
         r'heading_data/(?P<heading_code>(\d{10})|(\d{4}))', views.heading_data, name='heading-data'
     ),
-    
+
     #path('hierarchy/', hierarchy_views.hierarchy, name='hierarchy-view'),
     #path('hierarchy_data/', hierarchy_views.get_hierarchy_data),
     #path('hierarchy_data_cached/', hierarchy_views.get_hierarchy_data_cached),
-    
+
     # re_path(
     #     r'headings/(?P<heading_code>(\d{10})|(\d{4}))', heading_views.heading_detail, name='heading-detail'
     # ),
