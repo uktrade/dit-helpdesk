@@ -1,6 +1,6 @@
+'use strict'
 
-
-//const Modal = {
+// const Modal = {
 //  name: 'modal',
 //  template: '#measure-conditions-modal',
 //  methods: {
@@ -8,18 +8,16 @@
 //      this.$emit('close');
 //    },
 //  },
-//};
-
+// };
 
 Vue.component('conditions-modal', {
-    template: '#measure-conditions-modal',
-    methods: {
-        close(event) {
-            this.$emit('close');
-        },
-    },
+  template: '#measure-conditions-modal',
+  methods: {
+    close (event) {
+      this.$emit('close')
+    }
+  }
 })
-
 
 Vue.component('demo-grid', {
   template: '#grid-template',
@@ -74,28 +72,38 @@ Vue.component('demo-grid', {
   }
 })
 
-
 var demo = new Vue({
   el: '#demo',
   data: {
-    //isModalVisible: false,
-    searchQuery: "",
+    // isModalVisible: false,
+    searchQuery: '',
     gridColumns: [
-        'country', 'measure_description',  'measure_value', 'conditions_html',
-        'excluded_countries', 'legal_base_html', 'start_end_date', 'footnotes_html'
+      'country', 'measure_description', 'measure_value', 'conditions_html',
+      'excluded_countries', 'legal_base_html', 'start_end_date', 'footnotes_html'
     ],
     gridData: []
   },
   methods: {
   },
   mounted: function () {
-
-     axios.get("commodity_measures_table/"+commodityCode+"/"+originCountry)
-      .then(response => {
-        this.gridData = response.data.gridData;
+    fetch(`commodity_measures_table/${commodityCode}/${originCountry}`)
+      .then(res => {
+        return res.json()
+      })
+      .then(json => {
+        console.log(json)
+        this.gridData = json.data.gridData
       })
       .catch(error => {
         console.log(error)
       })
+
+    //  axios.get('commodity_measures_table/' + commodityCode + '/' + originCountry)
+    //   .then(response => {
+    //     this.gridData = response.data.gridData;
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //   })
   }
 })
