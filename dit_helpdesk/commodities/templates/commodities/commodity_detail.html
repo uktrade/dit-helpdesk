@@ -1,65 +1,83 @@
 {% extends 'core/base.html' %}
 {% load static staticfiles i18n %}
 
+{% block footer_additions %}
+  <script src="{% static 'js/enhancements.js' %}" type="module"></script>
+{% endblock footer_additions %}
+
 {% block content %}
-
-
-  <h2 class="govuk-heading-l">
-    <span class="govuk-caption-l">
-      Exporting from {{ selected_origin_country_name }} to the UK
-    </span>
-    Commodity information for
-
-    {% for commodity_code_segment in commodity_code %}
-      <span class="app-commodity-code-highlight app-commodity-code-highlight--{{ forloop.counter }}">
-        {{ commodity_code_segment }}
-      </span>
-    {% endfor %}
-  </h2>
-
-  <p class="govuk-body">{{ commodity.tts_title }}</p>
-
-  <h3 class="govuk-heading-m">Tarrifs and quotas</h3>
-  <p class="govuk-body">The commodity code for exporting is <strong>{{ commodity.commodity_code }}</strong></p>
-  <p class="govuk-body">Goods are subject to a <strong></strong></p>
-  <p class="govuk-body">Exporting is subject to a duty of <strong>%</strong>, unless subject to other measures</p>
-
-  <section class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-tables">
-    <table class="govuk-table table">
-      <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          {% for key in table_keys %}
-            <th class="govuk-table__header" scope="col">{{ key | capfirst  }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody class="govuk-table__body">
-        {% for row in table_data %}
-          <tr class="govuk-table__row">
-            {% for  col in row %}
-              <td class="govuk-table__cell">{{ col | safe }}</td>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+        <span class="govuk-caption-l">
+          Exporting from {{ selected_origin_country_name }} to the UK
+        </span>
+        Commodity information for
+        {% spaceless %}
+          <span class="app-commodity-code">
+            {% for commodity_code_segment in commodity_code %}
+              <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
+                {{ commodity_code_segment }}
+              </span>
             {% endfor %}
+          </span>
+        {% endspaceless %}
+      </h2>
+    </div>
+  </div>
+  <div class="govuk-grid-row govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">{{ commodity.tts_title }}</p>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h3 class="govuk-heading-m">Tarrifs and quotas</h3>
+      <div class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-table">
+        <table class="govuk-table app-table">
+          <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
+          <thead class="govuk-table__head app-table__header">
+            <tr class="govuk-table__row">
+              {% for key in column_titles %}
+                <th class="govuk-table__header app-table__header" scope="col">{{ key  }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body app-table__body">
+            {% spaceless %}
+              {% for row in table_data %}
+                  <tr class="govuk-table__row">
+                    {% for  col in row %}
+                      {% if forloop.counter == 1 %}
+                        <th class="govuk-table__header app-table__cell govuk-!-font-weight-regular" scope="row">{{ col }}</td>
+                      {% else %}
+                        <td class="govuk-table__cell app-table__cell">{{ col | safe }}</td>
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              {% endspaceless %}
+            </tbody>
+        </table>
+      </div>
+      {% if roo_fragments %}
+        <h3 class="govuk-heading-m">Rules of Origin</h3>
+        <div class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-table">
+          <table class="govuk-table app-table app-table--no-wrap">
+            <caption class="govuk-table__caption govuk-visually-hidden">Rules of Origin</caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header app-table__header" scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
+              <th class="govuk-table__header app-table__header" scope="col">Description of product</th>
+              <th class="govuk-table__header govuk-!-width-one-half app-table__header" scope="col">Working or processing, carried out on non-originating materials, which confers originating status</th>
           </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-  </section>
-
-
-    {% if roo_fragments %}
-      <table class="govuk-table">
-        <caption class="govuk-table__caption govuk-heading-m">Rules of Origin</caption>
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header"><abbr title="Harmonised System">HS</abbr> heading</th>
-          <th class="govuk-table__header">Description of product</th>
-          <th class="govuk-table__header govuk-!-width-one-half">Working or processing, carried out on non-originating materials, which confers originating status</th>
-      </tr>
-      </thead>
-        {% for html_fragment in roo_fragments %}
-            {{ html_fragment | safe }}
-        {% endfor %}
-      </table>
-    {% endif %}
-  {% endblock %}
+          </thead>
+            {% for html_fragment in roo_fragments %}
+                {{ html_fragment | safe }}
+            {% endfor %}
+          </table>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

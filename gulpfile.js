@@ -16,22 +16,16 @@ const paths = {
     source: './assets/global.scss',
     destination: './dit_helpdesk/static/css/'
   },
+  javascripts: {
+    source: './assets/**/*.js',
+    destination: './dit_helpdesk/static/js/'
+  },
   govukFrontendAssets: {
     source: './node_modules/govuk-frontend/assets/**/*.*',
     destination: './dit_helpdesk/static/'
   },
   manifest: './manifest'
 }
-
-gulp.task('sass', () => {
-  return gulp.src('./sass/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./css'))
-})
-
-gulp.task('sass:watch', () => {
-  gulp.watch('./sass/**/*.scss', ['sass'])
-})
 
 const styles = () => {
   return gulp.src(paths.styles.source)
@@ -48,6 +42,11 @@ const styles = () => {
     // .pipe(gulp.dest(paths.manifest))
 }
 
+const javascripts = () => {
+  return gulp.src(paths.javascripts.source)
+    .pipe(gulp.dest(paths.javascripts.destination))
+}
+
 const copyAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
@@ -59,4 +58,5 @@ const watch = () => {
 
 gulp.task('default', watch)
 gulp.task('styles', styles)
+gulp.task('javascripts', javascripts)
 gulp.task('copy', copyAssets)

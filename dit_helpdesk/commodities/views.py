@@ -1,5 +1,6 @@
 import json
 import re
+import datetime
 
 # from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
@@ -57,12 +58,13 @@ def commodity_detail(request, commodity_code):
         Commodity, commodity_code=commodity_code,
     )
 
-    commodity_code_regex = re.search('([0-9]{2})([0-9]{2})([0-9]{6})', commodity.commodity_code)
+    commodity_code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', commodity.commodity_code)
 
     commodity_code_split = [
         commodity_code_regex.group(1),
         commodity_code_regex.group(2),
-        commodity_code_regex.group(3)
+        commodity_code_regex.group(3),
+        commodity_code_regex.group(4)
     ]
 
     heading = commodity.get_heading()
@@ -82,7 +84,12 @@ def commodity_detail(request, commodity_code):
     roo_fragments = []
     for key in roo_keys:
         if key in RULES_OF_ORIGIN_DATA:
-            roo_fragments.extend(RULES_OF_ORIGIN_DATA[key])
+            for html_fragment in RULES_OF_ORIGIN_DATA[key]:
+                html_fragment = html_fragment.replace(
+                    '<td class="table" valign="top">',
+                    '<td class="govuk-table__cell app-table__cell">'
+                )
+                roo_fragments.append(html_fragment)
 
     context = {
         'selected_origin_country': selected_country, 'commodity': commodity,
