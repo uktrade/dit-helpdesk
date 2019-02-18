@@ -11,6 +11,7 @@ MIDDLEWARE = [
    'global_login_required.GlobalLoginRequiredMiddleware'
 ] + MIDDLEWARE
 
+DEBUG = False
 
 '''
 DATABASES = {
