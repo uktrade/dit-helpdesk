@@ -16,22 +16,17 @@ const paths = {
     source: './assets/global.scss',
     destination: './dit_helpdesk/static/css/'
   },
+  javascripts: {
+    source: './assets/**/*.js',
+    accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
+    destination: './dit_helpdesk/static/js/'
+  },
   govukFrontendAssets: {
     source: './node_modules/govuk-frontend/assets/**/*.*',
     destination: './dit_helpdesk/static/'
   },
   manifest: './manifest'
 }
-
-gulp.task('sass', () => {
-  return gulp.src('./sass/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./css'))
-})
-
-gulp.task('sass:watch', () => {
-  gulp.watch('./sass/**/*.scss', ['sass'])
-})
 
 const styles = () => {
   return gulp.src(paths.styles.source)
@@ -48,9 +43,19 @@ const styles = () => {
     // .pipe(gulp.dest(paths.manifest))
 }
 
+const javascripts = () => {
+  return gulp.src(paths.javascripts.source)
+    .pipe(gulp.dest(paths.javascripts.destination))
+}
+
 const copyAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
+}
+
+const copyAccessibleAutocomplete = () => {
+  return gulp.src(paths.javascripts.accessibleAutocomplete)
+    .pipe(gulp.dest(paths.javascripts.destination))
 }
 
 const watch = () => {
@@ -59,4 +64,5 @@ const watch = () => {
 
 gulp.task('default', watch)
 gulp.task('styles', styles)
-gulp.task('copy', copyAssets)
+gulp.task('javascripts', javascripts)
+gulp.task('copy', gulp.parallel(copyAssets, copyAccessibleAutocomplete))

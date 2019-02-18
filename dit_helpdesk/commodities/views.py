@@ -1,6 +1,9 @@
 import json
+import re
+import datetime
 import os
 
+# from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.conf import settings
@@ -40,11 +43,17 @@ example commodities with rules of origin:
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()
+
+    country = Country.objects.filter(
+        country_code=selected_country
+    )
+
     country_exists = False
+
+    country_name = country.values()[0]['name']
+
     if selected_country:
-        country_exists = Country.objects.filter(
-            country_code=selected_country
-        ).exists()
+        country_exists = country.exists()
 
     if (not selected_country) or (not country_exists):
         messages.error(request, 'Invalid originCountry')
@@ -53,6 +62,15 @@ def commodity_detail(request, commodity_code):
     commodity = get_object_or_404(
         Commodity, commodity_code=commodity_code,
     )
+
+    commodity_code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', commodity.commodity_code)
+
+    commodity_code_split = [
+        commodity_code_regex.group(1),
+        commodity_code_regex.group(2),
+        commodity_code_regex.group(3),
+        commodity_code_regex.group(4)
+    ]
 
     heading = commodity.get_heading()
     heading_code = heading.heading_code[:4]
@@ -70,13 +88,21 @@ def commodity_detail(request, commodity_code):
     roo_fragments = []
     for key in roo_keys:
         if key in RULES_OF_ORIGIN_DATA:
-            roo_fragments.extend(RULES_OF_ORIGIN_DATA[key])
+            for html_fragment in RULES_OF_ORIGIN_DATA[key]:
+                html_fragment = html_fragment.replace(
+                    '<td class="table" valign="top">',
+                    '<td class="govuk-table__cell app-table__cell">'
+                )
+                roo_fragments.append(html_fragment)
 
     context = {
         'selected_origin_country': selected_country, 'commodity': commodity,
+        'selected_origin_country_name': country_name,
+        'commodity_code': commodity_code_split,
         'roo_fragments': roo_fragments, 'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
     }
+
     return render(request, 'commodities/commodity_detail.html', context)
 
 
