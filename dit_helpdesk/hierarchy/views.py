@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
@@ -68,7 +69,7 @@ def _get_hierarchy_level_html(node, expanded):
 
     return html
 
-
+@login_required
 def hierarchy_view(request, node_id):
 
     expanded = _get_expanded_context(node_id)

@@ -8,7 +8,7 @@ django-classy-tags==0.8.0
 -e git+https://github.com/django-haystack/django-haystack@802b0f6f4b3b99314453261876a32bac2bbec94f#egg=django_haystack
 django-haystackbrowser==0.6.3
 django-manager-utils==1.2.0
-django-glrm==1.1.3
+#django-glrm==1.1.3
 django-postgres-extra==1.21a12
 django-query-builder==1.1.0
 django-redis-cache==1.8.1
