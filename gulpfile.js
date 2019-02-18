@@ -18,6 +18,7 @@ const paths = {
   },
   javascripts: {
     source: './assets/**/*.js',
+    accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
     destination: './dit_helpdesk/static/js/'
   },
   govukFrontendAssets: {
@@ -52,6 +53,11 @@ const copyAssets = () => {
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
 }
 
+const copyAccessibleAutocomplete = () => {
+  return gulp.src(paths.javascripts.accessibleAutocomplete)
+    .pipe(gulp.dest(paths.javascripts.destination))
+}
+
 const watch = () => {
   gulp.watch(paths.styles.folder, styles)
 }
@@ -59,4 +65,4 @@ const watch = () => {
 gulp.task('default', watch)
 gulp.task('styles', styles)
 gulp.task('javascripts', javascripts)
-gulp.task('copy', copyAssets)
+gulp.task('copy', gulp.parallel(copyAssets, copyAccessibleAutocomplete))
