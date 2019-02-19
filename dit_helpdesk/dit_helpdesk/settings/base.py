@@ -57,6 +57,7 @@ MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # 'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -159,6 +160,7 @@ STATICFILES_DIRS = [
     join_path(BASE_DIR, 'static'),
     # os.path.join(BASE_DIR, 'node_modules'),
 ]
+
 STATIC_ROOT = join_path(BASE_DIR, 'static_collected')  # manage.py collectstatic will copy static files here
 
 MEDIA_ROOT = join_path(BASE_DIR, 'media')
@@ -166,9 +168,12 @@ MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    #'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'sass_processor.finders.CssFinder',
 ]
+
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # compression and cachine
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
 
 # a list of (measure_type_id, measure_type_series_id) values that are relevant
 # we will ignore measures that are not in this list.
