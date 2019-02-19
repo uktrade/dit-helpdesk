@@ -72,9 +72,11 @@ def _get_hierarchy_level_html(node, expanded):
 
     return html
 
+
 @login_required
 def hierarchy_view(request, node_id):
 
+    node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded)
 
