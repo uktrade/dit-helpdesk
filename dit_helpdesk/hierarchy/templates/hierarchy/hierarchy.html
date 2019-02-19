@@ -1,16 +1,8 @@
+{% extends 'core/base.html' %}
 {% load static staticfiles i18n %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-</head>
+{% block title %}Search{% endblock title %}
 
-<body>
-
-<table>
+{% block content %}
     {{ hierarchy_html | safe }}
-</table>
-
-</body>
-
-</html>
+{% endblock %}

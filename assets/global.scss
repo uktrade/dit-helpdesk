@@ -147,3 +147,32 @@ a {
     background-color: lighten(govuk-colour("orange"), 30%);
   }
 }
+
+.app-hierarchy-tree {
+  &,
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  & > li {
+    &:nth-child(even) {
+     background: govuk-colour("grey-4");
+    }
+  }
+
+  ul {
+    margin-left: 2em;
+  }
+
+  li {
+    @extend .govuk-body;
+    margin: 0;
+  }
+
+  a {
+    padding: 0.5em;
+    display: inline-block;
+  }
+}

@@ -51,21 +51,24 @@ def _get_hierarchy_level_html(node, expanded):
 
     if node == 'root':
         children = Section.objects.all()
+        html = '<ul class="app-hierarchy-tree">'
+        end = '</ul>'
+
     else:
         children = node.get_hierarchy_children()
-
-    html = '<li>\n   <ul>'
+        html = '\n   <ul>'
+        end = '  </ul>\n</li>'
 
     for child in children:
         if type(child) is Commodity:
-            li = ('\n      <li><b><a href="%s">' % child.get_absolute_url()) + child.tts_title + '</a></b></li>'
+            li = ('\n      <li><strong><a href="%s">' % child.get_absolute_url()) + child.tts_title + '</a></strong></li>'
         else:
-            li = ('\n      <li><a href="%s">' % child.get_hierarchy_url()) + child.tts_title + '</a></li>'
+            li = ('\n      <li><a href="%s">' % child.get_hierarchy_url()) + child.tts_title + '</a>'
         html = html + li
         if child.hierarchy_key in expanded:
             html = html + _get_hierarchy_level_html(child, expanded)
 
-    html = html + '   </ul>\n</li>'
+    html = html + end
 
     return html
 
