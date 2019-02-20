@@ -7,7 +7,6 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-
 def _get_expanded_context(selected_node_id):
     if selected_node_id == 'root':
         return []
@@ -48,25 +47,29 @@ def _get_expanded_context(selected_node_id):
 
 
 def _get_hierarchy_level_html(node, expanded):
-
     if node == 'root':
         children = Section.objects.all()
         html = '<ul class="app-hierarchy-tree">'
-        end = '</ul>'
+        end = '\n</ul>'
 
     else:
         children = node.get_hierarchy_children()
-        html = '\n   <ul>'
-        end = '  </ul>\n</li>'
+        html = '\n<ul class="app-hierarchy-tree--child">'
+        end = '\n</ul>\n</li>'
 
     for child in children:
         if type(child) is Commodity:
-            li = ('\n      <li><strong><a href="%s">' % child.get_absolute_url()) + child.tts_title + '</a></strong></li>'
+            li = ('\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__child">\n<a href="%s" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">' % child.get_absolute_url()) + child.tts_title + '\n<span class="govuk-visually-hidden"> &ndash; </span>\n<b>Select</b>\n</a>\n</li>'
         else:
-            li = ('\n      <li><a href="%s">' % child.get_hierarchy_url()) + child.tts_title + '</a>'
+            openclass = 'closed'
+            if child.hierarchy_key in expanded:
+                openclass = 'open'
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__parent app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>'
+
         html = html + li
+
         if child.hierarchy_key in expanded:
-            html = html + _get_hierarchy_level_html(child, expanded)
+            html = html +  _get_hierarchy_level_html(child, expanded)
 
     html = html + end
 
@@ -80,7 +83,6 @@ def hierarchy_view(request, node_id):
 
     context = {'hierarchy_html': html}
     return render(request, 'hierarchy/hierarchy.html', context)
-
 
 # -----------------------------------------------
 # old vue.js stuff:

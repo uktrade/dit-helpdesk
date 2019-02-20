@@ -23,7 +23,7 @@
         navigator.msDoNotTrack === '1' || // IE 9 - 10
         window.doNotTrack === '1' // IE 11 / Edge 16 and below
       )
-      // If the user has enabled 'DoNotTrack', we should not load Google Tag Manager (and therefore, Google Analytics.)
+      // If the user has enabled 'DoNotTrack', we should not load any tracking.
       if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
         console.log('Analytics will be loaded')
       }
@@ -70,7 +70,7 @@
             </span>
           </p>
         </div>
-        <main class="govuk-main-wrapper">
+        <main class="govuk-main-wrapper" id="main-content">
           {% block content %}
           {% endblock content %}
         </main>
