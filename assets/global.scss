@@ -167,17 +167,52 @@ a {
   }
 }
 
-.app-hierarchy-tree__parent,
-.app-hierarchy-tree__child {
+.app-hierarchy-tree__section,
+.app-hierarchy-tree__heading,
+.app-hierarchy-tree__subheading,
+.app-hierarchy-tree__commodity,
+.app-hierarchy-tree__other {
   @extend .govuk-body;
-
   // background-color: rgba(0, 0, 0, 0.01);
   border-top: 1px solid $govuk-border-colour;
   line-height: 1.5;
+  margin: 0;
+}
+
+
+.app-hierarchy-tree__chapter,
+.app-hierarchy-tree__heading,
+.app-hierarchy-tree__subheading,
+.app-hierarchy-tree__commodity,
+.app-hierarchy-tree__other {
   margin: 0 0 0 2em;
 }
 
-.app-hierarchy-tree__child {
+.app-hierarchy-tree__section {
+  background: steelblue;
+}
+
+.app-hierarchy-tree__chapter {
+  background: rebeccapurple;
+}
+
+.app-hierarchy-tree__heading {
+  background: lightyellow;
+}
+
+.app-hierarchy-tree__subheading {
+  background: limegreen;
+}
+
+.app-hierarchy-tree__commodity {
+  background: orange;
+}
+
+.app-hierarchy-tree__other {
+  background: orangered;
+}
+
+.app-hierarchy-tree__commodity {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 8 16' fill='currentColor'><path fill-rule='evenodd' d='M8 12H0V4h8v8z'/></svg>");
   background-size: 0.9em 0.9em;
   background-position: 0.65em 0.75em;

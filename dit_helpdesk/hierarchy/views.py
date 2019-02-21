@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -58,13 +59,39 @@ def _get_hierarchy_level_html(node, expanded):
         end = '\n</ul>\n</li>'
 
     for child in children:
-        if type(child) is Commodity:
-            li = ('\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__child">\n<a href="%s" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">' % child.get_absolute_url()) + child.tts_title + '\n<span class="govuk-visually-hidden"> &ndash; </span>\n<b>Select</b>\n</a>\n</li>'
+        # print(dir(child))
+        if child.hierarchy_key in expanded:
+            openclass = 'open'
         else:
             openclass = 'closed'
-            if child.hierarchy_key in expanded:
-                openclass = 'open'
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__parent app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>'
+
+        code_html = '';
+        if (type(child) is not Section):
+            if type(child) is Commodity:
+                child.harmonized_code = child.tts_obj.code
+            code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', child.harmonized_code)
+            code_split = [
+                code_regex.group(1),
+                code_regex.group(2),
+                code_regex.group(3),
+                code_regex.group(4)
+            ]
+            for index, code_segment in enumerate(code_split):
+                counter = str(int(index) + 1)
+                code_html = code_html + '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+
+        if type(child) is Section:
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__section app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a> - Section ' + child.roman_numeral + ' ; ' + child.chapter_range_str
+        elif type(child) is Chapter:
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__chapter app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+        elif type(child) is Heading:
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__heading app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+        elif type(child) is SubHeading:
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__subheading app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+        elif type(child) is Commodity:
+            li = ('\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__commodity">\n<a href="%s" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">' % child.get_absolute_url()) + child.tts_title + '\n<span class="govuk-visually-hidden"> &ndash; </span>\n<b>Select</b>\n</a>\n' + code_html + '</li>'
+        else:
+            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__other app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
 
         html = html + li
 

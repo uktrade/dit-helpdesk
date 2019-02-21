@@ -100,6 +100,9 @@ class CommodityHeadingJson(object):
     def title(self):
         return self.di['description']
 
+    @property
+    def harmonized_code(self):
+        return self.di['goods_nomenclature_item_id']
 
 class SectionJson(object):
 
@@ -144,7 +147,7 @@ class ChapterJson(object):
         return self.di['formatted_description']
 
     @property
-    def code(self):
+    def harmonized_code(self):
         return self.di['goods_nomenclature_item_id']
 
     @property
