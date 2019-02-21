@@ -10,8 +10,14 @@
   background-color: lighten(desaturate(govuk-colour("light-blue"), 8.46), 42.55);
 }
 
-.app-cookie-banner--hidden {
-  display: none;
+.js-enabled {
+  .app-cookie-banner {
+    display: none;
+  }
+
+  .app-cookie-banner--show {
+    display: block;
+  }
 }
 
 @include govuk-media-query($media-type: print) {
