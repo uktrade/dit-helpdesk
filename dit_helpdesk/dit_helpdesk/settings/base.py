@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rules_of_origin',
     'search',
     'trade_tariff_service',
+    'django_extensions',
 ]
 
 

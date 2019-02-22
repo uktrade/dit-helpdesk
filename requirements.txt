@@ -5,6 +5,7 @@ decorator==4.3.0
 Django==2.1.5
 dj-database-url==0.5.0
 django-classy-tags==0.8.0
+django-extensions==2.1.5
 -e git+https://github.com/django-haystack/django-haystack@802b0f6f4b3b99314453261876a32bac2bbec94f#egg=django_haystack
 django-haystackbrowser==0.6.3
 django-manager-utils==1.2.0
@@ -13,8 +14,10 @@ django-postgres-extra==1.21a12
 django-query-builder==1.1.0
 django-redis-cache==1.8.1
 elasticsearch==5.5.3
+flake8==3.7.6
 fleming==0.4.6
 idna==2.8
+ipdb==0.11
 ipython-genutils==0.2.0
 jsonschema==2.6.0
 jupyter-core==4.4.0
@@ -33,4 +36,5 @@ six==1.12.0
 soupsieve==1.6.1
 traitlets==4.3.2
 urllib3==1.24.1
+werkzeug==0.14.1
 whitenoise==4.1.2
