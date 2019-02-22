@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'psqlextra',
-    'haystack',
-    'haystackbrowser',
 
     'core',
     'commodities',
