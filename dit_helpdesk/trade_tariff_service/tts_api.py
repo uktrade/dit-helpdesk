@@ -1,6 +1,6 @@
+import re
 from dateutil.parser import parse as parse_dt
 
-import re
 from django.conf import settings
 
 COMMODITY_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
@@ -11,6 +11,18 @@ HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
 TTS_MEASURE_TYPES = [tup[0] for tup in settings.TTS_MEASURE_TYPES]
+
+COMMODITY_DETAIL_TABLE_KEYS = [
+    # dict_key, column_title
+    ('country', 'Country'),
+    ('measure_description', 'Description'),
+    ('conditions_html', 'Conditions'),
+    ('measure_value', 'Value'),
+    ('excluded_countries', 'Excluded Countries'),
+    ('start_end_date', 'Date'),
+    ('legal_base_html', 'Legal Base'),
+    ('footnotes_html', 'Footnotes'),
+]
 
 
 class CommodityJson(object):
@@ -73,22 +85,10 @@ class CommodityJson(object):
 
         return measures
 
-    @property
-    def section_chapter_heading(self):
-        links = self.di['links']
-        section_url = [di for di in links if di['rel'] == 'section'][0]['href']
-        chapter_url = [di for di in links if di['rel'] == 'chapter'][0]['href']
-        heading_url = [di for di in links if di['rel'] == 'heading'][0]['href']
-        result = [
-            'https://www.trade-tariff.service.gov.uk' + u
-            for u in [section_url, chapter_url, heading_url]
-        ]
-        return result
-
 
 class CommodityHeadingJson(object):
     """
-    Sub-dictionary from Commodity response about its Headin
+    Sub-dictionary from Commodity response about its Heading
     """
     # example:
     # {'goods_nomenclature_item_id': '0706000000', 'description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled', 'formatted_description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled', 'description_plain': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled'}
@@ -195,31 +195,18 @@ class HeadingJson(object):
         return [((COMMODITY_URL % id), is_leaf) for (id, is_leaf) in self.commodity_ids]
 
 
-def get_date(di, key):
-    dt_str = di.get(key)
-    if dt_str is None:
-        return None
-    return parse_dt(dt_str)
-
-
-COMMODITY_DETAIL_TABLE_KEYS = [
-    # dict_key, column_title
-    ('country', 'Country'),
-    ('measure_description', 'Description'),
-    ('conditions_html', 'Conditions'),
-    ('measure_value', 'Value'),
-    ('excluded_countries', 'Excluded Countries'),
-    ('start_end_date', 'Date'),
-    ('legal_base_html', 'Legal Base'),
-    ('footnotes_html', 'Footnotes'),
-]
-
-
 class ImportMeasureJson(object):
 
     def __init__(self, di, commodity_code):
         self.di = di
         self.commodity_code = commodity_code
+
+    @classmethod
+    def get_date(cls, di, key):
+        dt_str = di.get(key)
+        if dt_str is None:
+            return None
+        return parse_dt(dt_str)
 
     def __repr__(self):
         return 'ImportMeasureJson %s %s' % (self.commodity_code, self.type_id)
@@ -234,11 +221,11 @@ class ImportMeasureJson(object):
 
     @property
     def effective_start_date(self):
-        return get_date(self.di, 'effective_start_date')
+        return self.get_date(self.di, 'effective_start_date')
 
     @property
     def effective_end_date(self):
-        return get_date(self.di, 'effective_end_date')
+        return self.get_date(self.di, 'effective_end_date')
 
     @property
     def geographical_area(self): # one GA per measure
@@ -331,18 +318,7 @@ class ImportMeasureJson(object):
             )
         return ', '.join(hrefs)
 
-    @property
-    def vue__table_rank(self):
-        # sort data by ERGA OMNES first, then regions with children, then alphabetically
-        country = self.di['geographical_area']['description']
-        if country == 'ERGA OMNES':
-            return 0
-        elif self.di['geographical_area']['children_geographical_areas']:
-            return 1
-        else:
-            return 5  # ord(country[0].lower())
-
-    def get_vue_table_dict(self):
+    def get_table_dict(self):
 
         country = self.di['geographical_area']['description']
 
@@ -370,12 +346,12 @@ class ImportMeasureJson(object):
             'country': country, 'measure_description': measure_description,
             'conditions_html': self.vue__conditions_html, 'measure_value': measure_value,
             'excluded_countries': excluded_countries, 'start_end_date': start_end_date,
-            'legal_base_html': self.vue__legal_base_html, 'table_rank': self.vue__table_rank,
+            'legal_base_html': self.vue__legal_base_html,
             'footnotes_html': self.vue__footnotes_html
         }
 
     def get_table_row(self):
-        di = self.get_vue_table_dict()
+        di = self.get_table_dict()
         return [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
 
     def get_measure_conditions(self):
@@ -390,13 +366,6 @@ class MeasureCondition(object):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
 
-    @property
-    def description(self):
-        condition = self.di['condition'] or ' ' # + '\n ' + self.di['requirement'] + '\n ' + 'Document code: ' + self.di['document_code']
-        requirement = self.di['requirement'] or ' '
-        document_code = self.di['document_code'] or ' '
-        st = condition + ' | ' + requirement + ' | ' + document_code
-        return st
 
 
 # ========================================
