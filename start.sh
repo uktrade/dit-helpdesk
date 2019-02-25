@@ -1,5 +1,4 @@
 #!/bin/bash -xe
-gulp build:all
 python dit_helpdesk/manage.py collectstatic --noinput
 python dit_helpdesk/manage.py migrate
 python dit_helpdesk/manage.py create_admin_user
