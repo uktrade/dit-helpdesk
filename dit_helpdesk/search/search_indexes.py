@@ -1,4 +1,6 @@
-
+"""
+Work in progress Haystack search indexes.
+"""
 from haystack import indexes
 
 from hierarchy.models import Heading
