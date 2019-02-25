@@ -13,17 +13,17 @@ sass.compiler = require('node-sass')
 const paths = {
   styles: {
     folder: './assets/',
-    source: './assets/global.scss',
-    destination: './dit_helpdesk/static/css/'
+    source: './dit_helpdesk/static/global.scss',
+    destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
     source: './assets/**/*.js',
     accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
-    destination: './dit_helpdesk/static/js/'
+    destination: './dit_helpdesk/static_collected/js/'
   },
   govukFrontendAssets: {
     source: './node_modules/govuk-frontend/assets/**/*.*',
-    destination: './dit_helpdesk/static/'
+    destination: './dit_helpdesk/static_collected/'
   },
   manifest: './manifest'
 }
@@ -66,3 +66,4 @@ gulp.task('default', watch)
 gulp.task('styles', styles)
 gulp.task('javascripts', javascripts)
 gulp.task('copy', gulp.parallel(copyAssets, copyAccessibleAutocomplete))
+gulp.task('build:all', gulp.parallel(copyAssets, copyAccessibleAutocomplete, styles, javascripts))
