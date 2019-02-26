@@ -11,7 +11,7 @@ from commodities.models import Commodity
 from countries.models import Country
 
 
-@login_required
+# @login_required
 def search_view(request):
 
     countries = Country.objects.all()

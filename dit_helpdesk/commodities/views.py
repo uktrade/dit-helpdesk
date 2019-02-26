@@ -15,7 +15,7 @@ TABLE_COLUMN_TITLES = [
 ]
 
 
-@login_required
+# @login_required
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()

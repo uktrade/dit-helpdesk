@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from countries.models import Country
 
 
-@login_required
+# @login_required
 def choose_country_view(request):
 
     if request.method == 'POST':
