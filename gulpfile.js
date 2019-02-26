@@ -17,7 +17,7 @@ const paths = {
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
-    source: './assets/**/*.js',
+    source: './dit_helpdesk/static/js/**/*.js',
     accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
     destination: './dit_helpdesk/static_collected/js/'
   },
