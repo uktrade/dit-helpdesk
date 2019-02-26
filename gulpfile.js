@@ -12,12 +12,12 @@ sass.compiler = require('node-sass')
 
 const paths = {
   styles: {
-    folder: './dit_helpdesk/static/',
-    source: './dit_helpdesk/static/global.scss',
+    folder: './assets/scss',
+    source: './assets/scss/global.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
-    source: './dit_helpdesk/static/js/**/*.js',
+    source: './assets/javascript/**/*.js',
     accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
     destination: './dit_helpdesk/static_collected/js/'
   },
