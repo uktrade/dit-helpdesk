@@ -105,7 +105,7 @@ class Chapter(models.Model):
         return self.tts_obj.harmonized_code
 
     def get_hierarchy_children(self):
-        return self.heading_set.all()
+        return self.headings.all()
 
     def get_headings_url(self):
         return reverse(
