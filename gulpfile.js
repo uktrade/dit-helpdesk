@@ -12,7 +12,7 @@ sass.compiler = require('node-sass')
 
 const paths = {
   styles: {
-    folder: './assets/',
+    folder: './dit_helpdesk/static/',
     source: './dit_helpdesk/static/global.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },

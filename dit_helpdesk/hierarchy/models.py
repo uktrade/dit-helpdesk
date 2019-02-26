@@ -157,7 +157,7 @@ class Heading(models.Model):
 
     '''
     # this was used for indexing Headings for search
-    def get_search_index_words(self): 
+    def get_search_index_words(self):
         words = self.tts_title
         for commodity in self.get_commodities_flattened():
             words = words + ' ' + commodity.tts_title

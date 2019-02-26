@@ -55,7 +55,6 @@ def _get_hierarchy_level_html(node, expanded):
         children = Section.objects.all()
         html = '<ul class="app-hierarchy-tree">'
         end = '\n</ul>'
-
     else:
         children = node.get_hierarchy_children()
         html = '\n<ul class="app-hierarchy-tree--child">'
@@ -70,8 +69,11 @@ def _get_hierarchy_level_html(node, expanded):
 
         code_html = '';
         if (type(child) is not Section):
+            code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+
             if type(child) is Commodity:
                 child.harmonized_code = child.tts_obj.code
+
             code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', child.harmonized_code)
             code_split = [
                 code_regex.group(1),
@@ -79,22 +81,25 @@ def _get_hierarchy_level_html(node, expanded):
                 code_regex.group(3),
                 code_regex.group(4)
             ]
+
             for index, code_segment in enumerate(code_split):
                 counter = str(int(index) + 1)
                 code_html = code_html + '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
 
+            code_html = code_html + '</span>'
+
         if type(child) is Section:
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__section app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a> - Section ' + child.roman_numeral + ' ; ' + child.chapter_range_str
+            li = '<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--' + openclass +'"><a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">' + child.tts_title + '</a> <span class="app-hierarchy-tree__section-numbers">Section ' + child.roman_numeral + '</span> <span class="app-hierarchy-tree__chapter-range">' + child.chapter_range_str + '</span>'
         elif type(child) is Chapter:
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__chapter app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+            li = '<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--' + openclass +'"><a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">' + child.tts_title + '</a>' + code_html
         elif type(child) is Heading:
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__heading app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+            li = '<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__heading app-hierarchy-tree__parent--' + openclass +'"><a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">' + child.tts_title + '</a>' + code_html
         elif type(child) is SubHeading:
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__subheading app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+            li = '<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__subheading app-hierarchy-tree__parent--' + openclass +'"><a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">' + child.tts_title + '</a>' + code_html
         elif type(child) is Commodity:
-            li = ('\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__commodity">\n<a href="%s" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">' % child.get_absolute_url()) + child.tts_title + '\n<span class="govuk-visually-hidden"> &ndash; </span>\n<b>Select</b>\n</a>\n' + code_html + '</li>'
+            li = ('<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="%s" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">' % child.get_absolute_url()) + child.tts_title + '<span class="govuk-visually-hidden"> &ndash; </span><b>Select</b></a>' + code_html + '</li>'
         else:
-            li = '\n<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__other app-hierarchy-tree__parent--' + openclass +'">\n<a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">\n' + child.tts_title + '\n</a>\n' + code_html
+            li = '<li id="' + child.hierarchy_key + '" class="app-hierarchy-tree__part app-hierarchy-tree__other app-hierarchy-tree__parent--' + openclass +'"><a href="' + child.get_hierarchy_url() + '#' + child.hierarchy_key + '" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">' + child.tts_title + '</a>' + code_html
 
         html = html + li
 
