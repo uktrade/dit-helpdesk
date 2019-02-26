@@ -12,7 +12,12 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
 
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <!--[if !IE 8]><!-->
+    <link rel="stylesheet" href="{% static 'css/govuk-frontend-2.7.0.min.css' %}">
+    <!--<![endif]-->
+    <!--[if IE 8]>
+    <link rel="stylesheet" href="css/govuk-frontend-ie8-2.7.0.min.css">
+    <![endif]-->
 
     <script>
       // Sourced from https://github.com/alphagov/govuk-design-system/blob/c641c14f043ac8b84a178b4e6260c1f8129a27a8/views/partials/_tracking-head.njk

@@ -11,22 +11,38 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import environ
+
+root = environ.Path(__file__) - 4
+env = environ.Env(
+    DEBUG=(bool, False),
+    BASICAUTH_DISABLE=(bool, False),
+)
+
+DEBUG=env('DEBUG')
+BASICAUTH_DISABLE=env('BASICAUTH_DISABLE')
+BASICAUTH_USERS=env.json('BASICAUTH_USERS')
+
+
+#environ.Env.read_env(f'{root}/local.env')
+
+SITE_ROOT = root()
+
 from os.path import join as join_path
 
 # import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-
-BASE_DIR = os.environ.get(
-    'DJANGO_BASE_DIR',
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
@@ -52,8 +68,9 @@ INSTALLED_APPS = [
     'trade_tariff_service',
 ]
 
-
+# Temporary BasicAuth - NB setting BASICAUTH_DISABLE=1 environment var dynamically disables
 MIDDLEWARE = [
+    'basicauth.middleware.BasicAuthMiddleware',  # Temporary
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # 'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -86,7 +103,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
+# Remove after v4
+#WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
 
 
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
@@ -133,8 +151,8 @@ FIXTURE_DIRS = (
    'countries/fixtures/',
 )
 
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-# SESSION_COOKIE_AGE = 5 * 60
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 15 * 60
 
 
 # Internationalization
@@ -158,6 +176,7 @@ USE_TZ = True
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [
     join_path(BASE_DIR, 'static'),
+    join_path(BASE_DIR, 'govuk_template_assets'),
     # os.path.join(BASE_DIR, 'node_modules'),
 ]
 
