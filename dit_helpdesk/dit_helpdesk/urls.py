@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, re_path
 
 from commodities import views as commodity_views
 from countries import views as country_views
@@ -36,16 +36,14 @@ urlpatterns = [
     re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
 ]
 
-'''
+"""
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('commodities/', views.commodity_list, name='commodity_list'),
-
     #re_path(r'^search/', include('haystack.urls')),
     re_path(r'^search*?', CommoditySearchView.as_view(), name='commodity-search-view'),
 
     re_path(r'section_data/(?P<section_id>\d+)', views.get_section_data),
-
 
     path(
         r'choose_country/', views.choose_country_view, name='choose-country'
@@ -73,4 +71,4 @@ urlpatterns = [
         commodity_views.get_measure_table_data, name='commodity-measures-table'
     ),
 ]
-'''
+"""

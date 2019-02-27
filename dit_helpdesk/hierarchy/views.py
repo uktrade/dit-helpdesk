@@ -2,7 +2,7 @@ import json
 import re
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading

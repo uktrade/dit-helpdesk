@@ -5,7 +5,10 @@ from commodities.models import Commodity
 from hierarchy.models import Heading, SubHeading
 
 
-COMMODITY_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+COMMODITY_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
 
 
 def scrape_heading_hierarchy(heading):
@@ -86,11 +89,10 @@ def _attach_to_parent(obj, parent):
 
 def get_commodity_json(commodity_code):
     url = COMMODITY_URL % commodity_code
-    print('        COMMODITY: '+url)
+    print('        COMMODITY: ' + url)
     try:
         resp = requests.get(url, timeout=10)
     except requests.exceptions.ReadTimeout:
-        import pdb; pdb.set_trace()
         return None
     resp_content = resp.content.decode()
     if resp.status_code != 200:

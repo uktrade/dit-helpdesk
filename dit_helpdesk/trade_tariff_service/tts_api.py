@@ -3,7 +3,10 @@ from dateutil.parser import parse as parse_dt
 
 from django.conf import settings
 
-COMMODITY_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+COMMODITY_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
 CHAPTER_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/%s.json'
 HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.json'
 
@@ -89,10 +92,17 @@ class CommodityJson(object):
 class CommodityHeadingJson(object):
     """
     Sub-dictionary from Commodity response about its Heading
+    example:
+    {'goods_nomenclature_item_id': '0706000000',
+    'description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
+                   'and similar edible roots, fresh or chilled',
+     'formatted_description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
+                              'and similar edible roots, fresh or chilled',
+     'description_plain': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
+                          'and similar edible roots, fresh or chilled'}
+    ('basic_duty_rate', "<span title='13.6 '>13.60</span> %")
     """
-    # example:
-    # {'goods_nomenclature_item_id': '0706000000', 'description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled', 'formatted_description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled', 'description_plain': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled'}
-    # ('basic_duty_rate', "<span title='13.6 '>13.60</span> %")
+
     def __init__(self, di):
         self.di = di
 
@@ -116,7 +126,7 @@ class SectionJson(object):
     @property
     def chapter_ids(self):
         frm, to = int(self.di['chapter_from']), int(self.di['chapter_to'])
-        return [v for v in range(frm, to+1)]
+        return [v for v in range(frm, to + 1)]
 
     @property
     def chapter_urls(self):
@@ -192,7 +202,7 @@ class HeadingJson(object):
 
     @property
     def commodity_urls(self):
-        return [((COMMODITY_URL % id), is_leaf) for (id, is_leaf) in self.commodity_ids]
+        return [((COMMODITY_URL % _id), is_leaf) for (_id, is_leaf) in self.commodity_ids]
 
 
 class ImportMeasureJson(object):
@@ -228,15 +238,30 @@ class ImportMeasureJson(object):
         return self.get_date(self.di, 'effective_end_date')
 
     @property
-    def geographical_area(self): # one GA per measure
-        if self.di['geographical_area']['description'] == 'ERGA OMNES':  # everywhere in the world outside the EU
+    def geographical_area(self):
+        """"
+        one GA per measure
+        if everywhere in the world outside the EU return ERGA OMNES
+
+        """
+
+        if self.di['geographical_area']['description'] == 'ERGA OMNES':
             return 'ERGA OMNES'
-        # NOTE: when filtering by a GA, you will need to search both the top-level and any children in case the country exists
+        # NOTE: when filtering by a GA, you will need to search
+        # both the top-level and any children in case the country exists
         import pdb; pdb.set_trace()
 
     @property
     def type_id(self):
-        return self.di['measure_type']['id']  # e.g. "VTZ", "VTS", "103" (103 is third world duty) (142, tariff preference, e.g. preferential rate for particular countries; 122-125 quota limit)
+        """
+        returns type_id
+
+        e.g. "VTZ", "VTS", "103" (103 is third world duty)
+        (142, tariff preference, e.g. preferential rate for particular countries;
+        122-125 quota limit)
+
+        """
+        return self.di['measure_type']['id']
 
     @property
     def type_description(self):
@@ -245,8 +270,11 @@ class ImportMeasureJson(object):
 
     @property
     def conditions_summary(self):
-        """list of conditions (e.g. you can import if you have document X)  """
-        # other keys: 'condition_code', 'condition', 'document_code', 'requirement', 'action', 'duty_expression'
+        """
+        list of conditions (e.g. you can import if you have document X)
+        other keys: 'condition_code', 'condition', 'document_code', '
+        requirement', 'action', 'duty_expression'
+        """
         return [di['condition'] for di in self.di['measure_conditions']]
 
     @property
@@ -365,7 +393,6 @@ class MeasureCondition(object):
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
-
 
 
 # ========================================

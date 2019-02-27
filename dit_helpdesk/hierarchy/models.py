@@ -149,7 +149,7 @@ class Heading(models.Model):
         return self.tts_obj.code
 
     def __str__(self):
-        return 'Heading '+self.heading_code[:4]
+        return 'Heading ' + self.heading_code[:4]
 
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
