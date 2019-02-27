@@ -6,18 +6,18 @@ import re
 import os
 
 from bs4 import BeautifulSoup
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.conf import settings
 
 ROO_FP = os.path.join(
-    settings.BASE_DIR, 'rules_of_origin/management/commands/roo.json'
+    settings.BASE_DIR, 'rules_of_origin/management/commands/roo_chile.json'
 )
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 RULES = defaultdict(list)
 EXCLUSION_RULES = defaultdict(list)
 
-roo_fp = 'core/management/commands/roo.html'
+roo_fp = 'rules_of_origin/management/commands/roo_chile.html'
 
 '''
 
@@ -40,9 +40,9 @@ ex ex2004 and ex ex2005
 ex ex9601 and ex ex9602
 ex ex4410 to ex ex4413
 ex ex6202, ex ex6204, ex ex6206, ex ex6209 and ex ex6211
+---------
 
-
-what do these mean? 
+NOTE: this script doesn't parse these cases:  (which are in fact in the document)
 5004 to ex ex5006
 ex ex7218, 7219 to 7222
 ex ex7224, 7225 to 7228
@@ -74,8 +74,8 @@ def get_keys(st, category, match_obj):
     elif category == 'chapter_exclusion':
         chapter_num = match_obj.groupdict()['chapter_num']
         if len(chapter_num) == '1':
-            chapter_num = '0'+chapter_num
-        return ['chapter_exclusion__' +chapter_num]
+            chapter_num = '0' + chapter_num
+        return ['chapter_exclusion__' + chapter_num]
 
     elif category == 'heading':
         return ['heading__' + match_obj.groupdict()['heading_num']]
@@ -88,14 +88,14 @@ def get_keys(st, category, match_obj):
         keys = []
         for heading_str in heading_strings:
             heading_num = heading_str.lstrip('ex ex').strip().rstrip(',')
-            keys.append('heading_exclusion__'+heading_num)
+            keys.append('heading_exclusion__' + heading_num)
         return keys
 
     elif category == 'heading_exclusion_range':
         di = match_obj.groupdict()
         start, end = int(di['start_heading']), int(di['end_heading'])
         keys = []
-        for heading_num in range(start, end+1):
+        for heading_num in range(start, end + 1):
             keys.append('heading_exclusion__%s' % heading_num)
         return keys
 
@@ -103,11 +103,9 @@ def get_keys(st, category, match_obj):
         di = match_obj.groupdict()
         start, end = int(di['start_heading']), int(di['end_heading'])
         keys = []
-        for heading_num in range(start, end+1):
-            keys.append('heading__'+str(heading_num))
+        for heading_num in range(start, end + 1):
+            keys.append('heading__' + str(heading_num))
         return keys
-
-    import pdb; pdb.set_trace()
     return ''
 
 
@@ -133,16 +131,12 @@ class Command(BaseCommand):
             if len(cols) != 4:
                 continue
 
-            if left_col in table_segments:
-                import pdb; pdb.set_trace()
-
             table_segments[left_col].append(i)
-            if prev_left_col and (i-1) not in table_segments[prev_left_col]:
-                table_segments[prev_left_col].append(i-1)
+            if prev_left_col and (i - 1) not in table_segments[prev_left_col]:
+                table_segments[prev_left_col].append(i - 1)
 
         html_fragments = defaultdict(list)
 
-        curr_match = None
         for segment_title, row_positions in table_segments.items():
 
             if segment_title in ('ex ex7218, 7219 to 7222', 'ex ex7224, 7225 to 7228'):
@@ -162,10 +156,6 @@ class Command(BaseCommand):
                             )
                     break
 
-            if curr_match is None:
-                import pdb; pdb.set_trace()
-                print()
-
-        file = open('rules_of_origin/management/commands/roo.json', 'w')
+        file = open('rules_of_origin/management/commands/roo_chile.json', 'w')
         file.write(json.dumps(html_fragments))
         file.close()

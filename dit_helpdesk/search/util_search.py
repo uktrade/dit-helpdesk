@@ -60,36 +60,3 @@ class CommoditySearchView(SearchView):
     def get_context_data(self, *args, **kwargs):
         return super(CommoditySearchView, self).get_context_data(*args, **kwargs)
 
-    def get_context_data__hierarchical_search_prototype(self, *args, **kwargs):
-
-        context = super(CommoditySearchView, self).get_context_data(*args, **kwargs)
-
-        if not self.request.GET.get('q'):
-            return context
-
-        context['object_list'] = [o for o in context['object_list'] if o.model is Heading]
-
-        context['page_obj'].object_list = [
-            o for o in context['page_obj'].object_list if o.model is Heading
-        ]
-
-        commodity_pks, subheading_pks = [], []
-        for result_item in context['object_list']:
-            heading = result_item.object
-            for model_name, pk in heading.get_commodity_keys_flattened():
-                if model_name == 'Commodity':
-                    commodity_pks.append(pk)
-                elif model_name == 'SubHeading':
-                    subheading_pks.append(pk)
-
-        query_str = self.request.GET['q']
-        related_items = SearchQuerySet().models(Commodity, SubHeading).filter(
-            Q(commodity_pk__in=commodity_pks) | Q(subheading_pk__in=subheading_pks)).filter(
-            content=query_str)
-
-        related_items_by_key = {}
-        for result_item in related_items:
-            key = (result_item.object.__class__.__name__, result_item.object.pk)
-            related_items_by_key[key] = result_item.object
-
-        return context

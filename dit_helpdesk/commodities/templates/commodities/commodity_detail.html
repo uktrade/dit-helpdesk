@@ -1,118 +1,83 @@
+{% extends 'core/base.html' %}
 {% load static staticfiles i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <style>
-        # from: https://vuejs.org/v2/examples/grid-component.html
-        table {
-          border: 2px solid #42b983;
-          border-radius: 3px;
-          background-color: #fff;
-        }
 
-        th {
-          background-color: #323959;
-          color: rgba(255,255,255,0.66);
-          cursor: pointer;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
+{% block footer_additions %}
+  <script src="{% static 'js/enhancements.js' %}" type="module"></script>
+{% endblock footer_additions %}
 
-        td {
-          background-color: #f9f9f9;
-        }
-
-        th, td {
-          min-width: 120px;
-          padding: 10px 20px;
-        }
-
-        th.active {
-          color: #fff;
-        }
-
-        th.active .arrow {
-          opacity: 1;
-        }
-
-        .arrow {
-          display: inline-block;
-          vertical-align: middle;
-          width: 0;
-          height: 0;
-          margin-left: 5px;
-          opacity: 0.66;
-        }
-
-        .arrow.asc {
-          border-left: 4px solid transparent;
-          border-right: 4px solid transparent;
-          border-bottom: 4px solid #fff;
-        }
-
-        .arrow.dsc {
-          border-left: 4px solid transparent;
-          border-right: 4px solid transparent;
-          border-top: 4px solid #fff;
-        }
-    </style>
-</head>
-<body>
-
-    <p>Exporting from {{ selected_origin_country }} to the UK</p>
-
-    <p>{{ commodity.commodity_code }} - <b>{{ commodity.tts_title }}</b></p>
-
-    <table>
-        <thead>
-        <tr>
-            {% for key in column_titles %}
-            <td><b>{{ key }}</b></td>
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+        <span class="govuk-caption-l">
+          Exporting from {{ selected_origin_country_name }} to the UK
+        </span>
+        Commodity information for
+        {% spaceless %}
+          <span class="app-commodity-code">
+            {% for commodity_code_segment in commodity_code %}
+              <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
+                {{ commodity_code_segment }}
+              </span>
             {% endfor %}
-        </tr>
-        </thead>
-        {% for row in table_data %}
-        <tr>
-            {% for  col in row %}
-                {% if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 %}
-                <td>{{ col | safe }}</td>
-                {% else %}
-                <td>{{ col }}</td>
-                {% endif %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-
-    {% if roo_fragments %}
-    <h3>Rules of Origin:</h3>
-    <div>
-        <table style="border: 2px solid red;">
-        <thead>
-        <tr>
-            <td><b>HS heading</b></td>
-            <td><b>Description of product</b></td>
-            <td><b>Working or processing, carried out on non-originating materials, which confers originating status</b></td>
-            <td></td>
-        </tr>
-        </thead>
-        {% for html_fragment in roo_fragments %}
-            {{ html_fragment | safe }}
-        {% endfor %}
-        </table>
+          </span>
+        {% endspaceless %}
+      </h2>
     </div>
-    {% endif %}
-
-    <script>
-        var commodityCode = "{{ commodity.commodity_code }}";
-        var originCountry = "{{ selected_origin_country }}";
-    </script>
-
-</body>
-</html>
+  </div>
+  <div class="govuk-grid-row govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">{{ commodity.tts_title }}</p>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h3 class="govuk-heading-m">Tarrifs and quotas</h3>
+      <div class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-table">
+        <table class="govuk-table app-table">
+          <caption class="govuk-table__caption govuk-visually-hidden">Tarrifs and quotas</caption>
+          <thead class="govuk-table__head app-table__header">
+            <tr class="govuk-table__row">
+              {% for key in column_titles %}
+                <th class="govuk-table__header app-table__header" scope="col">{{ key  }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body app-table__body">
+            {% spaceless %}
+              {% for row in table_data %}
+                  <tr class="govuk-table__row">
+                    {% for  col in row %}
+                      {% if forloop.counter == 1 %}
+                        <th class="govuk-table__header app-table__cell govuk-!-font-weight-regular" scope="row">{{ col }}</td>
+                      {% else %}
+                        <td class="govuk-table__cell app-table__cell">{{ col | safe }}</td>
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              {% endspaceless %}
+            </tbody>
+        </table>
+      </div>
+      {% if roo_fragments %}
+        <h3 class="govuk-heading-m">Rules of Origin</h3>
+        <div class="app-fullscreen-content govuk-!-margin-bottom-9" data-module="scrolling-table">
+          <table class="govuk-table app-table app-table--no-wrap">
+            <caption class="govuk-table__caption govuk-visually-hidden">Rules of Origin</caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header app-table__header" scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
+              <th class="govuk-table__header app-table__header" scope="col">Description of product</th>
+              <th class="govuk-table__header govuk-!-width-one-half app-table__header" scope="col">Working or processing, carried out on non-originating materials, which confers originating status</th>
+          </tr>
+          </thead>
+            {% for html_fragment in roo_fragments %}
+                {{ html_fragment | safe }}
+            {% endfor %}
+          </table>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

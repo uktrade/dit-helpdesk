@@ -76,9 +76,7 @@ class Section(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'section-%s' % self.pk}
-        return reverse(
-            'hierarchy_node', kwargs=kwargs
-        )
+        return reverse('hierarchy_node', kwargs=kwargs)
 
 
 class Chapter(models.Model):
@@ -103,7 +101,7 @@ class Chapter(models.Model):
         return self.tts_obj.title
 
     def get_hierarchy_children(self):
-        return self.heading_set.all()
+        return self.headings.all()
 
     def get_headings_url(self):
         return reverse(
@@ -113,9 +111,7 @@ class Chapter(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'chapter-%s' % self.pk}
-        return reverse(
-            'hierarchy_node', kwargs=kwargs
-        )
+        return reverse('hierarchy_node', kwargs=kwargs)
 
 
 class Heading(models.Model):
@@ -128,7 +124,8 @@ class Heading(models.Model):
     tts_json = models.TextField(blank=True, null=True)
 
     chapter = models.ForeignKey(
-        'hierarchy.Chapter', blank=True, null=True, on_delete=models.CASCADE
+        'hierarchy.Chapter', blank=True, null=True, on_delete=models.CASCADE,
+        related_name='headings'
     )
 
     @property
@@ -144,30 +141,22 @@ class Heading(models.Model):
         return self.tts_obj.title
 
     def __str__(self):
-        return 'Heading '+self.heading_code[:4]
+        return 'Heading ' + self.heading_code[:4]
 
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
         return reverse('heading-detail', kwargs=kwargs)
 
-    def get_commodities_flattened(self):
-        from headings.views import get_heading_data
-        return get_heading_data(self, '')[2]
-
-    def get_commodity_keys_flattened(self):
-        commodities = self.get_commodities_flattened()
-        return [
-            (o.__class__.__name__, o.pk) for o in commodities
-        ]
-
+    '''
+    # this was used for indexing Headings for search
     def get_search_index_words(self):
-
         words = self.tts_title
         for commodity in self.get_commodities_flattened():
             words = words + ' ' + commodity.tts_title
 
         words = words.replace('Other', ' ').replace('other', ' ').replace('  ', ' ')
         return words
+    '''
 
     def get_hierarchy_children(self):
         sub_headings = [obj for obj in self.child_subheadings.all()]
@@ -176,9 +165,7 @@ class Heading(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'heading-%s' % self.pk}
-        return reverse(
-            'hierarchy_node', kwargs=kwargs
-        )
+        return reverse('hierarchy_node', kwargs=kwargs)
 
 
 class SubHeading(models.Model):
@@ -223,9 +210,7 @@ class SubHeading(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'sub_heading-%s' % self.pk}
-        return reverse(
-            'hierarchy_node', kwargs=kwargs
-        )
+        return reverse('hierarchy_node', kwargs=kwargs)
 
     def get_hierarchy_children(self):
         sub_headings = [obj for obj in self.child_subheadings.all()]

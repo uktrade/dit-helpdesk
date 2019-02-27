@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from os.path import join as join_path
 
-import dj_database_url
+# import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
@@ -25,14 +25,10 @@ BASE_DIR = os.environ.get(
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 # Application definition
 
@@ -44,9 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'psqlextra',
-    'haystack',
-    'haystackbrowser',
-
     'core',
     'commodities',
     'countries',
@@ -54,6 +47,7 @@ INSTALLED_APPS = [
     'rules_of_origin',
     'search',
     'trade_tariff_service',
+    'django_extensions',
 ]
 
 
@@ -61,6 +55,7 @@ MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # 'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -133,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 FIXTURE_DIRS = (
-   'countries/fixtures/',
+    'countries/fixtures/',
 )
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = False
@@ -160,19 +155,23 @@ USE_TZ = True
 
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [
-    join_path(BASE_DIR, 'static'),
+    join_path(BASE_DIR, 'static_collected'),
     # os.path.join(BASE_DIR, 'node_modules'),
 ]
-STATIC_ROOT = join_path(BASE_DIR, 'static_collected')  # manage.py collectstatic will copy static files here
+
+STATIC_ROOT = join_path(BASE_DIR, 'static')  # manage.py collectstatic will copy static files here
 
 MEDIA_ROOT = join_path(BASE_DIR, 'media')
 MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    #'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'sass_processor.finders.CssFinder',
 ]
+
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # compression and cachine
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
 
 # a list of (measure_type_id, measure_type_series_id) values that are relevant
 # we will ignore measures that are not in this list.

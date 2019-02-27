@@ -8,14 +8,15 @@ python3 -m venv venv/
 source venv/bin/activate
 pip install -r requirements.txt
 
+# development setup:
 export PYTHONPATH=$(pwd)
-
-# to use 'dev' settings do:
+export DJANGO_BASE_DIR=$(pwd)
 export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings.dev
+
 
 # this uses the development sqlite database with prepolpulated data (located at: dit_helpdesk/dit_helpdesk_db.sqlite3)
 # Be careful when committing changes on this to github.
-# The Django superuser on this development DB is username: 'dit', password: 'dit'
+# The Django superuser on this development DB is username: 'dit_helpdesk_admin', password: 'dit4life'
 
 
 # If you're working with a fresh database:
