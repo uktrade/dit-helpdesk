@@ -117,3 +117,6 @@ dit_helpdesk/static_collected/css/
 dit_helpdesk/static_collected/js/
 dit_helpdesk/static/js/
 dit_helpdesk/static/css/
+
+# PyCharm
+.idea
