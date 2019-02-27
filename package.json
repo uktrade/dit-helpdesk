@@ -8,7 +8,9 @@
     "lint:sass": "sass-lint --config .sasslintrc './assets/**/*.scss' --verbose --no-exit",
     "build:javascript": "gulp javascripts",
     "build:styles": "gulp copy && gulp styles",
-    "watch:styles": "gulp copy && gulp"
+    "watch:styles": "gulp copy && gulp",
+    "build": "npm run build:all",
+    "build:all": "gulp build:all"
   },
   "dependencies": {
     "accessible-autocomplete": "^1.6.2",
