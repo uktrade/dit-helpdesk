@@ -40,8 +40,8 @@ def get_rules_of_origin_html_fragments(commodity):
     ]
     # include any entries relating to headings under the chapter
     for _heading in chapter_headings:
-        roo_keys.append('heading__'+_heading.heading_code[:4])
-        roo_keys.append('heading_exclusion__'+_heading.heading_code[:4])
+        roo_keys.append('heading__' + _heading.heading_code[:4])
+        roo_keys.append('heading_exclusion__' + _heading.heading_code[:4])
 
     roo_fragments = []
     for key in roo_keys:

@@ -11,7 +11,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 DEBUG = False
 
-'''
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
@@ -22,4 +22,4 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-'''
+"""
