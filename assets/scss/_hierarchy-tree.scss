@@ -74,9 +74,13 @@
 .app-hierarchy-tree__commodity {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 8 16' fill='currentColor'><path fill-rule='evenodd' d='M8 12H0V4h8v8z'/></svg>");
   background-size: 0.9em 0.9em;
-  background-position: 0.65em 0.75em;
+  background-position: 0.75em 0.9em;
   background-repeat: no-repeat;
   padding-left: 2em;
+
+  @include govuk-media-query($from: tablet) {
+    background-position: 0.9em 0.85em;
+  }
 }
 
 .app-hierarchy-tree__section-numbers,
@@ -118,6 +122,10 @@
   width: 100%;
 
   @include govuk-media-query($from: tablet) {
+    background-position: -0.1em 0.15em;
+  }
+
+  @include govuk-media-query($from: tablet) {
     // background-position: 0.5em 0.5em;
     vertical-align: top;
     width: calc(100% - 9.5em);
@@ -138,6 +146,7 @@
     color: govuk-colour('white');
     display: block;
     line-height: 1;
+    margin: 0.2em 0 0 0;
     padding: 0.6em 0.7em 0.4em 0.7em;
     width: 3em;
     text-align: center;
