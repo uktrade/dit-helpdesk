@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from commodities.models import Commodity
@@ -76,7 +75,6 @@ def _get_hierarchy_level_html(node, expanded):
     return html
 
 
-@login_required
 def hierarchy_view(request, node_id):
 
     node_id = node_id.rstrip('/')
