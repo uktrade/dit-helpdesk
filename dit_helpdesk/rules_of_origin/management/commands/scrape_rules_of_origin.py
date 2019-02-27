@@ -10,14 +10,14 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 ROO_FP = os.path.join(
-    settings.BASE_DIR, 'rules_of_origin/management/commands/roo.json'
+    settings.BASE_DIR, 'rules_of_origin/management/commands/roo_chile.json'
 )
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
 RULES = defaultdict(list)
 EXCLUSION_RULES = defaultdict(list)
 
-roo_fp = 'core/management/commands/roo.html'
+roo_fp = 'rules_of_origin/management/commands/roo_chile.html'
 
 '''
 
@@ -40,9 +40,9 @@ ex ex2004 and ex ex2005
 ex ex9601 and ex ex9602
 ex ex4410 to ex ex4413
 ex ex6202, ex ex6204, ex ex6206, ex ex6209 and ex ex6211
+---------
 
-
-what do these mean? 
+NOTE: this script doesn't parse these cases:  (which are in fact in the document)
 5004 to ex ex5006
 ex ex7218, 7219 to 7222
 ex ex7224, 7225 to 7228
@@ -155,6 +155,7 @@ class Command(BaseCommand):
                 curr_match = re.search(regex, segment_title)
                 if curr_match:
                     keys = get_keys(table_segments, category, curr_match)
+                    import pdb; pdb.set_trace()
                     for key in keys:
                         for row_pos in row_positions:
                             html_fragments[key].append(
@@ -166,6 +167,6 @@ class Command(BaseCommand):
                 import pdb; pdb.set_trace()
                 print()
 
-        file = open('rules_of_origin/management/commands/roo.json', 'w')
+        file = open('rules_of_origin/management/commands/roo_chile.json', 'w')
         file.write(json.dumps(html_fragments))
         file.close()
