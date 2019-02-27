@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'psqlextra',
-
     'core',
     'commodities',
     'countries',
@@ -129,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 FIXTURE_DIRS = (
-   'countries/fixtures/',
+    'countries/fixtures/',
 )
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = False

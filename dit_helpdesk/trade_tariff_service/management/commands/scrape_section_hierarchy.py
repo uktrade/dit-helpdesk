@@ -1,6 +1,6 @@
 import json
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 import requests
 
 from hierarchy.models import Section, Chapter, Heading
@@ -23,7 +23,7 @@ def get_and_update_section(section_id):
 
     section_json_obj = SectionJson(json.loads(resp_content))
 
-    section_db_obj.tts_json = resp_content  #json.dumps(section_json_obj.di)
+    section_db_obj.tts_json = resp_content  # json.dumps(section_json_obj.di)
     section_db_obj.save()
 
     return section_json_obj, section_db_obj
@@ -43,9 +43,9 @@ def get_and_update_chapter(chapter_url, section_db_obj):
     if created:
         chapter_db_obj.section = section_db_obj
     elif chapter_db_obj.section and chapter_db_obj.section != section_db_obj:
-        import pdb; pdb.set_trace()  # multiple parent sections?
+        print('multiple parent sections?')
 
-    chapter_db_obj.tts_json = resp_content #json.dumps(chapter_json_obj.di)
+    chapter_db_obj.tts_json = resp_content  # json.dumps(chapter_json_obj.di)
     chapter_db_obj.save()
 
     return chapter_json_obj, chapter_db_obj
@@ -67,9 +67,9 @@ def get_and_update_heading(heading_url, chapter_db_obj):
     if created:
         heading_db_obj.chapter = chapter_db_obj
     elif heading_db_obj.chapter and heading_db_obj.chapter != chapter_db_obj:
-        import pdb; pdb.set_trace()  # multiple parent chapters?
+        print('multiple parent chapters?')
 
-    heading_db_obj.tts_json = resp_content #json.dumps(heading_json_obj.di)
+    heading_db_obj.tts_json = resp_content  # json.dumps(heading_json_obj.di)
     heading_db_obj.save()
 
     return heading_json_obj, heading_db_obj
@@ -93,7 +93,7 @@ class Command(BaseCommand):
 
         for chapter_url in section_json_obj.chapter_urls:
             print('----------------------------------------------')
-            print('CHAPTER '+chapter_url)
+            print('CHAPTER ' + chapter_url)
 
             chapter_json_obj, chapter_db_obj = get_and_update_chapter(
                 chapter_url, section_db_obj
