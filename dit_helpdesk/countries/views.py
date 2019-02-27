@@ -6,8 +6,11 @@ from django.contrib.auth.decorators import login_required
 from countries.models import Country
 
 
-@login_required
 def choose_country_view(request):
+    if request.session.has_key('origin_country'):
+        selected_country = request.session['origin_country']
+    else:
+        selected_country = False
 
     if request.method == 'POST':
         origin_country = request.POST.get('origin_country', '').strip().upper()
@@ -19,6 +22,7 @@ def choose_country_view(request):
 
     countries = Country.objects.all()
     context = {
-        'country_options': [(c.country_code, c.name) for c in countries]
+        'country_options': [(c.country_code, c.name) for c in countries],
+        'selected_country': selected_country
     }
     return render(request, 'countries/choose_country.html', context)
