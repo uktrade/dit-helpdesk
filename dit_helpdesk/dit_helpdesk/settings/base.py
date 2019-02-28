@@ -19,7 +19,7 @@ from os.path import join as join_path
 
 BASE_DIR = os.environ.get(
     'DJANGO_BASE_DIR',
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
 # Quick-start development settings - unsuitable for production
@@ -63,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.AdminIpRestrictionMiddleware',
     #'requirements_documents.middleware.RedirectExceptionMiddleware',
     #'django.middleware.cache.FetchFromCacheMiddleware',
 ]
@@ -174,6 +175,10 @@ STATICFILES_FINDERS = [
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # compression and cachine
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
 
+# The correct index of the client IP in the X-Forwarded-For header.  It should be set to
+# -2 if accessing the private domain and -3 if accessing the site via the public URL.
+IP_SAFELIST_XFF_INDEX = int(os.environ.get('IP_SAFELIST_XFF_INDEX', '-2'))
+
 # a list of (measure_type_id, measure_type_series_id) values that are relevant
 # we will ignore measures that are not in this list.
 TTS_MEASURE_TYPES = [
@@ -202,3 +207,7 @@ TTS_MEASURE_TYPES = [
     # seems to also be necessary for commodity: 0202309075
     ('710', 'UNKNOWN'),
 ]
+
+RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
+ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
+ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
