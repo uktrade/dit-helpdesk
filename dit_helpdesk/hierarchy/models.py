@@ -101,7 +101,7 @@ class Chapter(models.Model):
         return self.tts_obj.title
 
     def get_hierarchy_children(self):
-        return self.heading_set.all()
+        return self.headings.all()
 
     def get_headings_url(self):
         return reverse(
@@ -141,7 +141,7 @@ class Heading(models.Model):
         return self.tts_obj.title
 
     def __str__(self):
-        return 'Heading '+self.heading_code[:4]
+        return 'Heading ' + self.heading_code[:4]
 
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
@@ -149,7 +149,7 @@ class Heading(models.Model):
 
     '''
     # this was used for indexing Headings for search
-    def get_search_index_words(self): 
+    def get_search_index_words(self):
         words = self.tts_title
         for commodity in self.get_commodities_flattened():
             words = words + ' ' + commodity.tts_title

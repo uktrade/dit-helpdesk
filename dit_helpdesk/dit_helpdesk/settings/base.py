@@ -56,9 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'psqlextra',
-    'haystack',
-    'haystackbrowser',
-
     'core',
     'commodities',
     'countries',
@@ -66,6 +63,7 @@ INSTALLED_APPS = [
     'rules_of_origin',
     'search',
     'trade_tariff_service',
+    'django_extensions',
 ]
 
 # Temporary BasicAuth - NB setting BASICAUTH_DISABLE=1 environment var dynamically disables
@@ -148,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 FIXTURE_DIRS = (
-   'countries/fixtures/',
+    'countries/fixtures/',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -180,7 +178,7 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'node_modules'),
 ]
 
-STATIC_ROOT = join_path(BASE_DIR, 'static_collected')  # manage.py collectstatic will copy static files here
+STATIC_ROOT = join_path(BASE_DIR, 'static')  # manage.py collectstatic will copy static files here
 
 MEDIA_ROOT = join_path(BASE_DIR, 'media')
 MEDIA_URL = '/files/'

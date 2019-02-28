@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, re_path
 
 from commodities import views as commodity_views
 from countries import views as country_views
@@ -24,7 +24,7 @@ from search import views as search_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(
-        'choose_country/', country_views.choose_country_view,
+        'choose-country/', country_views.choose_country_view,
         name='choose-country'
     ),
     re_path(
@@ -36,17 +36,15 @@ urlpatterns = [
     re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
 ]
 
-'''
+"""
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('commodities/', views.commodity_list, name='commodity_list'),
-    
     #re_path(r'^search/', include('haystack.urls')),
     re_path(r'^search*?', CommoditySearchView.as_view(), name='commodity-search-view'),
 
     re_path(r'section_data/(?P<section_id>\d+)', views.get_section_data),
 
-    
     path(
         r'choose_country/', views.choose_country_view, name='choose-country'
     ),
@@ -60,11 +58,11 @@ urlpatterns = [
     re_path(
         r'heading_data/(?P<heading_code>(\d{10})|(\d{4}))', views.heading_data, name='heading-data'
     ),
-    
+
     #path('hierarchy/', hierarchy_views.hierarchy, name='hierarchy-view'),
     #path('hierarchy_data/', hierarchy_views.get_hierarchy_data),
     #path('hierarchy_data_cached/', hierarchy_views.get_hierarchy_data_cached),
-    
+
     # re_path(
     #     r'headings/(?P<heading_code>(\d{10})|(\d{4}))', heading_views.heading_detail, name='heading-detail'
     # ),
@@ -73,4 +71,4 @@ urlpatterns = [
         commodity_views.get_measure_table_data, name='commodity-measures-table'
     ),
 ]
-'''
+"""

@@ -60,10 +60,12 @@ def _get_hierarchy_level_html(node, expanded):
         end = '  </ul>\n</li>'
 
     for child in children:
+        title = child.tts_title
         if type(child) is Commodity:
-            li = ('\n      <li><strong><a href="%s">' % child.get_absolute_url()) + child.tts_title + '</a></strong></li>'
+            link = f'<strong><a href="{child.get_absolute_url()}">{title}</a></strong></li>'
         else:
-            li = ('\n      <li><a href="%s">' % child.get_hierarchy_url()) + child.tts_title + '</a>'
+            link = f'<a href="{child.get_hierarchy_url()}">{title}</a>'
+        li = f'\n      <li>{link}</li>'
         html = html + li
         if child.hierarchy_key in expanded:
             html = html + _get_hierarchy_level_html(child, expanded)
@@ -81,4 +83,3 @@ def hierarchy_view(request, node_id):
 
     context = {'hierarchy_html': html}
     return render(request, 'hierarchy/hierarchy.html', context)
-
