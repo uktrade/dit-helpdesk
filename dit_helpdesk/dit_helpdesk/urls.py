@@ -21,11 +21,11 @@ from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
 from feedback import views as feedback_views
-from core.admin_views import admin_login
+from admin.views import admin_login_view
 
 urlpatterns = [
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
-    path('admin/login/', admin_login),
+    path('admin/login/', admin_login_view),
     path('admin/', admin.site.urls),
     path(
         'choose-country/', country_views.choose_country_view,

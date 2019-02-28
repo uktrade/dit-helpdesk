@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.core.exceptions import PermissionDenied
 
 
-def admin_login(request):
+def admin_login_view(request):
     """A replacement admin login view that will direct the user through the SSO
     authentication flow. """
 
