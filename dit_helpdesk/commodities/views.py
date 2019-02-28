@@ -11,6 +11,7 @@ TABLE_COLUMN_TITLES = [
     tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
 ]
 
+
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()
