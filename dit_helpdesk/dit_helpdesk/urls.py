@@ -24,7 +24,7 @@ from search import views as search_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(
-        'choose_country/', country_views.choose_country_view,
+        'choose-country/', country_views.choose_country_view,
         name='choose-country'
     ),
     re_path(
