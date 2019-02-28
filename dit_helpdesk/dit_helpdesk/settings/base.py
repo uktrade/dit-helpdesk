@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'trade_tariff_service',
     'feedback',
     'django_extensions',
+    'authbroker_client',
+    'user',
 ]
 
 
@@ -128,6 +130,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authbroker_client.backends.AuthbrokerBackend',
+]
+
 
 FIXTURE_DIRS = (
     'countries/fixtures/',
@@ -211,3 +220,13 @@ TTS_MEASURE_TYPES = [
 RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
 ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
 ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
+
+# authbroker config
+AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
+AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
+AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
+
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/admin/login/'
+
+AUTH_USER_MODEL = 'user.User'
