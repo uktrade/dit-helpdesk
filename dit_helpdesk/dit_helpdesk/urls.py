@@ -20,6 +20,7 @@ from commodities import views as commodity_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
+from feedback import views as feedback_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +33,12 @@ urlpatterns = [
         commodity_views.commodity_detail, name='commodity-detail'
     ),
     path('search/', search_views.search_view, name='search-view'),
+    path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
+    path(
+        'feedback/success/',
+        feedback_views.FeedbackSuccessView.as_view(),
+        name='feedback-success-view',
+    ),
 
     re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
 ]
