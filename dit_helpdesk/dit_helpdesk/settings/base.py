@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from os.path import join as join_path
 
-# import dj_database_url
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
@@ -26,9 +26,11 @@ BASE_DIR = os.environ.get(
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
 # Application definition
 
@@ -90,6 +92,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
 
+DATABASES = {
+   'default': dj_database_url.config()
+}
 
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
