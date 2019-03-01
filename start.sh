@@ -1,4 +1,5 @@
 #!/bin/bash -xe
+# pip install -r requirements.txt
 python dit_helpdesk/manage.py collectstatic --noinput
 python dit_helpdesk/manage.py migrate
 python dit_helpdesk/manage.py loaddata countries_data
