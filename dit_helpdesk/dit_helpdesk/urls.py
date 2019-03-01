@@ -20,6 +20,7 @@ from commodities import views as commodity_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
+from cookies import views as cookie_views
 from feedback import views as feedback_views
 from admin.views import admin_login_view
 
@@ -31,6 +32,7 @@ urlpatterns = [
         'choose-country/', country_views.choose_country_view,
         name='choose-country'
     ),
+    path('cookies/', cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
         r'commodity/(?P<commodity_code>\d{10})',
         commodity_views.commodity_detail, name='commodity-detail'

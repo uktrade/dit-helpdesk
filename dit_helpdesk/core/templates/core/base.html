@@ -34,6 +34,9 @@
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+    <div class="app-cookie-banner js--cookie-banner">
+      <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. <a href="{% url 'cookies' %}" class="govuk-link">Find out more about cookies</a></p>
+    </div>
     <header class="govuk-header " role="banner" data-module="header">
         <div class="govuk-header__container govuk-width-container">
 
@@ -97,6 +100,9 @@
           </div>
         </div>
       </footer>
+
+      <script src="{% static 'js/global.js' %}"></script>
+      <script src="{% static 'js/enhancements.js' %}" type="module"></script>
       {% block footer_additions %}
       {% endblock footer_additions %}
   </body>
