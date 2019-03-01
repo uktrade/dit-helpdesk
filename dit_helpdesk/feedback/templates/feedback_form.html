@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Feedback{% endblock %}
+{% block feedback_banner %}{% endblock %}
+
+{% block content %}
+
+    {{ form.errors }}
+
+    <form action="." method="post">
+        {% csrf_token %}
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="name">Name</label>
+            <input class="govuk-input govuk-input--width-20" id="name" name="name" type="text">
+        </div>
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="email">Email Address</label>
+            <input class="govuk-input govuk-input--width-20" id="email" name="email" type="text">
+        </div>
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="name">Message</label>
+            <textarea class="govuk-textarea" id="message" name="message" rows="20" cols="60"></textarea>
+        </div>
+        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Submit</button>
+    </form>
+
+{% endblock %}
