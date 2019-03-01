@@ -10,5 +10,3 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '123')
