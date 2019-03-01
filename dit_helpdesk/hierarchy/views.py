@@ -1,8 +1,15 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+import os
+import json
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+
+HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), 'hierarchy_cached.json')
+with open(HIERARCHY_JSON_PATH) as f:
+    HIERARCHY_CACHED = json.loads(f.read())
 
 
 def _get_expanded_context(selected_node_id):
@@ -76,7 +83,6 @@ def _get_hierarchy_level_html(node, expanded):
     return html
 
 
-@login_required
 def hierarchy_view(request, node_id):
 
     node_id = node_id.rstrip('/')

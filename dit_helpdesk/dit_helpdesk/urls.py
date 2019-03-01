@@ -14,26 +14,36 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
 from commodities import views as commodity_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
+from feedback import views as feedback_views
+from admin.views import admin_login_view
 
 urlpatterns = [
-    path('cookies/', cookie_views.show),
+    path('auth/', include('authbroker_client.urls', namespace='authbroker')),
+    path('admin/login/', admin_login_view),
     path('admin/', admin.site.urls),
     path(
         'choose-country/', country_views.choose_country_view,
         name='choose-country'
     ),
+    path('cookies/', cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
         r'commodity/(?P<commodity_code>\d{10})',
         commodity_views.commodity_detail, name='commodity-detail'
     ),
     path('search/', search_views.search_view, name='search-view'),
+    path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
+    path(
+        'feedback/success/',
+        feedback_views.FeedbackSuccessView.as_view(),
+        name='feedback-success-view',
+    ),
 
     re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
 ]
