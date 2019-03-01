@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #'psqlextra',
     'core',
     'commodities',
+    'cookies',
     'countries',
     'hierarchy',
     'rules_of_origin',
