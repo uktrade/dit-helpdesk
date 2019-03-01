@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 python dit_helpdesk/manage.py collectstatic --noinput
 python dit_helpdesk/manage.py migrate
-python dit_helpdesk/manage.py create_admin_user
 python dit_helpdesk/manage.py loaddata countries_data
 npm install
 npm rebuild node-sass
