@@ -13,22 +13,24 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from os.path import join as join_path
 
-# import dj_database_url
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 BASE_DIR = os.environ.get(
     'DJANGO_BASE_DIR',
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
 # Application definition
 
@@ -42,12 +44,16 @@ INSTALLED_APPS = [
     #'psqlextra',
     'core',
     'commodities',
+    'cookies',
     'countries',
     'hierarchy',
     'rules_of_origin',
     'search',
     'trade_tariff_service',
+    'feedback',
     'django_extensions',
+    'authbroker_client',
+    'user',
 ]
 
 
@@ -62,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.AdminIpRestrictionMiddleware',
     #'requirements_documents.middleware.RedirectExceptionMiddleware',
     #'django.middleware.cache.FetchFromCacheMiddleware',
 ]
@@ -86,6 +93,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
 
+DATABASES = {
+   'default': dj_database_url.config()
+}
 
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
@@ -126,6 +136,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authbroker_client.backends.AuthbrokerBackend',
+]
+
 
 FIXTURE_DIRS = (
     'countries/fixtures/',
@@ -173,6 +190,10 @@ STATICFILES_FINDERS = [
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # compression and cachine
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
 
+# The correct index of the client IP in the X-Forwarded-For header.  It should be set to
+# -2 if accessing the private domain and -3 if accessing the site via the public URL.
+IP_SAFELIST_XFF_INDEX = int(os.environ.get('IP_SAFELIST_XFF_INDEX', '-2'))
+
 # a list of (measure_type_id, measure_type_series_id) values that are relevant
 # we will ignore measures that are not in this list.
 TTS_MEASURE_TYPES = [
@@ -201,3 +222,19 @@ TTS_MEASURE_TYPES = [
     # seems to also be necessary for commodity: 0202309075
     ('710', 'UNKNOWN'),
 ]
+
+RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
+ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
+ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
+
+# authbroker config
+AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
+AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
+AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
+
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/admin/login/'
+
+AUTH_USER_MODEL = 'user.User'
+
+FEEDBACK_MAX_LENGTH = 1000

@@ -9,6 +9,7 @@
     "build:javascript": "gulp javascripts",
     "build:styles": "gulp copy && gulp styles",
     "watch:styles": "gulp copy && gulp",
+    "build": "npm run build:all",
     "build:all": "gulp build:all"
   },
   "dependencies": {

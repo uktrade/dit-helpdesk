@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 
 from commodities.models import Commodity
 from countries.models import Country
@@ -13,7 +12,6 @@ TABLE_COLUMN_TITLES = [
 ]
 
 
-# @login_required
 def commodity_detail(request, commodity_code):
 
     selected_country = request.session.get('origin_country', '').upper()
