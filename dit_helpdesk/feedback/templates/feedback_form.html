@@ -4,14 +4,33 @@
 {% block feedback_banner %}{% endblock %}
 
 {% block content %}
-
-    {{ form.errors }}
-
     <form action="." method="post">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h2 class="govuk-fieldset__heading">Send feedback</h2>
+        </legend>
+        {{ form.errors }}
+
+        {% if form.errors.name %}
+            Error name
+        {% endif %}
+
+        {% if form.errors %}
+    {% for field in form %}
+        #{{ field.name }}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <i>{{ error|escape }}</i>
+        </div>
+    {% endfor %}
+{% endif %}
+
         <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h2 class="govuk-fieldset__heading">Send feedback</h2>
-            </legend>
             <div class="govuk-form-group govuk-!-width-two-thirds">
                 <label class="govuk-label govuk-visually-hidden" for="message">Message</label>
                 <div class="govuk-warning-text govuk-!-margin-bottom-0">
