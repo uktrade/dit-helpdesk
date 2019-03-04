@@ -173,7 +173,6 @@ USE_TZ = True
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [
     join_path(BASE_DIR, 'static_collected'),
-    # os.path.join(BASE_DIR, 'node_modules'),
 ]
 
 STATIC_ROOT = join_path(BASE_DIR, 'static')  # manage.py collectstatic will copy static files here
