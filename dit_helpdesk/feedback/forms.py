@@ -10,7 +10,7 @@ class FeedbackForm(forms.ModelForm):
         error_messages = {
             'message': {
                 'required': "Enter a message",
-                'limit': "The message needs to be less than 1000 characters"
+                'max_length': "The message needs to be less than 1,000 characters"
             },
             'email': {
                 'invalid' : 'Enter a valid email address'
