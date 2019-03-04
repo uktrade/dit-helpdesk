@@ -236,3 +236,5 @@ LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/admin/login/'
 
 AUTH_USER_MODEL = 'user.User'
+
+FEEDBACK_MAX_LENGTH = 1000

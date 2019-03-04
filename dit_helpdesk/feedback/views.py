@@ -1,4 +1,4 @@
-from django.views.generic import FormView, TemplateView
+from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 from django.urls import reverse
 from feedback.forms import FeedbackForm
