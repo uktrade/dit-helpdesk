@@ -67,7 +67,6 @@ def _get_hierarchy_level_html(node, expanded):
         end = '\n</ul>\n</li>'
 
     for child in children:
-        # print(dir(child))
         if child.hierarchy_key in expanded:
             openclass = 'open'
         else:
