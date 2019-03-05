@@ -102,7 +102,7 @@ class Chapter(models.Model):
 
     @property
     def harmonized_code(self):
-        return self.tts_obj.harmonized_code
+        return self.chapter_code
 
     def get_hierarchy_children(self):
         return self.headings.all()
@@ -146,7 +146,7 @@ class Heading(models.Model):
 
     @property
     def harmonized_code(self):
-        return self.tts_obj.code
+        return self.heading_code
 
     def __str__(self):
         return 'Heading ' + self.heading_code[:4]
@@ -215,7 +215,7 @@ class SubHeading(models.Model):
 
     @property
     def harmonized_code(self):
-        return self.tts_heading_obj.harmonized_code
+        return self.commodity_code
 
     def get_parent(self):
         return self.heading or self.parent_subheading
