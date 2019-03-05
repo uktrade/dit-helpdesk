@@ -42,7 +42,7 @@
           </strong>
         </div>
       </div>
-      <div class="govuk-form-group govuk-!-width-two-thirds {% if form.errors %}{% if form.errors.message %} govuk-form-group--error{% endif %}{% endif %}">
+      <div class="govuk-form-group govuk-!-width-two-thirds {% if form.message.errors %} govuk-form-group--error{% endif %}">
         {% if form.message.errors %}
           {% for error in form.message.errors %}
             <span id="message-error" class="govuk-error-message">
@@ -61,7 +61,7 @@
         <h2 class="govuk-fieldset__heading">Do you want a reply?</h2>
       </legend>
       <p class="govuk-body">If you'd like us to be able get back to you, please leave your details below.</p>
-      <div class="govuk-form-group {% if form.errors %}{% if form.errors.message %} govuk-form-group--error{% endif %}{% endif %}">
+      <div class="govuk-form-group {% if form.name.errors %} govuk-form-group--error{% endif %}">
         <label class="govuk-label" for="name">Name</label>
         {% if form.name.errors %}
           {% for error in form.name.errors %}
@@ -81,7 +81,7 @@
         {% endif %}
         />
       </div>
-      <div class="govuk-form-group{% if form.errors %}{% if form.errors.email %} govuk-form-group--error{% endif %}{% endif %}">
+      <div class="govuk-form-group{% if form.email.errors %} govuk-form-group--error{% endif %}">
         <label class="govuk-label" for="email">Email address</label>
         {% if form.email.errors %}
           {% for error in form.email.errors %}
