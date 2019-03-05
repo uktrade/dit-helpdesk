@@ -33,10 +33,7 @@
 }
 
 .app-hierarchy-tree__chapter,
-.app-hierarchy-tree__heading,
-.app-hierarchy-tree__subheading,
-.app-hierarchy-tree__commodity,
-.app-hierarchy-tree__other {
+.app-hierarchy-tree__commodity {
   margin-left: 1em;
 
   @include govuk-media-query($from: tablet) {
