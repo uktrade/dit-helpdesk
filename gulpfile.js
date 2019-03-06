@@ -5,6 +5,7 @@ const sass = require('gulp-sass')
 // const rev = require('gulp-rev')
 const sourcemaps = require('gulp-sourcemaps')
 const cssnano = require('gulp-cssnano')
+const taskListing = require('gulp-task-listing')
 
 sass.compiler = require('node-sass')
 
@@ -12,11 +13,12 @@ sass.compiler = require('node-sass')
 
 const paths = {
   styles: {
-    folder: './assets/',
+    watch: './assets/scss/**/*.scss',
     source: './assets/scss/global.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
+    watch: './assets/javascript/**/*.js',
     source: './assets/javascript/**/*.js',
     accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
     destination: './dit_helpdesk/static_collected/js/'
@@ -28,7 +30,7 @@ const paths = {
   manifest: './manifest'
 }
 
-const styles = () => {
+const buildStyles = () => {
   return gulp.src(paths.styles.source)
     .pipe(sass({
       includePaths: 'node_modules'
@@ -43,12 +45,12 @@ const styles = () => {
     // .pipe(gulp.dest(paths.manifest))
 }
 
-const javascripts = () => {
-  return gulp.src(paths.javascripts.source)
+const buildJavascripts = () => {
+  return gulp.src(paths.javascripts.source, { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const copyAssets = () => {
+const copyGOVUKFrontendAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
 }
@@ -58,12 +60,29 @@ const copyAccessibleAutocomplete = () => {
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const watch = () => {
-  gulp.watch(paths.styles.folder, styles)
+const copyDependencies = () => {
+  gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
 }
 
-gulp.task('default', watch)
-gulp.task('styles', styles)
-gulp.task('javascripts', javascripts)
-gulp.task('copy', gulp.parallel(copyAssets, copyAccessibleAutocomplete))
-gulp.task('build:all', gulp.parallel(copyAssets, copyAccessibleAutocomplete, styles, javascripts))
+const watchStyles = () => {
+  gulp.watch(paths.styles.watch, buildStyles)
+}
+
+const watchJavascripts = () => {
+  gulp.watch(paths.javascripts.watch, buildStyles)
+}
+
+exports.default = gulp.p
+
+// Add a task to render the output
+// gulp.task('help', taskListing)
+
+// gulp.task('default', gulp.parallel(copyDependencies, watchStyles, watchJavascripts))
+// gulp.task('watch', gulp.parallel(copyDependencies, watchStyles, watchJavascripts))
+// gulp.task('build', gulp.parallel(copyDependencies, buildStyles, buildJavascripts))
+// gulp.task('copy', gulp.parallel(copyDependencies))
+
+// gulp.task('watch:styles', watchStyles)
+// gulp.task('watch:javascripts', watchJavascripts)
+// gulp.task('build:styles', buildStyles)
+// gulp.task('build:javascripts', buildJavascripts)
