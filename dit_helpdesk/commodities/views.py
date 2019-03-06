@@ -41,9 +41,9 @@ def commodity_detail(request, commodity_code):
     ]
 
     context = {
-        'selected_origin_country': selected_country, 'commodity': commodity,
+        'selected_origin_country': selected_country,
+        'commodity': commodity,
         'selected_origin_country_name': country_name,
-        'commodity_code': commodity.commodity_code_split,
         'roo_fragments': get_rules_of_origin_html_fragments(commodity),
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
