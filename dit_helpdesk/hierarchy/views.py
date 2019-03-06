@@ -1,7 +1,7 @@
 import os
 import json
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
 from commodities.models import Commodity
@@ -55,7 +55,7 @@ def _get_expanded_context(selected_node_id):
     return expanded
 
 
-def _get_hierarchy_level_html(node, expanded):
+def _get_hierarchy_level_html(node, expanded, origin_country):
 
     if node == 'root':
         children = Section.objects.all()
@@ -70,24 +70,26 @@ def _get_hierarchy_level_html(node, expanded):
     for child in children:
         title = child.tts_title
         if type(child) is Commodity:
-            link = f'<strong><a href="{child.get_absolute_url()}">{title}</a></strong></li>'
+            link = f'<strong><a href="{child.get_absolute_url(origin_country)}">{title}</a></strong></li>'
         else:
-            link = f'<a href="{child.get_hierarchy_url()}">{title}</a>'
+            link = f'<a href="{child.get_hierarchy_url(origin_country)}">{title}</a>'
         li = f'\n      <li>{link}</li>'
         html = html + li
         if child.hierarchy_key in expanded:
-            html = html + _get_hierarchy_level_html(child, expanded)
+            html = html + _get_hierarchy_level_html(child, expanded, origin_country)
 
     html = html + end
 
     return html
 
 
-def hierarchy_view(request, node_id):
+def hierarchy_view(request, node_id, country_code):
+    if not country_code:
+        country_code = request.session.get('origin_country')
 
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
-    html = _get_hierarchy_level_html('root', expanded)
+    html = _get_hierarchy_level_html('root', expanded, country_code)
 
     context = {'hierarchy_html': html}
     return render(request, 'hierarchy/hierarchy.html', context)
