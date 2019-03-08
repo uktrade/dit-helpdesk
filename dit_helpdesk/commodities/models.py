@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 
-COMMODITY_CODE_REGEX = '([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})'
+COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
 
 
 class Commodity(models.Model):
@@ -47,7 +47,7 @@ class Commodity(models.Model):
     @property
     def commodity_code_split(self):
         code_match_obj = re.search(COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 5)]
+        return [code_match_obj.group(i) for i in range(1, 4)]
 
     @property
     def tts_obj(self):

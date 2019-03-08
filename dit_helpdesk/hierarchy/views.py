@@ -79,12 +79,11 @@ def _get_hierarchy_level_html(node, expanded):
             if type(child) is Commodity:
                 child.harmonized_code = child.tts_obj.code
 
-            code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', child.harmonized_code)
+            code_regex = re.search('([0-9]{6})([0-9]{2})([0-9]{2})', child.harmonized_code)
             code_split = [
                 code_regex.group(1),
                 code_regex.group(2),
-                code_regex.group(3),
-                code_regex.group(4)
+                code_regex.group(3)
             ]
 
             for index, code_segment in enumerate(code_split):
