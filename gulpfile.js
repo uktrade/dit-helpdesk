@@ -60,29 +60,24 @@ const copyAccessibleAutocomplete = () => {
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const copyDependencies = () => {
-  gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
-}
-
 const watchStyles = () => {
-  gulp.watch(paths.styles.watch, buildStyles)
+  return gulp.watch(paths.styles.watch, buildStyles)
 }
 
 const watchJavascripts = () => {
-  gulp.watch(paths.javascripts.watch, buildStyles)
+  return gulp.watch(paths.javascripts.watch, buildStyles)
 }
 
-exports.default = gulp.p
+const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
+const watch = gulp.parallel(watchStyles, watchJavascripts)
+const build = gulp.parallel(buildStyles, buildJavascripts)
 
-// Add a task to render the output
-// gulp.task('help', taskListing)
+gulp.task('default', taskListing)
+gulp.task('copyExternalAssets', copy)
+gulp.task('watch', gulp.series(copy, watch))
+gulp.task('build', gulp.series(copy, build))
 
-// gulp.task('default', gulp.parallel(copyDependencies, watchStyles, watchJavascripts))
-// gulp.task('watch', gulp.parallel(copyDependencies, watchStyles, watchJavascripts))
-// gulp.task('build', gulp.parallel(copyDependencies, buildStyles, buildJavascripts))
-// gulp.task('copy', gulp.parallel(copyDependencies))
-
-// gulp.task('watch:styles', watchStyles)
-// gulp.task('watch:javascripts', watchJavascripts)
-// gulp.task('build:styles', buildStyles)
-// gulp.task('build:javascripts', buildJavascripts)
+gulp.task('watch:styles', watchStyles)
+gulp.task('watch:javascripts', watchJavascripts)
+gulp.task('build:styles', buildStyles)
+gulp.task('build:javascripts', buildJavascripts)
