@@ -38,7 +38,7 @@ def get_and_update_chapter(chapter_url, section_db_obj):
 
     chapter_json_obj = ChapterJson(json.loads(resp_content))
     chapter_db_obj, created = Chapter.objects.get_or_create(
-        chapter_code=chapter_json_obj.code
+        chapter_code=chapter_json_obj.harmonized_code
     )
     if created:
         chapter_db_obj.section = section_db_obj
