@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Send feedback{% endblock %}
+
+{% block feedback_banner %}{% endblock %}
+
+{% block content %}
+
+    {{ form.errors }}
+
+    <form action="." method="post">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-fieldset__heading">Send feedback</h2>
+            </legend>
+            <div class="govuk-form-group govuk-!-width-two-thirds">
+                <label class="govuk-label govuk-visually-hidden" for="message">Message</label>
+                <div class="govuk-warning-text govuk-!-margin-bottom-0">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text" id="message-hint">
+                        Do not include personal or financial information, like your National Insurance number or credit card details.
+                    </strong>
+                </div>
+                <textarea class="govuk-textarea js-character-count" id="message" name="message" rows="7" aria-describedby="message-hint"></textarea>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">Do you want a reply?</h2>
+            </legend>
+            <p class="govuk-body">If you'd like us to be able get back to you, please leave your details below.</p>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="name">Name</label>
+                <input class="govuk-input govuk-!-width-one-half" id="name" name="name" type="text" spellcheck="false">
+            </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="email">Email address</label>
+                <input class="govuk-input govuk-!-width-one-half" id="email" name="email" type="email" spellcheck="false">
+            </div>
+        </fieldset>
+        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Send feedback</button>
+    </form>
+
+{% endblock %}

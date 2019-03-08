@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Search{% endblock title %}
+{% block title %}Select country{% endblock title %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -20,7 +20,11 @@
         <select name="origin_country" id="country-picker">
           <option value="">Select a country</option>
           {% for country_code, country_name in country_options %}
-            <option value="{{ country_code }}">{{ country_name }}</option>
+            {% if selected_country == country_code %}
+              <option value="{{ country_code }}" selected>{{ country_name }}</option>
+            {% else %}
+              <option value="{{ country_code }}">{{ country_name }}</option>
+            {% endif %}
           {% endfor %}
         </select>
         <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>

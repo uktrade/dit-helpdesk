@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - Find information about exporting to the UK</title>
 
     <meta name="twitter:dnt" content="on">
     <meta name="format-detection" content="telephone=no">
@@ -34,6 +34,9 @@
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+    <div class="app-cookie-banner js--cookie-banner">
+      <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. <a href="{% url 'cookies' %}" class="govuk-link">Find out more about cookies</a></p>
+    </div>
     <header class="govuk-header " role="banner" data-module="header">
         <div class="govuk-header__container govuk-width-container">
 
@@ -60,17 +63,19 @@
       </header>
 
       <div class="govuk-width-container">
-        <div class="govuk-phase-banner">
-          <p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">
-              beta
-            </strong>
-            <span class="govuk-phase-banner__text">
-              This is a new service – your
-              <a class="govuk-link" href="#">feedback</a> will help us to improve it.
-            </span>
-          </p>
-        </div>
-        <main class="govuk-main-wrapper">
+        {% block feedback_banner %}
+          <div class="govuk-phase-banner">
+            <p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">
+                beta
+              </strong>
+              <span class="govuk-phase-banner__text">
+                This is a new service – your
+                <a class="govuk-link" href="{% url 'feedback-view' %}">feedback</a> will help us to improve it.
+              </span>
+            </p>
+          </div>
+        {% endblock %}
+        <main id="main-content" class="govuk-main-wrapper">
           {% block content %}
           {% endblock content %}
         </main>
@@ -95,6 +100,9 @@
           </div>
         </div>
       </footer>
+
+      <script src="{% static 'js/global.js' %}"></script>
+      <script src="{% static 'js/enhancements.js' %}" type="module"></script>
       {% block footer_additions %}
       {% endblock footer_additions %}
   </body>
