@@ -21,9 +21,11 @@ cd dit-helpdesk
 
 If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about virtual environments - it's all within the Docker instance.
 
-#### Frontend static assets
+#### Frontend static asset installation
 
-We need to install [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend), [Accessible Autocomplete](https://github.com/alphagov/accessible-autocomplete), and other front end dependencies. This is all done by going to the project root folder, which contains `package.json`. Then run:
+First we need to install [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend), [Accessible Autocomplete](https://github.com/alphagov/accessible-autocomplete), and other front end dependencies.
+
+This is all done by going to the project root folder, which contains `package.json`. Then run:
 
 ```bash
 npm install
@@ -42,11 +44,21 @@ To trigger a build when any Sass is changed, run:
 npm run watch:styles
 ```
 
-A list of all of the commands, including linting, can be found the the `package.json` file in the `scripts` object.
+`npm run` will show a list of all of the commands available, including linting.
 
 #### Installation
 
-Make sure that Docker is installed and running. Then run:
+Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation (`pip install -r requirements.txt`).
+
+Then run:
+
+```bash
+docker-compose build
+```
+
+Once the build has completed, comment out the pip installation in `start.sh` - this isn't essential, but it will save you time when booting up the docker instance.
+
+Now run:
 
 ```bash
 docker-compose up
@@ -66,7 +78,7 @@ python dit_helpdesk/manage.py scrape_section_hierarchy 1
 
 To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
 
-#### Running
+### Running
 
 Starting the server again is the same command as installing:
 
@@ -74,7 +86,28 @@ Starting the server again is the same command as installing:
 docker-compose up
 ```
 
-The site will be available at http://localhost:8000
+The site will be available at http://localhost:8000.
+
+### Running, then shelling in
+
+If you want to be able to run commands in bash within the docker instance, we need to change the start script `start.sh` slightly.
+
+Comment out the line that starts the app, and comment back in the sleep command. So it should read:
+```shell
+sleep infinity
+# python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
+```
+
+This will cause the docker instance to pause once it's up and running. Now
+
+```bash
+docker-compose up
+```
+then
+
+```bash
+docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
+```
 
 <!---
 ### Install locally
