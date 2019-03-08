@@ -56,27 +56,29 @@
 .app-hierarchy-tree__section-numbers,
 .app-hierarchy-tree__chapter-range {
   @extend .govuk-body-s;
-
   box-sizing: border-box;
   display: inline-block;
   margin: 0;
+  width: (8.8em / 2);
 
   @include govuk-media-query($from: tablet) {
     padding-top: 0.5em;
-    width: (9.5em / 2);
-    text-align: left;
   }
 }
 
 .app-hierarchy-tree__section-numbers {
   margin-right: 1em;
+  text-align: left;
+}
+
+.app-hierarchy-tree__chapter-range {
 }
 
 .app-hierarchy-tree__commodity-code {
   margin-top: 0.125em;
 
   @include govuk-media-query($from: tablet) {
-    width: 9.5em;
+    width: 9em;
   }
 }
 
