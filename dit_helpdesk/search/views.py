@@ -31,7 +31,8 @@ def search_view(request):
         code = query
         if Commodity.objects.filter(commodity_code=code).exists():
             return redirect(reverse(
-                'commodity-detail', kwargs={'commodity_code':code}
+                'commodity-detail', kwargs={'commodity_code':code,
+                                            'country_code': request.session.get('origin_country')}
             ))
         else:
             #messages.error('Commodity "%s" not found' % code)

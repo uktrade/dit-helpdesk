@@ -12,9 +12,9 @@ TABLE_COLUMN_TITLES = [
 ]
 
 
-def commodity_detail(request, commodity_code):
+def commodity_detail(request, commodity_code, country_code):
 
-    selected_country = request.session.get('origin_country', '').upper()
+    selected_country = country_code.upper()
 
     country = Country.objects.filter(
         country_code=selected_country

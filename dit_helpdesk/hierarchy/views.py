@@ -2,7 +2,7 @@ import os
 import json
 import re
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
 from commodities.models import Commodity
@@ -56,7 +56,7 @@ def _get_expanded_context(selected_node_id):
     return expanded
 
 
-def _get_hierarchy_level_html(node, expanded):
+def _get_hierarchy_level_html(node, expanded, origin_country):
     if node == 'root':
         children = Section.objects.all()
         html = '<ul class="app-hierarchy-tree">'
@@ -94,26 +94,27 @@ def _get_hierarchy_level_html(node, expanded):
             commodity_code_html = commodity_code_html + '</span>'
 
         if type(child) is Section:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url()}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif type(child) is Commodity:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url()}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">{child.tts_title}<span class="govuk-visually-hidden"> &ndash; </span><b>Select</b></a>{commodity_code_html}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">{child.tts_title}<span class="govuk-visually-hidden"> &ndash; </span><b>Select</b></a>{commodity_code_html}</li>'
         else:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url()}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a>{commodity_code_html}'
-
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a>{commodity_code_html}'
         html = html + li
 
         if child.hierarchy_key in expanded:
-            html = html +  _get_hierarchy_level_html(child, expanded)
+            html = html + _get_hierarchy_level_html(child, expanded, origin_country)
 
     html = html + end
 
     return html
 
 
-def hierarchy_view(request, node_id):
+def hierarchy_view(request, node_id, country_code):
+    if not country_code:
+        country_code = request.session.get('origin_country')
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
-    html = _get_hierarchy_level_html('root', expanded)
+    html = _get_hierarchy_level_html('root', expanded, country_code)
 
     context = {'hierarchy_html': html}
     return render(request, 'hierarchy/hierarchy.html', context)
