@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     path('cookies/', cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
-        r'(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})',
+        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})',
         commodity_views.commodity_detail, name='commodity-detail'
     ),
     path('search/', search_views.search_view, name='search-view'),
@@ -45,7 +45,7 @@ urlpatterns = [
         name='feedback-success-view',
     ),
 
-    re_path(r'(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
+    re_path(r'country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
 ]
 
 """

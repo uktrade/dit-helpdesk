@@ -43,7 +43,7 @@ class Commodity(models.Model):
     def get_absolute_url(self, country_code=None):
         kwargs = {'commodity_code': self.commodity_code}
         if country_code is not None:
-            kwargs['country_code'] = country_code
+            kwargs['country_code'] = country_code.lower()
         return reverse('commodity-detail', kwargs=kwargs)
 
     @property
