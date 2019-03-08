@@ -1,6 +1,8 @@
 {% extends 'core/base.html' %}
 {% load static staticfiles i18n %}
 
+{% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -11,7 +13,7 @@
         Commodity information for
         {% spaceless %}
           <span class="app-commodity-code">
-            {% for commodity_code_segment in commodity_code %}
+            {% for commodity_code_segment in commodity.commodity_code_split %}
               <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
                 {{ commodity_code_segment }}
               </span>
