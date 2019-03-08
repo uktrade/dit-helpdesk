@@ -117,7 +117,3 @@ def hierarchy_data(node_id='root'):
     context = {'hierarchy_html': html}
     return context
 
-
-def hierarchy_view(request, node_id='root'):
-    context = hierarchy_data(node_id)
-    return render(request, 'hierarchy/hierarchy.html', context)
