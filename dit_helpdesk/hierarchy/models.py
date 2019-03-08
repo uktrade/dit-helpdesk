@@ -76,7 +76,7 @@ class Section(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'section-%s' % self.pk}
-        return reverse('hierarchy_node', kwargs=kwargs)
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Chapter(models.Model):
@@ -115,7 +115,7 @@ class Chapter(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'chapter-%s' % self.pk}
-        return reverse('hierarchy_node', kwargs=kwargs)
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Heading(models.Model):
@@ -173,7 +173,7 @@ class Heading(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'heading-%s' % self.pk}
-        return reverse('hierarchy_node', kwargs=kwargs)
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class SubHeading(models.Model):
@@ -222,7 +222,7 @@ class SubHeading(models.Model):
 
     def get_hierarchy_url(self):
         kwargs = {'node_id': 'sub_heading-%s' % self.pk}
-        return reverse('hierarchy_node', kwargs=kwargs)
+        return reverse('search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
         sub_headings = [obj for obj in self.child_subheadings.all()]

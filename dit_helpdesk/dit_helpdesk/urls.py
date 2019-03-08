@@ -45,7 +45,7 @@ urlpatterns = [
         name='feedback-success-view',
     ),
 
-    re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
+    re_path(r'search/(?P<node_id>.+)', search_views.hierarchy_view, name='search-hierarchy'),
 ]
 
 """

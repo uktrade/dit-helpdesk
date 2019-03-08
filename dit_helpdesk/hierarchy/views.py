@@ -109,10 +109,15 @@ def _get_hierarchy_level_html(node, expanded):
     return html
 
 
-def hierarchy_view(request, node_id):
+def hierarchy_data(node_id='root'):
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded)
 
     context = {'hierarchy_html': html}
+    return context
+
+
+def hierarchy_view(request, node_id='root'):
+    context = hierarchy_data(node_id)
     return render(request, 'hierarchy/hierarchy.html', context)
