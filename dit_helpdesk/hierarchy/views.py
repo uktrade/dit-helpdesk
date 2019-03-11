@@ -113,6 +113,5 @@ def hierarchy_data(country_code, node_id='root'):
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded, country_code)
 
-    context = {'hierarchy_html': html}
-    return context
+    return html
 

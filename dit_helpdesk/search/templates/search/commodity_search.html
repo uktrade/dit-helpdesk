@@ -19,6 +19,7 @@
           </label>
           <input class="govuk-input govuk-input--width-10" id="search" name="q" type="text">
         </div>
+          <input type="hidden" name="country" value="{{ country_code | escape }}" />
         <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
 

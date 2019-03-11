@@ -1,7 +1,3 @@
-"""
-Work in progress custom search view
-"""
-
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -16,15 +12,29 @@ def search_hierarchy(request, node_id='root', country_code=None):
     if country_code is None:
         country_code = request.session.get('origin_country')
 
-    context = hierarchy_data(country_code, node_id)
+    context = {
+        'hierarchy_html': hierarchy_data(country_code, node_id),
+        'country_code': country_code
+    }
+
     return render(request, 'search/commodity_search.html', context)
 
 
-def search_view(request):
+def search_view(request, country_code=None):
+    if country_code is None:
+        if 'country' in request.GET:
+            country_code = request.GET['country']
+        else:
+            return redirect(reverse('choose-country'))
+
     countries = Country.objects.all()
 
     if 'q' not in request.GET:
-        context = hierarchy_data(request.session.get('origin_country'))
+        context = {
+            'hierarchy_html': hierarchy_data(country_code),
+            'country_code' : country_code
+        }
+
         return render(request, 'search/commodity_search.html', context)
 
     query = request.GET['q'].strip()
@@ -35,7 +45,7 @@ def search_view(request):
         if Commodity.objects.filter(commodity_code=code).exists():
             return redirect(reverse(
                 'commodity-detail', kwargs={'commodity_code':code,
-                                            'country_code': request.session.get('origin_country')}
+                                            'country_code': country_code.lower() }
             ))
         else:
             #messages.error('Commodity "%s" not found' % code)

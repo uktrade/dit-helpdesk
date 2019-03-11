@@ -46,6 +46,6 @@ urlpatterns = [
     ),
 
     path('search/', search_views.search_view, name='search-view'),
-    re_path(r'search/code/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
+    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search-hierarchy'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
 ]
