@@ -74,8 +74,14 @@ class Section(models.Model):
             kwargs={'section_id': str(self.section_id)}
         )
 
-    def get_hierarchy_url(self):
-        kwargs = {'node_id': 'section-%s' % self.pk}
+    def get_hierarchy_url(self, country_code=None):
+        kwargs = {
+            'node_id': 'section-%s' % self.pk
+        }
+
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
+
         return reverse('search-hierarchy', kwargs=kwargs)
 
 
@@ -113,8 +119,14 @@ class Chapter(models.Model):
             kwargs={'chapter_code_2': self.chapter_code[:2]}
         )
 
-    def get_hierarchy_url(self):
-        kwargs = {'node_id': 'chapter-%s' % self.pk}
+    def get_hierarchy_url(self, country_code=None):
+        kwargs = {
+            'node_id': 'chapter-%s' % self.pk
+        }
+
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
+
         return reverse('search-hierarchy', kwargs=kwargs)
 
 
@@ -171,8 +183,14 @@ class Heading(models.Model):
         commodities = [obj for obj in self.children_concrete.all()]
         return commodities + sub_headings
 
-    def get_hierarchy_url(self):
-        kwargs = {'node_id': 'heading-%s' % self.pk}
+    def get_hierarchy_url(self, country_code=None):
+        kwargs = {
+            'node_id': 'heading-%s' % self.pk
+        }
+
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
+
         return reverse('search-hierarchy', kwargs=kwargs)
 
 
@@ -220,8 +238,14 @@ class SubHeading(models.Model):
     def get_parent(self):
         return self.heading or self.parent_subheading
 
-    def get_hierarchy_url(self):
-        kwargs = {'node_id': 'sub_heading-%s' % self.pk}
+    def get_hierarchy_url(self, country_code=None):
+        kwargs = {
+            'node_id': 'sub_heading-%s' % self.pk
+        }
+
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
+
         return reverse('search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
