@@ -239,3 +239,6 @@ LOGIN_REDIRECT_URL = '/admin/login/'
 AUTH_USER_MODEL = 'user.User'
 
 FEEDBACK_MAX_LENGTH = 1000
+
+
+IMPORT_DATA_PATH = BASE_DIR+"/trade_tariff_service/import_data/{0}"

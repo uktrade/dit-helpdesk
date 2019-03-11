@@ -36,6 +36,8 @@ class Commodity(models.Model):
         related_name='children_concrete', on_delete=models.CASCADE
     )
 
+    last_updated = models.DateTimeField(auto_now=True)
+
     objects = models.Manager()
 
     class Meta:
