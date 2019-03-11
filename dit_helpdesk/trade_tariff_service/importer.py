@@ -1,13 +1,14 @@
 import json
+import os
 import sys
-
 import requests
 from django.apps import apps
 from commodities.models import Commodity
+from django.conf import settings
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 section_url = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
-data_path = 'import_data/{0}'
+
 
 hierarchy_model_map = {
     "Commodity": {
@@ -60,7 +61,10 @@ class HierarchyBuilder:
         }
 
     def file_loader(self, model_name):
-        file_path = data_path.format(hierarchy_model_map[model_name]["file_name"])
+
+        file_name = hierarchy_model_map[model_name]['file_name']
+        file_path = settings.IMPORT_DATA_PATH.format(file_name)
+        print("FILE PATH: ", file_name)
         with open(file_path) as f:
             json_data = json.load(f)
         return json_data

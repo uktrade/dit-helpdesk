@@ -1,4 +1,5 @@
 import json
+from time import sleep
 
 from django.core.management.base import BaseCommand
 
@@ -15,5 +16,7 @@ class Command(BaseCommand):
         builder = HierarchyBuilder()
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
         builder.data_scanner(model_names)
+        sleep(60)
         builder.process_orphaned_subheadings()
+        sleep(60)
         builder.process_orphaned_commodities()
