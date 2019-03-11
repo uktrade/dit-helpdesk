@@ -12,7 +12,15 @@ COMMODITY_CODE_REGEX = '([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})'
 class Commodity(models.Model):
 
     commodity_code = models.CharField(max_length=10, unique=True)
+    # goods_nomenclature_item_id = models.CharField(max_length=10, unique=True)
     goods_nomenclature_sid = models.CharField(max_length=10)
+    productline_suffix = models.CharField(max_length=2, null=True)
+    # leaf = models.BooleanField(blank=True, null=True)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    parent_productline_suffix = models.CharField(max_length=2, null=True)
+    description = models.TextField(null=True)
+    number_indents = models.SmallIntegerField(null=True)
 
     tts_json = models.TextField(blank=True, null=True)
     tts_heading_json = models.TextField(blank=True, null=True)
@@ -61,11 +69,13 @@ class Commodity(models.Model):
 
     @property
     def tts_title(self):
-        return self.tts_obj.title
+        # return self.tts_obj.title
+        return self.description
 
     @property
     def tts_heading_description(self):
-        return self.tts_obj.heading_description
+        # return self.tts_obj.heading_description
+        return self.description
 
     def get_heading(self):
         """Got up the hierarchy of sub-headings and return the Heading"""
