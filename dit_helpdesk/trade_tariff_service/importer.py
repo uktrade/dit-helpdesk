@@ -7,7 +7,8 @@ from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 section_url = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
-data_path = '/Users/glenl/Code/engine/data/subheadings/json/{0}'
+data_path = 'import_data/{0}'
+
 hierarchy_model_map = {
     "Commodity": {
         "file_name":"hierarchy_subheading_commodities.json",
