@@ -46,7 +46,7 @@ class Section(models.Model):
             int(chapter.chapter_code[:2]) for chapter in self.chapter_set.all()
         ]
         if len(chapter_codes) == 0:
-            return 'NONE'
+            return 'None'
         if len(chapter_codes) == 1:
             return str(chapter_codes[0])
         min_code, max_code = min(chapter_codes), max(chapter_codes)
@@ -74,8 +74,10 @@ class Section(models.Model):
             kwargs={'section_id': str(self.section_id)}
         )
 
-    def get_hierarchy_url(self):
+    def get_hierarchy_url(self, country_code=None):
         kwargs = {'node_id': 'section-%s' % self.pk}
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
         return reverse('hierarchy_node', kwargs=kwargs)
 
 
@@ -100,6 +102,10 @@ class Chapter(models.Model):
     def tts_title(self):
         return self.tts_obj.title
 
+    @property
+    def harmonized_code(self):
+        return self.chapter_code
+
     def get_hierarchy_children(self):
         return self.headings.all()
 
@@ -109,8 +115,10 @@ class Chapter(models.Model):
             kwargs={'chapter_code_2': self.chapter_code[:2]}
         )
 
-    def get_hierarchy_url(self):
+    def get_hierarchy_url(self, country_code=None):
         kwargs = {'node_id': 'chapter-%s' % self.pk}
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
         return reverse('hierarchy_node', kwargs=kwargs)
 
 
@@ -140,6 +148,10 @@ class Heading(models.Model):
     def tts_title(self):
         return self.tts_obj.title
 
+    @property
+    def harmonized_code(self):
+        return self.heading_code
+
     def __str__(self):
         return 'Heading ' + self.heading_code[:4]
 
@@ -163,8 +175,10 @@ class Heading(models.Model):
         commodities = [obj for obj in self.children_concrete.all()]
         return commodities + sub_headings
 
-    def get_hierarchy_url(self):
+    def get_hierarchy_url(self, country_code=None):
         kwargs = {'node_id': 'heading-%s' % self.pk}
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
         return reverse('hierarchy_node', kwargs=kwargs)
 
 
@@ -205,11 +219,17 @@ class SubHeading(models.Model):
     def tts_heading_description(self):
         return self.tts_heading_obj.title
 
+    @property
+    def harmonized_code(self):
+        return self.commodity_code
+
     def get_parent(self):
         return self.heading or self.parent_subheading
 
-    def get_hierarchy_url(self):
+    def get_hierarchy_url(self, country_code=None):
         kwargs = {'node_id': 'sub_heading-%s' % self.pk}
+        if country_code is not None:
+           kwargs['country_code'] = country_code.lower()
         return reverse('hierarchy_node', kwargs=kwargs)
 
     def get_hierarchy_children(self):

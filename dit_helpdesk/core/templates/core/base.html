@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - Find information about exporting to the UK</title>
 
     <meta name="twitter:dnt" content="on">
     <meta name="format-detection" content="telephone=no">
@@ -28,7 +28,7 @@
         navigator.msDoNotTrack === '1' || // IE 9 - 10
         window.doNotTrack === '1' // IE 11 / Edge 16 and below
       )
-      // If the user has enabled 'DoNotTrack', we should not load Google Tag Manager (and therefore, Google Analytics.)
+      // If the user has enabled 'DoNotTrack', we should not load any tracking.
       if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
         console.log('Analytics will be loaded')
       }
@@ -61,7 +61,7 @@
           </div>
           <div class="govuk-header__content">
             <a href="#" class="govuk-header__link govuk-header__link--service-name">
-              Find information about exporting to the UK
+              Find information about exporting to&nbsp;the&nbsp;UK
             </a>
           </div>
         </div>
