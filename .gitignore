@@ -108,3 +108,13 @@ node_modules/
 
 # PyCharm
 .idea
+
+**/*.css.gz
+**/*.css.map.gz
+**/*.eot.gz
+**/*.ico.gz
+**/*.svg.gz
+**/*.min.js.gz
+**/*.min.js.map.gz
+**/*.js.gz
+src/
