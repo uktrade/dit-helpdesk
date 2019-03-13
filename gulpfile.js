@@ -1,10 +1,20 @@
 'use strict'
 
 const gulp = require('gulp')
-const sass = require('gulp-sass')
-// const rev = require('gulp-rev')
-const sourcemaps = require('gulp-sourcemaps')
+
+const autoprefixer = require('autoprefixer')
 const cssnano = require('gulp-cssnano')
+const oldie = require('oldie')({
+  rgba: { filter: true },
+  rem: { disable: true },
+  unmq: { disable: true },
+  pseudo: { disable: true }
+  // more rules go here
+})
+const postcss = require('gulp-postcss')
+const rename = require('gulp-rename')
+const sass = require('gulp-sass')
+const sourcemaps = require('gulp-sourcemaps')
 const taskListing = require('gulp-task-listing')
 
 sass.compiler = require('node-sass')
@@ -30,19 +40,46 @@ const paths = {
   manifest: './manifest'
 }
 
-const buildStyles = () => {
+const buildStylesForModernBrowsers = () => {
   return gulp.src(paths.styles.source)
     .pipe(sass({
       includePaths: 'node_modules'
     }))
     .pipe(sourcemaps.init())
-    // .pipe(rev())
     .pipe(sass().on('error', sass.logError))
+    .pipe(
+      postcss([
+        autoprefixer
+      ])
+    )
     .pipe(cssnano())
+    .pipe(rename({
+      extname: '.min.css'
+    }))
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.styles.destination))
-    // .pipe(rev.manifest({ merge: true }))
-    // .pipe(gulp.dest(paths.manifest))
+}
+
+const buildStylesForOldIE = () => {
+  return gulp.src(paths.styles.source)
+    .pipe(sass({
+      includePaths: 'node_modules'
+    }))
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(
+      postcss([
+        autoprefixer,
+        oldie
+      ])
+    )
+    .pipe(cssnano())
+    .pipe(rename({
+      basename: 'global-oldie',
+      extname: '.min.css'
+    }))
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest(paths.styles.destination))
 }
 
 const buildJavascripts = () => {
@@ -67,6 +104,8 @@ const watchStyles = () => {
 const watchJavascripts = () => {
   return gulp.watch(paths.javascripts.watch, buildStyles)
 }
+
+const buildStyles = gulp.parallel(buildStylesForModernBrowsers, buildStylesForOldIE)
 
 const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
 const watch = gulp.parallel(watchStyles, watchJavascripts)
