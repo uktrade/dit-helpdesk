@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 from commodities import views as commodity_views
+from contact import views as contact_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
+from privacy import views as privacy_views
 from feedback import views as feedback_views
 from admin.views import admin_login_view
 
@@ -39,6 +41,8 @@ urlpatterns = [
     ),
     path('search/', search_views.search_view, name='search-view'),
     path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
+    path('contact/', contact_views.ContactView.as_view(), name='contact'),
+    path('privacy/', privacy_views.PrivacyView.as_view(), name='privacy'),
     path(
         'feedback/success/',
         feedback_views.FeedbackSuccessView.as_view(),

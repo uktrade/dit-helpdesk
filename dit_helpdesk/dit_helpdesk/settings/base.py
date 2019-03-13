@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'authbroker_client',
     'user',
+    'privacy',
+    'contact'
 ]
 
 
