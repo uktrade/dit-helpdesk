@@ -60,13 +60,8 @@ class HierarchyBuilder:
 
     def file_loader(self, model_name):
 
-        print (settings.TRADE_TARIFF_SERVICE_BASE_URL)
-        print (settings.TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH.format("X"))
-        print (settings.TRADE_TARIFF_SERVICE_SECTION_URL.format("Y"))
-
         file_name = hierarchy_model_map[model_name]['file_name']
         file_path = settings.IMPORT_DATA_PATH.format(file_name)
-        print("FILE PATH: ", file_path)
 
         with open(file_path) as f:
             json_data = json.load(f)
