@@ -56,18 +56,13 @@ class Section(models.Model):
         min_code, max_code = min(chapter_codes), max(chapter_codes)
         return '%s to %s' % (min_code, max_code)
 
-    # @property
-    # def roman_numeral(self):
-    #     # or: return ROMAN_NUMERALS[int(self.section_id)]
-    #     return self.tts_obj.numeral
-
     @property
     def tts_obj(self):
         return SectionJson(json.loads(self.tts_json))
 
     @property
     def tts_title(self):
-        return self.title
+        return self.tts_obj.title
 
     def get_hierarchy_children(self):
         return self.chapter_set.all()
@@ -79,10 +74,14 @@ class Section(models.Model):
         )
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'section-%s' % self.pk}
+        kwargs = {
+            'node_id': 'section-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Chapter(models.Model):
@@ -134,15 +133,18 @@ class Chapter(models.Model):
         )
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'chapter-%s' % self.pk}
+        kwargs = {
+            'node_id': 'chapter-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Heading(models.Model):
 
-    # goods_nomenclature_item_id = models.CharField(max_length=10, unique=True)
     goods_nomenclature_sid = models.CharField(max_length=10, null=True)
     productline_suffix = models.CharField(max_length=2, null=True)
     leaf = models.BooleanField(blank=True, null=True)
@@ -174,7 +176,6 @@ class Heading(models.Model):
 
     @property
     def tts_title(self):
-        # return self.tts_obj.title
         return self.description
 
     @property
@@ -205,18 +206,19 @@ class Heading(models.Model):
         return commodities + sub_headings
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'heading-%s' % self.pk}
+        kwargs = {
+            'node_id': 'heading-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class SubHeading(models.Model):
 
-    # goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    # goods_nomenclature_sid = models.CharField(max_length=10, null=True)
     productline_suffix = models.CharField(max_length=2, null=True)
-    # leaf = models.BooleanField(blank=True, null=True)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
     parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
     parent_productline_suffix = models.CharField(max_length=2, null=True)
@@ -252,12 +254,10 @@ class SubHeading(models.Model):
 
     @property
     def tts_title(self):
-        # return self.tts_heading_obj.title
         return self.description
 
     @property
     def tts_heading_description(self):
-        # return self.tts_heading_obj.title
         return self.description
 
     @property
@@ -268,10 +268,14 @@ class SubHeading(models.Model):
         return self.heading or self.parent_subheading
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'sub_heading-%s' % self.pk}
+        kwargs = {
+            'node_id': 'sub_heading-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
         sub_headings = [obj for obj in self.child_subheadings.all()]
