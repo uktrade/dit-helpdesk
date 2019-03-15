@@ -14,33 +14,21 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
-      <form action="" method="post">
+      <form action="{% url 'choose-country' %}" method="post">
         {% csrf_token %}
         <label class="govuk-label" for="country-picker">Choose the country of origin for the products</label>
         <select name="origin_country" id="country-picker">
           <option value="">Select a country</option>
           {% for country_code, country_name in country_options %}
             {% if selected_country == country_code %}
-              <option value="{{ country_code }}" selected>{{ country_name }}</option>
+              <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
             {% else %}
-              <option value="{{ country_code }}">{{ country_name }}</option>
+              <option value="{{ country_code | lower }}">{{ country_name }}</option>
             {% endif %}
           {% endfor %}
         </select>
         <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
       </form>
-
-      <details class="govuk-details">
-        <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">
-            Don't know which country to choose?
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-          <p class="govuk-body">&hellip;</p>
-        </div>
-      </details>
-
     </div>
   </div>
 {% endblock %}
