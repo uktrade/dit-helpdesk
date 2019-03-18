@@ -22,7 +22,11 @@ from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
 from feedback import views as feedback_views
+
 from admin.views import admin_login_view
+
+handler404 = 'core.views.error404handler'
+handler500 = 'core.views.error500handler'
 
 urlpatterns = [
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
