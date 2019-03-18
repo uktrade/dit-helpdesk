@@ -58,6 +58,7 @@
   box-sizing: border-box;
   display: inline-block;
   margin: 0;
+  width: (8.8em / 2);
 
   @include govuk-media-query($from: tablet) {
     padding-top: 0.5em;

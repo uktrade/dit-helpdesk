@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta, timezone
+
+import requests
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -11,6 +14,10 @@ TABLE_COLUMN_TITLES = [
     tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
 ]
 
+COMMODITY_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
 
 def commodity_detail(request, commodity_code, country_code):
 
@@ -35,10 +42,28 @@ def commodity_detail(request, commodity_code, country_code):
         Commodity, commodity_code=commodity_code,
     )
 
-    import_measures = commodity.tts_obj.get_import_measures(selected_country)
-    table_data = [
-        measure_json.get_table_row() for measure_json in import_measures
-    ]
+    if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
+
+        url = COMMODITY_URL % commodity.commodity_code
+        try:
+            resp = requests.get(url, timeout=10)
+        except requests.exceptions.ReadTimeout:
+            return None
+        resp_content = resp.content.decode()
+        if resp.status_code == 200:
+            commodity.tts_json = resp_content
+            commodity.save()
+
+
+    table_data = []
+    try:
+        import_measures = commodity.tts_obj.get_import_measures(selected_country)
+        table_data = [
+            measure_json.get_table_row() for measure_json in import_measures
+        ]
+    except:
+        #TODO: log to file
+        print("No Measures")
 
     context = {
         'selected_origin_country': selected_country,
