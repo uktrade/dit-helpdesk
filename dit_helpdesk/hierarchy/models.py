@@ -35,6 +35,10 @@ class Section(models.Model):
 
     section_id = models.IntegerField(unique=True)
     tts_json = models.TextField(blank=True, null=True)
+    roman_numeral = models.CharField(max_length=5, null=True)
+    title = models.TextField(blank=True, null=True)
+    position = models.IntegerField(null=True)
+
 
     @property
     def hierarchy_key(self):
@@ -51,11 +55,6 @@ class Section(models.Model):
             return str(chapter_codes[0])
         min_code, max_code = min(chapter_codes), max(chapter_codes)
         return '%s to %s' % (min_code, max_code)
-
-    @property
-    def roman_numeral(self):
-        # or: return ROMAN_NUMERALS[int(self.section_id)]
-        return self.tts_obj.numeral
 
     @property
     def tts_obj(self):
@@ -75,13 +74,27 @@ class Section(models.Model):
         )
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'section-%s' % self.pk}
+        kwargs = {
+            'node_id': 'section-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Chapter(models.Model):
+
+    # goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
+    goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    productline_suffix = models.CharField(max_length=2, null=True)
+    leaf = models.BooleanField(blank=True, null=True)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    parent_productline_suffix = models.CharField(max_length=2, null=True)
+    description = models.TextField(null=True)
+    number_indents = models.SmallIntegerField(null=True)
 
     chapter_code = models.CharField(max_length=30)
     tts_json = models.TextField(blank=True, null=True)
@@ -89,6 +102,10 @@ class Chapter(models.Model):
     section = models.ForeignKey(
         'Section', blank=True, null=True, on_delete=models.CASCADE
     )
+
+    @property
+    def title(self):
+        return self.description
 
     @property
     def hierarchy_key(self):
@@ -116,17 +133,30 @@ class Chapter(models.Model):
         )
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'chapter-%s' % self.pk}
+        kwargs = {
+            'node_id': 'chapter-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class Heading(models.Model):
 
-    heading_code = models.CharField(max_length=10, unique=True)
+    goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    productline_suffix = models.CharField(max_length=2, null=True)
+    leaf = models.BooleanField(blank=True, null=True)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    parent_productline_suffix = models.CharField(max_length=2, null=True)
+    description = models.TextField(null=True)
+    number_indents = models.SmallIntegerField(null=True)
+
+    heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(
-        max_length=4, unique=True, null=True, blank=True
+        max_length=4, null=True, blank=True
     )
 
     tts_json = models.TextField(blank=True, null=True)
@@ -146,14 +176,14 @@ class Heading(models.Model):
 
     @property
     def tts_title(self):
-        return self.tts_obj.title
+        return self.description
 
     @property
     def harmonized_code(self):
         return self.heading_code
 
     def __str__(self):
-        return 'Heading ' + self.heading_code[:4]
+        return 'Heading ' + self.heading_code[:4] or self.heading_code
 
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
@@ -176,13 +206,24 @@ class Heading(models.Model):
         return commodities + sub_headings
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'heading-%s' % self.pk}
+        kwargs = {
+            'node_id': 'heading-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
 
 class SubHeading(models.Model):
+
+    productline_suffix = models.CharField(max_length=2, null=True)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
+    parent_productline_suffix = models.CharField(max_length=2, null=True)
+    description = models.TextField(null=True)
+    number_indents = models.SmallIntegerField(null=True)
 
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
@@ -213,11 +254,11 @@ class SubHeading(models.Model):
 
     @property
     def tts_title(self):
-        return self.tts_heading_obj.title
+        return self.description
 
     @property
     def tts_heading_description(self):
-        return self.tts_heading_obj.title
+        return self.description
 
     @property
     def harmonized_code(self):
@@ -227,10 +268,14 @@ class SubHeading(models.Model):
         return self.heading or self.parent_subheading
 
     def get_hierarchy_url(self, country_code=None):
-        kwargs = {'node_id': 'sub_heading-%s' % self.pk}
+        kwargs = {
+            'node_id': 'sub_heading-%s' % self.pk
+        }
+
         if country_code is not None:
            kwargs['country_code'] = country_code.lower()
-        return reverse('hierarchy_node', kwargs=kwargs)
+
+        return reverse('search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
         sub_headings = [obj for obj in self.child_subheadings.all()]

@@ -77,14 +77,13 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
             if type(child) is Commodity:
-                child.harmonized_code = child.tts_obj.code
+                child.harmonized_code = child.commodity_code
 
-            code_regex = re.search('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})', child.harmonized_code)
+            code_regex = re.search('([0-9]{6})([0-9]{2})([0-9]{2})', child.harmonized_code)
             code_split = [
                 code_regex.group(1),
                 code_regex.group(2),
-                code_regex.group(3),
-                code_regex.group(4)
+                code_regex.group(3)
             ]
 
             for index, code_segment in enumerate(code_split):
@@ -94,11 +93,11 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             commodity_code_html = commodity_code_html + '</span>'
 
         if type(child) is Section:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif type(child) is Commodity:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">{child.tts_title}<span class="govuk-visually-hidden"> &ndash; </span><b>Select</b></a>{commodity_code_html}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.tts_title}</a>{commodity_code_html}'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description}</a>{commodity_code_html}'
         html = html + li
 
         if child.hierarchy_key in expanded:
@@ -109,12 +108,10 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     return html
 
 
-def hierarchy_view(request, node_id, country_code):
-    if not country_code:
-        country_code = request.session.get('origin_country')
+def hierarchy_data(country_code, node_id='root'):
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded, country_code)
 
-    context = {'hierarchy_html': html}
-    return render(request, 'hierarchy/hierarchy.html', context)
+    return html
+
