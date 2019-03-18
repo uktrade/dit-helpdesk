@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Error{% endblock title %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+        Sorry, there is a problem with the service
+    </h1>
+    <p class="govuk-body">Try again later.</p>
+    <p class="govuk-body">
+      If the error persists
+      <a href="{% url 'feedback-view' %}" class="govuk-link">get in contact</a>.
+    </p>
+  </div>
+</div>
+{% endblock content%}
