@@ -1,9 +1,11 @@
 import json
+import sys
+
 import pandas
 from django.shortcuts import _get_queryset
 from commodities.models import Commodity
 from hierarchy.models import Section
-from regulations.models import Regulation
+from regulations.models import Regulation, Document
 
 
 def get_object_or_none(klass, *args, **kwargs):
@@ -34,9 +36,6 @@ class RegulationsImporter:
         commodity = get_object_or_none(Commodity, commodity_code=commodity_code)
         section = get_object_or_none(Section, section_id=data['section_id'])
 
-        print (commodity)
-        print(section)
-
         titles = list(regulations.Title)
         types = list(regulations.Type)
         celexes = list(regulations.CELEX)
@@ -44,20 +43,23 @@ class RegulationsImporter:
 
         document_titles = [doc.strip() for doc in data["Documents"].split('|')]
 
-        documents = [(types[titles.index(title)], celexes[titles.index(title)], urls[titles.index(title)], title)
-                                                    for title in document_titles if title in titles]
+        for item in document_titles:
+            for idx, title in enumerate(titles):
+                if not isinstance(urls[idx], float):
+                    if title == item:
+                        regulation, created_reg = Regulation.objects.get_or_create(title=title)
 
-        for document in documents:
-            regulation = Regulation(type=document[0],
-                                    celex=document[1],
-                                    url=document[2],
-                                    title=document[3])
-            regulation.save()
+                        document, created_doc = Document.objects.get_or_create(
+                            type=types[idx],
+                            celex=celexes[idx],
+                            url=urls[idx]
+                        )
 
-            regulation.commodities.add(commodity)
-            regulation.sections.add(section)
-            regulation.save()
-
+                        document.regulations.add(regulation)
+                        document.save()
+                        regulation.commodities.add(commodity)
+                        regulation.sections.add(section)
+                        regulation.save()
 
     def normalise_commodity_code(self, data):
         if len(str(data['commodity_id'])) == 9:

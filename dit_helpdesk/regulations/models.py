@@ -5,10 +5,7 @@ from django.db import models
 
 class Regulation(models.Model):
 
-    type = models.CharField(max_length=255)
     title = models.TextField(null=True)
-    celex = models.CharField(max_length=20)
-    url = models.URLField()
     sections = models.ManyToManyField("hierarchy.Section")
     commodities = models.ManyToManyField("commodities.Commodity")
 
@@ -17,3 +14,16 @@ class Regulation(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Document(models.Model):
+    regulations = models.ManyToManyField(Regulation)
+    type = models.CharField(max_length=255)
+    celex = models.CharField(max_length=20)
+    url = models.URLField()
+
+    class Meta:
+        pass
+
+    def __str__(self):
+        return self.url
