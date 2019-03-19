@@ -72,6 +72,7 @@ def commodity_detail(request, commodity_code, country_code):
         'roo_fragments': get_rules_of_origin_html_fragments(commodity),
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
+        'regulations': commodity.regulation_set.all()
     }
 
     return render(request, 'commodities/commodity_detail.html', context)

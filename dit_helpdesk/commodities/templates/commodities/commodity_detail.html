@@ -76,6 +76,14 @@
           </table>
         </div>
       {% endif %}
+      {% if regulations %}
+      <h3 class="govuk-heading-m">Regulations and Documents</h3>
+        <ul>
+        {% for regulation in regulations.all %}
+          <li><a href="{{ regulation.url }}">{{ regulation.title }}</a></li>
+        {% endfor %}
+          </ul>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
