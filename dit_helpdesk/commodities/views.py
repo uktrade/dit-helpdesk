@@ -1,3 +1,11 @@
+# -----------------------------------------------------------------------------
+# NOTE - table column headers.
+# -----------------------------------------------------------------------------
+# If the table columns headings are changed, they also need to be updated in
+# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
+# smaller screens will break.
+# -----------------------------------------------------------------------------
+
 from datetime import datetime, timedelta, timezone
 
 import requests

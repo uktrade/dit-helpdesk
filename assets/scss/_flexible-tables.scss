@@ -1,0 +1,108 @@
+.app-table {
+  font-size: 1em;
+  margin-bottom: 0;
+
+  a {
+    &[href^="http"] {
+      &::after {
+        content: " (external link)";
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+
+  tr {
+    td,
+    th {
+      &:nth-child(7),
+      &:last-child {
+       display: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .app-table__head {
+    display: none;
+  }
+
+  .app-table__body {
+    display: block;
+  }
+
+  .app-table__row {
+    display: block;
+    margin: 0 0 1em 0;
+    border: 1px solid govuk-colour("grey-2");
+  }
+
+
+  .app-table__header {
+    background: govuk-colour("grey-4");
+    display: block;
+  }
+
+  .app-table__cell {
+    border: 0;
+    display: block;
+    padding: 0 1em 0 0;
+
+    &::before {
+      content: " ";
+      width: 33%;
+      font-weight: bold;
+      display: inline-block;
+      min-width: 5em;
+      padding: 0.5em 1em 0.5em 0.5em;
+      vertical-align: middle;
+    }
+
+    &:nth-child(odd) {
+      background: govuk-colour("grey-4");
+    }
+
+    // ------------------------------------------------------------------------
+    // Card-layout headers are set here - take them from the columns generated
+    //  by the `commodities/view.py`.
+    // ------------------------------------------------------------------------
+    &:nth-child(1) {
+      &::before {
+        content: 'Country';
+      }
+    }
+
+    &:nth-child(2) {
+      &::before {
+        content: 'Description';
+      }
+    }
+
+    &:nth-child(3) {
+      &::before {
+        content: 'Conditions';
+      }
+    }
+
+    &:nth-child(4) {
+      &::before {
+        content: 'Value';
+      }
+    }
+
+    &:nth-child(5) {
+      &::before {
+        content: 'Excluded Countries';
+      }
+    }
+
+    &:nth-child(6) {
+      &::before {
+        content: 'Date';
+      }
+    }
+  }
+}

@@ -51,79 +51,34 @@
 
 @import "accessible-autocomplete/dist/accessible-autocomplete.min";
 
-@import "scrollable-tables";
+@import "flexible-tables";
 @import "hierarchy-tree";
 @import "cookie-banner";
 
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
 
 a {
   @extend %govuk-link;
 }
 
+abbr {
+  cursor: help;
+}
+
 .autocomplete__option {
   @include govuk-typography-common;
-}
-
-.app-table {
-  font-size: 1em;
-  margin-bottom: 0;
-
-  &--no-wrap {
-    td {
-      white-space: normal;
-    }
-  }
-
-  a {
-    &[href^="http"] {
-      &::after {
-        content: " (external link)";
-      }
-    }
-  }
-
-  p {
-    margin: 0;
-  }
-
-  tr {
-    &:nth-child(even) {
-      th,
-      td {
-        background: govuk-colour("grey-4");
-      }
-    }
-  }
-}
-
-.app-table__body {
-  tr {
-    &:last-child {
-      th,
-      td {
-        border: 0;
-      }
-    }
-  }
-}
-
-.app-table__header {
-  background: govuk-colour("grey-3");
-  border-left: 2px solid govuk-colour("white");
-  padding-left: 0.5em;
-
-  &:last-child {
-    padding-right: 1em;
-  }
-}
-
-.app-table__cell {
-  padding-left: 0.5em;
-  white-space: pre;
-
-  &:last-child {
-    padding-right: 1em;
-  }
 }
 
 .app-commodity-code {
