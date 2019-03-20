@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'authbroker_client',
     'user',
     'privacy',
-    'contact'
+    'contact',
+    'regulations'
 ]
 
 
@@ -240,8 +241,13 @@ AUTH_USER_MODEL = 'user.User'
 
 FEEDBACK_MAX_LENGTH = 1000
 
-
+# trade tariff service arguments
 IMPORT_DATA_PATH = BASE_DIR+"/trade_tariff_service/import_data/{0}"
 TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
 TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
 TRADE_TARIFF_SERVICE_SECTION_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
+TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+
+# regulation import arguments
+REGULATIONS_MODEL_ARG=["Regulation"]
+REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
