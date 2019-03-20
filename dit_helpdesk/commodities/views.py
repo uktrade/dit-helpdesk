@@ -80,14 +80,12 @@ def get_commodity_content(commodity):
     resp = requests.get(url, timeout=10)
     resp_content = None
     if resp.status_code == 200:
-        print("Getting commodity URL")
         resp_content = resp.content.decode()
     elif resp.status_code == 404:
-        print("Getting heading URL")
         url = HEADING_URL % commodity.commodity_code[:4]
         resp = requests.get(url, timeout=10)
         if resp.status_code == 200:
-            print("no heading")
             resp_content = resp.content.decode()
+
     commodity.tts_json = resp_content
     commodity.save()
