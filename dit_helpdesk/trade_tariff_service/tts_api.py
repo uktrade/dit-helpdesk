@@ -393,13 +393,20 @@ class ImportMeasureJson(object):
     def reformat_date(self, data):
 
         row_last_index = len(data) - 1
-        pattern = '(\d{4})-(\d{2})-(\d{2})'
+        pattern = '^((\d{4})-(\d{2})-(\d{2}))$|^((\d{4})-(\d{2})-(\d{2}))\s(\(((\d{4})-(\d{2})-(\d{2}))\))$'
         target = re.compile(pattern)
         matched = target.match(data[row_last_index])
+        if not matched.group(9):
+            start_date_obj = datetime.strptime(matched.group(1), '%Y-%m-%d')
+            start_date_str = start_date_obj.strftime('%d/%m/%Y')
+            data[row_last_index] = start_date_str
+        else:
+            start_date_obj = datetime.strptime(matched.group(5), '%Y-%m-%d')
+            start_date_str = start_date_obj.strftime('%d/%m/%Y')
+            end_date_obj = datetime.strptime(matched.group(10), '%Y-%m-%d')
+            end_date_str = end_date_obj.strftime('%d/%m/%Y')
 
-        date_obj = datetime.strptime(matched.group(), '%Y-%m-%d')
-        date_str = date_obj.strftime('%d/%m/%Y')
-        data[row_last_index] = date_str
+            data[row_last_index] = "{0} ({1})".format(start_date_str, end_date_str)
 
         return data
 
