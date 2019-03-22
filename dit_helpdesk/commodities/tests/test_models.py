@@ -1,66 +1,49 @@
-from django.test import TestCase
-from django.test import reverse
+import json
 
+from django.apps import apps
+from django.conf import settings
+from django.test import TestCase
 from commodities.models import Commodity
 
-commodity_struct_data = """{
-		"goods_nomenclature_item_id": "0101210000",
-		"goods_nomenclature_sid": "93796",
-		"productline_suffix": "80",
-		"leaf": "1",
-		"parent_goods_nomenclature_item_id": "0101210000",
-		"parent_goods_nomenclature_sid": "93797",
-		"parent_productline_suffix": "10",
-		"description": "Pure-bred breeding animals",
-		"number_indents": "2"
-	}"""
 
-subheading_struct_data = """{
-		"goods_nomenclature_item_id": "0101210000",
-		"goods_nomenclature_sid": "93797",
-		"productline_suffix": "10",
-		"leaf": "0",
-		"parent_goods_nomenclature_item_id": "0101000000",
-		"parent_goods_nomenclature_sid": "27624",
-		"parent_productline_suffix": "80",
-		"description": "Horses",
-		"number_indents": "1"
-	}"""
+COMMODITY_DATA = settings.BASE_DIR+"/commodities/tests/commodity_0101210000.json"
+COMMODITY_STRUCTURE = settings.BASE_DIR+"/commodities/tests/structure_0101210000.json"
+SUBHEADING_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/subheading_0101210000_structure.json"
+HEADING_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/heading_0101000000_structure.json"
 
-heading_struct_data = """{
-		"goods_nomenclature_item_id": "0101000000",
-		"goods_nomenclature_sid": "27624",
-		"productline_suffix": "80",
-		"leaf": "0",
-		"parent_goods_nomenclature_item_id": "0100000000",
-		"parent_goods_nomenclature_sid": "27623",
-		"parent_productline_suffix": "80",
-		"description": "Live horses, asses, mules and hinnies",
-		"number_indents": "0"
-	}"""
 
-class TestCommoditiesModels(TestCase):
+class TestCommodityModels(TestCase):
+
+    def get_data(self, file_path):
+
+        with open(file_path) as f:
+            json_data = json.load(f)
+        return json_data
+
+    def create_instance(self, data, app_name, model_name):
+
+        model = apps.get_model(app_label=app_name, model_name=model_name)
+        instance = model(**data)
+        return instance
+
+    def setUp(self):
+
+        self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
+
+        self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading.heading_id = self.heading.id
+        self.subheading.save()
+
+        self.commodity = self.create_instance(self.get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity.subheading_id = self.subheading.id
+        self.commodity.save()
 
     def test_get_heading(self):
 
-        data = {
-            "commodity_code": "",
-            "goods_nomenclature_sid": "",
-            "productline_suffix": "",
-            "parent_goods_nomenclature_item_id": "",
-            "parent_goods_nomenclature_sid": "",
-            "parent_productline_suffix": "",
-            "description": "",
-            "number_indents": 0,
-            "tts_json": "",
-            "tts_heading_json": "",
-            "tts_is_leaf": False,
-            "heading": None,
-            "parent_subheading": None,
-            "last_updated": None
-        }
-        commodity = Commodity()
-
+        self.assertEquals(
+            "Live horses, asses, mules and hinnies",
+            self.commodity.get_heading()
+        )
 
     def test_tts_title(self):
         pass

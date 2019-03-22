@@ -1,0 +1,11 @@
+{
+		"commodity_code": "0101210000",
+		"goods_nomenclature_sid": "93796",
+		"productline_suffix": "80",
+		"tts_is_leaf": "1",
+		"parent_goods_nomenclature_item_id": "0101210000",
+		"parent_goods_nomenclature_sid": "93797",
+		"parent_productline_suffix": "10",
+		"description": "Pure-bred breeding animals",
+		"number_indents": "2"
+	}

@@ -18,9 +18,9 @@ class TestFeedbackForm(TestCase):
         self.assertEquals(
             form.errors,
             {
-                'name': ['This field is required.'],
-                'email': ['This field is required.'],
-                'message': ['This field is required.'],
+                # 'name': ['This field is required.'],
+                # 'email': ['This field is required.'],
+                'message': ['Enter a message'],
             },
         )
 
@@ -28,6 +28,27 @@ class TestFeedbackForm(TestCase):
         response = self.client.post(
             reverse('feedback-view'),
             {'name': 'test', 'email': 'test@test.com', 'message': 'feedback'},
+        )
+        self.assertRedirects(response, reverse('feedback-success-view'))
+
+    def test_submitting_form_with_message_only_redirects_to_success_page(self):
+        response = self.client.post(
+            reverse('feedback-view'),
+            {'message': 'feedback'},
+        )
+        self.assertRedirects(response, reverse('feedback-success-view'))
+
+    def test_submitting_form_with_message_and_name_redirects_to_success_page(self):
+        response = self.client.post(
+            reverse('feedback-view'),
+            {'name': 'test', 'message': 'feedback'},
+        )
+        self.assertRedirects(response, reverse('feedback-success-view'))
+
+    def test_submitting_form_with_message_and_email_only_redirects_to_success_page(self):
+        response = self.client.post(
+            reverse('feedback-view'),
+            {'email': 'test@test.com', 'message': 'feedback'},
         )
         self.assertRedirects(response, reverse('feedback-success-view'))
 
@@ -43,7 +64,7 @@ class TestFeedbackForm(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEquals(
             form.errors,
-            {'message': ['Ensure this value has at most 1000 characters (it has 1100).']},
+            {'message': ['Message needs to be less than 1,000 characters.']},
         )
 
     def test_invalid_email_address(self):
