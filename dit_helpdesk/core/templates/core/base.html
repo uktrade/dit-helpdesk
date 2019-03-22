@@ -12,7 +12,12 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
 
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <!--[if lt IE 9]>
+      <link href="{% static 'css/global-oldie.min.css' %}" rel="stylesheet" media="all" />
+    <![endif]-->
+    <!--[if !IE 8]><!-->
+      <link rel="stylesheet" media="all" href="{% static 'css/global.min.css' %}">
+    <!--<![endif]-->
 
     <script>
       // Sourced from https://github.com/alphagov/govuk-design-system/blob/c641c14f043ac8b84a178b4e6260c1f8129a27a8/views/partials/_tracking-head.njk
@@ -23,7 +28,7 @@
         navigator.msDoNotTrack === '1' || // IE 9 - 10
         window.doNotTrack === '1' // IE 11 / Edge 16 and below
       )
-      // If the user has enabled 'DoNotTrack', we should not load Google Tag Manager (and therefore, Google Analytics.)
+      // If the user has enabled 'DoNotTrack', we should not load any tracking.
       if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
         console.log('Analytics will be loaded')
       }
@@ -31,7 +36,7 @@
   </head>
   <body class="govuk-template__body">
     <script>
-      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+      // document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
@@ -56,7 +61,7 @@
           </div>
           <div class="govuk-header__content">
             <a href="/" class="govuk-header__link govuk-header__link--service-name">
-              Find information about exporting to the UK
+              Find information about exporting to&nbsp;the&nbsp;UK
             </a>
           </div>
         </div>
@@ -95,6 +100,11 @@
                 <li class="govuk-footer__inline-list-item">
                   <a class="govuk-footer__link" href="{% url 'privacy_terms_and_conditions_views' %}">
                     Privacy, terms and conditions
+                  </a>
+                </li>
+                <li class="govuk-footer__inline-list-item">
+                  <a class="govuk-footer__link" href="{% url 'contact' %}">
+                    Contact us
                   </a>
                 </li>
               </ul>

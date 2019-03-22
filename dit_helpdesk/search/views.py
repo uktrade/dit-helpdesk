@@ -1,7 +1,3 @@
-"""
-Work in progress custom search view
-"""
-
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -9,29 +5,47 @@ from django.urls import reverse
 from commodities.models import Commodity
 from countries.models import Country
 
+from hierarchy.views import hierarchy_data
 
-def search_view(request):
+
+def search_hierarchy(request, node_id='root', country_code=None):
+    if country_code is None:
+        country_code = request.session.get('origin_country')
+
+    context = {
+        'hierarchy_html': hierarchy_data(country_code, node_id),
+        'country_code': country_code
+    }
+
+    return render(request, 'search/commodity_search.html', context)
+
+
+def search_view(request, country_code=None):
+    if country_code is None:
+        if 'country' in request.GET:
+            country_code = request.GET['country']
+        else:
+            return redirect(reverse('choose-country'))
 
     countries = Country.objects.all()
 
-    # context = {
-    #     'country_options': [(c.country_code, c.name) for c in countries],
-    # }
+    if 'q' not in request.GET:
+        context = {
+            'hierarchy_html': hierarchy_data(country_code),
+            'country_code' : country_code
+        }
 
-    # for country in context['country_options']:
-    #     if country[0] == request.session['origin_country']:
-    #         context['currently_selected_country'] = country
-
-    if 'q'not in request.GET:
-        # return render(request, 'search/commodity_search.html', context)
-        return render(request, 'search/commodity_search.html')
+        return render(request, 'search/commodity_search.html', context)
 
     query = request.GET['q'].strip()
+
     if len(query) == 10 and query.isdigit():
         code = query
+
         if Commodity.objects.filter(commodity_code=code).exists():
             return redirect(reverse(
-                'commodity-detail', kwargs={'commodity_code':code}
+                'commodity-detail', kwargs={'commodity_code':code,
+                                            'country_code': country_code.lower() }
             ))
         else:
             #messages.error('Commodity "%s" not found' % code)
@@ -41,4 +55,4 @@ def search_view(request):
         #messages.error('Expected 10-digit code')
         return redirect(reverse('search-view'))
 
-    # return render(request, 'countries/choose_country.html', context)
+    return render(request, 'countries/choose_country.html', context)

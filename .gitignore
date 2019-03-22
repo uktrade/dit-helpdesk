@@ -109,5 +109,12 @@ node_modules/
 # PyCharm
 .idea
 
-*.gz
-dit_helpdesk/static/admin/
+**/*.css.gz
+**/*.css.map.gz
+**/*.eot.gz
+**/*.ico.gz
+**/*.svg.gz
+**/*.min.js.gz
+**/*.min.js.map.gz
+**/*.js.gz
+src/

@@ -15,7 +15,7 @@ def choose_country_view(request):
         origin_country = request.POST.get('origin_country', '').strip().upper()
         if origin_country and Country.objects.filter(country_code=origin_country).exists():
             request.session['origin_country'] = origin_country
-            return redirect(reverse('search-view'))
+            return redirect(reverse('search-view') + 'country/' + origin_country.lower())
         else:
             messages.error(request, 'Invalid origin_country: %s' % origin_country)
 
