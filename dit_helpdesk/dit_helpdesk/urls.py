@@ -22,7 +22,7 @@ from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
 from feedback import views as feedback_views
-from terms_and_conditions import views as terms_and_conditions_views
+from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 from admin.views import admin_login_view
 
 urlpatterns = [
@@ -47,7 +47,7 @@ urlpatterns = [
     ),
 
     re_path(r'hierarchy/(?P<node_id>.+)', hierarchy_views.hierarchy_view, name='hierarchy_node'),
-    path('terms-and-conditions/', terms_and_conditions_views.TermsAndConditionsView.as_view(), name="terms_and_conditions"),
+    path('privacy-terms-and-conditions/', privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(), name="privacy_terms_and_conditions_views"),
 
 ]
 

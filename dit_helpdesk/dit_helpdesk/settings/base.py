@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'hierarchy',
     'rules_of_origin',
     'search',
-    'terms_and_conditions',
+    'privacy_terms_and_conditions',
     'trade_tariff_service',
     'django_extensions',
     'authbroker_client',
