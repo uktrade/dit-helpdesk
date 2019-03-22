@@ -404,7 +404,7 @@ class ImportMeasureJson(object):
             start_date_obj = datetime.strptime(matched.group(5), '%Y-%m-%d')
             start_date_str = start_date_obj.strftime('%-d %B %Y')
             end_date_obj = datetime.strptime(matched.group(10), '%Y-%m-%d')
-            end_date_str = end_date_obj.strftime('%d %b %Y')
+            end_date_str = end_date_obj.strftime('%-d %B %Y')
 
             data[row_last_index] = "{0} ({1})".format(start_date_str, end_date_str)
 
