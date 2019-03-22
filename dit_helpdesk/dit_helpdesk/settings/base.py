@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'authbroker_client',
     'user',
     'privacy',
-    'contact',
     'regulations'
 ]
 
