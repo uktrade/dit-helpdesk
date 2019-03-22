@@ -52,14 +52,11 @@ def commodity_detail(request, commodity_code, country_code):
         get_commodity_content(commodity)
 
     table_data = []
-    try:
-        import_measures = commodity.tts_obj.get_import_measures(selected_country)
-        table_data = [
-            measure_json.get_table_row() for measure_json in import_measures
-        ]
-    except:
-        #TODO: log to file
-        print("No Measures")
+
+    import_measures = commodity.tts_obj.get_import_measures(selected_country)
+    table_data = [
+        measure_json.get_table_row() for measure_json in import_measures
+    ]
 
     context = {
         'selected_origin_country': selected_country,

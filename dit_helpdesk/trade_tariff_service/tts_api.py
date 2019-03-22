@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from dateutil.parser import parse as parse_dt
 
@@ -18,13 +19,13 @@ TTS_MEASURE_TYPES = [tup[0] for tup in settings.TTS_MEASURE_TYPES]
 COMMODITY_DETAIL_TABLE_KEYS = [
     # dict_key, column_title
     ('country', 'Country'),
-    ('measure_description', 'Description'),
-    ('conditions_html', 'Conditions'),
+    ('measure_description', 'Measure type'),
     ('measure_value', 'Value'),
+    ('conditions_html', 'Conditions'),
     ('excluded_countries', 'Excluded Countries'),
     ('start_end_date', 'Date'),
-    ('legal_base_html', 'Legal Base'),
-    ('footnotes_html', 'Footnotes'),
+    # ('legal_base_html', 'Legal Base'),
+    # ('footnotes_html', 'Footnotes'),
 ]
 
 
@@ -380,7 +381,40 @@ class ImportMeasureJson(object):
 
     def get_table_row(self):
         di = self.get_table_dict()
-        return [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
+        data = [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
+        data = self.rename_countries_default(data)
+
+        try:
+            data = self.reformat_date(data)
+        except Exception as e:
+            print(e.args)
+        return data
+
+    def reformat_date(self, data):
+
+        row_last_index = len(data) - 1
+        pattern = '^((\d{4})-(\d{2})-(\d{2}))$|^((\d{4})-(\d{2})-(\d{2}))\s(\(((\d{4})-(\d{2})-(\d{2}))\))$'
+        target = re.compile(pattern)
+        matched = target.match(data[row_last_index])
+        if not matched.group(9):
+            start_date_obj = datetime.strptime(matched.group(1), '%Y-%m-%d')
+            start_date_str = start_date_obj.strftime('%-d %B %Y')
+            data[row_last_index] = start_date_str
+        else:
+            start_date_obj = datetime.strptime(matched.group(5), '%Y-%m-%d')
+            start_date_str = start_date_obj.strftime('%-d %B %Y')
+            end_date_obj = datetime.strptime(matched.group(10), '%Y-%m-%d')
+            end_date_str = end_date_obj.strftime('%-d %B %Y')
+
+            data[row_last_index] = "{0} ({1})".format(start_date_str, end_date_str)
+
+        return data
+
+    def rename_countries_default(self, data):
+        if 'ERGA OMNES' in data:
+            idx = data.index('ERGA OMNES')
+            data[idx] = "All counties"
+        return data
 
     def get_measure_conditions(self):
         return [
