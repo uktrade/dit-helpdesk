@@ -109,3 +109,5 @@ node_modules/
 # PyCharm
 .idea
 
+*.gz
+dit_helpdesk/static/admin/
