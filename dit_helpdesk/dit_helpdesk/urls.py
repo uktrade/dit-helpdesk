@@ -24,12 +24,16 @@ from cookies import views as cookie_views
 from privacy import views as privacy_views
 from feedback import views as feedback_views
 
+from index import views as index
+
 from admin.views import admin_login_view
 
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
+    path('', index.IndexRedirect.as_view(), name="index"),
+
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
     path('admin/login/', admin_login_view),
     path('admin/', admin.site.urls),
