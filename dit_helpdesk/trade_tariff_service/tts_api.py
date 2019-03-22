@@ -398,7 +398,7 @@ class ImportMeasureJson(object):
         matched = target.match(data[row_last_index])
         if not matched.group(9):
             start_date_obj = datetime.strptime(matched.group(1), '%Y-%m-%d')
-            start_date_str = start_date_obj.strftime('%d %b %Y')
+            start_date_str = start_date_obj.strftime('%-d %B %Y')
             data[row_last_index] = start_date_str
         else:
             start_date_obj = datetime.strptime(matched.group(5), '%Y-%m-%d')
