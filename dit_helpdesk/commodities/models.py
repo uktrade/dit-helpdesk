@@ -40,6 +40,7 @@ class Commodity(models.Model):
 
     class Meta:
         unique_together = ('commodity_code', 'goods_nomenclature_sid')
+        verbose_name_plural = 'commodities'
 
     @property
     def hierarchy_key(self):
@@ -73,12 +74,16 @@ class Commodity(models.Model):
 
     @property
     def tts_heading_description(self):
-        return self.description
+        return self.tts_obj.heading_description
+
+    def heading_description(self):
+        return self.parent_subheading.heading.description
 
     def get_heading(self):
         """Got up the hierarchy of sub-headings and return the Heading"""
         from hierarchy.models import Heading
         obj = self.heading or self.parent_subheading
+        print ("get heading obj:" , obj)
         while type(obj) is not Heading:
             obj = obj.get_parent()
         return obj

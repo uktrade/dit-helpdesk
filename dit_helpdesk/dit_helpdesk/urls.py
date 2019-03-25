@@ -27,6 +27,8 @@ from feedback import views as feedback_views
 
 from admin.views import admin_login_view
 
+from commodities.views import CommodityView
+
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
@@ -56,4 +58,7 @@ urlpatterns = [
     path('search/', search_views.search_view, name='search-view'),
     re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search-hierarchy'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
+
+    # path(r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})',
+    #      CommodityView.as_view(), name="commodity-detail-view")
 ]

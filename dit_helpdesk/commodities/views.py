@@ -10,13 +10,16 @@ from countries.models import Country
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 from rules_of_origin.util import get_rules_of_origin_html_fragments
 
+from django.views.generic import DetailView
+
+
 TABLE_COLUMN_TITLES = [
     tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
 ]
 
 COMMODITY_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+    'commodities/{0}.json?currency=EUR&day=1&month=1&year=2019'
 )
 
 def commodity_detail(request, commodity_code, country_code):
@@ -44,7 +47,7 @@ def commodity_detail(request, commodity_code, country_code):
 
     if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
 
-        url = COMMODITY_URL % commodity.commodity_code
+        url = COMMODITY_URL.format(commodity.commodity_code)
         try:
             resp = requests.get(url, timeout=10)
         except requests.exceptions.ReadTimeout:
@@ -76,3 +79,9 @@ def commodity_detail(request, commodity_code, country_code):
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
+
+
+class CommodityView(DetailView):
+
+    template_name = "commodities/commodity_detail.html"
+    model = Commodity

@@ -12,6 +12,7 @@ def search_hierarchy(request, node_id='root', country_code=None):
     if country_code is None:
         country_code = request.session.get('origin_country')
 
+    print(hierarchy_data(country_code, node_id))
     context = {
         'hierarchy_html': hierarchy_data(country_code, node_id),
         'country_code': country_code

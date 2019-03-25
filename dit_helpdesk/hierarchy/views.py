@@ -22,6 +22,7 @@ def _get_expanded_context(selected_node_id):
         return []
 
     expanded = []
+    print("selected_node_id: ", selected_node_id)
     node_type, node_pk = selected_node_id.split('-')
 
     if node_type == 'section':
@@ -72,7 +73,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         else:
             openclass = 'closed'
 
-        commodity_code_html = '';
+        commodity_code_html = ''
         if (type(child) is not Section):
             commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 

@@ -244,6 +244,9 @@ class SubHeading(models.Model):
     class Meta:
         unique_together = ('commodity_code', 'goods_nomenclature_sid')
 
+    def __str__(self):
+        return "SubHeading {0}".format(self.commodity_code)
+
     @property
     def hierarchy_key(self):
         return 'sub_heading-%s' % self.pk
