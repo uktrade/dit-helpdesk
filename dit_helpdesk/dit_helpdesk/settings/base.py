@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'cookies',
     'countries',
     'hierarchy',
+    'index',
     'rules_of_origin',
     'search',
     'trade_tariff_service',
