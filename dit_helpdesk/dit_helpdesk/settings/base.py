@@ -46,16 +46,16 @@ INSTALLED_APPS = [
     'commodities',
     'cookies',
     'countries',
+    'feedback',
     'hierarchy',
     'index',
     'rules_of_origin',
     'search',
+    'privacy_terms_and_conditions',
     'trade_tariff_service',
-    'feedback',
     'django_extensions',
     'authbroker_client',
     'user',
-    'privacy',
     'regulations'
 ]
 
