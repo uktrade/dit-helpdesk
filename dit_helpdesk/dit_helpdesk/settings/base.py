@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'countries',
     'feedback',
     'hierarchy',
+    'index',
     'rules_of_origin',
     'search',
     'privacy_terms_and_conditions',
@@ -55,7 +56,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'authbroker_client',
     'user',
-    'contact',
     'regulations'
 ]
 

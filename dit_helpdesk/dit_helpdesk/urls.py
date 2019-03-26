@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 from commodities import views as commodity_views
-from contact import views as contact_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
@@ -25,12 +24,16 @@ from cookies import views as cookie_views
 from feedback import views as feedback_views
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 
+from index import views as index
+
 from admin.views import admin_login_view
 
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
+    path('', index.IndexRedirect.as_view(), name="index"),
+
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
     path('admin/login/', admin_login_view),
     path('admin/', admin.site.urls),
@@ -44,7 +47,6 @@ urlpatterns = [
         commodity_views.commodity_detail, name='commodity-detail'
     ),
     path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
-    path('contact/', contact_views.ContactView.as_view(), name='contact'),
     path(
         'feedback/success/',
         feedback_views.FeedbackSuccessView.as_view(),

@@ -19,6 +19,11 @@ COMMODITY_URL = (
     'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
 )
 
+HEADING_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
+
 def commodity_detail(request, commodity_code, country_code):
 
     selected_country = country_code.upper()
@@ -44,26 +49,14 @@ def commodity_detail(request, commodity_code, country_code):
 
     if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
 
-        url = COMMODITY_URL % commodity.commodity_code
-        try:
-            resp = requests.get(url, timeout=10)
-        except requests.exceptions.ReadTimeout:
-            return None
-        resp_content = resp.content.decode()
-        if resp.status_code == 200:
-            commodity.tts_json = resp_content
-            commodity.save()
-
+        get_commodity_content(commodity)
 
     table_data = []
-    try:
-        import_measures = commodity.tts_obj.get_import_measures(selected_country)
-        table_data = [
-            measure_json.get_table_row() for measure_json in import_measures
-        ]
-    except:
-        #TODO: log to file
-        print("No Measures")
+
+    import_measures = commodity.tts_obj.get_import_measures(selected_country)
+    table_data = [
+        measure_json.get_table_row() for measure_json in import_measures
+    ]
 
     context = {
         'selected_origin_country': selected_country,
@@ -76,3 +69,20 @@ def commodity_detail(request, commodity_code, country_code):
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
+
+
+def get_commodity_content(commodity):
+
+    url = COMMODITY_URL % commodity.commodity_code
+    resp = requests.get(url, timeout=10)
+    resp_content = None
+    if resp.status_code == 200:
+        resp_content = resp.content.decode()
+    elif resp.status_code == 404:
+        url = HEADING_URL % commodity.commodity_code[:4]
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            resp_content = resp.content.decode()
+
+    commodity.tts_json = resp_content
+    commodity.save()
