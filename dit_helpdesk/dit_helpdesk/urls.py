@@ -22,7 +22,6 @@ from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
-from privacy import views as privacy_views
 from feedback import views as feedback_views
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 
@@ -46,7 +45,6 @@ urlpatterns = [
     ),
     path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
     path('contact/', contact_views.ContactView.as_view(), name='contact'),
-    path('privacy/', privacy_views.PrivacyView.as_view(), name='privacy'),
     path(
         'feedback/success/',
         feedback_views.FeedbackSuccessView.as_view(),
