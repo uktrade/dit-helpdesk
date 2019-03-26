@@ -109,6 +109,10 @@ then
 docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
 
+## Country synonyms
+
+The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to add synonyms. Then run `npm run update-countries`. You should see the updated files in `dit_helpdesk/static_collected/js/`.
+
 <!---
 ### Install locally
 To run, we need to create a Python virtual environment and install any requirements.
