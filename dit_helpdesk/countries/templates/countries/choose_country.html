@@ -21,25 +21,25 @@
           <option value="">Select a country</option>
           {% for country_code, country_name in country_options %}
             {% if selected_country == country_code %}
-              <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
+                <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
             {% else %}
-              <option value="{{ country_code | lower }}">{{ country_name }}</option>
+                <option value="{{ country_code | lower }}">{{ country_name }}</option>
             {% endif %}
           {% endfor %}
         </select>
-        <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+
+          <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
       </form>
     </div>
   </div>
 {% endblock %}
 
 {% block footer_additions %}
-  <script type="text/javascript" src="/assets/js/accessible-autocomplete.min.js"></script>
+  <script src="/assets/js/location-autocomplete.min.js"></script>
   <script>
-     accessibleAutocomplete.enhanceSelectElement({
-      defaultValue: '',
-      minLength: 2,
-      selectElement: document.getElementById('country-picker')
+    openregisterLocationPicker({
+      selectElement: document.getElementById('country-picker'),
+      url: '/assets/js/location-autocomplete-graph.json'
     })
   </script>
 {% endblock footer_additions %}
