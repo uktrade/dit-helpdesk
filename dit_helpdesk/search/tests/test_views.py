@@ -13,6 +13,7 @@ TEST_CHAPTER_CODE = "0100000000"
 TEST_SECTION_ID = "1"
 TEST_COUNTRY_CODE = "AU"
 TEST_COUNTRY_NAME = "Australia"
+TEST_SECTION_DESCRIPTION = "Live animals; animal products"
 
 COMMODITY_DATA = settings.BASE_DIR+"/commodities/tests/commodity_{0}.json".format(TEST_COMMODITY_CODE)
 COMMODITY_STRUCTURE = settings.BASE_DIR+"/commodities/tests/structure_{0}.json".format(TEST_COMMODITY_CODE)
@@ -42,11 +43,11 @@ class SearchViewTestCase(TestCase):
         self.section = self.create_instance(self.get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
 
         self.chapter = self.create_instance(self.get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
-        self.chapter.parent = self.section.pk
+        self.chapter.section_id = self.section.pk
         self.chapter.save()
 
         self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
-        self.heading.chapter_id = self.heading.pk
+        self.heading.chapter_id = self.chapter.pk
         self.heading.save()
 
         self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
@@ -68,13 +69,22 @@ class SearchViewTestCase(TestCase):
                                            kwargs={"country_code": TEST_COUNTRY_CODE, "node_id": "section-1"}))
         self.assertTemplateUsed(response, 'search/commodity_search.html')
 
-    def test_search_hierachy_view_(self):
+    def test_search_hierachy_view_for_section_1(self):
+        response = self.client.get(reverse('search-hierarchy',
+                                           kwargs={"country_code": TEST_COUNTRY_CODE, "node_id": "section-1"}))
+        self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
+
+
+    def test_search_hierachy_view_for_country_code(self):
         response = self.client.get(reverse('search-hierarchy',
                                            kwargs={"country_code": TEST_COUNTRY_CODE}))
-        print(response.context)
-        self.assertTemplateUsed('search/commodity_search.html')
+        self.assertTemplateUsed(response, 'search/commodity_search.html')
+        print("CONTEXT: ", response.context)
 
     def test_search_view_redirects_to_choose_country(self):
         response = self.client.get(reverse('search-view'))
         self.assertRedirects(response, '/choose-country/')
 
+    def test_search_view_(self):
+        response = self.client.get('/search-view/?q=0101210000')
+        self.assertEqual(response.context, {})

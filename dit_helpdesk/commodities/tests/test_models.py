@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from django.apps import apps
 from django.conf import settings
@@ -9,12 +10,14 @@ from hierarchy.models import SubHeading, Heading
 from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 
 TEST_COMMODITY_CODE = "0101210000"
+TEST_COMMODITY_CODE_SPLIT = list(re.search('([0-9]{6})([0-9]{2})([0-9]{2})', TEST_COMMODITY_CODE).groups())
 TEST_SUBHEADING_CODE = "0101210000"
 TEST_HEADING_CODE = "0101000000"
 TEST_CHAPTER_CODE = "0100000000"
 TEST_SECTION_ID = "1"
 TEST_COUNTRY_CODE = "AU"
 TEST_COUNTRY_NAME = "Australia"
+TEST_COMMODITY_DESCRIPTION = "Pure-bred breeding animals"
 TEST_HEADING_DESCRIPTION = "Live horses, asses, mules and hinnies"
 TEST_SUBHEADING_DESCRIPTION = "Horses"
 
@@ -86,13 +89,13 @@ class TestCommodityModel(TestCase):
         self.assertTrue(self.commodity.parent_subheading.description, TEST_SUBHEADING_DESCRIPTION)
 
     def test_heading_exists(self):
-        self.assertEqual(str(self.heading), "Heading {0}".format(TEST_HEADING_CODE))
+        self.assertEqual(str(self.heading), "Heading {0}".format(TEST_HEADING_CODE[:4]))
 
     def test_subheading_exists(self):
         self.assertEqual(str(self.subheading), "SubHeading {0}".format(TEST_SUBHEADING_CODE))
 
     def test_subheading_has_heading_parent(self):
-        self.assertEqual(str(self.subheading.heading), "Heading {0}".format(TEST_HEADING_CODE))
+        self.assertEqual(str(self.subheading.heading), "Heading {0}".format(TEST_HEADING_CODE[:4]))
         self.assertTrue(self.subheading.heading)
 
     def test_commodity_parent_subheading_has_parent_heading(self):
@@ -107,28 +110,25 @@ class TestCommodityModel(TestCase):
         )
 
     def test_commodity_tts_title_is_correct(self):
-        self.assertEqual(self.commodity.tts_title, "Pure-bred breeding animals")
+        self.assertEqual(self.commodity.tts_title, TEST_COMMODITY_DESCRIPTION)
 
-    def test_commodity_0101210000_tts_heading_description(self):
-        self.assertEqual(self.commodity.tts_heading_description, "Live horses, asses, mules and hinnies")
+    def test_commodity_tts_heading_description(self):
+        self.assertEqual(self.commodity.tts_heading_description, TEST_HEADING_DESCRIPTION)
 
-    def test_commodity_0101210000_heading_description(self):
-        self.assertEqual(self.commodity.heading_description(), "Live horses, asses, mules and hinnies")
+    def test_commodity_heading_description(self):
+        self.assertEqual(self.commodity.heading_description(), TEST_HEADING_DESCRIPTION)
 
-    def test_commodity_0101210000_tts_obj_is_not_empty(self):
+    def test_commodity_tts_obj_is_not_empty(self):
         self.assertNotEqual(self.commodity.tts_obj, None)
 
-    def test_commodity_0101210000_tts_obj_is_CommodityJson(self):
+    def test_commodity_tts_obj_is_CommodityJson(self):
         self.assertTrue(isinstance(self.commodity.tts_obj, CommodityJson))
 
-    def test_commodity_0101210000_tts_heading_obj_is_CommodityHeadingJson_is_empty(self):
-        self.assertTrue(self.commodity.tts_heading_obj, None)
+    def test_commodity_code_splt_is_correct(self):
+        self.assertTrue(self.commodity.commodity_code_split, TEST_COMMODITY_CODE_SPLIT)
 
-    def test_commodity_0101210000__code_splt_is_correct(self):
-        self.assertTrue(self.commodity.commodity_code_split, ['010121', '00', '00'])
-
-    def test_commodity_0101210000_get_absolute_url(self):
-        self.assertEqual(self.commodity.get_absolute_url('au'), "/country/au/commodity/0101210000")
+    def test_commodity_get_absolute_url(self):
+        self.assertEqual(self.commodity.get_absolute_url(TEST_COUNTRY_CODE), "/country/au/commodity/{0}".format(TEST_COMMODITY_CODE))
 
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))

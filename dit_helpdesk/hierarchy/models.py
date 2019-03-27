@@ -62,6 +62,7 @@ class Section(models.Model):
 
     @property
     def tts_title(self):
+        # TODO: remove
         return self.tts_obj.title
 
     def get_hierarchy_children(self):
@@ -116,6 +117,7 @@ class Chapter(models.Model):
         return ChapterJson(json.loads(self.tts_json))
 
     @property
+    # TODO: remove
     def tts_title(self):
         return self.tts_obj.title
 
@@ -127,6 +129,7 @@ class Chapter(models.Model):
         return self.headings.all()
 
     def get_headings_url(self):
+        #TODO: remove
         return reverse(
             'hierarchy-section-chapter-headings',
             kwargs={'chapter_code_2': self.chapter_code[:2]}
@@ -186,6 +189,7 @@ class Heading(models.Model):
         return 'Heading ' + self.heading_code[:4] or self.heading_code
 
     def get_absolute_url(self):
+        #TODO: if not used. remove
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
         return reverse('heading-detail', kwargs=kwargs)
 

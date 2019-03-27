@@ -16,6 +16,11 @@ TEST_CHAPTER_CODE = "0100000000"
 TEST_SECTION_ID = "1"
 TEST_COUNTRY_CODE = "AU"
 TEST_COUNTRY_NAME = "Australia"
+TEST_HEADING_DESCRIPTION = "Live horses, asses, mules and hinnies"
+TEST_SUBHEADING_DESCRIPTION = "Horses"
+TEST_SECTION_DESCRIPTION = "Live animals; animal products"
+TEST_CHAPTER_DESCRIPTION = "LIVE ANIMALS"
+
 
 COMMODITY_DATA = settings.BASE_DIR+"/commodities/tests/commodity_{0}.json".format(TEST_COMMODITY_CODE)
 COMMODITY_STRUCTURE = settings.BASE_DIR+"/commodities/tests/structure_{0}.json".format(TEST_COMMODITY_CODE)
@@ -25,7 +30,7 @@ CHAPTER_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/chapter_{0}_structure.js
 SECTION_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/section_{}_structure.json".format(TEST_SECTION_ID)
 
 
-class CommodityViewTestCase(TestCase):
+class HierarchyViewTestCase(TestCase):
 
     def get_data(self, file_path):
 
@@ -53,7 +58,7 @@ class CommodityViewTestCase(TestCase):
         self.chapter.save()
 
         self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
-        self.heading.chapter_id = self.chapter.id
+        self.heading.chapter_id = self.chapter.pk
         self.heading.save()
 
         self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
@@ -67,13 +72,8 @@ class CommodityViewTestCase(TestCase):
         self.commodity.save()
 
         self.client = Client()
-        self.url = reverse('commodity-detail', kwargs={"commodity_code": TEST_COMMODITY_CODE,
-                                                       "country_code": TEST_COUNTRY_CODE})
 
     fixtures = ['countries/fixtures/countries_data.json']
-    # fixtures = ['hierarchy/fixtures/hierarchy.json']
-    # fixtures = ['commodities/fixtures/commodities.json']
-    # fixtures = ['regulations/fixtures/regulations.json']
 
     def test_fixtures_load_countries_data(self):
         self.assertTrue(Country.objects.count() > 0)
@@ -93,33 +93,40 @@ class CommodityViewTestCase(TestCase):
     def test_commodity_data_exists(self):
         self.assertTrue(Commodity.objects.count() > 0)
 
-    def test_commodity_detail_view(self):
-        response = self.client.get(self.url)
+    def test_hierarchy_data_is_valid(self):
+        response = self.client.get('/search/country/au/hierarchy/root')
         self.assertEqual(response.status_code, 200)
 
-    def test_commodity_detail_view_is_using_the_correct_template(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed('commodity_detail.html')
-        self.assertInHTML(
-            response.context['commodity'].description,
-            response.content.decode("utf-8")
-        )
+    def test_hierarchy_data_at_root(self):
+        response = self.client.get('/search/country/au/hierarchy/root')
+        self.assertInHTML("Live animals; animal products", response.context['hierarchy_html'])
+        self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
 
-    def test_commodity_detail_receives_the_correct_country_code(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.context['selected_origin_country'], TEST_COUNTRY_CODE)
+    def test_hierarchy_data_at_section(self):
+        response = self.client.get('/search/country/au/hierarchy/section-2#section-2')
+        self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
 
-    def test_commodity_detail_has_the_correct_commodity_code(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.context['commodity'].commodity_code, TEST_COMMODITY_CODE)
+    def test_hierarchy_data_at_chapter(self):
+        chapter_id = Chapter.objects.get(chapter_code=TEST_CHAPTER_CODE).pk
+        response = self.client.get('/search/country/au/hierarchy/chapter-{0}#chapter-{0}'.format(chapter_id))
+        self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
 
-    def test_commodity_detail_has_the_selected_country_origin_name(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.context['selected_origin_country_name'], TEST_COUNTRY_NAME)
+    def test_hierarchy_data_at_heading(self):
+        heading_id = Heading.objects.get(heading_code=TEST_HEADING_CODE).pk
+        response = self.client.get('/search/country/au/hierarchy/heading-{0}#heading-{0}'.format(heading_id))
+        self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_HEADING_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
 
-    def test_commodity_column_titles_are_correct(self):
-        response = self.client.get(self.url)
-        self.assertEqual(
-            response.context['column_titles'],
-            ['Country', 'Description', 'Conditions', 'Value', 'Excluded Countries', 'Date', 'Legal Base', 'Footnotes']
-        )
+    def test_hierarchy_data_at_subheading(self):
+        subheading_id = SubHeading.objects.get(commodity_code=TEST_SUBHEADING_CODE).pk
+        response = self.client.get('/search/country/au/hierarchy/sub_heading-{0}#sub_heading-{0}'.format(subheading_id))
+        self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_HEADING_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertInHTML(TEST_SUBHEADING_DESCRIPTION, response.context['hierarchy_html'])
+        self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
