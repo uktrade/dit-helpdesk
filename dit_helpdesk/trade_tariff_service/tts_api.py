@@ -413,7 +413,7 @@ class ImportMeasureJson(object):
     def rename_countries_default(self, data):
         if 'ERGA OMNES' in data:
             idx = data.index('ERGA OMNES')
-            data[idx] = "All counties"
+            data[idx] = "All countries"
         return data
 
     def get_measure_conditions(self):
