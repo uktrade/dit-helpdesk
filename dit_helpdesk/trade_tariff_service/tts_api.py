@@ -14,8 +14,6 @@ HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.
 
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
-TTS_MEASURE_TYPES = [tup[0] for tup in settings.TTS_MEASURE_TYPES]
-
 COMMODITY_DETAIL_TABLE_KEYS = [
     # dict_key, column_title
     ('country', 'Country'),
