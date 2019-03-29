@@ -14,8 +14,6 @@ HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.
 
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
-TTS_MEASURE_TYPES = [tup[0] for tup in settings.TTS_MEASURE_TYPES]
-
 COMMODITY_DETAIL_TABLE_KEYS = [
     # dict_key, column_title
     ('country', 'Country'),
@@ -267,6 +265,10 @@ class ImportMeasureJson(object):
         return self.di['measure_type']['description']
 
     @property
+    def measure_id(self):
+        return self.di['measure_id']
+
+    @property
     def conditions_summary(self):
         """
         list of conditions (e.g. you can import if you have document X)
@@ -327,7 +329,7 @@ class ImportMeasureJson(object):
     def vue__conditions_html(self):
         if not self.num_conditions:
             return '-'
-        conditions_url = 'http://google.com'
+        conditions_url = self.measure_id #self.measure_id
         return '<a href="%s">Conditions</a>' % conditions_url
 
     @property

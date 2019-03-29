@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -84,5 +85,18 @@ def get_commodity_content(commodity):
         if resp.status_code == 200:
             resp_content = resp.content.decode()
 
+    resp_content = update_tts_json_measure_conditions(resp_content)
     commodity.tts_json = resp_content
     commodity.save()
+
+
+def update_tts_json_measure_conditions(resp_content):
+
+    obj = json.loads(resp_content)
+    for idx, measure in enumerate(obj['import_measures']):
+        measure['measure_id'] = idx
+        for i, condition in enumerate(measure['measure_conditions']):
+            if isinstance(condition, dict):
+                condition['measure_id'] = idx
+                condition['condition_id'] = i
+    return json.dumps(obj)
