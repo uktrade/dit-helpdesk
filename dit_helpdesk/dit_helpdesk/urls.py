@@ -54,6 +54,6 @@ urlpatterns = [
     ),
     path('privacy-terms-and-conditions/', privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(), name="privacy_terms_and_conditions_views"),
     path('search/', search_views.search_view, name='search-view'),
-    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search-hierarchy'),
+    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
 ]
