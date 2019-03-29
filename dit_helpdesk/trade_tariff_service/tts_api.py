@@ -78,9 +78,6 @@ class CommodityJson(object):
             json_obj for json_obj in measures
             if json_obj.is_relevant_for_origin_country(origin_country)
         ]
-        measures = [
-            obj for obj in measures if obj.type_id in TTS_MEASURE_TYPES
-        ]
 
         if vat is not None:
             measures = [obj for obj in measures if obj.vat == vat]
