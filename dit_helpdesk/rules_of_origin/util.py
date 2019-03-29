@@ -5,6 +5,7 @@ from django.conf import settings
 
 ROO_FP = os.path.join(
     settings.BASE_DIR, 'rules_of_origin/management/commands/roo_chile.json'
+    # settings.BASE_DIR, 'rules_of_origin/json_output/EUR-Lex-32015R2446-EN-EUR-Lex.json'
 )
 RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
 
