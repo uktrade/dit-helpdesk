@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+import sys
 from collections import defaultdict
 import json
 import re
@@ -9,15 +10,22 @@ from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-ROO_FP = os.path.join(
-    settings.BASE_DIR, 'rules_of_origin/management/commands/roo_chile.json'
-)
-RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
-
-RULES = defaultdict(list)
-EXCLUSION_RULES = defaultdict(list)
-
+# ROO_FP = os.path.join(
+#     # settings.BASE_DIR, 'rules_of_origin/management/commands/roo_chile.json'
+#     settings.BASE_DIR, 'rules_of_origin/management/commands/L_2013054EN.01000301.json'
+# )
+# RULES_OF_ORIGIN_DATA = json.loads(open(ROO_FP).read())
+#
+# RULES = defaultdict(list)
+# EXCLUSION_RULES = defaultdict(list)
+#
 roo_fp = 'rules_of_origin/management/commands/roo_chile.html'
+
+
+# roo_fp = 'rules_of_origin/management/commands/L_2013054EN.01000301.html'
+# roo_fp = 'rules_of_origin/management/commands/Official.html'
+# roo_fp = 'rules_of_origin/html_source/EUR-Lex-32015R2446-EN-EUR-Lex.html'
+
 
 '''
 
@@ -108,15 +116,17 @@ def get_keys(st, category, match_obj):
         return keys
     return ''
 
-
+#origin_id : 'L_2013054EN.01003001'
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-
+        print("HANDLE")
         # html from: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2013.054.01.0003.01.ENG
         html = open(roo_fp).read()
         soup = BeautifulSoup(html, 'html.parser')
         tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2013054EN.01003001'}).children][5].children][9]
+        # tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2012111EN.01104601'}).children][5].children][9]
+        # tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2015343EN.01011101'}).children][5].children][9]
 
         rows = [e for e in tbody.findChildren('tr', recursive=False)]
 
@@ -124,6 +134,7 @@ class Command(BaseCommand):
 
         prev_left_col = None
         for i, row in enumerate(rows):
+
             if i < 2:
                 continue
             cols = row.findChildren('td', recursive=False)
@@ -136,6 +147,7 @@ class Command(BaseCommand):
                 table_segments[prev_left_col].append(i - 1)
 
         html_fragments = defaultdict(list)
+        print("table_segments: ", table_segments)
 
         for segment_title, row_positions in table_segments.items():
 
@@ -157,5 +169,8 @@ class Command(BaseCommand):
                     break
 
         file = open('rules_of_origin/management/commands/roo_chile.json', 'w')
+        # file = open('rules_of_origin/management/commands/L_2013054EN.01000301.json', 'w')
+        # file = open('rules_of_origin/management/commands/official.json', 'w')
+        # file = open('rules_of_origin/data/EUR-Lex-32015R2446-EN-EUR-Lex.json', 'w')
         file.write(json.dumps(html_fragments))
         file.close()
