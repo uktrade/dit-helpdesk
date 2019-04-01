@@ -69,12 +69,6 @@ a {
   font-size: 1em;
   margin-bottom: 0;
 
-  &--no-wrap {
-    td {
-      white-space: normal;
-    }
-  }
-
   a {
     &[href^="http"] {
       &::after {
@@ -120,7 +114,6 @@ a {
 
 .app-table__cell {
   padding-left: 0.5em;
-  white-space: pre;
 
   &:last-child {
     padding-right: 1em;

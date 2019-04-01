@@ -340,7 +340,7 @@ class ImportMeasureJson(object):
     def vue__conditions_html(self):
         if not self.num_conditions:
             return '-'
-        conditions_url = "{0}/import_measure/{1}/conditions".format(self.commodity_code, self.measure_id)
+        conditions_url = "{0}/import-measure/{1}/conditions".format(self.commodity_code, self.measure_id)
         return '<a href="%s">Conditions</a>' % conditions_url
 
     @property
