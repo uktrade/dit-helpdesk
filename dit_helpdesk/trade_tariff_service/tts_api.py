@@ -3,6 +3,7 @@ import re
 from dateutil.parser import parse as parse_dt
 
 from django.conf import settings
+from django.urls import reverse
 
 COMMODITY_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
@@ -84,6 +85,16 @@ class CommodityJson(object):
 
         return measures
 
+    def get_import_measure_by_id(self, measure_id, country_code=None):
+        measures = [
+            measure for measure in self.get_import_measures(country_code) if measure.measure_id == measure_id
+        ]
+        if len(measures) > 1:
+            print("query returned {0} results. There should be only only one".format(len(measures)))
+        elif len(measures)== 1:
+            return measures[0]
+        else:
+            return None
 
 class CommodityHeadingJson(object):
     """
@@ -265,6 +276,10 @@ class ImportMeasureJson(object):
         return self.di['measure_type']['description']
 
     @property
+    def measure_id(self):
+        return self.di['measure_id']
+
+    @property
     def conditions_summary(self):
         """
         list of conditions (e.g. you can import if you have document X)
@@ -325,7 +340,7 @@ class ImportMeasureJson(object):
     def vue__conditions_html(self):
         if not self.num_conditions:
             return '-'
-        conditions_url = 'http://google.com'
+        conditions_url = "{0}/import-measure/{1}/conditions".format(self.commodity_code, self.measure_id)
         return '<a href="%s">Conditions</a>' % conditions_url
 
     @property
@@ -416,6 +431,10 @@ class ImportMeasureJson(object):
             MeasureCondition(di) for di in self.di['measure_conditions']
         ]
 
+    def get_measure_conditions_by_measure_id(self, measure_id):
+        return [
+            condition for condition in self.get_measure_conditions() if condition.di['measure_id'] == measure_id
+        ]
 
 class MeasureCondition(object):
 
