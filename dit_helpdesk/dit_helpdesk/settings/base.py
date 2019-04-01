@@ -46,16 +46,17 @@ INSTALLED_APPS = [
     'commodities',
     'cookies',
     'countries',
+    'feedback',
     'hierarchy',
+    'index',
     'rules_of_origin',
     'search',
+    'privacy_terms_and_conditions',
     'trade_tariff_service',
-    'feedback',
     'django_extensions',
     'authbroker_client',
     'user',
-    'privacy',
-    'contact'
+    'regulations'
 ]
 
 
@@ -195,35 +196,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compr
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
 IP_SAFELIST_XFF_INDEX = int(os.environ.get('IP_SAFELIST_XFF_INDEX', '-2'))
 
-# a list of (measure_type_id, measure_type_series_id) values that are relevant
-# we will ignore measures that are not in this list.
-TTS_MEASURE_TYPES = [
-    ('103', 'C'), ('105', 'C'), ('106', 'C'), ('112', 'C'), ('115', 'C'),
-    ('117', 'C'), ('119', 'C'), ('122', 'C'), ('123', 'C'), ('140', 'C'),
-    ('141', 'C'), ('142', 'C'), ('143', 'C'), ('144', 'C'), ('145', 'C'),
-    ('146', 'C'), ('147', 'C'), ('901', 'C'), ('902', 'C'), ('903', 'C'),
-    ('906', 'C'), ('907', 'C'), ('919', 'C'), ('305', 'P'), ('VTA', 'P'),
-    ('VTE', 'P'), ('VTS', 'P'), ('VTZ', 'P'), ('306', 'Q'), ('DAA', 'Q'),
-    ('DAB', 'Q'), ('DAC', 'Q'), ('DAE', 'Q'), ('DAI', 'Q'), ('DBA', 'Q'),
-    ('DBB', 'Q'), ('DBC', 'Q'), ('DBE', 'Q'), ('DBI', 'Q'), ('DCA', 'Q'),
-    ('DCC', 'Q'), ('DCE', 'Q'), ('DCH', 'Q'), ('DDA', 'Q'), ('DDB', 'Q'),
-    ('DDC', 'Q'), ('DDD', 'Q'), ('DDE', 'Q'), ('DDF', 'Q'), ('DDG', 'Q'),
-    ('DDJ', 'Q'), ('DEA', 'Q'), ('DFA', 'Q'), ('DFB', 'Q'), ('DFC', 'Q'),
-    ('DGC', 'Q'), ('DHA', 'Q'), ('DHC', 'Q'), ('DHE', 'Q'), ('EAA', 'Q'),
-    ('EAE', 'Q'), ('EBA', 'Q'), ('EBB', 'Q'), ('EBE', 'Q'), ('EBJ', 'Q'),
-    ('EDA', 'Q'), ('EDB', 'Q'), ('EDE', 'Q'), ('EDJ', 'Q'), ('EEA', 'Q'),
-    ('EEF', 'Q'), ('EFA', 'Q'), ('EFJ', 'Q'), ('EGA', 'Q'), ('EGB', 'Q'),
-    ('EGJ', 'Q'), ('EHI', 'Q'), ('EIA', 'Q'), ('EIB', 'Q'), ('EIC', 'Q'),
-    ('EID', 'Q'), ('EIE', 'Q'), ('EIJ', 'Q'), ('EXA', 'Q'), ('EXB', 'Q'),
-    ('EXC', 'Q'), ('EXD', 'Q'), ('FAA', 'Q'), ('FAE', 'Q'), ('FAI', 'Q'),
-    ('FBC', 'Q'), ('FBG', 'Q'), ('LAA', 'Q'), ('LAE', 'Q'), ('LBA', 'Q'),
-    ('LBB', 'Q'), ('LBE', 'Q'), ('LBJ', 'Q'), ('LDA', 'Q'), ('LEA', 'Q'),
-    ('LEF', 'Q'), ('LFA', 'Q'), ('LGJ', 'Q'),
-
-    # seems to also be necessary for commodity: 0202309075
-    ('710', 'UNKNOWN'),
-]
-
 RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
 ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
 ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
@@ -240,8 +212,20 @@ AUTH_USER_MODEL = 'user.User'
 
 FEEDBACK_MAX_LENGTH = 1000
 
-
+# trade tariff service arguments
 IMPORT_DATA_PATH = BASE_DIR+"/trade_tariff_service/import_data/{0}"
 TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
 TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
 TRADE_TARIFF_SERVICE_SECTION_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
+TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+
+# regulation import arguments
+REGULATIONS_MODEL_ARG=["Regulation"]
+REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
+
+# Secure cookie settings.
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_SECURE = True

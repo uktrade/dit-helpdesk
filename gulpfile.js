@@ -30,7 +30,7 @@ const paths = {
   javascripts: {
     watch: './assets/javascript/**/*.js',
     source: './assets/javascript/**/*.js',
-    accessibleAutocomplete: './node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js*',
+    accessibleAutocomplete: './node_modules/govuk-country-and-territory-autocomplete/dist/*.(js|js.map)',
     destination: './dit_helpdesk/static_collected/js/'
   },
   govukFrontendAssets: {

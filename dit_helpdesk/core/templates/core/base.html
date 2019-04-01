@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>{% block title %}{% endblock %} - Find information about exporting to the UK</title>
+    <title>{% block title %}{% endblock %} - Trade with the UK: look up tariffs, taxes and rules</title>
 
     <meta name="twitter:dnt" content="on">
     <meta name="format-detection" content="telephone=no">
@@ -66,13 +66,28 @@
       )
       // If the user has enabled 'DoNotTrack', we should not load any tracking.
       if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
-        console.log('Analytics will be loaded')
+        (function(w, d, s, l, i){
+          w[l] = w[l] || []
+          w[l].push({
+            'gtm.start': new Date().getTime(),
+            event: 'gtm.js'
+          })
+
+          var f = d.getElementsByTagName(s)[0];
+          var j = d.createElement(s)
+          var dl = l != 'dataLayer' ? '&l=' + l : ''
+
+          j.async = true
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+          f.parentNode.insertBefore(j,f)
+
+        })(window, document, 'script', 'dataLayer', 'GTM-KMLFLZW')
       }
     </script>
   </head>
   <body class="govuk-template__body">
     <script>
-      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled')
     </script>
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
@@ -90,13 +105,13 @@
               <span class="govuk-header__logotype-text">
                 GOV.UK
               </span>
-            </span>
-          </a>
-        </div>
-        <div class="govuk-header__content">
-          <a href="/" class="govuk-header__link govuk-header__link--service-name">
-            Find information about exporting to&nbsp;the&nbsp;UK
-          </a>
+            </a>
+          </div>
+          <div class="govuk-header__content">
+            <a href="{% url 'index' %}" class="govuk-header__link govuk-header__link--service-name">
+              Trade with the UK: look up tariffs, taxes and rules
+            </a>
+          </div>
         </div>
       </div>
     </header>
@@ -125,25 +140,20 @@
           <div class="govuk-footer__meta">
             <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
               <h2 class="govuk-visually-hidden">Support links</h2>
-              <ul class="govuk-footer__inline-list govuk-!-padding-bottom-2">
+              <ul class="govuk-footer__inline-list">
                 <li class="govuk-footer__inline-list-item">
                   <a class="govuk-footer__link" href="{% url 'cookies' %}">
                     Cookies
                   </a>
                 </li>
                 <li class="govuk-footer__inline-list-item">
-                  <a class="govuk-footer__link" href="">
-                    Terms and conditions
+                  <a class="govuk-footer__link" href="{% url 'privacy_terms_and_conditions_views' %}">
+                    Privacy, terms and conditions
                   </a>
                 </li>
                 <li class="govuk-footer__inline-list-item">
-                  <a class="govuk-footer__link" href="{% url 'privacy' %}">
-                    Privacy
-                  </a>
-                </li>
-                <li class="govuk-footer__inline-list-item">
-                  <a class="govuk-footer__link" href="{% url 'contact' %}">
-                    Contact Us
+                  <a class="govuk-footer__link" href="https://www.great.gov.uk/international/eu-exit-news/contact/">
+                    Contact
                   </a>
                 </li>
               </ul>

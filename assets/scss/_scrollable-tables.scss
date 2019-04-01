@@ -13,10 +13,6 @@
     .table {
       margin-bottom: 0;
     }
-
-    th {
-      white-space: nowrap;
-    }
   }
 
   &-scrollable-table {
@@ -84,5 +80,66 @@
     &::after {
       opacity: 1;
     }
+  }
+}
+
+.app-table {
+  font-size: 1em;
+  margin-bottom: 0;
+
+  &--no-wrap {
+    td {
+      white-space: normal;
+    }
+  }
+
+  a {
+    &[href^="http"] {
+      &::after {
+        content: " (external link)";
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+
+  tr {
+    &:nth-child(even) {
+      th,
+      td {
+        background: govuk-colour("grey-4");
+      }
+    }
+  }
+}
+
+.app-table__body {
+  tr {
+    &:last-child {
+      th,
+      td {
+        border: 0;
+      }
+    }
+  }
+}
+
+.app-table__header {
+  background: govuk-colour("grey-3");
+  border-left: 2px solid govuk-colour("white");
+  padding-left: 0.5em;
+
+  &:last-child {
+    padding-right: 1em;
+  }
+}
+
+.app-table__cell {
+  padding-left: 0.5em;
+
+  &:last-child {
+    padding-right: 1em;
   }
 }

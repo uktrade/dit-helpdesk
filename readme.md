@@ -39,16 +39,15 @@ To build and move all of the static assets:
 npm run build
 ```
 
-To trigger a build when any Sass is changed, run:
-```bash
-npm run watch:styles
-```
-
 `npm run` will show a list of all of the commands available, including linting.
 
 #### Installation
 
-Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation (`pip install -r requirements.txt`).
+Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation 
+
+```bash
+pip install -r requirements.txt
+```
 
 Then run:
 
@@ -73,7 +72,7 @@ docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 You should now be in the root of the app. To populate the products in the database, we need to run a scrape. To get the products in Section I, run:
 
 ```bash
-python dit_helpdesk/manage.py scrape_section_hierarchy 1
+python dit_helpdesk/manage.py scrape_section_hierarchy_v2
 ```
 
 To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
@@ -87,6 +86,11 @@ docker-compose up
 ```
 
 The site will be available at http://localhost:8000.
+
+To trigger a build when any Sass is changed, run:
+```bash
+npm run watch:styles
+```
 
 ### Running, then shelling in
 
@@ -108,6 +112,10 @@ then
 ```bash
 docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
+
+## Country synonyms
+
+The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to add synonyms. Then run `npm run update-countries`. You should see the updated files in `dit_helpdesk/static_collected/js/`.
 
 <!---
 ### Install locally

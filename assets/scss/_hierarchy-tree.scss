@@ -68,9 +68,11 @@
 .app-hierarchy-tree__section-numbers {
   margin-right: 1em;
   text-align: left;
+  width: 6em;
 }
 
 .app-hierarchy-tree__chapter-range {
+  width: 4em;
 }
 
 .app-hierarchy-tree__commodity-code {
@@ -105,7 +107,7 @@
   @include govuk-media-query($from: tablet) {
     // background-position: 0.5em 0.5em;
     vertical-align: top;
-    width: calc(100% - 9.5em);
+    width: calc(100% - 10em);
   }
 }
 

@@ -17,13 +17,14 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 from commodities import views as commodity_views
-from contact import views as contact_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
 from search import views as search_views
 from cookies import views as cookie_views
-from privacy import views as privacy_views
 from feedback import views as feedback_views
+from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
+
+from index import views as index
 
 from admin.views import admin_login_view
 
@@ -31,6 +32,8 @@ handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
+    path('', index.IndexRedirect.as_view(), name="index"),
+
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
     path('admin/login/', admin_login_view),
     path('admin/', admin.site.urls),
@@ -40,20 +43,21 @@ urlpatterns = [
     ),
     path('cookies/', cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
-        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})',
+        r'^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$',
         commodity_views.commodity_detail, name='commodity-detail'
     ),
-    # path('search/', search_views.search_view, name='search-view'),
+    re_path(
+        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        commodity_views.measure_condition_detail, name='commodity-measure-conditions'
+    ),
     path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
-    path('contact/', contact_views.ContactView.as_view(), name='contact'),
-    path('privacy/', privacy_views.PrivacyView.as_view(), name='privacy'),
     path(
         'feedback/success/',
         feedback_views.FeedbackSuccessView.as_view(),
         name='feedback-success-view',
     ),
-
+    path('privacy-terms-and-conditions/', privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(), name="privacy_terms_and_conditions_views"),
     path('search/', search_views.search_view, name='search-view'),
-    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search-hierarchy'),
+    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
 ]

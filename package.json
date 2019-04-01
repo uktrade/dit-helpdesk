@@ -15,12 +15,13 @@
     "build:styles": "gulp copyExternalAssets && gulp build:styles",
     "watch:styles": "gulp copyExternalAssets && gulp watch:styles",
     "build:all": "gulp build",
-    "watch:all": "gulp watch"
+    "watch:all": "gulp watch",
+    "update-countries": "node ./assets/countries/add-synonyms.js"
   },
   "dependencies": {
-    "accessible-autocomplete": "^1.6.2",
     "autoprefixer": "^9.4.10",
-    "cssnano": "^4.1.8",
+    "cssnano": "^4.1.10",
+    "govuk-country-and-territory-autocomplete": "^0.5.2",
     "govuk-frontend": "^2.6.0",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",

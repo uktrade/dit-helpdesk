@@ -49,7 +49,8 @@
 @import "govuk-frontend/overrides/typography";
 @import "govuk-frontend/overrides/width";
 
-@import "accessible-autocomplete/dist/accessible-autocomplete.min";
+// @import "accessible-autocomplete/dist/accessible-autocomplete.min";
+@import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";
 
 @import "flexible-tables";
 @import "hierarchy-tree";

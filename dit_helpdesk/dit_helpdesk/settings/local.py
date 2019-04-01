@@ -10,6 +10,7 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-SECRET_KEY="""SiMh\'&+z^q+xJi|a^f]cnxK#@RtB76aud"1pwCUO;8.GVY"""
+
+SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 RESTRICT_ADMIN = False
 DEBUG=True
