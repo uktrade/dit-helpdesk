@@ -43,8 +43,12 @@ urlpatterns = [
     ),
     path('cookies/', cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
-        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})',
+        r'^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$',
         commodity_views.commodity_detail, name='commodity-detail'
+    ),
+    re_path(
+        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        commodity_views.measure_condition_detail, name='commodity-measure-conditions'
     ),
     path('feedback/', feedback_views.FeedbackView.as_view(), name='feedback-view'),
     path(
@@ -54,6 +58,6 @@ urlpatterns = [
     ),
     path('privacy-terms-and-conditions/', privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(), name="privacy_terms_and_conditions_views"),
     path('search/', search_views.search_view, name='search-view'),
-    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search-hierarchy'),
+    re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
 ]
