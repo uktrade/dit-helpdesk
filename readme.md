@@ -39,16 +39,15 @@ To build and move all of the static assets:
 npm run build
 ```
 
-To trigger a build when any Sass is changed, run:
-```bash
-npm run watch:styles
-```
-
 `npm run` will show a list of all of the commands available, including linting.
 
 #### Installation
 
-Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation (`pip install -r requirements.txt`).
+Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation 
+
+```bash
+pip install -r requirements.txt
+```
 
 Then run:
 
@@ -87,6 +86,11 @@ docker-compose up
 ```
 
 The site will be available at http://localhost:8000.
+
+To trigger a build when any Sass is changed, run:
+```bash
+npm run watch:styles
+```
 
 ### Running, then shelling in
 
