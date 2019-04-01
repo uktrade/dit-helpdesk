@@ -72,7 +72,7 @@ docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 You should now be in the root of the app. To populate the products in the database, we need to run a scrape. To get the products in Section I, run:
 
 ```bash
-python dit_helpdesk/manage.py scrape_section_hierarchy 1
+python dit_helpdesk/manage.py scrape_section_hierarchy_v2
 ```
 
 To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
