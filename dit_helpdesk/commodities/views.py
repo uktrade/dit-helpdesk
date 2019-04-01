@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -84,5 +85,52 @@ def get_commodity_content(commodity):
         if resp.status_code == 200:
             resp_content = resp.content.decode()
 
+    resp_content = update_tts_json_measure_conditions(resp_content)
     commodity.tts_json = resp_content
     commodity.save()
+
+
+def update_tts_json_measure_conditions(resp_content):
+
+    obj = json.loads(resp_content)
+    for idx, measure in enumerate(obj['import_measures']):
+        measure['measure_id'] = idx
+        for i, condition in enumerate(measure['measure_conditions']):
+            if isinstance(condition, dict):
+                condition['measure_id'] = idx
+                condition['condition_id'] = i
+    return json.dumps(obj)
+
+
+def measure_condition_detail(request, commodity_code, country_code, measure_id):
+
+    selected_country = country_code.upper()
+
+    country = Country.objects.filter(
+        country_code=selected_country
+    )
+
+    country_exists = False
+
+    country_name = country.values()[0]['name']
+
+    if selected_country:
+        country_exists = country.exists()
+
+    if (not selected_country) or (not country_exists):
+        messages.error(request, 'Invalid originCountry')
+        return redirect(reverse('choose-country'))
+
+    commodity = Commodity.objects.get(commodity_code=commodity_code)
+    import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=selected_country)
+    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
+
+    context = {
+        'selected_origin_country': selected_country,
+        'commodity': commodity,
+        'selected_origin_country_name': country_name,
+        'import_measure': import_measure,
+        'conditions': conditions
+    }
+
+    return render(request, 'commodities/measure_condition_detail.html', context)
