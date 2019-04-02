@@ -1,3 +1,8 @@
+var Details = require('govuk-frontend/components/details/details.js')
+var Button = require('govuk-frontend/components/button/button.js')
+var common = require('govuk-frontend/common')
+var nodeListForEach = common.nodeListForEach
+
 /*
   Cookie methods
   ==============
@@ -9,7 +14,6 @@
     Deleting a cookie:
     CookieBanner.init('hobnob', null);
 */
-
 var CookieBanner = {
   init: function (name, value, options) {
     if (typeof value !== 'undefined') {
@@ -63,3 +67,15 @@ var CookieBanner = {
 }
 
 CookieBanner.addCookieMessage()
+
+
+// accessibility feature
+new Button(document).init()
+
+// details polyfill for MS browsers
+var $details = document.querySelectorAll('details')
+if ($details) {
+  nodeListForEach($details, function ($detail) {
+    new Details($detail).init()
+  })
+}
