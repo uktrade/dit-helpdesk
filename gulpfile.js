@@ -43,11 +43,10 @@ const paths = {
 
 const buildStylesForModernBrowsers = () => {
   return gulp.src(paths.styles.source)
+    .pipe(sourcemaps.init())
     .pipe(sass({
       includePaths: 'node_modules'
-    }))
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
+    }).on('error', sass.logError))
     .pipe(
       postcss([
         autoprefixer
@@ -65,9 +64,7 @@ const buildStylesForOldIE = () => {
   return gulp.src(paths.styles.oldie)
     .pipe(sass({
       includePaths: 'node_modules'
-    }))
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
+    }).on('error', sass.logError))
     .pipe(
       postcss([
         autoprefixer,

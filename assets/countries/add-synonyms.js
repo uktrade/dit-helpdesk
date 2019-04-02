@@ -4,7 +4,7 @@ const countriesToAddSynonymsTo = [
   {
     // This is the country code of that all of the synonyms will redirect to.
     countryCode: 'EU',
-    // An array of strings containing all of the synonyms.
+    // An array of strings containing all of the synonyms that will redirect to `countryCode`.
     synonyms: [
       'Austria',
       'Belgium',
