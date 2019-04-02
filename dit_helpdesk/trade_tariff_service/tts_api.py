@@ -398,7 +398,13 @@ class ImportMeasureJson(object):
             data = self.reformat_date(data)
         except Exception as e:
             print(e.args)
-        return data
+
+        data_with_headings = []
+
+        for index, value in enumerate(data):
+            data_with_headings.append([COMMODITY_DETAIL_TABLE_KEYS[index][1], value])
+
+        return data_with_headings
 
     def reformat_date(self, data):
 
@@ -408,13 +414,13 @@ class ImportMeasureJson(object):
         matched = target.match(data[row_last_index])
         if not matched.group(9):
             start_date_obj = datetime.strptime(matched.group(1), '%Y-%m-%d')
-            start_date_str = start_date_obj.strftime('%-d %B %Y')
+            start_date_str = start_date_obj.strftime('%-d&nbsp;%B&nbsp;%Y')
             data[row_last_index] = start_date_str
         else:
             start_date_obj = datetime.strptime(matched.group(5), '%Y-%m-%d')
-            start_date_str = start_date_obj.strftime('%-d %B %Y')
+            start_date_str = start_date_obj.strftime('%-d&nbsp;%B&nbsp;%Y')
             end_date_obj = datetime.strptime(matched.group(10), '%Y-%m-%d')
-            end_date_str = end_date_obj.strftime('%-d %B %Y')
+            end_date_str = end_date_obj.strftime('%-d&nbsp;%B&nbsp;%Y')
 
             data[row_last_index] = "{0} ({1})".format(start_date_str, end_date_str)
 

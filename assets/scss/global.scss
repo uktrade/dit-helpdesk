@@ -16,7 +16,7 @@
 // @import "govuk-frontend/components/breadcrumbs/breadcrumbs";
 @import "govuk-frontend/components/button/button";
 // @import "govuk-frontend/components/checkboxes/checkboxes";
-@import "govuk-frontend/components/character-count/character-count";
+// @import "govuk-frontend/components/character-count/character-count";
 // @import "govuk-frontend/components/summary-list/summary-list";
 // @import "govuk-frontend/components/date-input/date-input";
 @import "govuk-frontend/components/details/details";
@@ -53,6 +53,7 @@
 @import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";
 
 @import "flexible-tables";
+@import "scrollable-tables";
 @import "hierarchy-tree";
 @import "cookie-banner";
 

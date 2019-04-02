@@ -11,8 +11,10 @@
     <meta name="twitter:dnt" content="on">
     <meta name="format-detection" content="telephone=no">
 
-    <!--[if lt IE 9]>
+    <!--[if lte IE 9]>
       <link href="{% static 'css/global-oldie.min.css' %}" rel="stylesheet" media="all" />
+    <![endif]-->
+    <!--[if lt IE 9]>
       <script>
         (function(){
           var elements = [
@@ -51,7 +53,7 @@
         }
       </style>
     <![endif]-->
-    <!--[if !IE 8]><!-->
+    <!--[if !(lte IE 9)]><!-->
       <link rel="stylesheet" media="all" href="{% static 'css/global.min.css' %}">
     <!--<![endif]-->
 

@@ -138,6 +138,7 @@
 
 .app-table__cell {
   padding-left: 0.5em;
+  min-width: 10em;
 
   &:last-child {
     padding-right: 1em;
