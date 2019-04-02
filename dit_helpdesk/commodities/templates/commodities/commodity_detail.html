@@ -49,7 +49,7 @@
                   <tr class="govuk-table__row">
                     {% for  col in row %}
                       {% if forloop.counter == 1 %}
-                        <th class="govuk-table__header app-table__cell govuk-!-font-weight-regular" scope="row">{{ col }}</td>
+                        <th class="govuk-table__header app-table__cell govuk-!-font-weight-regular" scope="row">{{ col }}</th>
                       {% else %}
                         <td class="govuk-table__cell app-table__cell">{{ col | safe }}</td>
                       {% endif %}
