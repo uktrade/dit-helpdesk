@@ -1,0 +1,7 @@
+@import 'global';
+
+.app-flexible-table__cell {
+  &::before {
+    content: none;
+  }
+}

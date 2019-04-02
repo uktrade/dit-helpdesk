@@ -1,7 +1,3 @@
-import ScrollingTable from './modules/scrolling-tables.module.js'
-
-const $scrollingTables = document.querySelectorAll('[data-module="scrolling-table"]')
-
-$scrollingTables.forEach(($scrollingTable) => {
-  new ScrollingTable($scrollingTable).init()
-})
+// Include this at the bottom of core/templates/base.html as
+// `<script src="{% static 'js/enhancements.js' %}" type="module"></script>`
+//

@@ -25,6 +25,7 @@ const paths = {
   styles: {
     watch: './assets/scss/**/*.scss',
     source: './assets/scss/global.scss',
+    oldie: './assets/scss/oldie.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
@@ -60,8 +61,7 @@ const buildStylesForModernBrowsers = () => {
 }
 
 const buildStylesForOldIE = () => {
-  return gulp.src(paths.styles.source)
-    .pipe(sourcemaps.init())
+  return gulp.src(paths.styles.oldie)
     .pipe(sass({
       includePaths: 'node_modules'
     }).on('error', sass.logError))
