@@ -17,6 +17,12 @@ const sass = require('gulp-sass')
 const sourcemaps = require('gulp-sourcemaps')
 const taskListing = require('gulp-task-listing')
 
+const browserify = require('browserify')
+const source = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const uglify = require('gulp-uglify')
+const log = require('gulplog')
+
 sass.compiler = require('node-sass')
 
 // const environment = process.env.NODE_ENV || 'dev'
@@ -81,7 +87,28 @@ const buildStylesForOldIE = () => {
 }
 
 const buildJavascripts = () => {
-  return gulp.src(paths.javascripts.source, { sourcemaps: true })
+  return gulp.src([paths.javascripts.source,'!assets/javascript/global.js'], { sourcemaps: true })
+    .pipe(gulp.dest(paths.javascripts.destination))
+}
+
+const compileGovukFrontend = () => {
+  var b = browserify({
+    entries: [
+      './assets/javascript/global.js'
+    ],
+    debug: true
+  });
+
+  return b.bundle()
+    .pipe(source('global.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    // Add transformation tasks to the pipeline here.
+    .pipe(uglify())
+    .on('error', log.error)
+    .pipe(rename({
+      extname: '.min.js'
+    }))
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
@@ -100,14 +127,14 @@ const watchStyles = () => {
 }
 
 const watchJavascripts = () => {
-  return gulp.watch(paths.javascripts.watch, buildStyles)
+  return gulp.watch(paths.javascripts.watch, buildJavascripts)
 }
 
 const buildStyles = gulp.parallel(buildStylesForModernBrowsers, buildStylesForOldIE)
 
 const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
-const watch = gulp.parallel(watchStyles, watchJavascripts)
-const build = gulp.parallel(buildStyles, buildJavascripts)
+const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend)
+const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend)
 
 gulp.task('default', taskListing)
 gulp.task('copyExternalAssets', copy)
