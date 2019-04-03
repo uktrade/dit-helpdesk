@@ -1,5 +1,6 @@
 var Details = require('govuk-frontend/components/details/details.js')
 var Button = require('govuk-frontend/components/button/button.js')
+var Accordion = require('govuk-frontend/components/accordion/accordion.js')
 var common = require('govuk-frontend/common')
 var nodeListForEach = common.nodeListForEach
 
@@ -79,3 +80,9 @@ if ($details) {
     new Details($detail).init()
   })
 }
+
+ // Find all global accordion components to enhance.
+ var $accordions = document.querySelectorAll('[data-module="accordion"]');
+ nodeListForEach($accordions, function ($accordion) {
+   new Accordion($accordion).init();
+ });
