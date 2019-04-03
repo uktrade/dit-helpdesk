@@ -58,11 +58,18 @@ var CookieBanner = {
   },
   addCookieMessage: function () {
     var message = document.querySelector('.js--cookie-banner')
-    var messageIsShowing = (message && CookieBanner.init('seen_cookie_message') === null)
+    var hasCookieMessage = (message && CookieBanner.init('cookie_seen') === null)
+    
+    var isCookiesPage = document.URL.indexOf('cookies') !== -1
 
-    if (messageIsShowing) {
+    // we only want to dismiss the cookie banner once they've visited the cookie page
+    if (isCookiesPage) {
+      CookieBanner.init('cookie_seen', 'true', { days: 28 })
+    }
+
+    // show the cookies banner until the cookie has been set
+    if (hasCookieMessage) {
       message.className = message.className.replace(/js--cookie-banner/, 'app-cookie-banner--show')
-      CookieBanner.init('seen_cookie_message', 'true', { days: 28 })
     }
   }
 }
