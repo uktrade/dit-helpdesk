@@ -90,7 +90,8 @@ const buildJavascripts = () => {
   return gulp.src([
       paths.javascripts.source,
       '!assets/javascript/global.js',
-      '!assets/javascript/modules/commodity-tree.js'
+      '!assets/javascript/modules/commodity-tree.js',
+      '!assets/javascript/vendor/**/*'
     ], { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
