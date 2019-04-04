@@ -2,6 +2,7 @@ var Details = require('govuk-frontend/components/details/details.js')
 var Button = require('govuk-frontend/components/button/button.js')
 var Accordion = require('govuk-frontend/components/accordion/accordion.js')
 var common = require('govuk-frontend/common')
+var commodityTree = require('./modules/commodity-tree')
 var nodeListForEach = common.nodeListForEach
 
 /*
@@ -93,3 +94,12 @@ if ($details) {
  nodeListForEach($accordions, function ($accordion) {
    new Accordion($accordion).init();
  });
+
+
+
+var $commodityTree = document.querySelector('.app-hierarchy-tree')
+if ($commodityTree) {
+  commodityTree.init($commodityTree)
+}
+
+ 

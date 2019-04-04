@@ -87,7 +87,11 @@ const buildStylesForOldIE = () => {
 }
 
 const buildJavascripts = () => {
-  return gulp.src([paths.javascripts.source,'!assets/javascript/global.js'], { sourcemaps: true })
+  return gulp.src([
+      paths.javascripts.source,
+      '!assets/javascript/global.js',
+      '!assets/javascript/modules/commodity-tree.js'
+    ], { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
