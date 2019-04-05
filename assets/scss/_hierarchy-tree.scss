@@ -143,16 +143,35 @@
   text-transform: none;
 }
 
+
 .app-hierarchy-tree__link--parent {
   padding-left: 1.25em;
+  &:before {
+    color: black;
+    display: inline-block;
+    margin-left: -1.25em;
+    padding-right: 0.5em;
+    text-decoration: underline;
+  }
 
   .app-hierarchy-tree__parent--open & {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='32' height='32' fill='currentColor'><path d='M5 6h10l-5 9-5-9z'/></svg>");
+    &:before {
+      content: "\25BC";
+      font-size: 16px;
+    }
     font-weight: bold;
   }
 
   .app-hierarchy-tree__parent--closed & {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='32' height='32' fill='currentColor'><path d='M15 10l-9 5V5l9 5z'/></svg>");
+    &:before {
+      content: "\25B6";
+      font-size: 15px;
+    }
     font-weight: normal;
   }
+  
+  &:link:before {
+    text-decoration: none;
+  }
+
 }
