@@ -7,8 +7,8 @@
     <div class="govuk-grid-column-full">
       <a href="{% url 'index' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
       <h2 class="govuk-heading-l">
-        <span class="govuk-caption-l">Question 1 of 2</span>
-        Where are you exporting from?
+        <span class="govuk-caption-l">Step 1 of 2</span>
+        Where do the goods you're exporting come from?
       </h2>
     </div>
   </div>
@@ -16,9 +16,9 @@
     <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
       <form action="{% url 'choose-country' %}" method="post">
         {% csrf_token %}
-        <label class="govuk-label" for="country-picker">Choose the country of origin for the products</label>
+        <label class="govuk-hint" for="country-picker">Start typing the export country</label>
         <select name="origin_country" id="country-picker">
-          <option value="">Select a country</option>
+          <option value="">Start typing the export country</option>
           {% for country_code, country_name in country_options %}
             {% if selected_country == country_code %}
                 <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
