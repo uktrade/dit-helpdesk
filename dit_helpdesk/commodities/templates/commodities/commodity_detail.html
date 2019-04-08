@@ -166,8 +166,8 @@
           </div>
         </details>
     </div>
-    {% if roo_fragments %}
       <div class="govuk-grid-column-full">
+      {% if rules_of_origin %}
         <h3 class="govuk-heading-m">Rules of origin</h3>
         <div class="app-fullscreen-content govuk-!-margin-bottom-4">
           <table class="govuk-table app-table">
@@ -176,12 +176,21 @@
             <tr class="govuk-table__row">
               <th class="govuk-table__header app-table__header" scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
               <th class="govuk-table__header app-table__header" scope="col">Description of product</th>
-              <th class="govuk-table__header govuk-!-width-one-half app-table__header" scope="col">Working or processing, carried out on non-originating materials, which confers originating status</th>
+              <th class="govuk-table__header govuk-!-width-one-half app-table__header" colspan="2" scope="col">Working or processing, carried out on non-originating materials, which confers originating status</th>
           </tr>
           </thead>
-            {% for html_fragment in roo_fragments %}
-                {{ html_fragment | safe }}
-            {% endfor %}
+          <tbody class="govuk-table__body app-table__body">
+              {% spaceless %}
+                {% for rule in rules_of_origin %}
+                    <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell">{{ rule.rule_id }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.description }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_one }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_two }}</td>
+                    </tr>
+                {% endfor %}
+              {% endspaceless %}
+          </tbody>
           </table>
         </div>
       </div>
