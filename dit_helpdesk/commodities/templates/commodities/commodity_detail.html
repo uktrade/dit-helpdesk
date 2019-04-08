@@ -156,11 +156,12 @@
           </div>
         </details>
     </div>
-    {% if roo_fragments %}
       <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.</p>
         <p class="govuk-body">Also <a class="govuk-link" href="https://www.gov.uk/guidance/signed-uk-trade-agreements-transitioned-from-the-eu">check the trade agreements the UK has with the country you are exporting from</a>.</p>
+      {% if rules_of_origin %}
+
         <div class="app-fullscreen-content govuk-!-margin-bottom-4">
           <table class="govuk-table app-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
@@ -171,9 +172,18 @@
               <th class="govuk-table__header govuk-!-width-one-half app-table__header" scope="col">How non-originating materials must be worked or processed to get country of origin status</th>
           </tr>
           </thead>
-            {% for html_fragment in roo_fragments %}
-                {{ html_fragment | safe }}
-            {% endfor %}
+          <tbody class="govuk-table__body app-table__body">
+              {% spaceless %}
+                {% for rule in rules_of_origin %}
+                    <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell">{{ rule.rule_id }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.description }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_one }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_two }}</td>
+                    </tr>
+                {% endfor %}
+              {% endspaceless %}
+          </tbody>
           </table>
         </div>
       </div>
