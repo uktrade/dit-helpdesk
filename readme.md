@@ -4,7 +4,7 @@ This service is used to help people find the correct Harmonised System (HS) code
 
 ## Requirements
  - Python 3
- - Node 10
+ - Node [Active LTS](https://nodejs.org/en/about/releases/) version (Current Active version is v10)
  - Docker
 
  You can install and run this outside of Docker, but currently there is no documentation for this.
@@ -23,7 +23,8 @@ If you have Docker installed, you can run this service without needing to set up
 
 #### Frontend static asset installation
 
-First we need to install [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend), [Accessible Autocomplete](https://github.com/alphagov/accessible-autocomplete), and other front end dependencies.
+First we need to install [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend) and
+[GOV.UK country and territory autocomplete](https://github.com/alphagov/govuk-country-and-territory-autocomplete) (Which will also also install the required [Accessible Autocomplete](https://github.com/alphagov/accessible-autocomplete) dependency), and other front end dependencies.
 
 This is all done by going to the project root folder, which contains `package.json`. Then run:
 
@@ -43,7 +44,7 @@ npm run build
 
 #### Installation
 
-Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation 
+Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation
 
 ```bash
 pip install -r requirements.txt
