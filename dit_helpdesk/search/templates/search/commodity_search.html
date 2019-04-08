@@ -8,14 +8,14 @@
     <a href="{% url 'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
 
     <h2 class="govuk-heading-l">
-      <span class="govuk-caption-l">Question 2 of 2</span>
-      Select product code
+      <span class="govuk-caption-l">Step 2 of 2</span>
+      Enter the commodity code for your goods
     </h2>
 
     <form action="{% url 'search-view' %}" method="get">
         <div class="govuk-form-group">
-          <label class="govuk-label" for="search">
-            Enter a full commodity code, or browse for a commodity below.
+          <label class="govuk-hint" for="search">
+            If you do not know the commodity code, you can look for it below.
           </label>
           <input class="govuk-input govuk-input--width-10" id="search" name="q" type="text">
         </div>
@@ -24,8 +24,9 @@
     </form>
 
     <h2 class="govuk-heading-l govuk-!-padding-top-8">
-      Browse product codes
+      Look up commodity codes
     </h2>
+    <p class="govuk-body govuk-hint">You might need to click through many descriptions before you can select a code.</p>
 
     {{ hierarchy_html | safe }}
   </div>
