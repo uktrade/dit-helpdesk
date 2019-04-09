@@ -1,6 +1,7 @@
 var Details = require('govuk-frontend/components/details/details.js')
 var Button = require('govuk-frontend/components/button/button.js')
 var Accordion = require('govuk-frontend/components/accordion/accordion.js')
+var ErrorSummary = require('govuk-frontend/components/error-summary/error-summary.js')
 var common = require('govuk-frontend/common')
 var commodityTree = require('./modules/commodity-tree')
 var nodeListForEach = common.nodeListForEach
@@ -98,3 +99,11 @@ var $commodityTree = document.querySelector('.app-hierarchy-tree')
 if ($commodityTree) {
   commodityTree.init($commodityTree)
 }
+
+// error summary focus on page load
+var $errorSummary = document.querySelector('[data-module="error-summary"]')
+if ($errorSummary) {
+  new ErrorSummary($errorSummary).init()
+}
+
+ 
