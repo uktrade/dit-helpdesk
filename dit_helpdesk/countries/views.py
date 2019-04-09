@@ -6,6 +6,9 @@ from countries.models import Country
 
 
 def choose_country_view(request):
+    countries = Country.objects.all()
+    COUNTRY_NOT_SELECTED_SUMMARY_ERROR_MESSAGE = 'Enter a country'
+    COUNTRY_NOT_SELECTED_INPUR_ERROR_MESSAGE = 'Enter a country'
     if request.session.has_key('origin_country'):
         selected_country = request.session['origin_country']
     else:
@@ -17,9 +20,14 @@ def choose_country_view(request):
             request.session['origin_country'] = origin_country
             return redirect(reverse('search-view') + 'country/' + origin_country.lower())
         else:
-            messages.error(request, 'Invalid origin_country: %s' % origin_country)
+            context = {
+                'country_options': [(c.country_code, c.name) for c in countries],
+                'isError': True,
+                'errorSummaryMessage' : COUNTRY_NOT_SELECTED_SUMMARY_ERROR_MESSAGE,
+                'errorInputMessage' : COUNTRY_NOT_SELECTED_INPUR_ERROR_MESSAGE,
+            }
+            return render(request, 'countries/choose_country.html', context)
 
-    countries = Country.objects.all()
     context = {
         'country_options': [(c.country_code, c.name) for c in countries],
         'selected_country': selected_country
