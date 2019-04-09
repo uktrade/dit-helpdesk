@@ -65,11 +65,11 @@
             <tr class="govuk-table__row app-flexible-table__row">
               {% for  col in row %}
                 {% if forloop.counter == 1 %}
-                <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular"
+                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular"
                     scope="row"
                     data-column-heading="{{ col.0 }}">
                   <p>{{ col.1 }}</p>
-                  </td>
+                </td>
                   {% else %}
                 <td class="govuk-table__cell app-flexible-table__cell"
                     data-column-heading="{{ col.0 }}">
