@@ -6,21 +6,39 @@
 <div class="govuk-grid-row govuk-!-padding-bottom-9">
   <div class="govuk-grid-column-full">
     <a href="{% url 'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
-
+    {% if isError %}
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          <li>
+            <a href="#commodity-code-error">{{ errorSummaryMessage | safe }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
     <h2 class="govuk-heading-l">
       <span class="govuk-caption-l">Step 2 of 2</span>
       Enter the commodity code for your goods
     </h2>
 
     <form action="{% url 'search-view' %}" method="get">
-        <div class="govuk-form-group">
+        <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
             If you do not know the commodity code, you can look for it below.
           </label>
-          <input class="govuk-input govuk-input--width-10" id="search" name="q" type="text">
+          {% if isError %}
+            <span id="commodity-code-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage | safe}}
+          </span>
+          {% endif %}
+          <input class="govuk-input govuk-input--width-10{% if isError %} govuk-input--error{% endif %}" id="search" name="q" type="text" {% if isError %} aria-describedby="select-country-error"{% endif %}>
         </div>
-          <input type="hidden" name="country" value="{{ country_code | escape }}" />
-        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+      <input type="hidden" name="country" value="{{ country_code | escape }}" />
+      <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
 
     <h2 class="govuk-heading-l govuk-!-padding-top-8">
