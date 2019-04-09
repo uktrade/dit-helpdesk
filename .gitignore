@@ -119,3 +119,4 @@ node_modules/
 **/*.min.js.map.gz
 **/*.js.gz
 src/
+.vscode

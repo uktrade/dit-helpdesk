@@ -60,7 +60,7 @@ var CookieBanner = {
   addCookieMessage: function () {
     var message = document.querySelector('.js--cookie-banner')
     var hasCookieMessage = (message && CookieBanner.init('cookie_seen') === null)
-    
+
     var isCookiesPage = document.URL.indexOf('cookies') !== -1
 
     // we only want to dismiss the cookie banner once they've visited the cookie page
@@ -77,7 +77,6 @@ var CookieBanner = {
 
 CookieBanner.addCookieMessage()
 
-
 // accessibility feature
 new Button(document).init()
 
@@ -89,17 +88,13 @@ if ($details) {
   })
 }
 
- // Find all global accordion components to enhance.
- var $accordions = document.querySelectorAll('[data-module="accordion"]');
- nodeListForEach($accordions, function ($accordion) {
-   new Accordion($accordion).init();
- });
-
-
+// Find all global accordion components to enhance.
+var $accordions = document.querySelectorAll('[data-module="accordion"]')
+nodeListForEach($accordions, function ($accordion) {
+  new Accordion($accordion).init()
+})
 
 var $commodityTree = document.querySelector('.app-hierarchy-tree')
 if ($commodityTree) {
   commodityTree.init($commodityTree)
 }
-
- 
