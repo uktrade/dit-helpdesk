@@ -86,7 +86,7 @@ Starting the server again is the same command as installing:
 docker-compose up
 ```
 
-The site will be available at http://localhost:8000.
+The site will be available at http://localhost:8000/choose-country/.
 
 To trigger a build when any Sass is changed, run:
 ```bash

@@ -29,7 +29,6 @@ COMMODITY_DETAIL_TABLE_KEYS = [
 
 
 class CommodityJson(object):
-
     def __init__(self, di):
         self.di = di
 
@@ -365,6 +364,11 @@ class ImportMeasureJson(object):
             country = country + ' (%s)' % self.di['geographical_area']['id']
 
         measure_description = self.di['measure_type']['description']
+
+        try:
+            measure_description = (self.di['measure_type']['description'], self.di['additional_code'])
+        except KeyError:
+            measure_description = self.di['measure_type']['description']
 
         if self.di['order_number']:
             order_str = ' - Order No: %s' % self.di['order_number']['number']  # todo: add href
