@@ -41,3 +41,4 @@ werkzeug==0.14.1
 whitenoise==4.1.2
 -e "git+https://github.com/uktrade/django-staff-sso-client.git#egg=authbroker_client"
 pandas==0.24.2
+python-docx==0.8.10

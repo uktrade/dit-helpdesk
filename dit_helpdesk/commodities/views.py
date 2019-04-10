@@ -16,6 +16,7 @@ from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
+from rules_of_origin.models import RulesGroupMember
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 from rules_of_origin.util import get_rules_of_origin_html_fragments
 
@@ -67,11 +68,22 @@ def commodity_detail(request, commodity_code, country_code):
         measure_json.get_table_row() for measure_json in import_measures
     ]
 
+    # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
+    rules = []
+    try:
+        for country_code in country:
+            for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
+                for r in rd.rule_set.all():
+                    if r.chapter == commodity.get_heading().chapter:
+                        rules.append(r)
+    except Exception as ex:
+        print(ex.args)
+
     context = {
         'selected_origin_country': selected_country,
         'commodity': commodity,
         'selected_origin_country_name': country_name,
-        'roo_fragments': get_rules_of_origin_html_fragments(commodity),
+        'rules_of_origin': rules,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': commodity.regulation_set.all()
