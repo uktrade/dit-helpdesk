@@ -30,6 +30,25 @@ def search_view(request, country_code=None):
 
     countries = Country.objects.all()
 
+    # error message variables used for validation
+    CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE = 'Enter a UK commodity code. <br /> The code can be 2,4,6,8 or 10 digits long'
+    CODE_NOT_FOUND_INPUT_ERROR_MESSAGE = 'Enter a UK commodity code'
+    CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
+    CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
+    CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
+    CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
+    CODE_HAS_SPACES_SUMMARY_ERROR_MESSAGE = 'Enter commodity code without spaces'
+    CODE_HAS_SPACES_INPUT_ERROR_MESSAGE = 'Enter commodity code without spaces'
+
+    # config for instance when the code is not found
+    CODE_NOT_FOUND_KWARGS = { 
+        'isError': True,
+        'errorSummaryMessage' : CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE,
+        'errorInputMessage' : CODE_NOT_FOUND_INPUT_ERROR_MESSAGE,
+        'hierarchy_html': hierarchy_data(country_code),
+        'country_code': country_code.lower()
+    }
+
     if 'q' not in request.GET:
         context = {
             'hierarchy_html': hierarchy_data(country_code),
@@ -39,12 +58,45 @@ def search_view(request, country_code=None):
         return render(request, 'search/commodity_search.html', context)
 
     query = request.GET['q'].strip()
-
-
+    
+    # show message that a code must not be empty
+    if len(query) == 0:
+        kwargs = { 
+            'isError': True,
+            'errorSummaryMessage' : CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE,
+            'errorInputMessage' : CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE,
+            'hierarchy_html': hierarchy_data(country_code),
+            'country_code': country_code.lower()
+        }   
+        return render(request, 'search/commodity_search.html', kwargs)
+        
     # SEARCH PRE-PROCESSING:
     # deal with 1 digits, e.g., convert 2 to 02
     if len(query) == 1:
         query = '0' + query
+
+    # show an error message if it is not a digit
+    if len(query) > 0 and not query.isdigit():
+
+        # if there are spaces show error message
+        if ' ' in query: 
+            kwargs = { 
+                'isError': True,
+                'errorSummaryMessage' : CODE_HAS_SPACES_SUMMARY_ERROR_MESSAGE,
+                'errorInputMessage' : CODE_HAS_SPACES_INPUT_ERROR_MESSAGE,
+                'hierarchy_html': hierarchy_data(country_code),
+                'country_code': country_code.lower()
+            }
+            return render(request, 'search/commodity_search.html', kwargs)
+        else:
+            kwargs = { 
+                'isError': True,
+                'errorSummaryMessage' : CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE,
+                'errorInputMessage' : CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE,
+                'hierarchy_html': hierarchy_data(country_code),
+                'country_code': country_code.lower()
+            }
+            return render(request, 'search/commodity_search.html', kwargs)  
 
     # deal with illegal 3,5,7,9 digit codes by removing final digit
     if len(query) in [3,5,7,9]:
@@ -72,13 +124,7 @@ def search_view(request, country_code=None):
                                             'country_code': country_code.lower() }
             ))
         else:
-
-
-            kwargs = {
-                'country_code': country_code.lower()
-            }
-            #messages.error('Commodity "%s" not found' % code)
-            return redirect(reverse('search', kwargs=kwargs))
+            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
 
     elif len(query) == 2 and query.isdigit():
@@ -94,12 +140,7 @@ def search_view(request, country_code=None):
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
 
         else:
-
-            kwargs = {
-                'country_code': country_code.lower()
-            }
-            #messages.error('Commodity "%s" not found' % code)
-            return redirect(reverse('search', kwargs=kwargs))    
+            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)    
 
 
     elif len(query) == 4 and query.isdigit():
@@ -115,11 +156,7 @@ def search_view(request, country_code=None):
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
 
         else:
-            kwargs = {
-                'country_code': country_code.lower()
-            }
-            #messages.error('Commodity "%s" not found' % code)
-            return redirect(reverse('search', kwargs=kwargs))
+            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
 
     elif len(query) == 6 and query.isdigit():
@@ -135,22 +172,10 @@ def search_view(request, country_code=None):
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
 
         else:
-            kwargs = {
-                'country_code': country_code.lower()
-            }
-            #messages.error('Commodity "%s" not found' % code)
-            return redirect(reverse('search', kwargs=kwargs))
-
+            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
     else:
-        #print('else')
-        #messages.error('Expected 10-digit code')
-        # return redirect(reverse('search-view'))
-        kwargs = { 
-            'country_code': country_code.lower()
-        }   
-
-        return redirect(reverse('search', kwargs=kwargs))
+        return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
 
     return render(request, 'countries/choose_country.html', context)

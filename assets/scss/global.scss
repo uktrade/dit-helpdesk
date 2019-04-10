@@ -79,8 +79,25 @@ abbr {
   cursor: help;
 }
 
-.autocomplete__option {
+.autocomplete__option,
+.autocomplete__input,
+.autocomplete__hint {
   @include govuk-typography-common;
+}
+
+.autocomplete__hint,
+.autocomplete__input {
+  height: 40px;
+}
+
+// fix the offeset the autocomple creates
+.autocomplete__hint {
+  left: 1px;
+}
+
+// add error state and 
+.govuk-form-group--error .autocomplete__input {
+  border: $govuk-border-width-form-element-error solid $govuk-error-colour;
 }
 
 .app-commodity-code {

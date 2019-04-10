@@ -6,6 +6,20 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <a href="{% url 'index' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+      {% if isError %}
+      <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+          There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            <li>
+              <a href="#select-country-error">{{ errorSummaryMessage }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
       <h2 class="govuk-heading-l">
         <span class="govuk-caption-l">Step 1 of 2</span>
         Where do the goods you're exporting come from?
@@ -15,20 +29,26 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
       <form action="{% url 'choose-country' %}" method="post">
-        {% csrf_token %}
-        <label class="govuk-hint" for="country-picker">Start typing the export country.</label>
-        <select name="origin_country" id="country-picker">
-          <option value="">Start typing the export country</option>
-          {% for country_code, country_name in country_options %}
-            {% if selected_country == country_code %}
-                <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
-            {% else %}
-                <option value="{{ country_code | lower }}">{{ country_name }}</option>
-            {% endif %}
-          {% endfor %}
-        </select>
-
-          <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+        <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
+          {% csrf_token %}
+          <label class="govuk-hint" for="country-picker">Start typing the export country.</label>
+          {% if isError %}
+            <span id="select-country-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage}}
+            </span>
+          {% endif %}
+          <select name="origin_country" class="govuk-select{% if isError %} govuk-select--error{% endif %}" id="country-picker" {% if isError %} aria-describedby="select-country-error"{% endif %}>
+            <option value="">Select the export country</option>
+            {% for country_code, country_name in country_options %}
+              {% if selected_country == country_code %}
+                  <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
+              {% else %}
+                  <option value="{{ country_code | lower }}">{{ country_name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="govuk-button govuk-!-margin-top-6 govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
       </form>
     </div>
   </div>
@@ -39,7 +59,8 @@
   <script>
     openregisterLocationPicker({
       selectElement: document.getElementById('country-picker'),
-      url: '/assets/js/location-autocomplete-graph.json'
+      url: '/assets/js/location-autocomplete-graph.json',
+      defaultValue: '',
     })
   </script>
 {% endblock footer_additions %}
