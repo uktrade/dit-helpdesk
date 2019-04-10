@@ -16,7 +16,7 @@
     <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
       <form action="{% url 'choose-country' %}" method="post">
         {% csrf_token %}
-        <label class="govuk-hint" for="country-picker">Start typing the export country</label>
+        <label class="govuk-hint" for="country-picker">Start typing the export country.</label>
         <select name="origin_country" id="country-picker">
           <option value="">Start typing the export country</option>
           {% for country_code, country_name in country_options %}
