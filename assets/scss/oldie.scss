@@ -5,3 +5,19 @@
     content: none;
   }
 }
+
+.app-hierarchy-tree__link {
+  width: 80%;
+}
+
+// fix hierarchy tree underline in IE 8-10
+
+.app-hierarchy-tree__link--parent:link:before,
+.app-hierarchy-tree__parent--closed .app-hierarchy-tree__link--parent:link:before {
+  text-decoration: none;
+}
+
+//fix triangle size
+.app-hierarchy-tree__parent--closed .app-hierarchy-tree__link--parent:before {
+  font-size: 22px;
+}

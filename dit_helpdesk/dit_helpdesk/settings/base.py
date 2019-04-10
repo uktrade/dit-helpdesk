@@ -222,6 +222,7 @@ TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", 
 # regulation import arguments
 REGULATIONS_MODEL_ARG=["Regulation"]
 REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
+RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
@@ -229,3 +230,6 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_SECURE = True
+
+
+

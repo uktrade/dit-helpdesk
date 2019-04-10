@@ -1,7 +1,9 @@
 var Details = require('govuk-frontend/components/details/details.js')
 var Button = require('govuk-frontend/components/button/button.js')
 var Accordion = require('govuk-frontend/components/accordion/accordion.js')
+var ErrorSummary = require('govuk-frontend/components/error-summary/error-summary.js')
 var common = require('govuk-frontend/common')
+var commodityTree = require('./modules/commodity-tree')
 var nodeListForEach = common.nodeListForEach
 
 /*
@@ -58,17 +60,23 @@ var CookieBanner = {
   },
   addCookieMessage: function () {
     var message = document.querySelector('.js--cookie-banner')
-    var messageIsShowing = (message && CookieBanner.init('seen_cookie_message') === null)
+    var hasCookieMessage = (message && CookieBanner.init('cookie_seen') === null)
 
-    if (messageIsShowing) {
+    var isCookiesPage = document.URL.indexOf('cookies') !== -1
+
+    // we only want to dismiss the cookie banner once they've visited the cookie page
+    if (isCookiesPage) {
+      CookieBanner.init('cookie_seen', 'true', { days: 28 })
+    }
+
+    // show the cookies banner until the cookie has been set
+    if (hasCookieMessage) {
       message.className = message.className.replace(/js--cookie-banner/, 'app-cookie-banner--show')
-      CookieBanner.init('seen_cookie_message', 'true', { days: 28 })
     }
   }
 }
 
 CookieBanner.addCookieMessage()
-
 
 // accessibility feature
 new Button(document).init()
@@ -81,8 +89,21 @@ if ($details) {
   })
 }
 
- // Find all global accordion components to enhance.
- var $accordions = document.querySelectorAll('[data-module="accordion"]');
- nodeListForEach($accordions, function ($accordion) {
-   new Accordion($accordion).init();
- });
+// Find all global accordion components to enhance.
+var $accordions = document.querySelectorAll('[data-module="accordion"]')
+nodeListForEach($accordions, function ($accordion) {
+  new Accordion($accordion).init()
+})
+
+var $commodityTree = document.querySelector('.app-hierarchy-tree')
+if ($commodityTree) {
+  commodityTree.init($commodityTree)
+}
+
+// error summary focus on page load
+var $errorSummary = document.querySelector('[data-module="error-summary"]')
+if ($errorSummary) {
+  new ErrorSummary($errorSummary).init()
+}
+
+ 

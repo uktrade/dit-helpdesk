@@ -87,7 +87,12 @@ const buildStylesForOldIE = () => {
 }
 
 const buildJavascripts = () => {
-  return gulp.src([paths.javascripts.source,'!assets/javascript/global.js'], { sourcemaps: true })
+  return gulp.src([
+      paths.javascripts.source,
+      '!assets/javascript/global.js',
+      '!assets/javascript/modules/commodity-tree.js',
+      '!assets/javascript/vendor/**/*'
+    ], { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
@@ -104,7 +109,7 @@ const compileGovukFrontend = () => {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     // Add transformation tasks to the pipeline here.
-    .pipe(uglify())
+    .pipe(uglify({ie8:true}))
     .on('error', log.error)
     .pipe(rename({
       extname: '.min.js'

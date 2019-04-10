@@ -21,7 +21,7 @@ COMMODITY_DETAIL_TABLE_KEYS = [
     ('measure_description', 'Measure type'),
     ('measure_value', 'Value'),
     ('conditions_html', 'Conditions'),
-    ('excluded_countries', 'Excluded Countries'),
+    ('excluded_countries', 'Excluded countries'),
     ('start_end_date', 'Date'),
     # ('legal_base_html', 'Legal Base'),
     # ('footnotes_html', 'Footnotes'),
@@ -29,7 +29,6 @@ COMMODITY_DETAIL_TABLE_KEYS = [
 
 
 class CommodityJson(object):
-
     def __init__(self, di):
         self.di = di
 
@@ -366,6 +365,11 @@ class ImportMeasureJson(object):
 
         measure_description = self.di['measure_type']['description']
 
+        try:
+            measure_description = (self.di['measure_type']['description'], self.di['additional_code'])
+        except KeyError:
+            measure_description = self.di['measure_type']['description']
+
         if self.di['order_number']:
             order_str = ' - Order No: %s' % self.di['order_number']['number']  # todo: add href
             measure_description = measure_description + '\n' + order_str
@@ -451,6 +455,7 @@ class MeasureCondition(object):
 
 # ========================================
 # Section response:
+
 
     """
     {'_response_info': {'links': [{'href': '/trade-tariff/sections/4.json',

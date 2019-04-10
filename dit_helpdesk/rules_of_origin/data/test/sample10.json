@@ -1,0 +1,53 @@
+{
+	"chapter": [{
+		"number": "01",
+		"row": [{
+			"id": "Chapter 1",
+			"desc": ["Live animals"],
+			"workingLeft": ["All the animals of Chapter 1 shall be wholly obtained"],
+			"workingRight": []
+		}]
+	}, {
+		"number": "02",
+		"row": [{
+			"id": "Chapter 2",
+			"desc": ["Meat and edible meat offal"],
+			"workingLeft": ["Manufacture in which all the materials of Chapters 1 and 2 used are wholly obtained"],
+			"workingRight": []
+		}]
+	}, {
+		"number": "03",
+		"row": [{
+			"id": "Chapter 3",
+			"desc": ["Fish and crustaceans, molluscs and other aquatic invertebrates"],
+			"workingLeft": ["Manufacture in which all the materials of Chapter 3 used are wholly obtained"],
+			"workingRight": []
+		}]
+	}, {
+		"number": "04",
+		"row": [{
+			"id": "ex Chapter 4",
+			"desc": ["Dairy produce; birds’ eggs; natural honey; edible products of animal origin, not elsewhere specified or included; except for:"],
+			"workingLeft": ["Manufacture in which all the materials of Chapter 4 used are wholly obtained"],
+			"workingRight": []
+		}, {
+			"id": "403",
+			"desc": ["Buttermilk, curdled milk and cream, yoghurt, kephir and other fermented or acidified milk and cream, whether or not concentrated or containing added sugar or other sweetening matter or flavoured or containing added fruit, nuts or cocoa"],
+			"workingLeft": ["Manufacture in which:", "—all the materials of Chapter 4 used are wholly obtained,", "—all the fruit juice (except that of pineapple, lime or grapefruit) of heading 2009 used is originating, and", "—the value of all the materials of Chapter 17 used does not exceed 30 % of the ex-works price of the product"],
+			"workingRight": []
+		}]
+	}, {
+		"number": "05",
+		"row": [{
+			"id": "ex Chapter 5",
+			"desc": ["Products of animal origin, not elsewhere specified or included; except for:"],
+			"workingLeft": ["Manufacture in which all the materials of Chapter 5 used are wholly obtained"],
+			"workingRight": []
+		}, {
+			"id": "ex ex0502",
+			"desc": ["Prepared pigs’, hogs’ or boars’ bristles and hair"],
+			"workingLeft": ["Cleaning, disinfecting, sorting and straightening of bristles and hair"],
+			"workingRight": []
+		}]
+	}]
+}

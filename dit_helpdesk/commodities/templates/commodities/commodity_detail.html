@@ -18,7 +18,8 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <a href="{% url 'search' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+      <a href="{% url 'search' country_code=selected_origin_country.lower %}"
+         class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
 
       <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
         <span class="govuk-caption-l">
@@ -26,162 +27,198 @@
         </span>
         Commodity information for
         {% spaceless %}
-          <span class="app-commodity-code">
-            {% for commodity_code_segment in commodity.commodity_code_split %}
-              <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
-                {{ commodity_code_segment }}
-              </span>
-            {% endfor %}
+        <span class="app-commodity-code">
+          {% for commodity_code_segment in commodity.commodity_code_split %}
+          <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
+            {{ commodity_code_segment }}
           </span>
+          {% endfor %}
+        </span>
         {% endspaceless %}
       </h2>
     </div>
   </div>
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
-      <p class="govuk-body">{{ commodity.tts_title }}</p>
+      <p class="govuk-body govuk-!-font-weight-bold">{{ commodity.tts_title }}</p>
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h3 class="govuk-heading-m">Tariffs and quotas</h3>
+      <h3 class="govuk-heading-m">Tariffs and other measures</h3>
+      <p class="govuk-body">The table below shows all the tariffs and other measures that apply for this product and the
+        selected country.</p>
       <table class="govuk-table app-flexible-table govuk-!-margin-bottom-6">
-        <caption class="govuk-table__caption govuk-visually-hidden">Tariffs and quotas</caption>
+        <caption class="govuk-table__caption govuk-visually-hidden">The table below shows all the tariffs and other
+          measures that apply for this product and the selected country.</caption>
         <thead class="govuk-table__head app-flexible-table__head">
           <tr class="govuk-table__row">
             {% for key in column_titles %}
-              <th class="govuk-table__header app-flexible-table__header" scope="col">{{ key }}</th>
+            <th class="govuk-table__header app-flexible-table__header"
+                scope="col">{{ key }}</th>
             {% endfor %}
           </tr>
         </thead>
         <tbody class="govuk-table__body app-flexible-table__body">
           {% spaceless %}
             {% for row in table_data %}
-                <tr class="govuk-table__row app-flexible-table__row">
-                  {% for  col in row %}
-                    {% if forloop.counter == 1 %}
-                      <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ col.0 }}"><p>{{ col.1 }}</p></td>
+            <tr class="govuk-table__row app-flexible-table__row">
+              {% for  col in row %}
+                {% if forloop.counter == 1 %}
+                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular"
+                    scope="row"
+                    data-column-heading="{{ col.0 }}">
+                  <p>{{ col.1 }}</p>
+                </td>
+                  {% else %}
+                <td class="govuk-table__cell app-flexible-table__cell"
+                    data-column-heading="{{ col.0 }}">
+                    {% if col.1.1.code %}
+                      <p>{{ col.1.0 | cell_cleaner | safe }}</p>
+                      <p>Additional code: <strong>{{col.1.1.code}}</strong></p>
                     {% else %}
-                      <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ col.0 }}"><p>{{ col.1 | cell_cleaner | safe }}</p></td>
+                      <p>{{ col.1 | cell_cleaner | safe }}</p>
                     {% endif %}
-                  {% endfor %}
-                </tr>
+                </td>
+                {% endif %}
               {% endfor %}
-            {% endspaceless %}
-          </tbody>
+            </tr>
+            {% endfor %}
+          {% endspaceless %}
+        </tbody>
       </table>
     </div>
     <div class="govuk-grid-column-three-quarters govuk-!-margin-bottom-9">
-        <details class="govuk-details govuk-!-margin-bottom-0">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">Guide to measure types</span>
-          </summary>
-          <div class="govuk-details__text">
+      <details class="govuk-details govuk-!-margin-bottom-0">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">Understand the main measure types</span>
+        </summary>
+        <div class="govuk-details__text">
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">Third country duty</span>
-              </summary>
-              <div class="govuk-details__text">
-                A duty applied to all trade partners who are fellow WTO members. In practice this means that these tariffs are the highest rates that the UK would apply to other WTO (apart from additional duties charged as anti-dumping or anti-subsidies).
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Third country duty</span>
+            </summary>
+            <div class="govuk-details__text">
+              A third country duty is the duty payable in the absence of any other type of tariff measure.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Tariff preference
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                Reduces or removes applicable tariffs when there is a trade agreement in place with another country. To qualify for tariff preference, your product must meet the rules of origin (see below) otherwise the standard third country duty will apply.
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Tariff preference
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              A <a class="govuk-link"
+                 href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">tariff
+                preference</a> means that you pay a lower or nil rate of import duty on your goods. To qualify, goods must
+              meet the rules of origin.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Quotas
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                These allow limited amounts of specific products to be imported at a reduced or zero duty rate until the quota runs out. These are applied on a ‘first come first serve’ basis or with a licence.
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Quotas
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              <a class="govuk-link"
+                 href="https://www.gov.uk/government/publications/notice-375-tariff-quotas/notice-375-tariff-quotas">Quotas</a>
+              allow limited amounts of specific goods to be imported at a lower duty rate.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Reliefs
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                A relief removes some or all of the amount of import duty for certain goods.
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Reliefs
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              A relief removes some or all of the import duty for certain goods.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Provisional anti-dumping/anti-subsidy duty
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                During an investigation a provisional duty is applied and held as a guarantee or bond until the end of an investigation. It is applied on top of any existing tariffs (third country duty or tariff preference) when import duty is calculated.
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Anti-dumping duty
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              <a class="govuk-link"
+                 href="https://www.gov.uk/government/publications/notice-376-anti-dumping-and-countervailing-duties">Anti-dumping
+                duty</a> is an amount of import duty applied in addition to any other duties that apply. It protects UK
+              industry against the dumping of goods at a substantially lower value than normal.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Final anti-dumping/anti-subsidy duty
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                A duty applied on top of any existing tariffs (third country duty or tariff preference) when import duty is calculated.
-              </div>
-            </details>
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Import controls
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              <a class="govuk-link"
+                 href="https://www.gov.uk/guidance/import-controls">Import controls</a> can be either prohibitions, where
+              goods cannot be imported under any circumstances, or restrictions, where goods can be imported only under
+              certain circumstances. Check the conditions related to this type of measure.
+            </div>
+          </details>
 
-            <details class="govuk-details govuk-!-margin-bottom-2">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Import control
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                This measure can take the form of prohibitions, where goods are not allowed to be imported under any circumstances, or restrictions where goods can only be imported under certain circumstances, for example, with a licence. Check the conditions related to this type of measure to see what type of licence a UK importer needs.
-              </div>
-            </details>
-
-            <details class="govuk-details">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Supplementary unit
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                A measure that asks for an additional measurement unit, for example, the weight as well as the quantity of the products. The importer may ask for this for informational purposes - it does not impact the duty charged. The import may not be allowed if the supplementary unit is not given. Check a <a href="https://www.uktradeinfo.com/TradeTools/ICN/Pages/ICNSupplementaryUnits.aspx" rel="noopener noreferrer">list of supplementary units and their descriptions</a>.
-              </div>
-            </details>
-          </div>
-        </details>
+          <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Supplementary unit
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              <p class="govuk-body">This is used when an additional measurement unit is needed, for example, the weight as
+                well as the quantity of the products. The importer might need to declare this information. The product
+                might not be allowed into the UK if the supplementary unit is not given. <a class="govuk-link"
+                   href="https://www.uktradeinfo.com/TradeTools/ICN/Pages/ICNSupplementaryUnits.aspx">Check a list of
+                  supplementary units and their descriptions</a>.</p>
+            </div>
+          </details>
+        </div>
+      </details>
     </div>
-    {% if roo_fragments %}
+    {% if rules_of_origin %}
       <div class="govuk-grid-column-full">
-        <h3 class="govuk-heading-m">Rules of origin</h3>
+        <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
+        <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.</p>
+        <p class="govuk-body">Also <a class="govuk-link" href="https://www.gov.uk/guidance/signed-uk-trade-agreements-transitioned-from-the-eu">check the trade agreements the UK has with the country you are exporting from</a>.</p>
+
         <div class="app-fullscreen-content govuk-!-margin-bottom-4">
           <table class="govuk-table app-table">
-            <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin</caption>
+            <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-table__head">
-            <tr class="govuk-table__row">
-              <th class="govuk-table__header app-table__header" scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
-              <th class="govuk-table__header app-table__header" scope="col">Description of product</th>
-              <th class="govuk-table__header govuk-!-width-one-half app-table__header" scope="col">Working or processing, carried out on non-originating materials, which confers originating status</th>
-          </tr>
-          </thead>
-            {% for html_fragment in roo_fragments %}
-                {{ html_fragment | safe }}
-            {% endfor %}
+              <tr class="govuk-table__row">
+                <th class="govuk-table__header app-table__header"
+                    scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
+                <th class="govuk-table__header app-table__header"
+                    scope="col">Description of product</th>
+                <th class="govuk-table__header govuk-!-width-one-half app-table__header"
+                    scope="col">How non-originating materials must be worked or processed to get country of origin status
+                </th>
+              </tr>
+            </thead>
+            <tbody class="govuk-table__body app-table__body">
+              {% spaceless %}
+                {% for rule in rules_of_origin %}
+                    <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell">{{ rule.rule_id }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.description }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_one }}</td>
+                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_two }}</td>
+                    </tr>
+                {% endfor %}
+              {% endspaceless %}
+            </tbody>
           </table>
         </div>
       </div>
@@ -193,58 +230,71 @@
             </span>
           </summary>
           <div class="govuk-details__text">
-            <p class="govuk-body">The rules of origin contain a table for each product that contains:</p>
+            <p class="govuk-body">The rules of origin table contains:</p>
 
             <ul class="govuk-list--bullet">
-              <li>the product classification heading or chapter number (column 1)</li>
+              <li>the product classification heading ('HS heading') or chapter number (column 1)</li>
               <li>a description of the product (column 2)</li>
-              <li>a description of how non-originating materials must be worked or processed to get country of origin status (column 3)</li>
+              <li>a description of how non-originating materials must be worked or processed to get country of origin status
+                (column 3)</li>
             </ul>
 
-            <p class="govuk-body">In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating materials must be worked or processed.</p>
+            <p class="govuk-body">In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating
+              materials must be worked or processed.</p>
 
             <p class="govuk-body">For each row:</p>
 
             <ul class="govuk-list--bullet">
-              <li>Check column 1 to find the product classification heading or chapter number that relates to the product being exported.</li>
-              <li>Check column 2 to find the description that applies to the product.</li>
-              <li>Check column 3 (and 4 if present) to see what how the product must be worked or processed to gain country of origin status.</li>
+              <li>check column 1 to find the product classification heading or chapter number for the product being exported
+              </li>
+              <li>check column 2 to find the description that applies to the product</li>
+              <li>check column 3 (and 4 if present) to see how the product must be worked or processed to gain country of
+                origin status</li>
             </ul>
 
-            <p class="govuk-body">Unless preceded by ‘ex’, the rules in column 3 or 4 apply to all commodities that come under the headings and chapters in column 1.</p>
+            <p class="govuk-body">Unless preceded by ‘ex’, the rules in column 3 (or 4 if present) apply to all products
+              that come under the headings and chapters in column 1.</p>
 
-            <p class="govuk-body">If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if applicable) will only apply to the product as described in column 2.</p>
+            <p class="govuk-body">If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if present) will
+              only apply to the product as described in column 2.</p>
 
-            <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or processed (if columns 3 and 4 are present), you can apply either rule.</p>
+            <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or
+              processed (if columns 3 and 4 are present), you can apply either rule.</p>
           </div>
         </details>
       </div>
     {% endif %}
-
     {% if regulations %}
-      <div class="govuk-grid-column-full">
-        <h3 class="govuk-heading-m">Regulations and Documents</h3>
-        <div class="govuk-accordion" data-module="accordion" id="accordion-default">
-          {% for regulation in regulations.all %}
-            <div class="govuk-accordion__section ">
-              <div class="govuk-accordion__section-header">
-                <h4 class="govuk-accordion__section-heading govuk-heading-s">
-                  <span class="govuk-accordion__section-button" id="accordion-default-heading-{{ forloop.counter }}">
-                    {{ regulation.title  }}
-                  </span>
-                </h4>
-              </div>
-              <div id="accordion-default-content-{{ forloop.counter }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
-                <ul class="govuk-list">
-                  {% for document in regulation.document_set.all %}
-                    <li class="govuk-body-s"><a href="{{ document.url }}" class="govuk-link">{{ document.title }}</a></li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          {% endfor %}
+    <div class="govuk-grid-column-full">
+      <h3 class="govuk-heading-m">Product-specific regulations</h3>
+      <p class="govuk-body">These regulations apply to this product. </P>
+      <div class="govuk-accordion"
+           data-module="accordion"
+           id="accordion-default">
+        {% for regulation in regulations.all %}
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h4 class="govuk-accordion__section-heading govuk-heading-s">
+              <span class="govuk-accordion__section-button"
+                    id="accordion-default-heading-{{ forloop.counter }}">
+                {{ regulation.title  }}
+              </span>
+            </h4>
+          </div>
+          <div id="accordion-default-content-{{ forloop.counter }}"
+               class="govuk-accordion__section-content"
+               aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
+            <ul class="govuk-list">
+              {% for document in regulation.document_set.all %}
+              <li class="govuk-body-s"><a href="{{ document.url }}"
+                   class="govuk-link">{{ document.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
+        {% endfor %}
       </div>
+    </div>
     {% endif %}
   </div>
 {% endblock %}

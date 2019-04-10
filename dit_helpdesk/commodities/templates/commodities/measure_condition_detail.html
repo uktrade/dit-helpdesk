@@ -54,7 +54,7 @@
                   <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Document code"><p>{{ condition.di.document_code | cell_cleaner }}</p></td>
                   <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Requirement"><p>{{ condition.di.requirement | safe }}</p></td>
                   <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Action"><p>{{ condition.di.action }}</p></td>
-                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Duty"><p>{{ condition.di.duty_expression | cell_cleaner }}</p></td>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Duty"><p>{{ condition.di.duty_expression | safe  }}</p></td>
               </tr>
           {%  endfor %}
           {% endspaceless %}
