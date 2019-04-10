@@ -187,7 +187,7 @@
         </div>
       </details>
     </div>
-      {% if rules_of_origin %}
+    {% if rules_of_origin %}
       <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.</p>
@@ -197,17 +197,17 @@
           <table class="govuk-table app-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-table__head">
-            <tr class="govuk-table__row">
-              <th class="govuk-table__header app-table__header"
-                  scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
-              <th class="govuk-table__header app-table__header"
-                  scope="col">Description of product</th>
-              <th class="govuk-table__header govuk-!-width-one-half app-table__header"
-                  scope="col">How non-originating materials must be worked or processed to get country of origin status
-              </th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body app-table__body">
+              <tr class="govuk-table__row">
+                <th class="govuk-table__header app-table__header"
+                    scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
+                <th class="govuk-table__header app-table__header"
+                    scope="col">Description of product</th>
+                <th class="govuk-table__header govuk-!-width-one-half app-table__header"
+                    scope="col">How non-originating materials must be worked or processed to get country of origin status
+                </th>
+              </tr>
+            </thead>
+            <tbody class="govuk-table__body app-table__body">
               {% spaceless %}
                 {% for rule in rules_of_origin %}
                     <tr class="govuk-table__row">
@@ -218,54 +218,52 @@
                     </tr>
                 {% endfor %}
               {% endspaceless %}
-          </tbody>
+            </tbody>
           </table>
         </div>
       </div>
-    </div>
-    <div class="govuk-grid-column-three-quarters">
-      <details class="govuk-details govuk-!-margin-bottom-9">
-        <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">
-            How to use the rules of origin table
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-          <p class="govuk-body">The rules of origin table contains:</p>
+      <div class="govuk-grid-column-three-quarters">
+        <details class="govuk-details govuk-!-margin-bottom-9">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              How to use the rules of origin table
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <p class="govuk-body">The rules of origin table contains:</p>
 
-          <ul class="govuk-list--bullet">
-            <li>the product classification heading ('HS heading') or chapter number (column 1)</li>
-            <li>a description of the product (column 2)</li>
-            <li>a description of how non-originating materials must be worked or processed to get country of origin status
-              (column 3)</li>
-          </ul>
+            <ul class="govuk-list--bullet">
+              <li>the product classification heading ('HS heading') or chapter number (column 1)</li>
+              <li>a description of the product (column 2)</li>
+              <li>a description of how non-originating materials must be worked or processed to get country of origin status
+                (column 3)</li>
+            </ul>
 
-          <p class="govuk-body">In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating
-            materials must be worked or processed.</p>
+            <p class="govuk-body">In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating
+              materials must be worked or processed.</p>
 
-          <p class="govuk-body">For each row:</p>
+            <p class="govuk-body">For each row:</p>
 
-          <ul class="govuk-list--bullet">
-            <li>check column 1 to find the product classification heading or chapter number for the product being exported
-            </li>
-            <li>check column 2 to find the description that applies to the product</li>
-            <li>check column 3 (and 4 if present) to see how the product must be worked or processed to gain country of
-              origin status</li>
-          </ul>
+            <ul class="govuk-list--bullet">
+              <li>check column 1 to find the product classification heading or chapter number for the product being exported
+              </li>
+              <li>check column 2 to find the description that applies to the product</li>
+              <li>check column 3 (and 4 if present) to see how the product must be worked or processed to gain country of
+                origin status</li>
+            </ul>
 
-          <p class="govuk-body">Unless preceded by ‘ex’, the rules in column 3 (or 4 if present) apply to all products
-            that come under the headings and chapters in column 1.</p>
+            <p class="govuk-body">Unless preceded by ‘ex’, the rules in column 3 (or 4 if present) apply to all products
+              that come under the headings and chapters in column 1.</p>
 
-          <p class="govuk-body">If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if present) will
-            only apply to the product as described in column 2.</p>
+            <p class="govuk-body">If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if present) will
+              only apply to the product as described in column 2.</p>
 
-          <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or
-            processed (if columns 3 and 4 are present), you can apply either rule.</p>
-        </div>
-      </details>
-    </div>
+            <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or
+              processed (if columns 3 and 4 are present), you can apply either rule.</p>
+          </div>
+        </details>
+      </div>
     {% endif %}
-
     {% if regulations %}
     <div class="govuk-grid-column-full">
       <h3 class="govuk-heading-m">Product-specific regulations</h3>
