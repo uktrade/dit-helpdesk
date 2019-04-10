@@ -4,7 +4,7 @@ from time import sleep
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from regulations.importer import RegulationsImporter
+from regulations.documents_scraper import DocumentsScraper
 
 
 class Command(BaseCommand):
@@ -15,7 +15,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        data_path = settings.REGULATIONS_DATA_PATH
-
-        importer = RegulationsImporter()
-        importer.load(data_path)
+        scraper = DocumentsScraper()
+        scraper.load()

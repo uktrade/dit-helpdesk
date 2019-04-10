@@ -237,7 +237,7 @@
               <div id="accordion-default-content-{{ forloop.counter }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
                 <ul class="govuk-list">
                   {% for document in regulation.document_set.all %}
-                    <li class="govuk-body-s"><a href="{{ document.url }}" class="govuk-link">{{ document.url }}</a></li>
+                    <li class="govuk-body-s"><a href="{{ document.url }}" class="govuk-link">{{ document.title }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
