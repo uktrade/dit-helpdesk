@@ -31,12 +31,12 @@ def search_view(request, country_code=None):
     countries = Country.objects.all()
 
     # error message variables used for validation
-    CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE = 'Enter a UK commodity code. <br /> The code can be 2,4,6,8 or 10 digits long'
-    CODE_NOT_FOUND_INPUT_ERROR_MESSAGE = 'Enter a UK commodity code'
-    CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
-    CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
-    CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
-    CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE = 'Commodity code must be 2,4,6,8 or 10 digits'
+    CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
+    CODE_NOT_FOUND_INPUT_ERROR_MESSAGE = 'Enter a commodity codee'
+    CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
+    CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE = 'Enter a commodity code'
+    CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
+    CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE = 'Enter a commodity code'
     CODE_HAS_SPACES_SUMMARY_ERROR_MESSAGE = 'Enter commodity code without spaces'
     CODE_HAS_SPACES_INPUT_ERROR_MESSAGE = 'Enter commodity code without spaces'
 
