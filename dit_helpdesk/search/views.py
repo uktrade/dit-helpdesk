@@ -7,7 +7,6 @@ from countries.models import Country
 
 from hierarchy.views import hierarchy_data
 from hierarchy.models import Chapter, Heading, SubHeading
-import logging
 
 def search_hierarchy(request, node_id='root', country_code=None):
     if country_code is None:
@@ -40,8 +39,6 @@ def search_view(request, country_code=None):
 
     if selected_country:
         country_exists = country.exists()
-
-    logging.warning(country_name)
 
     countries = Country.objects.all()
 
