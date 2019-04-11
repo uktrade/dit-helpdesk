@@ -76,7 +76,11 @@
                     {% if col.1.1.code %}
                       <p>{{ col.1.0 | cell_cleaner | safe }}</p>
                       <p>Additional code: <strong>{{col.1.1.code}}</strong></p>
-                    {% else %}
+                    {% endif %}
+                    {% if col.1.1.description %}
+                      <p>{{col.1.1.description}}</p>
+                    {% endif %} 
+                    {% if not col.1.1.code or not col.1.1.description %}
                       <p>{{ col.1 | cell_cleaner | safe }}</p>
                     {% endif %}
                 </td>
