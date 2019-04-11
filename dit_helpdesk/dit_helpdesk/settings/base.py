@@ -32,10 +32,11 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
+ADMIN_ENABLED = False
+
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -59,6 +60,8 @@ INSTALLED_APPS = [
     'regulations'
 ]
 
+if ADMIN_ENABLED is True:
+    INSTALLED_APPS.append('django.contrib.admin',)
 
 MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
@@ -196,9 +199,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compr
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
 IP_SAFELIST_XFF_INDEX = int(os.environ.get('IP_SAFELIST_XFF_INDEX', '-2'))
 
-RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
-ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
-ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
+if ADMIN_ENABLED is True:
+    RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
+    ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
+    ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
 
 # authbroker config
 AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
@@ -206,7 +210,9 @@ AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 
 LOGIN_URL = '/auth/login/'
-LOGIN_REDIRECT_URL = '/admin/login/'
+
+if ADMIN_ENABLED is True:
+    LOGIN_REDIRECT_URL = '/admin/login/'
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -226,6 +232,7 @@ RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = 'Strict'
