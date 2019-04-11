@@ -110,9 +110,13 @@ def search_view(request, country_code=None):
     if len(query) == 4 and query[2:] == '00':
         query = query[:2]
 
-    # 
+    # Add two zeroes if length of query is 8 
     if len(query) == 8:
         query = query + '00'
+
+    # Truncate if length of query > 10
+    if len(query) > 10:
+        query = query[:10]
 
 
     if len(query) == 10 and query.isdigit():
@@ -134,7 +138,7 @@ def search_view(request, country_code=None):
         if Chapter.objects.filter(chapter_code=code2_10).exists():
 
             kwargs = {
-                'node_id': 'chapter-%s' % Chapter.objects.get(chapter_code=code2_10).id,
+                'node_id': 'chapter-%s' % Chapter.objects.filter(chapter_code=code2_10).first().id,
                 'country_code': country_code.lower()
             }
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
@@ -150,7 +154,7 @@ def search_view(request, country_code=None):
         if Heading.objects.filter(heading_code=code4_10).exists():
 
             kwargs = { 
-                'node_id': 'heading-%s' % Heading.objects.get(heading_code=code4_10).id,
+                'node_id': 'heading-%s' % Heading.objects.filter(heading_code=code4_10).first().id,
                 'country_code': country_code.lower()
             }   
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
