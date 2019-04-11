@@ -296,8 +296,14 @@
                aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
             <ul class="govuk-list">
               {% for document in regulation.document_set.all %}
-              <li class="govuk-body-s"><a href="{{ document.url }}"
-                   class="govuk-link">{{ document.url }}</a></li>
+              <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ document.url }}"
+                   class="govuk-link ">
+                   {% if 'none' not in document.title|lower %}
+                      {{ document.title }}
+                  {% else %}
+                      {{ document.url }}
+                  {% endif %}
+                   </a></li>
               {% endfor %}
             </ul>
           </div>
