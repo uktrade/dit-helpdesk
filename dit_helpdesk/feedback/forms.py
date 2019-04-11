@@ -13,9 +13,26 @@ class FeedbackForm(forms.ModelForm):
                 'max_length': 'Message needs to be less than 1,000 characters'
             },
             'name': {
+                'required': 'Enter your full name',
                 'max_length': 'Name entered needs to be less than 255 characters'
             },
             'email': {
-                'invalid' : 'Enter a valid email address'
+                'required': 'Enter an email address',
+                'invalid' : 'Enter an email address in the correct format, like name@example.com'
             }
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        name = cleaned_data.get("name")
+
+        if name and not email:
+            raise forms.ValidationError(
+                {'email': ["Enter an email address"]}
+            )
+
+        if email and not name:
+            raise forms.ValidationError(
+                {'name': ["Enter your full name"]}
+            )
