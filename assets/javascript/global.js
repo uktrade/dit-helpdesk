@@ -4,6 +4,7 @@ var Accordion = require('govuk-frontend/components/accordion/accordion.js')
 var ErrorSummary = require('govuk-frontend/components/error-summary/error-summary.js')
 var common = require('govuk-frontend/common')
 var commodityTree = require('./modules/commodity-tree')
+var Modal = require('./modules/modal')
 var nodeListForEach = common.nodeListForEach
 
 /*
@@ -104,4 +105,11 @@ if ($commodityTree) {
 var $errorSummary = document.querySelector('[data-module="error-summary"]')
 if ($errorSummary) {
   new ErrorSummary($errorSummary).init()
+}
+
+var $modals = document.querySelectorAll('[data-module="modal-dialogue"]')
+if ($modals) {
+  nodeListForEach($modals, function ($modal) {
+    new Modal($modal).start()
+  })
 }
