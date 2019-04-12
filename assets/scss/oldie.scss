@@ -21,3 +21,9 @@
 .app-hierarchy-tree__parent--closed .app-hierarchy-tree__link--parent:before {
   font-size: 22px;
 }
+
+// modal positional tweaks
+.app-modal-dialogue__box {
+  margin-left:auto;
+  margin-right:auto;
+}
