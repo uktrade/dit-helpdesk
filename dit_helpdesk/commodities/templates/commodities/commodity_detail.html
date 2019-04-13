@@ -40,7 +40,19 @@
   </div>
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
-      <p class="govuk-body govuk-!-font-weight-bold">{{ commodity.tts_title }}</p>
+      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">{{ commodity.tts_title }}</p>
+      <span class="govuk-caption-m">{{commodity_path | safe}}</span>
+      <!-- <p class="govuk-body-s">{{commodity_path | safe}}</p> -->
+
+      <!-- <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+          {% for path in commodity_path %}
+            {% if forloop.counter > 1 %}
+              <li class="govuk-breadcrumbs__list-item" href="#">{{path | safe}}</li>
+            {% endif %}
+          {% endfor %}
+        </ol>
+      </div> -->
     </div>
   </div>
   <div class="govuk-grid-row">
@@ -79,7 +91,7 @@
                     {% endif %}
                     {% if col.1.1.description %}
                       <p>{{col.1.1.description}}</p>
-                    {% endif %} 
+                    {% endif %}
                     {% if not col.1.1.code or not col.1.1.description %}
                       <p>{{ col.1 | cell_cleaner | safe }}</p>
                     {% endif %}
@@ -98,7 +110,7 @@
           <span class="govuk-details__summary-text">What are the main types of measure</span>
         </summary>
         <div class="govuk-details__text">
-          
+
           <details class="govuk-details govuk-!-margin-bottom-2">
             <summary class="govuk-details__summary">
               <span class="govuk-details__summary-text">Value	Added Tax (VAT)</span>
