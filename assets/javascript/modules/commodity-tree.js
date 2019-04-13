@@ -44,7 +44,7 @@ var commodityTree = {
     var element = document.getElementById(this.getFragmentFromUrl(url))
     element.scrollIntoView()
     // focus on the link
-    element.firstElementChild.focus({ preventScroll: true })
+    element.childNodes[0].focus({ preventScroll: true })
   },
   getFragmentFromUrl: function(url){
     if (url.indexOf('#') === -1) {
