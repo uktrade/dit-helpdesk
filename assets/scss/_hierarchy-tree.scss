@@ -91,14 +91,8 @@
   display: inline-block;
   padding: 0.25em 1em 0.25em 0;
   text-align: left;
-  text-transform: lowercase;
   vertical-align: middle;
   width: 100%;
-
-  &:first-letter,
-  &::first-letter {
-    text-transform: uppercase;
-  }
 
   @include govuk-media-query($from: tablet) {
     background-position: -0.1em 0.15em;
@@ -169,7 +163,7 @@
     }
     font-weight: normal;
   }
-  
+
   &:link:before {
     text-decoration: none;
   }
