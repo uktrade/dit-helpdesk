@@ -72,7 +72,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         else:
             openclass = 'closed'
 
-        commodity_code_html = '';
+        commodity_code_html = ''
         if (type(child) is not Section):
             commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
@@ -88,16 +88,17 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
 
             for index, code_segment in enumerate(code_split):
                 counter = str(int(index) + 1)
-                commodity_code_html = commodity_code_html + '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+                commodity_code_html = commodity_code_html + \
+                    '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
 
             commodity_code_html = commodity_code_html + '</span>'
 
         if type(child) is Section:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif type(child) is Commodity:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description}</a>{commodity_code_html}'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{commodity_code_html}'
         html = html + li
 
         if child.hierarchy_key in expanded:
@@ -114,4 +115,3 @@ def hierarchy_data(country_code, node_id='root'):
     html = _get_hierarchy_level_html('root', expanded, country_code)
 
     return html
-
