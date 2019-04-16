@@ -14,19 +14,25 @@ from numpy import nan
 
 from countries.models import Country
 from hierarchy.models import Chapter, Heading
-from rules_of_origin.models import Rule, RulesDocument, RulesGroup, RulesGroupMember
+from rules_of_origin.models import Rule, RulesDocument, RulesGroup, RulesGroupMember, RulesDocumentFootnote
 
 CHAPTER_MATCHES = (
     ('^ex Chapter (?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # ex Chapter 4
     ('^(ex\xa0ex\d{4}\s)+(ex\xa0ex\d{4})$', 'heading_exclusion_list'),  # ex ex6202, ex ex6204, ex ex6206
     ('^ex\xa0ex(?P<heading_num>\d{4})$', 'heading_exclusion'),  # ex ex7616
-    ('^ex\xa0ex(?P<start_heading>\d{4})( to | and |-| - )ex\xa0ex(?P<end_heading>\d{4})$', 'heading_exclusion_range'),  # ex ex4410-ex ex4413
-    ('^(ex\xa0ex(?P<heading_num>\d{4}),\s)(?P<start_heading>\d{4}) to (?P<end_heading>\d{4})$', 'heading_list_exclusion_and_range'), # 'ex ex7218, 7219 to 7222'
+    ('^ex\xa0ex(?P<start_heading>\d{4})( to | and |-| - )ex\xa0ex(?P<end_heading>\d{4})$', 'heading_exclusion_range'),
+    # ex ex4410-ex ex4413
+    ('^(ex\xa0ex(?P<heading_num>\d{4}),\s)(?P<start_heading>\d{4}) to (?P<end_heading>\d{4})$',
+     'heading_list_exclusion_and_range'),  # 'ex ex7218, 7219 to 7222'
     ('^Chapter (?P<chapter_num>\d{1,2})$', 'chapter'),
     ('^(?P<start_heading>\d{4})( to | and |-| - )(?P<end_heading>\d{4})$', 'heading_range'),  # 1507-1515
     ('^(\d{4},\s)+$', 'heading_list'),  # 4107, 4112
     ('^(?P<heading_num>\d{4})', 'heading')
 )
+
+MSWORD_PRIVATE_UNICODE_CHARS = {
+    u'\uf0b7': "&#45;"
+}
 
 
 def get_object_or_none(klass, *args, **kwargs):
@@ -55,6 +61,7 @@ class RulesOfOriginImporter:
         self.working_group_name = None
         self.current_chapter_code = None
         self.priority = None
+        self.footnotes = {}
 
     def data_loader(self, file_path):
         """
@@ -71,7 +78,7 @@ class RulesOfOriginImporter:
             return json_data
         else:
             with open(file_path) as f:
-                data_frame = pandas.read_csv(f, encoding = 'utf8')
+                data_frame = pandas.read_csv(f, encoding='utf8')
             return data_frame
 
     def data_writer(self, file_path, data):
@@ -105,7 +112,7 @@ class RulesOfOriginImporter:
         for country_code in self.rules_groups[self.working_group_name]:
             try:
                 country = Country.objects.get(country_code=country_code)
-                print (country.country_code)
+
                 group_member, created = RulesGroupMember.objects.get_or_create(
                     rules_group=rules_group,
                     country=country,
@@ -121,7 +128,7 @@ class RulesOfOriginImporter:
         try:
             doc_url = self.rules_documents[self.working_group_name]
         except Exception as ex:
-            print (ex.args)
+            print(ex.args)
             doc_url = None
 
         rules_document, created = RulesDocument.objects.get_or_create(
@@ -135,12 +142,26 @@ class RulesOfOriginImporter:
         else:
             print("{0} instance already exists".format(rules_document._meta.model_name))
 
+        if self.footnotes:
+            for footnote in self.footnotes:
+
+                footnote, created = RulesDocumentFootnote.objects.get_or_create(
+                    number=footnote,
+                    link_html=self.footnotes[footnote]['anchor'],
+                    note=self.footnotes[footnote]["note"],
+                    rules_document=rules_document
+                )
+
+                if created:
+                    print("{0} instance created".format(footnote._meta.model_name))
+                else:
+                    print("{0} instance already exists".format(footnote._meta.model_name))
+
         for rules_chapter in self.data:
 
             for level in self.data[rules_chapter]:
 
                 for rule in self.data[rules_chapter][level]:
-                    print("RULE: ", rule)
 
                     try:
                         related_chapter = Chapter.objects.get(chapter_code=rule['chapter_code'])
@@ -150,10 +171,15 @@ class RulesOfOriginImporter:
 
                     rule_instance, created = Rule.objects.get_or_create(
                         rule_id=rule['id'],
-                        description=rule['desc'] if len(rule['desc']) > 0 else "",
+                        description="".join(["<p>{0}</p>".format(text)
+                                             for text in rule['description']]) if len(rule['description']) > 0 else "",
                         is_exclusion=rule['exclusion'],
-                        working_or_processing_one=rule['workingLeft'] if len(rule['workingLeft']) > 0 else "",
-                        working_or_processing_two=rule['workingRight'] if len(rule['workingRight']) > 0 else "",
+                        working_or_processing_one="".join(["<p>{0}</p>".format(text)
+                                                           for text in rule['workingLeft']])
+                        if len(rule['workingLeft']) > 0 else "",
+                        working_or_processing_two="".join(["<p>{0}</p>".format(text)
+                                                           for text in rule['workingRight']])
+                        if len(rule['workingRight']) > 0 else "",
                         chapter=related_chapter,
                         rules_document=rules_document
                     )
@@ -174,6 +200,15 @@ class RulesOfOriginImporter:
             commodity_code = str(data['commodity_id'])
         return commodity_code
 
+    def convert_ms_word_unicode_char(self, char):
+        return MSWORD_PRIVATE_UNICODE_CHARS[char]
+
+    def text_sanitiser(self, text):
+        for key in MSWORD_PRIVATE_UNICODE_CHARS.keys():
+            if re.match(key, text) is not None:
+                text.replace(key, MSWORD_PRIVATE_UNICODE_CHARS[key])
+        return text
+
     def rename_key(self, old_dict, old_name, new_name):
         """
 
@@ -188,7 +223,7 @@ class RulesOfOriginImporter:
             new_dict[new_key] = old_dict[key]
         return new_dict
 
-    def load(self, input_file=None, output_file=None, documents_file=None, groups_file=None, priority=None):
+    def load(self, input_file=None, output_file=None, priority=None):
         """
         Starting point of the class. Takes passed documents and loads the data into memory, processes the data
         data into organised data structures then creates the model instances and commits to the database and outputs a log
@@ -197,25 +232,39 @@ class RulesOfOriginImporter:
         :param output_file: location of output log
         :return:
         """
+        print("importing file:", input_file)
+        print("priority:", priority)
 
-        data_path = settings.RULES_OF_ORIGIN_DATA_PATH
         self.priority = priority
 
-        self.set_group_documents(self.data_loader(data_path.format("reference/{0}".format(documents_file))))
-        self.set_rules_groups(self.data_loader(data_path.format("reference/{0}".format(groups_file))))
+        self.set_group_documents(self.data_loader(settings.RULES_OF_ORIGIN_DOCUMENTS_FILE))
+        self.set_rules_groups(self.data_loader(settings.RULES_OF_ORIGIN_GROUPS_FILE))
 
         self.working_group_name = Path(input_file).stem.upper()
 
+        if self.working_group_name not in self.rules_groups.keys():
+            print("{0} is not part of the Priority {1} group so there will no data to import".format(
+                Path(input_file).name, priority))
+            return
+
         if input_file:
-            rules_of_origin_file = data_path.format("import/v2/{0}".format(input_file))
+            rules_of_origin_file = input_file
 
             rules = self.data_loader(rules_of_origin_file)
 
-            self.process_rules(rules)
+            self.process_rules(rules['chapters'])
+
+            if rules['footnotes']:
+                self.process_footnotes(rules['footnotes'])
 
             self.instance_builder()
 
-            self.data_writer(data_path.format("output/v2/{0}".format(output_file)), self.data)
+            # self.data_writer(data_path.format("{0}/{1}".format(data_path, output_file)), self.data)
+
+    def process_footnotes(self, footnotes):
+
+        for idx, footnote in enumerate(footnotes):
+            self.footnotes[idx+1] = footnote
 
     def set_rules_groups(self, groups_data):
         """
@@ -232,7 +281,7 @@ class RulesOfOriginImporter:
 
         for idx, group in enumerate(groups):
             if group is not nan:
-                print ("GROUP: ", group)
+
                 if " and " in group:
                     for grp in group.split(' and '):
                         self.build_rules_groups(country_codes, grp, idx)
@@ -269,23 +318,23 @@ class RulesOfOriginImporter:
         :param rules:
         :return:
         """
+
         for rule in rules:
-            for row in rules[rule]:
 
-                self.data[row['number']] = {}
+            self.data[rule['number']] = {}
 
-                chapter_code = self.get_hierarchy_code(row['number'], "Chapter")
+            chapter_code = self.get_hierarchy_code(rule['number'], "Chapter")
 
-                for item in row['row']:
-                    regex_match, level = self.match_hierarchy_level(item['id'])
+            for item in rule['rows']:
+                regex_match, level = self.match_hierarchy_level(item['id'])
 
-                    if regex_match is not None:
-                        item = self.set_relationships(item, regex_match, chapter_code)
-                        if level in self.data[row['number']].keys() and \
-                                len(self.data[row['number']][level]) > 0:
-                            self.data[row['number']][level].append(item)
-                        else:
-                            self.data[row['number']][level] = [item]
+                if regex_match is not None:
+                    item = self.set_relationships(item, regex_match, chapter_code)
+                    if level in self.data[rule['number']].keys() and \
+                            len(self.data[rule['number']][level]) > 0:
+                        self.data[rule['number']][level].append(item)
+                    else:
+                        self.data[rule['number']][level] = [item]
 
     def match_hierarchy_level(self, item_id):
         """
@@ -293,9 +342,9 @@ class RulesOfOriginImporter:
         :param item:
         :return:
         """
-
-        matches = [(re.search(pattern, item_id), category) for pattern, category in CHAPTER_MATCHES
-               if re.search(pattern, item_id) is not None]
+        # print("item_id: ", item_id[0], [pattern for pattern, category in CHAPTER_MATCHES])
+        matches = [(re.search(pattern, item_id[0]), category) for pattern, category in CHAPTER_MATCHES
+                   if re.search(pattern, item_id[0]) is not None]
         if len(matches) > 0:
             return matches[0]
         else:
@@ -319,7 +368,7 @@ class RulesOfOriginImporter:
 
         related_hierarchy_levels = None
 
-        if {'chapter_num',} <= set(match_results.keys()):
+        if {'chapter_num', } <= set(match_results.keys()):
             chapter_code = self.get_hierarchy_code(regex_match.group('chapter_num'), "Chapter")
             related_hierarchy_levels = self.get_related_hierarchy_levels("Chapter", chapter_code, item, parent_ids_list)
 
@@ -346,20 +395,20 @@ class RulesOfOriginImporter:
 
             if ' to ' in regex_match.string:
                 code_range = [self.get_hierarchy_code(i, "Heading") for i in
-                                range(
-                                    int(regex_match.group('start_heading')),
-                                    int(regex_match.group('end_heading'))+1
-                                )]
+                              range(
+                                  int(regex_match.group('start_heading')),
+                                  int(regex_match.group('end_heading')) + 1
+                              )]
                 related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", start_heading_code,
                                                                              end_code=end_heading_code,
                                                                              code_range=code_range)
 
             elif ' and ' in regex_match.string:
                 code_range = [self.get_hierarchy_code(i, "Heading") for i in
-                                range(
-                                    int(regex_match.group('start_heading')),
-                                    int(regex_match.group('end_heading'))+1
-                                )]
+                              range(
+                                  int(regex_match.group('start_heading')),
+                                  int(regex_match.group('end_heading')) + 1
+                              )]
                 related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", start_heading_code,
                                                                              end_code=end_heading_code,
                                                                              code_range=code_range)
@@ -367,7 +416,7 @@ class RulesOfOriginImporter:
             else:
                 print("MATCH TYPE: ", regex_match.groupdict())
 
-        elif {'heading_num',} <= set(match_results.keys()):
+        elif {'heading_num', } <= set(match_results.keys()):
 
             heading_code = self.get_hierarchy_code(regex_match.group('heading_num'), "Heading")
             related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", heading_code)
@@ -402,7 +451,7 @@ class RulesOfOriginImporter:
         :param item:
         :return:
         """
-        item['id'] = item['id'].replace('ex\xa0ex', 'ex ')
+        item['id'] = item['id'][0].replace('ex\xa0ex', 'ex ')
 
     def get_related_hierarchy_levels(self, type, code, end_code=None, code_range=None):
         """
@@ -437,11 +486,11 @@ class RulesOfOriginImporter:
                                     "descriptipn": heading.description,
                                     "type": type
                                     } for heading in Heading.objects.filter(heading_code=code)] + [{
-                                                        "id": heading.id,
-                                                        "heading_code": heading.heading_code,
-                                                        "descriptipn": heading.description,
-                                                        "type": type
-                                                      } for heading in Heading.objects.filter(heading_code=end_code)]
+                    "id": heading.id,
+                    "heading_code": heading.heading_code,
+                    "descriptipn": heading.description,
+                    "type": type
+                } for heading in Heading.objects.filter(heading_code=end_code)]
             else:
                 related_objects = [{"id": heading.id,
                                     "heading_code": heading.heading_code,
