@@ -21,10 +21,31 @@
       <a href="{% url 'search' country_code=selected_origin_country.lower %}"
          class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
 
+      <span class="govuk-caption-l">
+        Exporting from {{ selected_origin_country_name }} to the UK
+      </span>
+
+      <!-- section accordion -->
+      <div class="govuk-accordion" data-module="accordion" id="accordion-default">
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading"></h2>
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-1">
+                Writing well for the web
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+            <ul class="app-hierarchy-tree">
+
+            </ul>
+            {{ commodity_hierarchy_context | safe }}
+          </div>
+        </div>
+      </div>
+      <!-- section accordion -->
+
       <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
-        <span class="govuk-caption-l">
-          Exporting from {{ selected_origin_country_name }} to the UK
-        </span>
         Commodity information for
         {% spaceless %}
         <span class="app-commodity-code">
@@ -38,24 +59,10 @@
       </h2>
     </div>
   </div>
+
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">{{ commodity.tts_title }}</p>
-      {% for path in commodity_path %}
-        <p>
-          {% if path.number_indents >= 0%}
-            <span class="govuk-caption-m govuk-!-margin-left-{{path.number_indents|add:"2"}}">
-          {% else %}
-            <span class="govuk-caption-m">
-          {% endif %}
-            {% if path.description%}
-              {{path.description.capitalize | safe}}
-            {% elif path.title%}
-              {{path.title.capitalize | safe}}
-            {% endif %}
-          </span>
-        </p>
-      {% endfor %}
     </div>
   </div>
   <div class="govuk-grid-row">

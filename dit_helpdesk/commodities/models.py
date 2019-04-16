@@ -8,6 +8,7 @@ from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 from hierarchy.models import SubHeading, Heading, Chapter, Section
 
 COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
+import logging
 
 class Commodity(models.Model):
 
@@ -106,5 +107,5 @@ class Commodity(models.Model):
     def append_path_children(self, parent, tree):
         children = parent.get_hierarchy_children()
         for child in children:
-            if type(child) is Commodity:
-                tree.append(child)
+            # if type(child) is Commodity:
+            tree.append(child)

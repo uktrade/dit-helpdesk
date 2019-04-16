@@ -35,6 +35,7 @@ HEADING_URL = (
     'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
 )
 
+import logging
 
 def commodity_detail(request, commodity_code, country_code):
     selected_country = country_code.upper()
@@ -57,8 +58,6 @@ def commodity_detail(request, commodity_code, country_code):
     commodity = get_object_or_404(
         Commodity, commodity_code=commodity_code,
     )
-
-    commodity_path = commodity.get_path()
 
     if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
 
@@ -90,7 +89,7 @@ def commodity_detail(request, commodity_code, country_code):
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': commodity.regulation_set.all(),
-        'commodity_path': commodity_path
+        'commodity_hierarchy_context': commodity_hierarchy_context(commodity, selected_country)
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
@@ -158,3 +157,19 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
+
+def commodity_hierarchy_context(commodity, country_code):
+    commodity_path = commodity.get_path()
+
+    html = ''
+
+    for item in commodity_path:
+        html += f'<p>'
+        if type(item) is Commodity:
+            html += f'<a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">{item.tts_title}</a>'
+        elif hasattr(item,'description'):
+            html += f'<a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>'
+        elif hasattr(item,'title'):
+            html += f'<a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.title.capitalize()}</a>'
+        html += f'</p>'
+    return html
