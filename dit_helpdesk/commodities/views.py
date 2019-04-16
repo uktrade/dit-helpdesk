@@ -21,11 +21,6 @@ from rules_of_origin.models import RulesGroupMember
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 from rules_of_origin.util import get_rules_of_origin_html_fragments
 
-import logging
-import sys
-sys.setrecursionlimit(1000000)
-
-
 TABLE_COLUMN_TITLES = [
     tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
 ]
@@ -40,14 +35,8 @@ HEADING_URL = (
     'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
 )
 
-HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), '../hierarchy/hierarchy_cached.json')
-with open(HIERARCHY_JSON_PATH) as f:
-    HIERARCHY_CACHED = json.loads(f.read())
 
 def commodity_detail(request, commodity_code, country_code):
-    commodity_path = get_commodity_path(HIERARCHY_CACHED, commodity_code)
-    commodity_path = format_path(commodity_path)
-
     selected_country = country_code.upper()
 
     country = Country.objects.filter(
@@ -68,6 +57,8 @@ def commodity_detail(request, commodity_code, country_code):
     commodity = get_object_or_404(
         Commodity, commodity_code=commodity_code,
     )
+
+    commodity_path = commodity.get_path()
 
     if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
 
@@ -167,20 +158,3 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
-
-def get_commodity_path(json_tree, target_commodity_code):
-    if 'commodity_code' in json_tree and  json_tree['commodity_code'] == target_commodity_code:
-        return json_tree['name']
-    else:
-        for attr, value in json_tree.items():
-            if attr == 'children':
-                for dic in value:
-                    p = get_commodity_path(dic, target_commodity_code)
-                    if p:
-                        return json_tree['name'] + ': ' +  p
-
-def format_path(commodity_path):
-    commodity_path = commodity_path.replace("root: ", "")
-    commodity_path = commodity_path.replace("H: ", "")
-    commodity_path = commodity_path.replace("I - ", "")
-    return commodity_path

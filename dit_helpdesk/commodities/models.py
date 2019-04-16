@@ -5,9 +5,9 @@ from django.db import models
 from django.urls import reverse
 
 from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
+from hierarchy.models import SubHeading, Heading, Chapter, Section
 
 COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
-
 
 class Commodity(models.Model):
 
@@ -77,8 +77,34 @@ class Commodity(models.Model):
 
     def get_heading(self):
         """Got up the hierarchy of sub-headings and return the Heading"""
-        from hierarchy.models import Heading
         obj = self.heading or self.parent_subheading
         while type(obj) is not Heading:
             obj = obj.get_parent()
         return obj
+
+    def get_path(self, parent = None, tree = [], level = 0):
+        if not parent:
+            tree = []
+            parent = self
+
+        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+            self.get_path(parent.parent_subheading, tree, level)
+            tree.append(parent.parent_subheading)
+        if hasattr(parent, 'heading') and parent.heading is not None:
+            self.get_path(parent.heading, tree, level)
+            tree.append(parent.heading)
+        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+            self.get_path(parent.chapter, tree, level)
+            tree.append(parent.chapter)
+        elif hasattr(parent, 'section') and parent.section is not None:
+            tree.append(parent.section)
+        elif self.parent_subheading is not parent:
+            self.append_path_children(self.parent_subheading, tree)
+
+        return tree
+
+    def append_path_children(self, parent, tree):
+        children = parent.get_hierarchy_children()
+        for child in children:
+            if type(child) is Commodity:
+                tree.append(child)

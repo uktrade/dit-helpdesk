@@ -41,18 +41,21 @@
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">{{ commodity.tts_title }}</p>
-      <span class="govuk-caption-m">{{commodity_path | safe}}</span>
-      <!-- <p class="govuk-body-s">{{commodity_path | safe}}</p> -->
-
-      <!-- <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-          {% for path in commodity_path %}
-            {% if forloop.counter > 1 %}
-              <li class="govuk-breadcrumbs__list-item" href="#">{{path | safe}}</li>
+      {% for path in commodity_path %}
+        <p>
+          {% if path.number_indents >= 0%}
+            <span class="govuk-caption-m govuk-!-margin-left-{{path.number_indents|add:"2"}}">
+          {% else %}
+            <span class="govuk-caption-m">
+          {% endif %}
+            {% if path.description%}
+              {{path.description.capitalize | safe}}
+            {% elif path.title%}
+              {{path.title.capitalize | safe}}
             {% endif %}
-          {% endfor %}
-        </ol>
-      </div> -->
+          </span>
+        </p>
+      {% endfor %}
     </div>
   </div>
   <div class="govuk-grid-row">
