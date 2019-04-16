@@ -76,7 +76,11 @@
                     {% if col.1.1.code %}
                       <p>{{ col.1.0 | cell_cleaner | safe }}</p>
                       <p>Additional code: <strong>{{col.1.1.code}}</strong></p>
-                    {% else %}
+                    {% endif %}
+                    {% if col.1.1.description %}
+                      <p>{{col.1.1.description}}</p>
+                    {% endif %} 
+                    {% if not col.1.1.code or not col.1.1.description %}
                       <p>{{ col.1 | cell_cleaner | safe }}</p>
                     {% endif %}
                 </td>
@@ -91,9 +95,19 @@
     <div class="govuk-grid-column-three-quarters govuk-!-margin-bottom-9">
       <details class="govuk-details govuk-!-margin-bottom-0">
         <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">Understand the main measure types</span>
+          <span class="govuk-details__summary-text">What are the main types of measure</span>
         </summary>
         <div class="govuk-details__text">
+          
+          <details class="govuk-details govuk-!-margin-bottom-2">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Value	Added Tax (VAT)</span>
+            </summary>
+            <div class="govuk-details__text">
+              <a class="govuk-link" href="https://www.gov.uk/guidance/vat-imports-acquisitions-and-purchases-from-abroad">VAT</a>
+              is a national tax charged in addition to any other duties that apply.
+            </div>
+          </details>
 
           <details class="govuk-details govuk-!-margin-bottom-2">
             <summary class="govuk-details__summary">
@@ -112,7 +126,7 @@
             </summary>
             <div class="govuk-details__text">
               A <a class="govuk-link"
-                 href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">tariff
+                 href="https://www.gov.uk/government/publications/notice-826-tariff-preferences-imports/notice-826-tariff-preferences-imports">tariff
                 preference</a> means that you pay a lower or nil rate of import duty on your goods. To qualify, goods must
               meet the rules of origin.
             </div>
@@ -193,28 +207,28 @@
         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.</p>
         <p class="govuk-body">Also <a class="govuk-link" href="https://www.gov.uk/guidance/signed-uk-trade-agreements-transitioned-from-the-eu">check the trade agreements the UK has with the country you are exporting from</a>.</p>
 
-        <div class="app-fullscreen-content govuk-!-margin-bottom-4">
-          <table class="govuk-table app-table">
+        <div class="govuk-!-margin-bottom-4">
+          <table class="govuk-table app-flexible-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
-            <thead class="govuk-table__head app-table__head">
+            <thead class="govuk-table__head app-flexible-table__head">
               <tr class="govuk-table__row">
-                <th class="govuk-table__header app-table__header"
+                <th class="govuk-table__header app-flexible-table__header"
                     scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
-                <th class="govuk-table__header app-table__header"
+                <th class="govuk-table__header app-flexible-table__header"
                     scope="col">Description of product</th>
-                <th class="govuk-table__header govuk-!-width-one-half app-table__header"
-                    scope="col">How non-originating materials must be worked or processed to get country of origin status
+                <th class="govuk-table__header govuk-!-width-one-half app-flexible-table__header"
+                    scope="col" colspan="2">How non-originating materials must be worked or processed to get country of origin status
                 </th>
               </tr>
             </thead>
-            <tbody class="govuk-table__body app-table__body">
+            <tbody class="govuk-table__body app-flexible-table__body">
               {% spaceless %}
                 {% for rule in rules_of_origin %}
-                    <tr class="govuk-table__row">
-                    <td class="govuk-table__cell app-table__cell">{{ rule.rule_id }}</td>
-                    <td class="govuk-table__cell app-table__cell">{{ rule.description }}</td>
-                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_one }}</td>
-                    <td class="govuk-table__cell app-table__cell">{{ rule.working_or_processing_two }}</td>
+                    <tr class="govuk-table__row app-flexible-table__row">
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Harmonised System heading"><p>{{ rule.rule_id }}</p></td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Description of product"><p>{{ rule.description }}</p></td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status"><p>{{ rule.working_or_processing_one }}</p></td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">{% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two }}</p>{% endif %}</td>
                     </tr>
                 {% endfor %}
               {% endspaceless %}
@@ -284,10 +298,16 @@
           <div id="accordion-default-content-{{ forloop.counter }}"
                class="govuk-accordion__section-content"
                aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
-            <ul class="govuk-list">
+            <ul class="govuk-list govuk-list--bullet">
               {% for document in regulation.document_set.all %}
-              <li class="govuk-body-s"><a href="{{ document.url }}"
-                   class="govuk-link">{{ document.url }}</a></li>
+              <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ document.url }}"
+                   class="govuk-link ">
+                   {% if 'none' not in document.title|lower %}
+                      {{ document.title }}
+                  {% else %}
+                      {{ document.url }}
+                  {% endif %}
+                   </a></li>
               {% endfor %}
             </ul>
           </div>

@@ -28,11 +28,24 @@ def search_view(request, country_code=None):
         else:
             return redirect(reverse('choose-country'))
 
+    selected_country = country_code.upper()
+
+    country = Country.objects.filter(
+        country_code=selected_country
+    )
+
+    country_exists = False
+
+    country_name = country.values()[0]['name']
+
+    if selected_country:
+        country_exists = country.exists()
+
     countries = Country.objects.all()
 
     # error message variables used for validation
     CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
-    CODE_NOT_FOUND_INPUT_ERROR_MESSAGE = 'Enter a commodity codee'
+    CODE_NOT_FOUND_INPUT_ERROR_MESSAGE = 'Enter a commodity code'
     CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
     CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE = 'Enter a commodity code'
     CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE = 'Enter a commodity code'
@@ -41,10 +54,10 @@ def search_view(request, country_code=None):
     CODE_HAS_SPACES_INPUT_ERROR_MESSAGE = 'Enter commodity code without spaces'
 
     # config for instance when the code is not found
-    CODE_NOT_FOUND_KWARGS = { 
+    CODE_NOT_FOUND_KWARGS = {
         'isError': True,
-        'errorSummaryMessage' : CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE,
-        'errorInputMessage' : CODE_NOT_FOUND_INPUT_ERROR_MESSAGE,
+        'errorSummaryMessage': CODE_NOT_FOUND_SUMMARY_ERROR_MESSAGE,
+        'errorInputMessage': CODE_NOT_FOUND_INPUT_ERROR_MESSAGE,
         'hierarchy_html': hierarchy_data(country_code),
         'country_code': country_code.lower()
     }
@@ -52,24 +65,26 @@ def search_view(request, country_code=None):
     if 'q' not in request.GET:
         context = {
             'hierarchy_html': hierarchy_data(country_code),
-            'country_code' : country_code
+            'country_code': country_code,
+            'selected_origin_country_name': country_name
         }
 
         return render(request, 'search/commodity_search.html', context)
 
-    query = request.GET['q'].strip()
-    
+    # remove all spaces
+    query = request.GET['q'].replace(" ", "")
+
     # show message that a code must not be empty
     if len(query) == 0:
-        kwargs = { 
+        kwargs = {
             'isError': True,
-            'errorSummaryMessage' : CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE,
-            'errorInputMessage' : CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE,
+            'errorSummaryMessage': CODE_NOT_ENTERED_SUMMARY_ERROR_MESSAGE,
+            'errorInputMessage': CODE_NOT_ENTERED_INPUR_ERROR_MESSAGE,
             'hierarchy_html': hierarchy_data(country_code),
             'country_code': country_code.lower()
-        }   
+        }
         return render(request, 'search/commodity_search.html', kwargs)
-        
+
     # SEARCH PRE-PROCESSING:
     # deal with 1 digits, e.g., convert 2 to 02
     if len(query) == 1:
@@ -79,28 +94,28 @@ def search_view(request, country_code=None):
     if len(query) > 0 and not query.isdigit():
 
         # if there are spaces show error message
-        if ' ' in query: 
-            kwargs = { 
+        if ' ' in query:
+            kwargs = {
                 'isError': True,
-                'errorSummaryMessage' : CODE_HAS_SPACES_SUMMARY_ERROR_MESSAGE,
-                'errorInputMessage' : CODE_HAS_SPACES_INPUT_ERROR_MESSAGE,
+                'errorSummaryMessage': CODE_HAS_SPACES_SUMMARY_ERROR_MESSAGE,
+                'errorInputMessage': CODE_HAS_SPACES_INPUT_ERROR_MESSAGE,
                 'hierarchy_html': hierarchy_data(country_code),
                 'country_code': country_code.lower()
             }
             return render(request, 'search/commodity_search.html', kwargs)
         else:
-            kwargs = { 
+            kwargs = {
                 'isError': True,
-                'errorSummaryMessage' : CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE,
-                'errorInputMessage' : CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE,
+                'errorSummaryMessage': CODE_NOT_DIGIT_SUMMARY_ERROR_MESSAGE,
+                'errorInputMessage': CODE_NOT_DIGIT_INPUT_ERROR_MESSAGE,
                 'hierarchy_html': hierarchy_data(country_code),
                 'country_code': country_code.lower()
             }
-            return render(request, 'search/commodity_search.html', kwargs)  
+            return render(request, 'search/commodity_search.html', kwargs)
 
     # deal with illegal 3,5,7,9 digit codes by removing final digit
-    if len(query) in [3,5,7,9]:
-    	query = query[:-1]
+    if len(query) in [3, 5, 7, 9]:
+        query = query[:-1]
 
     # deal with false positives 00 & 99
     if query in ['00', '99']:
@@ -110,22 +125,24 @@ def search_view(request, country_code=None):
     if len(query) == 4 and query[2:] == '00':
         query = query[:2]
 
-    # 
+    # Add two zeroes if length of query is 8
     if len(query) == 8:
         query = query + '00'
 
+    # Truncate if length of query > 10
+    if len(query) > 10:
+        query = query[:10]
 
     if len(query) == 10 and query.isdigit():
         code = query
 
         if Commodity.objects.filter(commodity_code=code).exists():
             return redirect(reverse(
-                'commodity-detail', kwargs={'commodity_code':code,
-                                            'country_code': country_code.lower() }
+                'commodity-detail', kwargs={'commodity_code': code,
+                                            'country_code': country_code.lower()}
             ))
         else:
             return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
-
 
     elif len(query) == 2 and query.isdigit():
         code2 = query
@@ -134,30 +151,27 @@ def search_view(request, country_code=None):
         if Chapter.objects.filter(chapter_code=code2_10).exists():
 
             kwargs = {
-                'node_id': 'chapter-%s' % Chapter.objects.get(chapter_code=code2_10).id,
+                'node_id': 'chapter-%s' % Chapter.objects.filter(chapter_code=code2_10).first().id,
                 'country_code': country_code.lower()
             }
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
 
         else:
-            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)    
-
+            return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
     elif len(query) == 4 and query.isdigit():
         code4 = query
         code4_10 = code4 + '000000'
 
         if Heading.objects.filter(heading_code=code4_10).exists():
-
-            kwargs = { 
-                'node_id': 'heading-%s' % Heading.objects.get(heading_code=code4_10).id,
+            kwargs = {
+                'node_id': 'heading-%s' % Heading.objects.filter(heading_code=code4_10).first().id,
                 'country_code': country_code.lower()
-            }   
+            }
             return redirect(reverse('search-hierarchy', kwargs=kwargs))
 
         else:
             return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
-
 
     elif len(query) == 6 and query.isdigit():
         code6 = query
@@ -177,9 +191,4 @@ def search_view(request, country_code=None):
     else:
         return render(request, 'search/commodity_search.html', CODE_NOT_FOUND_KWARGS)
 
-
     return render(request, 'countries/choose_country.html', context)
-
-
-
-

@@ -6,6 +6,7 @@ require('../vendor/polyfills/array-filter')
 var commodityTree = {
   init: function ($module) {
     $module.addEventListener('click', commodityTree.toggleSections.bind(this))
+    this.scrollToElement(window.location.pathname)
   },
   toggleSections: function (event) {
     var $target = event.target
@@ -33,6 +34,23 @@ var commodityTree = {
       })
 
       childList[0].style.display = 'block'
+    }
+  },
+  scrollToElement: function(url){
+    // only run when the search has found a valid code
+    if(window.location.pathname.indexOf('hierarchy') === -1) {
+      return false
+    }
+    var element = document.getElementById(this.getFragmentFromUrl(url))
+    element.scrollIntoView()
+    // focus on the link
+    element.childNodes[0].focus({ preventScroll: true })
+  },
+  getFragmentFromUrl: function(url){
+    if (url.indexOf('#') === -1) {
+      return url.substring(url.lastIndexOf("/") + 1, url.length)
+    } else {
+      return url.substring(url.lastIndexOf("#") + 1, url.length)
     }
   }
 }

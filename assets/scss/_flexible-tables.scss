@@ -120,6 +120,9 @@
     &:nth-child(odd) {
       background: govuk-colour("grey-4");
     }
+    &:empty {
+      display: none;
+    }
 
     p {
       box-sizing: border-box;

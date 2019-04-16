@@ -35,7 +35,7 @@
 // @import "govuk-frontend/components/tabs/tabs";
 // @import "govuk-frontend/components/tag/tag";
 // @import "govuk-frontend/components/radios/radios";
-// @import "govuk-frontend/components/select/select";
+@import "govuk-frontend/components/select/select";
 @import "govuk-frontend/components/skip-link/skip-link";
 @import "govuk-frontend/components/table/table";
 @import "govuk-frontend/components/textarea/textarea";
@@ -53,7 +53,6 @@
 @import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";
 
 @import "flexible-tables";
-@import "scrollable-tables";
 @import "hierarchy-tree";
 @import "cookie-banner";
 

@@ -8,6 +8,9 @@ class Regulation(models.Model):
     title = models.TextField(null=True)
     sections = models.ManyToManyField("hierarchy.Section")
     commodities = models.ManyToManyField("commodities.Commodity")
+    subheadings = models.ManyToManyField("hierarchy.SubHeading")
+    headings = models.ManyToManyField("hierarchy.Heading")
+    chapters = models.ManyToManyField("hierarchy.Chapter")
 
     class Meta:
         pass
@@ -17,6 +20,7 @@ class Regulation(models.Model):
 
 
 class Document(models.Model):
+    title = models.TextField(null=True, blank=True)
     regulations = models.ManyToManyField(Regulation)
     type = models.CharField(max_length=255)
     celex = models.CharField(max_length=20)

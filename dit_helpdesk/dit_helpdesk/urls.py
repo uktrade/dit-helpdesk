@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
-
+from django.conf import settings
 from commodities import views as commodity_views
 from countries import views as country_views
 from hierarchy import views as hierarchy_views
@@ -34,10 +34,7 @@ handler500 = 'core.views.error500handler'
 
 urlpatterns = [
     path('', index.IndexRedirect.as_view(), name="index"),
-
     path('auth/', include('authbroker_client.urls', namespace='authbroker')),
-    path('admin/login/', admin_login_view),
-    path('admin/', admin.site.urls),
     path(
         'choose-country/', country_views.choose_country_view,
         name='choose-country'
@@ -63,3 +60,9 @@ urlpatterns = [
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
     re_path(r'^check/$', HealthCheckView.as_view(), name='healthcheck'),
 ]
+
+if settings.ADMIN_ENABLED:
+    urlpatterns += [
+        path('admin/login/', admin_login_view),
+        path('admin/', admin.site.urls)
+    ]
