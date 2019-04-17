@@ -70,20 +70,30 @@ def commodity_detail(request, commodity_code, country_code):
 
     # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
     rules = []
+    roo_footnotes = None
+    all_commodity_rules = commodity.get_heading().chapter.rules_of_origin.all()
+    ch_id = commodity.get_heading().chapter.id
     try:
         for country_code in country:
+            rules_document = country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all()
+            for doc in rules_document:
+                roo_footnotes = doc.footnotes.all().order_by('id')
             for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
-                for r in rd.rule_set.all():
-                    if r.chapter == commodity.get_heading().chapter:
+                for r in rd.rule_set.all().order_by('id'):
+                    # if r.chapter == commodity.get_heading().chapter:
+                    if r in all_commodity_rules:
                         rules.append(r)
     except Exception as ex:
         print(ex.args)
+
+    print(ch_id)
 
     context = {
         'selected_origin_country': selected_country,
         'commodity': commodity,
         'selected_origin_country_name': country_name,
         'rules_of_origin': rules,
+        'roo_footnotes': roo_footnotes,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': commodity.regulation_set.all()

@@ -82,7 +82,10 @@
             "Buttermilk, curdled milk and cream, yoghurt, kephir and other fermented or acidified milk and cream, whether or not concentrated or containing added sugar or other sweetening matter or flavoured or containing added fruit, nuts or cocoa"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the materials of Chapter 4 used are wholly obtained,",
+            "-all the fruit juice (except that of pineapple, lime or grapefruit) of heading 2009 used is originating, and",
+            "-the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -134,7 +137,9 @@
             "Live trees and other plants; bulbs, roots and the like; cut flowers and ornamental foliage"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the materials of Chapter 6 used are wholly obtained, and",
+            "-the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -172,7 +177,9 @@
             "Edible fruit and nuts; peel of citrus fruits or melons"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the fruit and nuts used are wholly obtained, and",
+            "-the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the value of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -343,7 +350,7 @@
             "1302"
           ],
           "description": [
-            "\u2014 Mucilages and thickeners, modified, derived from vegetable products"
+            "- Mucilages and thickeners, modified, derived from vegetable products"
           ],
           "workingLeft": [
             "Manufacture from non-modified mucilages and thickeners"
@@ -357,7 +364,7 @@
             "1302"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -423,7 +430,7 @@
             "1501"
           ],
           "description": [
-            "\u2014 Fats from bones or waste"
+            "- Fats from bones or waste"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 0203 , 0206 or 0207 or bones of heading 0506"
@@ -437,7 +444,7 @@
             "1501"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from meat or edible offal of swine of heading 0203 or 0206 or of meat and edible offal of poultry of heading 0207"
@@ -465,7 +472,7 @@
             "1502"
           ],
           "description": [
-            "\u2014 Fats from bones or waste"
+            "- Fats from bones or waste"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 0201 , 0202 , 0204 or 0206 or bones of heading 0506"
@@ -479,7 +486,7 @@
             "1502"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which all the materials of Chapter 2 used are wholly obtained"
@@ -507,7 +514,7 @@
             "1504"
           ],
           "description": [
-            "\u2014 Solid fractions"
+            "- Solid fractions"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 1504"
@@ -521,7 +528,7 @@
             "1504"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which all the materials of Chapters 2 and 3 used are wholly obtained"
@@ -563,7 +570,7 @@
             "1506"
           ],
           "description": [
-            "\u2014 Solid fractions"
+            "- Solid fractions"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 1506"
@@ -577,7 +584,7 @@
             "1506"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which all the materials of Chapter 2 used are wholly obtained"
@@ -605,7 +612,7 @@
             "1507 to 1515"
           ],
           "description": [
-            "\u2014 Soya, ground nut, palm, copra, palm kernel, babassu, tung and oiticica oil, myrtle wax and Japan wax, fractions of jojoba oil and oils for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+            "- Soya, ground nut, palm, copra, palm kernel, babassu, tung and oiticica oil, myrtle wax and Japan wax, fractions of jojoba oil and oils for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -619,7 +626,7 @@
             "1507 to 1515"
           ],
           "description": [
-            "\u2014 Solid fractions, except for that of jojoba oil"
+            "- Solid fractions, except for that of jojoba oil"
           ],
           "workingLeft": [
             "Manufacture from other materials of headings 1507 to 1515"
@@ -633,7 +640,7 @@
             "1507 to 1515"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which all the vegetable materials used are wholly obtained"
@@ -650,7 +657,9 @@
             "Animal or vegetable fats and oils and their fractions, partly or wholly hydrogenated, inter-esterified, re-esterified or elaidinised, whether or not refined, but not further prepared"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the materials of Chapter 2 used are wholly obtained, and",
+            "-all the vegetable materials used are wholly obtained. However, materials of headings 1507, 1508, 1511 and 1513 may be used"
           ],
           "workingRight": [
             "\u00a0"
@@ -664,7 +673,9 @@
             "Margarine; edible mixtures or preparations of animal or vegetable fats or oils or of fractions of different fats or oils of this Chapter, other than edible fats or oils or their fractions of heading 1516"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the materials of Chapters 2 and 4 used are wholly obtained, and",
+            "-all the vegetable materials used are wholly obtained. However, materials of headings 1507, 1508, 1511 and 1513 may be used"
           ],
           "workingRight": [
             "\u00a0"
@@ -683,7 +694,9 @@
             "Preparations of meat, of fish or of crustaceans, molluscs or other aquatic invertebrates"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from animals of Chapter 1, and/or",
+            "-in which all the materials of Chapter 3 used are wholly obtained"
           ],
           "workingRight": [
             "\u00a0"
@@ -741,7 +754,7 @@
             "1702"
           ],
           "description": [
-            "\u2014 Chemically-pure maltose and fructose"
+            "- Chemically-pure maltose and fructose"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 1702"
@@ -755,7 +768,7 @@
             "1702"
           ],
           "description": [
-            "\u2014 Other sugars in solid form, containing added flavouring or colouring matter"
+            "- Other sugars in solid form, containing added flavouring or colouring matter"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of Chapter 17 used does not exceed 30 % of the ex-works price of the product"
@@ -769,7 +782,7 @@
             "1702"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which all the materials used are originating"
@@ -800,7 +813,9 @@
             "Sugar confectionery (including white chocolate), not containing cocoa"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -819,7 +834,9 @@
             "Cocoa and cocoa preparations"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -844,7 +861,7 @@
             "1901"
           ],
           "description": [
-            "\u2014 Malt extract"
+            "- Malt extract"
           ],
           "workingLeft": [
             "Manufacture from cereals of Chapter 10"
@@ -858,10 +875,12 @@
             "1901"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -886,7 +905,7 @@
             "1902"
           ],
           "description": [
-            "\u2014 Containing 20 % or less by weight of meat, meat offal, fish, crustaceans or molluscs"
+            "- Containing 20 % or less by weight of meat, meat offal, fish, crustaceans or molluscs"
           ],
           "workingLeft": [
             "Manufacture in which all the cereals and derivatives (except durum wheat and its derivatives) used are wholly obtained"
@@ -900,10 +919,12 @@
             "1902"
           ],
           "description": [
-            "\u2014 Containing more than 20 % by weight of meat, meat offal, fish, crustaceans or molluscs"
+            "- Containing more than 20 % by weight of meat, meat offal, fish, crustaceans or molluscs"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the cereals and their derivatives (except durum wheat and its derivatives) used are wholly obtained, and",
+            "-all the materials of Chapters 2 and 3 used are wholly obtained"
           ],
           "workingRight": [
             "\u00a0"
@@ -931,7 +952,10 @@
             "Prepared foods obtained by the swelling or roasting of cereals or cereal products (for example, corn flakes); cereals (other than maize (corn)) in grain form or in the form of flakes or other worked grains (except flour, groats and meal), pre-cooked or otherwise prepared, not elsewhere specified or included"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except those of heading 1806,",
+            "-in which all the cereals and flour (except durum wheat and\u00a0Zea indurate maize, and their derivatives) used are wholly obtained, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1020,7 +1044,9 @@
             "Jams, fruit jellies, marmalades, fruit or nut pur\u00e9e and fruit or nut pastes, obtained by cooking, whether or not containing added sugar or other sweetening matter"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1031,7 +1057,7 @@
             "ex\u00a0\u00a020\u00a008"
           ],
           "description": [
-            "\u2014 Nuts, not containing added sugar or spirits"
+            "- Nuts, not containing added sugar or spirits"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the originating nuts and oil seeds of headings 0801 , 0802 and 1202 to 1207 used exceeds 60 % of the ex-works price of the product"
@@ -1045,7 +1071,7 @@
             "ex\u00a0\u00a020\u00a008"
           ],
           "description": [
-            "\u2014 Peanut butter; mixtures based on cereals; palm hearts; maize (corn)"
+            "- Peanut butter; mixtures based on cereals; palm hearts; maize (corn)"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -1059,10 +1085,12 @@
             "ex\u00a0\u00a020\u00a008"
           ],
           "description": [
-            "\u2014 Other except for fruit and nuts cooked otherwise than by steaming or boiling in water, not containing added sugar, frozen"
+            "- Other except for fruit and nuts cooked otherwise than by steaming or boiling in water, not containing added sugar, frozen"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1087,10 +1115,12 @@
             "2009"
           ],
           "description": [
-            "\u2014 Citrus juices"
+            "- Citrus juices"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-all the citrus fruits used are wholly obtained,",
+            "-the value of any materials of Chapter 17 used does not exceed 30 % of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1101,10 +1131,12 @@
             "2009"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the materials used are classified within a heading other than that of the product,",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30 % of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1137,7 +1169,9 @@
             "Extracts, essences and concentrates, of coffee, tea or mat\u00e9 and preparations with a basis of these products or with a basis of coffee, tea or mat\u00e9; roasted chicory and other roasted coffee substitutes, and extracts, essences and concentrates thereof"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which all the chicory used is wholly obtained"
           ],
           "workingRight": [
             "\u00a0"
@@ -1162,7 +1196,7 @@
             "2103"
           ],
           "description": [
-            "\u2014 Sauces and preparations therefor; mixed condiments and mixed seasonings"
+            "- Sauces and preparations therefor; mixed condiments and mixed seasonings"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, mustard flour or meal or prepared mustard may be used"
@@ -1176,7 +1210,7 @@
             "2103"
           ],
           "description": [
-            "\u2014 Mustard flour and meal and prepared mustard"
+            "- Mustard flour and meal and prepared mustard"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading"
@@ -1207,7 +1241,9 @@
             "Food preparations not elsewhere specified or included"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -1226,7 +1262,9 @@
             "Beverages, spirits and vinegar; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which all the grapes or materials derived from grapes used are wholly obtained"
           ],
           "workingRight": [
             "\u00a0"
@@ -1240,7 +1278,10 @@
             "Waters, including mineral waters and aerated waters, containing added sugar or other sweetening matter or flavoured, and other non-alcoholic beverages, not including fruit or vegetable juices of heading 2009"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials of Chapter 17 used does not exceed 30\u00a0% of the ex-works price of the product, and",
+            "-in which all the fruit juice used (except that of pineapple, lime or grapefruit) is originating"
           ],
           "workingRight": [
             "\u00a0"
@@ -1254,7 +1295,9 @@
             "Undenatured ethyl alcohol of an alcoholic strength by volume of 80 % vol or higher; ethyl alcohol and other spirits, denatured, of any strength"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except heading 2207 or 2208, and",
+            "-in which all the grapes or materials derived from grapes used are wholly obtained or, if all the other materials used are already originating, arrack may be used up to a limit of 5\u00a0% by volume"
           ],
           "workingRight": [
             "\u00a0"
@@ -1268,7 +1311,9 @@
             "Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80 % vol; spirits, liqueurs and other spirituous beverages"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except heading 2207 or 2208, and",
+            "-in which all the grapes or materials derived from grapes used are wholly obtained or, if all the other materials used are already originating, arrack may be used up to a limit of 5\u00a0% by volume"
           ],
           "workingRight": [
             "\u00a0"
@@ -1343,7 +1388,9 @@
             "Preparations of a kind used in animal feeding"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-all the cereals, sugar or molasses, meat or milk used are originating, and",
+            "-all the materials of Chapter 3 used are wholly obtained"
           ],
           "workingRight": [
             "\u00a0"
@@ -1864,7 +1911,7 @@
             "ex\u00a0\u00a029\u00a032"
           ],
           "description": [
-            "\u2014 Internal ethers and their halogenated, sulphonated, nitrated or nitrosated derivatives"
+            "- Internal ethers and their halogenated, sulphonated, nitrated or nitrosated derivatives"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading. However, the value of all the materials of heading 2909 used shall not exceed 20 % of the ex-works price of the product"
@@ -1878,7 +1925,7 @@
             "ex\u00a0\u00a029\u00a032"
           ],
           "description": [
-            "\u2014 Cyclic acetals and internal hemiacetals and their halogenated, sulphonated, nitrated or nitrosated derivatives"
+            "- Cyclic acetals and internal hemiacetals and their halogenated, sulphonated, nitrated or nitrosated derivatives"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading"
@@ -1967,7 +2014,7 @@
             "3002"
           ],
           "description": [
-            "\u2014 Products consisting of two or more constituents which have been mixed together for therapeutic or prophylactic uses or unmixed products for these uses, put up in measured doses or in forms or packings for retail sale"
+            "- Products consisting of two or more constituents which have been mixed together for therapeutic or prophylactic uses or unmixed products for these uses, put up in measured doses or in forms or packings for retail sale"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3002. However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -1981,7 +2028,7 @@
             "3002"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "\u00a0"
@@ -1995,21 +2042,7 @@
             "3002"
           ],
           "description": [
-            "\u2014 \u2014 Human blood"
-          ],
-          "workingLeft": [
-            "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
-          ],
-          "workingRight": [
-            "\u00a0"
-          ]
-        },
-        {
-          "id": [
-            "3002"
-          ],
-          "description": [
-            "\u2014 \u2014 Animal blood prepared for therapeutic or prophylactic uses"
+            "- - Human blood"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2023,7 +2056,7 @@
             "3002"
           ],
           "description": [
-            "\u2014 \u2014 Blood fractions other than antisera, haemoglobin, blood globulins and serum globulins"
+            "- - Animal blood prepared for therapeutic or prophylactic uses"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2037,7 +2070,7 @@
             "3002"
           ],
           "description": [
-            "\u2014 \u2014 Haemoglobin, blood globulins and serum globulins"
+            "- - Blood fractions other than antisera, haemoglobin, blood globulins and serum globulins"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2051,7 +2084,21 @@
             "3002"
           ],
           "description": [
-            "\u2014 \u2014 Other"
+            "- - Haemoglobin, blood globulins and serum globulins"
+          ],
+          "workingLeft": [
+            "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
+          ],
+          "workingRight": [
+            "\u00a0"
+          ]
+        },
+        {
+          "id": [
+            "3002"
+          ],
+          "description": [
+            "- - Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3002 . However, materials of the same description as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2079,7 +2126,7 @@
             "3003 and 3004"
           ],
           "description": [
-            "\u2014 Obtained from amikacin of heading 2941"
+            "- Obtained from amikacin of heading 2941"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, materials of headings 3003 or 3004 may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2093,10 +2140,12 @@
             "3003 and 3004"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product. However, materials of headings 3003 and 3004 may be used, provided that their total value does not exceed 20\u00a0% of the ex-works price of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -2141,13 +2190,15 @@
           ],
           "description": [
             "Mineral or chemical fertilisers containing two or three of the fertilising elements nitrogen, phosphorous and potassium; other fertilisers; goods of this chapter, in tablets or similar forms or in packages of a gross weight not exceeding 10 kg, except for:",
-            "\u2014\u00a0sodium nitrate",
-            "\u2014\u00a0calcium cyanamide",
-            "\u2014\u00a0potassium sulphate",
-            "\u2014\u00a0magnesium potassium sulphate"
+            "-\u00a0sodium nitrate",
+            "-\u00a0calcium cyanamide",
+            "-\u00a0potassium sulphate",
+            "-\u00a0magnesium potassium sulphate"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product. However, materials of the same heading as the product may be used, provided that their total value does not exceed 20\u00a0% of the ex-works price of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -2287,7 +2338,7 @@
             "3404"
           ],
           "description": [
-            "\u2014 With a basis of paraffin, petroleum waxes, waxes obtained from bituminous minerals, slack wax or scale wax"
+            "- With a basis of paraffin, petroleum waxes, waxes obtained from bituminous minerals, slack wax or scale wax"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, materials of the same heading as the product may be used, provided that their total value does not exceed 50 % of the ex-works price of the product"
@@ -2301,11 +2352,14 @@
             "3404"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except:",
-            "However, these materials may be used, provided that their total value does not exceed 20\u00a0% of the ex-works price of the product"
+            "However, these materials may be used, provided that their total value does not exceed 20\u00a0% of the ex-works price of the product",
+            "-hydrogenated oils having the character of waxes of heading 1516,",
+            "-fatty acids not chemically defined or industrial fatty alcohols having the character of waxes of heading 3823, and",
+            "-materials of heading 3404"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -2349,7 +2403,7 @@
             "3505"
           ],
           "description": [
-            "\u2014 Starch ethers and esters"
+            "- Starch ethers and esters"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3505"
@@ -2363,7 +2417,7 @@
             "3505"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 1108"
@@ -2443,7 +2497,7 @@
             "3701"
           ],
           "description": [
-            "\u2014 Instant print film for colour photography, in packs"
+            "- Instant print film for colour photography, in packs"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 3701 or 3702 . However, materials of heading 3702 may be used, provided that their total value does not exceed 30 % of the ex-works price of the product"
@@ -2457,7 +2511,7 @@
             "3701"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 3701 or 3702 . However, materials of heading 3701 and 3702 may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2518,7 +2572,7 @@
             "ex\u00a0\u00a038\u00a001"
           ],
           "description": [
-            "\u2014 Colloidal graphite in suspension in oil and semi-colloidal graphite; carbonaceous pastes for electrodes"
+            "- Colloidal graphite in suspension in oil and semi-colloidal graphite; carbonaceous pastes for electrodes"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -2532,7 +2586,7 @@
             "ex\u00a0\u00a038\u00a001"
           ],
           "description": [
-            "\u2014 Graphite in paste form, being a mixture of more than 30 % by weight of graphite with mineral oils"
+            "- Graphite in paste form, being a mixture of more than 30 % by weight of graphite with mineral oils"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of heading 3403 used does not exceed 20 % of the ex-works price of the product"
@@ -2658,7 +2712,7 @@
             "3811"
           ],
           "description": [
-            "\u2014 Prepared additives for lubricating oil, containing petroleum oils or oils obtained from bituminous minerals"
+            "- Prepared additives for lubricating oil, containing petroleum oils or oils obtained from bituminous minerals"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of heading 3811 used does not exceed 50 % of the ex-works price of the product"
@@ -2672,7 +2726,7 @@
             "3811"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -2798,7 +2852,7 @@
             "3823"
           ],
           "description": [
-            "\u2014 Industrial monocarboxylic fatty acids, acid oils from refining"
+            "- Industrial monocarboxylic fatty acids, acid oils from refining"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -2812,7 +2866,7 @@
             "3823"
           ],
           "description": [
-            "\u2014 Industrial fatty alcohols"
+            "- Industrial fatty alcohols"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 3823"
@@ -2840,19 +2894,19 @@
             "3824"
           ],
           "description": [
-            "\u2014 The following of this heading:",
-            "\u2014 \u2014 Prepared binders for foundry moulds or cores based on natural resinous products",
-            "\u2014 \u2014 Naphthenic acids, their water-insoluble salts and their esters",
-            "\u2014 \u2014 Sorbitol other than that of heading 2905",
-            "\u2014 \u2014 Petroleum sulphonates, excluding petroleum sulphonates of alkali metals, of ammonium or of ethanolamines; thiophenated sulphonic acids of oils obtained from bituminous minerals, and their salts",
-            "\u2014 \u2014 Ion exchangers",
-            "\u2014 \u2014 Getters for vacuum tubes",
-            "\u2014 \u2014 Alkaline iron oxide for the purification of gas",
-            "\u2014 \u2014 Ammoniacal gas liquors and spent oxide produced in coal gas purification",
-            "\u2014 \u2014 Sulphonaphthenic acids, their water-insoluble salts and their esters",
-            "\u2014 \u2014 Fusel oil and Dippel's oil",
-            "\u2014 \u2014 Mixtures of salts having different anions",
-            "\u2014 \u2014 Copying pastes with a basis of gelatin, whether or not on a paper or textile backing"
+            "- The following of this heading:",
+            "- - Prepared binders for foundry moulds or cores based on natural resinous products",
+            "- - Naphthenic acids, their water-insoluble salts and their esters",
+            "- - Sorbitol other than that of heading 2905",
+            "- - Petroleum sulphonates, excluding petroleum sulphonates of alkali metals, of ammonium or of ethanolamines; thiophenated sulphonic acids of oils obtained from bituminous minerals, and their salts",
+            "- - Ion exchangers",
+            "- - Getters for vacuum tubes",
+            "- - Alkaline iron oxide for the purification of gas",
+            "- - Ammoniacal gas liquors and spent oxide produced in coal gas purification",
+            "- - Sulphonaphthenic acids, their water-insoluble salts and their esters",
+            "- - Fusel oil and Dippel's oil",
+            "- - Mixtures of salts having different anions",
+            "- - Copying pastes with a basis of gelatin, whether or not on a paper or textile backing"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, materials of the same heading as the product may be used, provided that their total value does not exceed 20 % of the ex-works price of the product"
@@ -2866,7 +2920,7 @@
             "3824"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -2894,10 +2948,11 @@
             "3901 to 3915"
           ],
           "description": [
-            "\u2014 Addition homopolymerisation products in which a single monomer contributes more than 99 % by weight to the total polymer content"
+            "- Addition homopolymerisation products in which a single monomer contributes more than 99 % by weight to the total polymer content"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product, and--\u00a0within the above limit, the value of all the materials of Chapter 39 used does not exceed 20 % of the ex-works price of the product\u00a0()"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -2908,7 +2963,7 @@
             "3901 to 3915"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of Chapter 39 used does not exceed 20 % of the ex-works price of the product\u00a0(<a href=\"#footnote_5\">5</a>) "
@@ -2922,7 +2977,7 @@
             "ex\u00a0\u00a039\u00a007"
           ],
           "description": [
-            "\u2014 Copolymer, made from polycarbonate and acrylonitrile-butadiene-styrene copolymer (ABS)"
+            "- Copolymer, made from polycarbonate and acrylonitrile-butadiene-styrene copolymer (ABS)"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, materials of the same heading as the product may be used, provided that their total value does not exceed 50 % of the ex-works price of the product\u00a0(<a href=\"#footnote_5\">5</a>) "
@@ -2936,7 +2991,7 @@
             "ex\u00a0\u00a039\u00a007"
           ],
           "description": [
-            "\u2014 Polyester"
+            "- Polyester"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of Chapter 39 used does not exceed 20 % of the ex-works price of the product and/or manufacture from polycarbonate of tetrabromo-(bisphenol A)"
@@ -2978,7 +3033,7 @@
             "3916 to 3921"
           ],
           "description": [
-            "\u2014 Flat products, further worked than only surface-worked or cut into forms other than rectangular (including square); other products, further worked than only surface-worked"
+            "- Flat products, further worked than only surface-worked or cut into forms other than rectangular (including square); other products, further worked than only surface-worked"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of Chapter 39 used does not exceed 50 % of the ex-works price of the product"
@@ -2992,7 +3047,7 @@
             "3916 to 3921"
           ],
           "description": [
-            "\u2014 Other:"
+            "- Other:"
           ],
           "workingLeft": [
             "\u00a0"
@@ -3006,10 +3061,12 @@
             "3916 to 3921"
           ],
           "description": [
-            "\u2014 \u2014 Addition homopolymerisation products in which a single monomer contributes more than 99 % by weight to the total polymer content"
+            "- - Addition homopolymerisation products in which a single monomer contributes more than 99 % by weight to the total polymer content"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of Chapter 39 used does not exceed 20\u00a0% of the ex-works price of the product\u00a0(<a href=\"#footnote_5\">5</a>)"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -3020,7 +3077,7 @@
             "3916 to 3921"
           ],
           "description": [
-            "\u2014 \u2014 Other"
+            "- - Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of Chapter 39 used does not exceed 20 % of the ex-works price of the product (<a href=\"#footnote_5\">5</a>)"
@@ -3037,7 +3094,9 @@
             "Profile shapes and tubes"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of the same heading as the product used does not exceed 20\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -3048,7 +3107,7 @@
             "ex\u00a0\u00a039\u00a020"
           ],
           "description": [
-            "\u2014 Ionomer sheet or film"
+            "- Ionomer sheet or film"
           ],
           "workingLeft": [
             "Manufacture from a thermoplastic partial salt which is a copolymer of ethylene and metacrylic acid partly neutralised with metal ions, mainly zinc and sodium"
@@ -3062,7 +3121,7 @@
             "ex\u00a0\u00a039\u00a020"
           ],
           "description": [
-            "\u2014 Sheets of regenerated cellulose, polyamides or polyethylene"
+            "- Sheets of regenerated cellulose, polyamides or polyethylene"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of the same heading as the product used does not exceed 20 % of the ex-works price of the product"
@@ -3165,7 +3224,7 @@
             "4012"
           ],
           "description": [
-            "\u2014 Retreaded pneumatic, solid or cushion tyres, of rubber"
+            "- Retreaded pneumatic, solid or cushion tyres, of rubber"
           ],
           "workingLeft": [
             "Retreading of used tyres"
@@ -3179,7 +3238,7 @@
             "4012"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 4011 and 4012"
@@ -3336,7 +3395,7 @@
             "ex\u00a0\u00a043\u00a002"
           ],
           "description": [
-            "\u2014 Plates, crosses and similar forms"
+            "- Plates, crosses and similar forms"
           ],
           "workingLeft": [
             "Bleaching or dyeing, in addition to cutting and assembly of non-assembled tanned or dressed furskins"
@@ -3350,7 +3409,7 @@
             "ex\u00a0\u00a043\u00a002"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from non-assembled, tanned or dressed furskins"
@@ -3453,7 +3512,7 @@
             "ex\u00a0\u00a044\u00a009"
           ],
           "description": [
-            "\u2014 Sanded or end-jointed"
+            "- Sanded or end-jointed"
           ],
           "workingLeft": [
             "Sanding or end-jointing"
@@ -3467,7 +3526,7 @@
             "ex\u00a0\u00a044\u00a009"
           ],
           "description": [
-            "\u2014 Beadings and mouldings"
+            "- Beadings and mouldings"
           ],
           "workingLeft": [
             "Beading or moulding"
@@ -3523,7 +3582,7 @@
             "ex\u00a0\u00a044\u00a018"
           ],
           "description": [
-            "\u2014 Builders' joinery and carpentry of wood"
+            "- Builders' joinery and carpentry of wood"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, cellular wood panels, shingles and shakes may be used"
@@ -3537,7 +3596,7 @@
             "ex\u00a0\u00a044\u00a018"
           ],
           "description": [
-            "\u2014 Beadings and mouldings"
+            "- Beadings and mouldings"
           ],
           "workingLeft": [
             "Beading or moulding"
@@ -3686,7 +3745,9 @@
             "Envelopes, letter cards, plain postcards and correspondence cards, of paper or paperboard; boxes, pouches, wallets and writing compendiums, of paper or paperboard, containing an assortment of paper stationery"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -3714,7 +3775,9 @@
             "Cartons, boxes, cases, bags and other packing containers, of paper, paperboard, cellulose wadding or webs of cellulose fibres"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -3728,7 +3791,9 @@
             "Letter pads"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -3800,10 +3865,12 @@
             "4910"
           ],
           "description": [
-            "\u2014 Calendars of the \u2018perpetual\u2019 type or with replaceable blocks mounted on bases other than paper or paperboard"
+            "- Calendars of the \u2018perpetual\u2019 type or with replaceable blocks mounted on bases other than paper or paperboard"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -3814,7 +3881,7 @@
             "4910"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 4909 or 4911"
@@ -3864,7 +3931,11 @@
             "Silk yarn and yarn spun from silk waste"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0():"
+            "Manufacture from\u00a0():",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-other natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -3889,7 +3960,7 @@
             "5007"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>) "
@@ -3903,12 +3974,17 @@
             "5007"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -3941,7 +4017,11 @@
             "Yarn of wool, of fine or coarse animal hair or of horsehair"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -3966,7 +4046,7 @@
             "5111 to 5113"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>)"
@@ -3980,12 +4060,17 @@
             "5111 to 5113"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -4018,7 +4103,11 @@
             "Yarn and thread of cotton"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4043,7 +4132,7 @@
             "5208 to 5212"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn (<a href=\"#footnote_7\">7</a>) "
@@ -4057,12 +4146,17 @@
             "5208 to 5212"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -4095,7 +4189,11 @@
             "Yarn of other vegetable textile fibres; paper yarn"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4120,7 +4218,7 @@
             "5309 to 5311"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>)"
@@ -4134,12 +4232,17 @@
             "5309 to 5311"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5\u00a0% of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5\u00a0% of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -4153,7 +4256,11 @@
             "Yarn, monofilament and thread of man-made filaments"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4178,7 +4285,7 @@
             "5407 and 5408"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>)"
@@ -4192,12 +4299,17 @@
             "5407 and 5408"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -4225,7 +4337,11 @@
             "Yarn and sewing thread of man-made staple fibres"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-raw silk or silk waste, carded or combed or otherwise prepared for spinning,",
+            "-natural fibres, not carded or combed or otherwise prepared for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4250,7 +4366,7 @@
             "5512 to 5516"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>) "
@@ -4264,12 +4380,17 @@
             "5512 to 5516"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise prepared for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper"
           ],
           "workingRight": [
             "\u00a0"
@@ -4288,7 +4409,11 @@
             "Wadding, felt and non-wovens; special yarns; twine, cordage, ropes and cables and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "coir yarn,",
+            "natural fibres,",
+            "chemical materials or textile pulp, or",
+            "paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4313,12 +4438,17 @@
             "5602"
           ],
           "description": [
-            "\u2014 Needleloom felt"
+            "- Needleloom felt"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "However:",
-            "of which the denomination in all cases of a single filament or fibre is less than 9 decitex, may be used, provided that their total value does not exceed 40\u00a0% of the ex-works price of the product"
+            "of which the denomination in all cases of a single filament or fibre is less than 9 decitex, may be used, provided that their total value does not exceed 40\u00a0% of the ex-works price of the product",
+            "natural fibres, or",
+            "chemical materials or textile pulp",
+            "polypropylene filament of heading 5402,",
+            "polypropylene fibres of heading 5503 or 5506, or",
+            "polypropylene filament tow of heading 5501,"
           ],
           "workingRight": [
             "\u00a0"
@@ -4329,10 +4459,13 @@
             "5602"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres made from casein, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4357,7 +4490,7 @@
             "5604"
           ],
           "description": [
-            "\u2014 Rubber thread and cord, textile covered"
+            "- Rubber thread and cord, textile covered"
           ],
           "workingLeft": [
             "Manufacture from rubber thread or cord, not textile covered"
@@ -4371,10 +4504,13 @@
             "5604"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-natural fibres, not carded or combed or otherwise processed for spinning,",
+            "-chemical materials or textile pulp, or",
+            "-paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4388,7 +4524,11 @@
             "Metallised yarn, whether or not gimped, being textile yarn, or strip or the like of heading 5404 or 5405 , combined with metal in the form of thread, strip or powder or covered with metal"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4402,7 +4542,11 @@
             "Gimped yarn, and strip and the like of heading 5404 or 5405 , gimped (other than those of heading 5605 and gimped horsehair yarn); chenille yarn (including flock chenille yarn); loop wale-yarn"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning,",
+            "chemical materials or textile pulp, or",
+            "paper-making materials"
           ],
           "workingRight": [
             "\u00a0"
@@ -4437,13 +4581,18 @@
             "Chapter 57"
           ],
           "description": [
-            "\u2014 Of needleloom felt"
+            "- Of needleloom felt"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "However:",
             "of which the denomination in all cases of a single filament or fibre is less than 9 decitex, may be used, provided that their total value does not exceed 40\u00a0% of the ex-works price of the product",
-            "Jute fabric may be used as a backing"
+            "Jute fabric may be used as a backing",
+            "-natural fibres, or",
+            "-chemical materials or textile pulp",
+            "-polypropylene filament of heading 5402,",
+            "-polypropylene fibres of heading 5503 or 5506, or",
+            "-polypropylene filament tow of heading 5501,"
           ],
           "workingRight": [
             "\u00a0"
@@ -4459,30 +4608,36 @@
             "Chapter 57"
           ],
           "description": [
-            "\u2014 Of other felt"
-          ],
-          "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
-          ],
-          "workingRight": [
-            "\u00a0"
-          ]
-        }
-      ]
-    },
-    {
-      "number": "57",
-      "rows": [
-        {
-          "id": [
-            "Chapter 57"
-          ],
-          "description": [
-            "\u2014 Other"
+            "- Of other felt"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
-            "Jute fabric may be used as a backing"
+            "-natural fibres, not carded or combed or otherwise processed for spinning, or",
+            "-chemical materials or textile pulp"
+          ],
+          "workingRight": [
+            "\u00a0"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "57",
+      "rows": [
+        {
+          "id": [
+            "Chapter 57"
+          ],
+          "description": [
+            "- Other"
+          ],
+          "workingLeft": [
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "Jute fabric may be used as a backing",
+            "-coir yarn or jute yarn,",
+            "-synthetic or artificial filament yarn,",
+            "-natural fibres, or",
+            "-man-made staple fibres, not carded or combed or otherwise processed for spinning"
           ],
           "workingRight": [
             "\u00a0"
@@ -4517,7 +4672,7 @@
             "ex Chapter 58"
           ],
           "description": [
-            "\u2014 Incorporating rubber thread"
+            "- Incorporating rubber thread"
           ],
           "workingLeft": [
             "Manufacture from single yarn\u00a0(<a href=\"#footnote_7\">7</a>) "
@@ -4536,12 +4691,15 @@
             "ex Chapter 58"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "--natural fibres,",
+            "-man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "-chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4569,7 +4727,9 @@
             "Embroidery in the piece, in strips or in motifs"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -4608,7 +4768,7 @@
             "5902"
           ],
           "description": [
-            "\u2014 Containing not more than 90 % by weight of textile materials"
+            "- Containing not more than 90 % by weight of textile materials"
           ],
           "workingLeft": [
             "Manufacture from yarn"
@@ -4622,7 +4782,7 @@
             "5902"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from chemical materials or textile pulp"
@@ -4680,7 +4840,7 @@
             "5905"
           ],
           "description": [
-            "\u2014 Impregnated, coated, covered or laminated with rubber, plastics or other materials"
+            "- Impregnated, coated, covered or laminated with rubber, plastics or other materials"
           ],
           "workingLeft": [
             "Manufacture from yarn"
@@ -4694,12 +4854,16 @@
             "5905"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
             "Or",
-            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product"
+            "Printing accompanied by at least two preparatory or finishing operations (such as scouring, bleaching, mercerising, heat setting, raising, calendering, shrink resistance processing, permanent finishing, decatising, impregnating, mending and burling), provided that the value of the unprinted fabric used does not exceed 47.5 % of the ex-works price of the product",
+            "-coir yarn,",
+            "-natural fibres,",
+            "-man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "-chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4724,10 +4888,13 @@
             "5906"
           ],
           "description": [
-            "\u2014 Knitted or crocheted fabrics"
+            "- Knitted or crocheted fabrics"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-natural fibres,",
+            "-man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "-chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4738,7 +4905,7 @@
             "5906"
           ],
           "description": [
-            "\u2014 Other fabrics made of synthetic filament yarn, containing more than 90 % by weight of textile materials"
+            "- Other fabrics made of synthetic filament yarn, containing more than 90 % by weight of textile materials"
           ],
           "workingLeft": [
             "Manufacture from chemical materials"
@@ -4752,7 +4919,7 @@
             "5906"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from yarn"
@@ -4796,7 +4963,7 @@
             "5908"
           ],
           "description": [
-            "\u2014 Incandescent gas mantles, impregnated"
+            "- Incandescent gas mantles, impregnated"
           ],
           "workingLeft": [
             "Manufacture from tubular knitted gas-mantle fabric"
@@ -4810,7 +4977,7 @@
             "5908"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -4838,7 +5005,7 @@
             "5909 to 5911"
           ],
           "description": [
-            "\u2014 Polishing discs or rings other than of felt of heading 5911"
+            "- Polishing discs or rings other than of felt of heading 5911"
           ],
           "workingLeft": [
             "Manufacture from yarn or waste fabrics or rags of heading 6310"
@@ -4852,10 +5019,12 @@
             "5909 to 5911"
           ],
           "description": [
-            "\u2014 Woven fabrics, of a kind commonly used in papermaking or other technical uses, felted or not, whether or not impregnated or coated, tubular or endless with single or multiple warp and/or weft, or flat woven with multiple warp and/or weft of heading 5911"
+            "- Woven fabrics, of a kind commonly used in papermaking or other technical uses, felted or not, whether or not impregnated or coated, tubular or endless with single or multiple warp and/or weft, or flat woven with multiple warp and/or weft of heading 5911"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "-coir yarn,",
+            "-the following materials:"
           ],
           "workingRight": [
             "\u00a0"
@@ -4866,10 +5035,14 @@
             "5909 to 5911"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "coir yarn,",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4888,7 +5061,10 @@
             "Knitted or crocheted fabrics"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -4923,7 +5099,7 @@
             "Chapter 61"
           ],
           "description": [
-            "\u2014 Obtained by sewing together or otherwise assembling, two or more pieces of knitted or crocheted fabric which have been either cut to form or obtained directly to form"
+            "- Obtained by sewing together or otherwise assembling, two or more pieces of knitted or crocheted fabric which have been either cut to form or obtained directly to form"
           ],
           "workingLeft": [
             "Manufacture from yarn\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0()"
@@ -4942,10 +5118,13 @@
             "Chapter 61"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -5021,7 +5200,7 @@
             "6213 and 6214"
           ],
           "description": [
-            "\u2014 Embroidered"
+            "- Embroidered"
           ],
           "workingLeft": [
             "Manufacture from unbleached single yarn\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0(<a href=\"#footnote_9\">9</a>) ",
@@ -5037,7 +5216,7 @@
             "6213 and 6214"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from unbleached single yarn\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0(<a href=\"#footnote_9\">9</a>) ",
@@ -5067,7 +5246,7 @@
             "6217"
           ],
           "description": [
-            "\u2014 Embroidered"
+            "- Embroidered"
           ],
           "workingLeft": [
             "Manufacture from yarn\u00a0(<a href=\"#footnote_9\">9</a>)",
@@ -5083,7 +5262,7 @@
             "6217"
           ],
           "description": [
-            "\u2014 Fire-resistant equipment of fabric covered with foil of aluminised polyester"
+            "- Fire-resistant equipment of fabric covered with foil of aluminised polyester"
           ],
           "workingLeft": [
             "Manufacture from yarn\u00a0(<a href=\"#footnote_9\">9</a>)",
@@ -5099,10 +5278,12 @@
             "6217"
           ],
           "description": [
-            "\u2014 Interlinings for collars and cuffs, cut out"
+            "- Interlinings for collars and cuffs, cut out"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -5113,7 +5294,7 @@
             "6217"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from yarn\u00a0(<a href=\"#footnote_9\">9</a>)"
@@ -5160,10 +5341,12 @@
             "6301 to 6304"
           ],
           "description": [
-            "\u2014 Of felt, of nonwovens"
+            "- Of felt, of nonwovens"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -5174,7 +5357,7 @@
             "6301 to 6304"
           ],
           "description": [
-            "\u2014 Other:"
+            "- Other:"
           ],
           "workingLeft": [
             "\u00a0"
@@ -5188,7 +5371,7 @@
             "6301 to 6304"
           ],
           "description": [
-            "\u2014 \u2014 Embroidered"
+            "- - Embroidered"
           ],
           "workingLeft": [
             "Manufacture from unbleached single yarn\u00a0(<a href=\"#footnote_9\">9</a>)\u00a0\u00a0(<a href=\"#footnote_10\">10</a>) ",
@@ -5204,7 +5387,7 @@
             "6301 to 6304"
           ],
           "description": [
-            "\u2014 \u2014 Other"
+            "- - Other"
           ],
           "workingLeft": [
             "Manufacture from unbleached single yarn\u00a0(<a href=\"#footnote_9\">9</a>)\u00a0\u00a0(<a href=\"#footnote_10\">10</a>) "
@@ -5221,7 +5404,10 @@
             "Sacks and bags, of a kind used for the packing of goods"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>):",
+            "natural fibres,",
+            "man-made staple fibres, not carded or combed or otherwise processed for spinning, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -5246,10 +5432,12 @@
             "6306"
           ],
           "description": [
-            "\u2014 Of nonwovens"
+            "- Of nonwovens"
           ],
           "workingLeft": [
-            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0(<a href=\"#footnote_9\">9</a>):"
+            "Manufacture from\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0(<a href=\"#footnote_9\">9</a>):",
+            "natural fibres, or",
+            "chemical materials or textile pulp"
           ],
           "workingRight": [
             "\u00a0"
@@ -5260,7 +5448,7 @@
             "6306"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from unbleached single yarn\u00a0(<a href=\"#footnote_7\">7</a>)\u00a0\u00a0(<a href=\"#footnote_9\">9</a>)"
@@ -5561,7 +5749,7 @@
             "7006"
           ],
           "description": [
-            "\u2014 Glass-plate substrates, coated with a dielectric thin film, and of a semiconductor grade in accordance with SEMII-standards\u00a0\u00a0SEMII \u2014 Semiconductor Equipment and Materials Institute Incorporated."
+            "- Glass-plate substrates, coated with a dielectric thin film, and of a semiconductor grade in accordance with SEMII-standards\u00a0\u00a0SEMII - Semiconductor Equipment and Materials Institute Incorporated."
           ],
           "workingLeft": [
             "Manufacture from non-coated glass-plate substrate of heading 7006"
@@ -5575,7 +5763,7 @@
             "7006"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of heading 7001"
@@ -5668,7 +5856,9 @@
             "Articles (other than yarn) of glass fibres"
           ],
           "workingLeft": [
-            "Manufacture from:"
+            "Manufacture from:",
+            "uncoloured slivers, rovings, yarn or chopped strands, or",
+            "glass wool"
           ],
           "workingRight": [
             "\u00a0"
@@ -5740,7 +5930,7 @@
             "7106 , 7108 and 7110"
           ],
           "description": [
-            "\u2014 Unwrought"
+            "- Unwrought"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except those of heading 7106 , 7108 or 7110",
@@ -5758,7 +5948,7 @@
             "7106 , 7108 and 7110"
           ],
           "description": [
-            "\u2014 Semi-manufactured or in powder form"
+            "- Semi-manufactured or in powder form"
           ],
           "workingLeft": [
             "Manufacture from unwrought precious metals"
@@ -6050,7 +6240,7 @@
             "ex\u00a0\u00a073\u00a021"
           ],
           "description": [
-            "\u2014 For gas fuel or for both gas and other fuels"
+            "- For gas fuel or for both gas and other fuels"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -6072,7 +6262,9 @@
             "Copper and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6125,7 +6317,7 @@
             "7403"
           ],
           "description": [
-            "\u2014 Refined copper"
+            "- Refined copper"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -6139,7 +6331,7 @@
             "7403"
           ],
           "description": [
-            "\u2014 Copper alloys and refined copper containing other elements"
+            "- Copper alloys and refined copper containing other elements"
           ],
           "workingLeft": [
             "Manufacture from refined copper, unwrought, or waste and scrap of copper"
@@ -6189,7 +6381,9 @@
             "Nickel and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6222,7 +6416,9 @@
             "Aluminium and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6238,7 +6434,9 @@
           "workingLeft": [
             "Manufacture:",
             "or",
-            "Manufacture by thermal or electrolytic treatment from unalloyed aluminium or waste and scrap of aluminium"
+            "Manufacture by thermal or electrolytic treatment from unalloyed aluminium or waste and scrap of aluminium",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6266,7 +6464,9 @@
             "Aluminium articles other than gauze, cloth, grill, netting, fencing, reinforcing fabric and similar materials (including endless bands) of aluminium wire, and expanded metal of aluminium"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product. However, gauze, cloth, grill, netting, fencing, reinforcing fabric and similar materials (including endless bands) of aluminium wire, or expanded metal of aluminium may be used; and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6304,7 +6504,9 @@
             "Lead and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6329,7 +6531,7 @@
             "7801"
           ],
           "description": [
-            "\u2014 Refined lead"
+            "- Refined lead"
           ],
           "workingLeft": [
             "Manufacture from \u2018bullion\u2019 or \u2018work\u2019 lead"
@@ -6343,7 +6545,7 @@
             "7801"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product. However, waste and scrap of heading 7802 may not be used"
@@ -6379,7 +6581,9 @@
             "Zinc and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6426,7 +6630,9 @@
             "Tin and articles thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6489,7 +6695,7 @@
             "Chapter 81"
           ],
           "description": [
-            "\u2014 Other base metals, wrought; articles thereof"
+            "- Other base metals, wrought; articles thereof"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials of the same heading as the product used does not exceed 50 % of the ex-works price of the product"
@@ -6508,7 +6714,7 @@
             "Chapter 81"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product"
@@ -6558,7 +6764,9 @@
             "Interchangeable tools for hand tools, whether or not power-operated, or for machine-tools (for example, for pressing, stamping, punching, tapping, threading, drilling, boring, broaching, milling, turning, or screwdriving), including dies for drawing or extruding metal, and rock drilling or earth boring tools"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6572,7 +6780,9 @@
             "Knives and cutting blades, for machines or for mechanical appliances"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -6680,7 +6890,9 @@
             "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -6694,7 +6906,9 @@
             "Steam or other vapour generating boilers (other than central heating hot water boilers capable also of producing low pressure steam); super-heated water boilers"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6778,7 +6992,9 @@
             "Turbo-jets, turbo-propellers and other gas turbines"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6806,7 +7022,9 @@
             "Rotary positive displacement pumps"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6820,7 +7038,9 @@
             "Industrial fans, blowers and the like"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6848,7 +7068,10 @@
             "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps other than air conditioning machines of heading 8415 :"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6859,7 +7082,7 @@
             "8418"
           ],
           "description": [
-            "\u2014 Combined refrigerators-freezers, fitted with separate external doors, refrigerators household type, refrigerating or freezing display counters, cabinets, show-cases and the like, other refrigerators, freezers and other refrigerating or freezing equipment"
+            "- Combined refrigerators-freezers, fitted with separate external doors, refrigerators household type, refrigerating or freezing display counters, cabinets, show-cases and the like, other refrigerators, freezers and other refrigerating or freezing equipment"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -6873,10 +7096,13 @@
             "8418"
           ],
           "description": [
-            "\u2014 Freezers and compression type units whose condensers are heat-exchangers"
+            "- Freezers and compression type units whose condensers are heat-exchangers"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6887,7 +7113,7 @@
             "8418"
           ],
           "description": [
-            "\u2014 Furniture designed to receive refrigerating or freezing equipment"
+            "- Furniture designed to receive refrigerating or freezing equipment"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -6901,7 +7127,7 @@
             "8418"
           ],
           "description": [
-            "\u2014 Other parts of refrigerators"
+            "- Other parts of refrigerators"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 35 % of the ex-works price of the product"
@@ -6918,7 +7144,9 @@
             "Machines for wood, paper pulp, paper and paperboard industries"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of the same heading as the product used does not exceed 25\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -6932,7 +7160,9 @@
             "Calendering or other rolling machines, other than for metals or glass, and cylinders therefor"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of the same heading as the product used does not exceed 25\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -6946,7 +7176,9 @@
             "Weighing machinery (excluding balances of a sensitivity of 5 cg or better), including weight operated counting or checking machines; weighing machine weights of all kinds"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -6960,7 +7192,9 @@
             "Lifting, handling, loading or unloading machinery"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8431 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -6985,7 +7219,7 @@
             "8429"
           ],
           "description": [
-            "\u2014 Road rollers"
+            "- Road rollers"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -6999,10 +7233,12 @@
             "8429"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8431 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7016,7 +7252,9 @@
             "Other moving, grading, levelling, scraping, excavating, tamping, compacting, extracting or boring machinery, for earth, minerals or ores; pile-drivers and pile-extractors; snow-ploughs and snow-blowers"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8431 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7044,7 +7282,9 @@
             "Machinery for making pulp of fibrous cellulosic material or for making or finishing paper or paperboard"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of the same heading as the product used does not exceed 25\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7058,7 +7298,9 @@
             "Other machinery for making up paper pulp, paper or paperboard, including cutting machines of all kinds"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of the same heading as the product used does not exceed 25\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7111,10 +7353,13 @@
             "8452"
           ],
           "description": [
-            "\u2014 Sewing machines (lock stitch only) with heads of a weight not exceeding 16 kg without motor or 17 kg with motor"
+            "- Sewing machines (lock stitch only) with heads of a weight not exceeding 16 kg without motor or 17 kg with motor"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product,",
+            "-the value of all the non-originating materials used in assembling the head (without motor) does not exceed the value of all the originating materials used, and",
+            "-the thread-tension, crochet and zigzag mechanisms used are originating"
           ],
           "workingRight": [
             "\u00a0"
@@ -7125,7 +7370,7 @@
             "8452"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -7195,7 +7440,7 @@
             "ex\u00a0\u00a084\u00a081"
           ],
           "description": [
-            "\u2014 Other appliances"
+            "- Other appliances"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -7212,7 +7457,9 @@
             "Ball or roller bearings"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7259,7 +7506,9 @@
             "Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and reproducers, and parts and accessories of such articles; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7273,7 +7522,9 @@
             "Electric motors and generators (excluding generating sets)"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8503 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7287,7 +7538,9 @@
             "Electric generating sets and rotary converters"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of headings 8501 and 8503 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7343,7 +7596,9 @@
             "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; audio-frequency electric amplifiers; electric sound amplifier sets"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7357,7 +7612,9 @@
             "Turntables (record-decks), record-players, cassette-players and other sound reproducing apparatus, not incorporating a sound recording device"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7371,7 +7628,9 @@
             "Magnetic tape recorders and other sound recording apparatus, whether or not incorporating a sound reproducing device"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7385,7 +7644,9 @@
             "Video recording or reproducing apparatus, whether or not incorporating a video tuner"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7438,7 +7699,7 @@
             "8524"
           ],
           "description": [
-            "\u2014 Matrices and masters for the production of records"
+            "- Matrices and masters for the production of records"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -7452,11 +7713,12 @@
             "8524"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which:",
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and-within the above limit, the value of all the materials of heading 8523 used does not exceed 10 % of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7467,7 +7729,7 @@
             "8525"
           ],
           "description": [
-            "\u2014 transmission apparatus for radio-telephony, radio-telegraphy, radio-broadcasting or television, whether or not incorporating reception apparatus or sound recording or reproducing apparatus;"
+            "- transmission apparatus for radio-telephony, radio-telegraphy, radio-broadcasting or television, whether or not incorporating reception apparatus or sound recording or reproducing apparatus;"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -7481,10 +7743,12 @@
             "8525"
           ],
           "description": [
-            "\u2014 television cameras; still image video cameras and other video camera recorders; digital cameras"
+            "- television cameras; still image video cameras and other video camera recorders; digital cameras"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7498,7 +7762,9 @@
             "Radar apparatus, radio navigational aid apparatus and radio remote control apparatus"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7512,7 +7778,9 @@
             "Reception apparatus for radio-telephony, radio-telegraphy or radio-broadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7526,7 +7794,9 @@
             "Reception apparatus for television, whether or not incorporating radio broadcast receivers or sound or video recording or reproducing apparatus; video monitors and video projectors"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7551,7 +7821,7 @@
             "8529"
           ],
           "description": [
-            "\u2014 Suitable for use solely or principally with video recording or reproducing apparatus"
+            "- Suitable for use solely or principally with video recording or reproducing apparatus"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -7565,10 +7835,12 @@
             "8529"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7582,7 +7854,9 @@
             "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8538 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7596,7 +7870,9 @@
             "Boards, panels, consoles, desks, cabinets and other bases, equipped with two or more apparatus of heading 8535 or 8536 , for electric control or the distribution of electricity, including those incorporating instruments or apparatus of Chapter 90, and numerical control apparatus, other than switching apparatus of heading 8517"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 8538 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7610,7 +7886,9 @@
             "Diodes, transistors and similar semi-conductor devices, except wafers not yet cut into chips"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7624,7 +7902,9 @@
             "Electronic integrated circuits and microassemblies"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of headings 8541 and 8542 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7727,7 +8007,9 @@
             "Railway or tramway track fixtures and fittings; mechanical (including electromechanical) signalling, safety or traffic control equipment for railways, tramways, roads, inland waterways, parking facilities, port installations or airfields; parts of the foregoing"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7760,7 +8042,9 @@
             "Works trucks, self-propelled, not fitted with lifting or handling equipment, of the type used in factories, warehouses, dock areas or airports for short distance transport of goods; tractors of the type used on railway station platforms; parts of the foregoing vehicles"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7774,7 +8058,9 @@
             "Tanks and other armoured fighting vehicles, motorised, whether or not fitted with weapons, and parts of such vehicles"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7799,7 +8085,7 @@
             "8711"
           ],
           "description": [
-            "\u2014 With reciprocating internal combustion piston engine of a cylinder capacity:"
+            "- With reciprocating internal combustion piston engine of a cylinder capacity:"
           ],
           "workingLeft": [
             "\u00a0"
@@ -7813,10 +8099,12 @@
             "8711"
           ],
           "description": [
-            "\u2014 \u2014 Not exceeding 50 cm3"
+            "- - Not exceeding 50 cm3"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 20 % of the ex-works price of the product"
@@ -7827,10 +8115,12 @@
             "8711"
           ],
           "description": [
-            "\u2014 \u2014 Exceeding 50 cm3"
+            "- - Exceeding 50 cm3"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -7841,10 +8131,12 @@
             "8711"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7872,7 +8164,9 @@
             "Baby carriages and parts thereof"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7886,7 +8180,9 @@
             "Trailers and semi-trailers; other vehicles, not mechanically propelled; parts thereof"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -7971,7 +8267,9 @@
             "Optical, photographic, cinematographic, measuring, checking, precision, medical or surgical instruments and apparatus; parts and accessories thereof; except for:"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8027,7 +8325,10 @@
             "Binoculars, monoculars, other optical telescopes, and mountings therefor, except for astronomical refracting telescopes and mountings therefor"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product; and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8041,7 +8342,10 @@
             "Photographic (other than cinematographic) cameras; photographic flashlight apparatus and flashbulbs other than electrically ignited flashbulbs"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product; and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8055,7 +8359,10 @@
             "Cinematographic cameras and projectors, whether or not incorporating sound recording or reproducing apparatus"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product; and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8069,7 +8376,10 @@
             "Compound optical microscopes, including those for photomicrography, cinephotomicrography or microprojection"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product,",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product; and",
+            "-in which the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8150,7 +8460,7 @@
             "9018"
           ],
           "description": [
-            "\u2014 Dentists' chairs incorporating dental appliances or dentists' spittoons"
+            "- Dentists' chairs incorporating dental appliances or dentists' spittoons"
           ],
           "workingLeft": [
             "Manufacture from materials of any heading, including other materials of heading 9018"
@@ -8164,12 +8474,12 @@
             "9018"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture:",
-            "\u2014\u00a0from materials of any heading, except that of the product, and",
-            "\u2014\u00a0in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
+            "-\u00a0from materials of any heading, except that of the product, and",
+            "-\u00a0in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -8183,7 +8493,9 @@
             "Mechano-therapy appliances; massage apparatus; psychological aptitude-testing apparatus; ozone therapy, oxygen therapy, aerosol therapy, artificial respiration or other therapeutic respiration apparatus"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -8197,7 +8509,9 @@
             "Other breathing appliances and gas masks, excluding protective masks having neither mechanical parts nor replaceable filters"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 25 % of the ex-works price of the product"
@@ -8278,7 +8592,7 @@
             "9028"
           ],
           "description": [
-            "\u2014 Parts and accessories"
+            "- Parts and accessories"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -8292,10 +8606,12 @@
             "9028"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8398,7 +8714,9 @@
             "Other clocks"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8412,7 +8730,9 @@
             "Clock movements, complete and assembled"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-the value of all the non-originating materials used does not exceed the value of all the originating materials used"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8426,7 +8746,9 @@
             "Complete watch or clock movements, unassembled or partly assembled (movement sets); incomplete watch or clock movements, assembled; rough watch or clock movements"
           ],
           "workingLeft": [
-            "Manufacture in which:"
+            "Manufacture in which:",
+            "-the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product, and",
+            "-within the above limit, the value of all the materials of heading 9114 used does not exceed 10\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8440,7 +8762,9 @@
             "Watch cases and parts thereof"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8454,7 +8778,9 @@
             "Clock cases and cases of a similar type for other goods of this chapter, and parts thereof"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 40\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 30 % of the ex-works price of the product"
@@ -8479,7 +8805,7 @@
             "9113"
           ],
           "description": [
-            "\u2014 Of base metal, whether or not gold- or silver-plated, or of metal clad with precious metal"
+            "- Of base metal, whether or not gold- or silver-plated, or of metal clad with precious metal"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -8493,7 +8819,7 @@
             "9113"
           ],
           "description": [
-            "\u2014 Other"
+            "- Other"
           ],
           "workingLeft": [
             "Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product"
@@ -8569,7 +8895,9 @@
           "workingLeft": [
             "Manufacture from materials of any heading, except that of the product",
             "or",
-            "Manufacture from cotton cloth already made up in a form ready for use with materials of heading 9401 or 9403 , provided that:"
+            "Manufacture from cotton cloth already made up in a form ready for use with materials of heading 9401 or 9403 , provided that:",
+            "-the value of the cloth does not exceed 25 % of the ex-works price of the product, and",
+            "-all the other materials used are originating and are classified in a heading other than heading 9401 or 9403"
           ],
           "workingRight": [
             "Manufacture in which the value of all the materials used does not exceed 40 % of the ex-works price of the product"
@@ -8630,7 +8958,9 @@
             "Other toys; reduced-size (\u2018scale\u2019) models and similar recreational models, working or not; puzzles of all kinds"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -8719,7 +9049,9 @@
             "Buttons, press-fasteners, snap-fasteners and press-studs, button moulds and other parts of these articles; button blanks"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -8747,7 +9079,9 @@
             "Typewriter or similar ribbons, inked or otherwise prepared for giving impressions, whether or not on spools or in cartridges; ink-pads, whether or not inked, with or without boxes"
           ],
           "workingLeft": [
-            "Manufacture:"
+            "Manufacture:",
+            "-from materials of any heading, except that of the product, and",
+            "-in which the value of all the materials used does not exceed 50\u00a0% of the ex-works price of the product"
           ],
           "workingRight": [
             "\u00a0"
@@ -8804,49 +9138,49 @@
     }
   ],
   "footnotes": [
-        {
-            "anchor": "<a name=\"#footnote_1\">1</a>",
-            "note": "For the special conditions relating to ‘specific processes’, see Introductory Notes 7.1 and 7.3."
-        },
-        {
-            "anchor": "<a name=\"#footnote_2\">2</a>",
-            "note": "For the special conditions relating to ‘specific processes’, see Introductory Note 7.2."
-        },
-        {
-            "anchor": "<a name=\"#footnote_3\">3</a>",
-            "note": "Note 3 to Chapter 32 says that these preparations are those of a kind used for colouring any material or used as ingredients in the manufacture of colouring preparations, provided that they are not classified in another heading in Chapter 32."
-        },
-        {
-            "anchor": "<a name=\"#footnote_4\">4</a>",
-            "note": "A ‘group’ is regarded as any part of the heading separated from the rest by a semicolon."
-        },
-        {
-            "anchor": "<a name=\"#footnote_5\">5</a>",
-            "note": "In the case of the products composed of materials classified within both headings 3901 to 3906 , on the one hand, and within headings 3907 to 3911 , on the other hand, this restriction only applies to that group of materials which predominates by weight in the product."
-        },
-        {
-            "anchor": "<a name=\"#footnote_6\">6</a>",
-            "note": "The following foils shall be considered as highly transparent: foils, the optical dimming of which, measured according to the haze factor is less than 2%."
-        },
-        {
-            "anchor": "<a name=\"#footnote_7\">7</a>",
-            "note": "For special conditions relating to products made of a mixture of textile materials, see Introductory Note 5."
-        },
-        {
-            "anchor": "<a name=\"#footnote_8\">8</a>",
-            "note": "The use of this material is restricted to the manufacture of woven fabrics of a kind used in paper-making machinery."
-        },
-        {
-            "anchor": "<a name=\"#footnote_9\">9</a>",
-            "note": "See Introductory Note 6."
-        },
-        {
-            "anchor": "<a name=\"#footnote_10\">10</a>",
-            "note": "For knitted or crocheted articles, not elastic or rubberised, obtained by sewing or assembling pieces of knitted or crocheted fabrics (cut out or knitted directly to shape), see Introductory Note 6."
-        },
-        {
-            "anchor": "<a name=\"#footnote_11\">11</a>",
-            "note": "SEMII — Semiconductor Equipment and Materials Institute Incorporated."
-        }
-    ]
+	{
+      "anchor": "<a name=\"#footnote_1\">1</a>",
+      "note": "For the special conditions relating to ‘specific processes’, see Introductory Notes 7.1 and 7.3."
+    },
+    {
+      "anchor": "<a name=\"#footnote_2\">2</a>",
+      "note": "For the special conditions relating to ‘specific processes’, see Introductory Note 7.2."
+    },
+    {
+      "anchor": "<a name=\"#footnote_3\">3</a>",
+      "note": "Note 3 to Chapter 32 says that these preparations are those of a kind used for colouring any material or used as ingredients in the manufacture of colouring preparations, provided that they are not classified in another heading in Chapter 32."
+    },
+    {
+      "anchor": "<a name=\"#footnote_4\">4</a>",
+      "note": "A ‘group’ is regarded as any part of the heading separated from the rest by a semicolon."
+    },
+    {
+      "anchor": "<a name=\"#footnote_5\">5</a>",
+      "note": "In the case of the products composed of materials classified within both headings 3901 to 3906 , on the one hand, and within headings 3907 to 3911 , on the other hand, this restriction only applies to that group of materials which predominates by weight in the product."
+    },
+    {
+      "anchor": "<a name=\"#footnote_6\">6</a>",
+      "note": "The following foils shall be considered as highly transparent: foils, the optical dimming of which, measured according to the haze factor is less than 2%."
+    },
+    {
+      "anchor": "<a name=\"#footnote_7\">7</a>",
+      "note": "For special conditions relating to products made of a mixture of textile materials, see Introductory Note 5."
+    },
+    {
+      "anchor": "<a name=\"#footnote_8\">8</a>",
+      "note": "The use of this material is restricted to the manufacture of woven fabrics of a kind used in paper-making machinery."
+    },
+    {
+      "anchor": "<a name=\"#footnote_9\">9</a>",
+      "note": "See Introductory Note 6."
+    },
+    {
+      "anchor": "<a name=\"#footnote_10\">10</a>",
+      "note": "For knitted or crocheted articles, not elastic or rubberised, obtained by sewing or assembling pieces of knitted or crocheted fabrics (cut out or knitted directly to shape), see Introductory Note 6."
+    },
+    {
+      "anchor": "<a name=\"#footnote_11\">11</a>",
+      "note": "SEMII — Semiconductor Equipment and Materials Institute Incorporated."
+    }
+  ]
 }

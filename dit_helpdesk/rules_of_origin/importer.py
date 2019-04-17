@@ -13,13 +13,17 @@ from django.shortcuts import _get_queryset
 from numpy import nan
 
 from countries.models import Country
-from hierarchy.models import Chapter, Heading
+from hierarchy.models import Chapter, Heading, SubHeading
 from rules_of_origin.models import Rule, RulesDocument, RulesGroup, RulesGroupMember, RulesDocumentFootnote
 
 CHAPTER_MATCHES = (
     ('^ex Chapter (?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # ex Chapter 4
+    ('^ex\xa0Chapter\xa0(?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # ex\xa0Chapter 4
+    ('^Ex Chapter (?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # Ex Chapter 4
     ('^(ex\xa0ex\d{4}\s)+(ex\xa0ex\d{4})$', 'heading_exclusion_list'),  # ex ex6202, ex ex6204, ex ex6206
     ('^ex\xa0ex(?P<heading_num>\d{4})$', 'heading_exclusion'),  # ex ex7616
+    ('^ex\xa0(?P<heading_num>\d{4})$', 'heading_exclusion'),  # ex ex7616
+    ('^ex (?P<heading_num>\d{4})$', 'heading_exclusion'),  # ex 7616
     ('^ex\xa0ex(?P<start_heading>\d{4})( to | and |-| - )ex\xa0ex(?P<end_heading>\d{4})$', 'heading_exclusion_range'),
     # ex ex4410-ex ex4413
     ('^(ex\xa0ex(?P<heading_num>\d{4}),\s)(?P<start_heading>\d{4}) to (?P<end_heading>\d{4})$',
@@ -27,7 +31,21 @@ CHAPTER_MATCHES = (
     ('^Chapter (?P<chapter_num>\d{1,2})$', 'chapter'),
     ('^(?P<start_heading>\d{4})( to | and |-| - )(?P<end_heading>\d{4})$', 'heading_range'),  # 1507-1515
     ('^(\d{4},\s)+$', 'heading_list'),  # 4107, 4112
-    ('^(?P<heading_num>\d{4})', 'heading')
+    ('^(?P<heading_num>\d{4})', 'heading'),
+    ('ex(\xa0(?P<sub_heading_num>\d{4}\xa0\d{2}[,\s]?))', 'subheadings'), # ex 8542 31, ex 8542 32, ex 8542 33, ex 8542 39
+    ('ex(\xa0(?P<heading_num>\d{4})[,\s| and ]?)', 'heading_num_list'), # ex 7107, ex 7109 and ex 7111
+    ('ex(\xa0ex(?P<heading_num>\d{4})[,\s| and ]?)', 'heading_num_list'), # ex 7107, ex 7109 and ex 7111
+    ('ex\xa0\xa0(?P<heading_num>\d{2}\xa0\d{2})?', 'heading_num_split'), # ex  96 13
+    ('ex\xa0\xa0(?P<heading_num>\d{2}\xa0\d{2})?', 'heading_num_split_range'), # ex  96 13
+    ('ex\xa0\xa0(?P<heading_num>\d{2}\xa0\d{2})[ and ]?', 'heading_num_split_range'), # ex  96 01 and ex  96 02
+    ('^ex\xa0\xa0(?P<heading_num>\d{2}\xa0\d{2})\s,\s(?P<start_heading>\d{4}) to (?P<end_heading>\d{4})$', 'heading_split_range'), #ex  72 24 , 7225 to 7228
+    ('ex\xa0\xa0(?P<heading_num>\d{2}\xa0\d{2})[\s,| and ]?', 'heading_split_range'),# ex  71 07 , ex  71 09 and ex  71 11
+    ('ex (?P<heading_num>\d{4})', 'heading_range'), # ex 9601 and ex 9602
+# ex ex7107, ex ex7109 and ex ex7111
+# ex 6210 and ex 6216
+# ex 6202, ex 6204, ex 6206, ex 6209 and ex 6211
+# ex 4410 to ex 4413
+# ex 0511 91
 )
 
 MSWORD_PRIVATE_UNICODE_CHARS = {
@@ -342,9 +360,13 @@ class RulesOfOriginImporter:
         :param item:
         :return:
         """
+        if len(item_id) > 0:
+            print("search: ", item_id[0] )
         # print("item_id: ", item_id[0], [pattern for pattern, category in CHAPTER_MATCHES])
         matches = [(re.search(pattern, item_id[0]), category) for pattern, category in CHAPTER_MATCHES
                    if re.search(pattern, item_id[0]) is not None]
+        print(matches)
+
         if len(matches) > 0:
             return matches[0]
         else:
@@ -373,7 +395,7 @@ class RulesOfOriginImporter:
             related_hierarchy_levels = self.get_related_hierarchy_levels("Chapter", chapter_code, item, parent_ids_list)
 
         elif {'heading_num', 'start_heading', 'end_heading'} <= set(match_results.keys()):
-            heading_code = self.get_hierarchy_code(regex_match.group('heading_num'), "Heading")
+            heading_code = self.get_hierarchy_code(regex_match.group('heading_num').replace('\xa0', ''), "Heading")
 
             start_heading_code = '{0}'.format(regex_match.group('start_heading')).ljust(10, '0')
             end_heading_code = '{0}'.format(regex_match.group('end_heading')).ljust(10, '0')
@@ -418,9 +440,30 @@ class RulesOfOriginImporter:
 
         elif {'heading_num', } <= set(match_results.keys()):
 
-            heading_code = self.get_hierarchy_code(regex_match.group('heading_num'), "Heading")
+            heading_code = self.get_hierarchy_code(regex_match.group('heading_num').replace('\xa0', ''), "Heading")
             related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", heading_code)
 
+        elif {'heading_num', 'heading_num'} <= set(match_results.keys()):
+
+            code_range = []
+            for value in match_results.values():
+                code_range.append(self.get_hierarchy_code(value.replace('\xa0', ''), "Heading"))
+            related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", code_range=code_range)
+
+        elif {'heading_num', 'heading_num', 'heading_num'} <= set(match_results.keys()):
+
+            code_range = []
+            for value in match_results.values():
+                code_range.append(self.get_hierarchy_code(value.replace('\xa0', ''), "Heading"))
+            related_hierarchy_levels = self.get_related_hierarchy_levels("Heading", code_range=code_range)
+
+        elif {'subheading_num', 'subheading_num', 'subheading_num', 'subheading_num'} <= set(match_results.keys()):
+
+            code_range = []
+            for value in match_results.values():
+                code_range.append(self.get_hierarchy_code(value.replace('\xa0', ''), "SubHeading"))
+
+            related_hierarchy_levels = self.get_related_hierarchy_levels("SubHeading", code_range=code_range)
         else:
             print(item['id'], regex_match.groupdict())
 
@@ -497,6 +540,13 @@ class RulesOfOriginImporter:
                                     "descriptipn": heading.description,
                                     "type": type
                                     } for heading in Heading.objects.filter(heading_code=code)]
+        elif type == "SubHeading":
+            related_objects = list([{"id": subheading.id,
+                                     "chapter_code": subheading.commodity_code,
+                                     "desription": subheading.description,
+                                     "type": type
+                                     } for subheading in SubHeading.objects.filter(commodity_code__in=code_range)])
+
         else:
             print("no level")
 

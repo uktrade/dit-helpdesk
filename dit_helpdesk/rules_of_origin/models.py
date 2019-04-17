@@ -51,7 +51,7 @@ class Rule(models.Model):
     """
     Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
     """
-    rule_id = models.CharField(max_length=50, null=True, blank=True)
+    rule_id = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField()
     working_or_processing_one = models.TextField(null=True, blank=True)
     working_or_processing_two = models.TextField(null=True, blank=True)

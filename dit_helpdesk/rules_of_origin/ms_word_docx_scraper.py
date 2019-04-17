@@ -1,6 +1,7 @@
 import re
 import sys
 import json
+from pprint import pprint
 
 from django.conf import settings
 from pathlib import Path
@@ -148,20 +149,19 @@ class DocxScraper:
         """
 
         document = Document(self.data_path.format(docx_file))
-        text = self.get_docx_text(self.data_path.format(docx_file))
+        # text = self.get_docx_text(self.data_path.format(docx_file))
 
-        matched = re.match("see Introductory Notes ", text)
-        print(matched)
-        # self.build_footnotes(document)
-        sys.exit()
+        self.build_footnotes(document)
         heading_rows = []
         number_cols = []
 
         chapter_regex = re.compile(r"Chapter ([\d]+)")
         for table in document.tables:
-            tables_rows = list(table.rows)
-            for row in tables_rows:
-                row = [[para.text for para in cell.paragraphs if para.text != ''] for cell in self.iter_unique_cells(row)]
+
+            for row in table.rows:
+
+                row = self.get_row(row)
+
                 if self.is_table_heading(row):
                     heading_rows.append(row)
                 if self.is_column_number_row(row):
@@ -192,8 +192,8 @@ class DocxScraper:
 
         validate(instance=self.table_dict, schema=JSON_SCHEMA)
 
-        self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_heading.json')), heading_rows)
-        self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_columns.json')), number_cols)
+        # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_heading.json')), heading_rows)
+        # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_columns.json')), number_cols)
         self.data_writer(self.data_path.format("import/{0}".format(docx_file)), self.table_dict)
 
     def process_footnote(self, text):
@@ -202,6 +202,9 @@ class DocxScraper:
         :param text: text string
         :return: text string with html formatted footnote link
         """
+        matched = re.match(u'\u2014', text)
+        if matched:
+            text = text.replace(u'\u2014', "- ")
         return re.sub(r'\(([\d]+)\)', "(<a href=\"#footnote_\\1\">\\1</a>)", text)
 
     def create_rule_item(self, cells):
@@ -215,7 +218,7 @@ class DocxScraper:
         """
         item = {}
         item_keys = ["id", "description", "workingLeft", "workingRight"]
-
+        # print(cells)
         if len(cells) == 4:
             for i in range(len(item_keys)):
                 item[item_keys[i]] = [self.process_footnote(text) for text in cells[i]]
@@ -248,7 +251,7 @@ class DocxScraper:
         """
         Check if the row is a heading row we do not need return True or False
         :param row: list is lists of text
-        :return: Boolean
+        :return: Boolea
         """
         if len(row) > 3:
             return False
@@ -273,48 +276,6 @@ class DocxScraper:
         :param document: python-docx word docx object
 
         """
-
-        for section in document.sections:
-            print(section)
-
-            print(section.header)
-            for paragraph in section.header.paragraphs:
-                print(paragraph)
-                print(paragraph.text)
-
-            for table in section.header.tables:
-                print(table)
-
-            print(section.footer)
-            for paragraph in section.footer.paragraphs:
-                print(paragraph)
-                print(paragraph.text)
-
-            for table in section.footer.tables:
-                print(table)
-
-
-        print([[paragraph.text for paragraph in section.footer.paragraphs] for section in document.sections])
-        print([paragraph.text for paragraph in document.paragraphs])
-        print([table for table in document.tables])
-
-        for table in document.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        print(paragraph.text)
-                    for subtable in cell.tables:
-                        for subrow in subtable.rows:
-                            for subcell in subrow.cells:
-                                for paragraph in subcell.paragraphs:
-                                    print (paragraph.text)
-
-
-                    # m = re.match("see Introductory Notes ", cell.text)
-                    # if m is not None:
-                    #     print(re.match("see Introductory Notes ", cell.text), cell.text)
-
-
         pattern = r'^\(([\d]+)\)\s(.+)$'
         footnote_matches = [re.match(pattern, paragraph.text) for paragraph in document.paragraphs]
 
@@ -332,6 +293,7 @@ class DocxScraper:
         :param file_path: path to the file being created
         :param data: data to use as content for the file
         """
+        print (file_path)
         if data is None:
             sys.exit()
 
@@ -369,21 +331,17 @@ class DocxScraper:
                         return True
         return False
 
-    def get_docx_text(self, path):
-        """
-        Take the path of a docx file as argument, return the text in unicode.
-        """
-        document = zipfile.ZipFile(path)
-        xml_content = document.read('word/document.xml')
-        document.close()
-        tree = XML(xml_content)
+    def get_row(self, row):
 
-        paragraphs = []
-        for paragraph in tree.getiterator(PARA):
-            texts = [node.text
-                        for node in paragraph.getiterator(TEXT)
-                        if node.text]
-            if texts:
-                paragraphs.append(''.join(texts))
+        row_obj_1 = self.iter_unique_cells(row)
+        row_obj_2 = self.iter_unique_cells(row)
 
-        return '\n\n'.join(paragraphs)
+        row1 = [[para.text for para in cell.paragraphs if para.text != ''] for cell in row_obj_1]
+        row2 = [[''.join([''.join([''.join([para.text for para in cell.paragraphs]) for cell in row.cells])
+                          for row in table.rows]) for table in cell.tables] for cell in row_obj_2]
+
+        for idx, item in enumerate(row1):
+            if row2[idx]:
+                for item in row2[idx]:
+                    row1[idx].append(item)
+        return row1
