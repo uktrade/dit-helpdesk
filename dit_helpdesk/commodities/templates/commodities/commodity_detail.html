@@ -235,22 +235,6 @@
             </tbody>
           </table>
         </div>
-        {% if roo_footnotes %}
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-            Footnotes
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-body-s app-footnotes">
-              {% for footnote in roo_footnotes %}
-                <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
-              {% endfor %}
-          </ul>
-          </div>
-        </details>
-        {% endif %}
       </div>
       <div class="govuk-grid-column-three-quarters">
         <details class="govuk-details govuk-!-margin-bottom-9">
@@ -259,7 +243,7 @@
               How to use the rules of origin table
             </span>
           </summary>
-          <div class="govuk-details__text">
+          <div class="govuk-details__text govuk-!-padding-bottom-0">
             <p class="govuk-body">The rules of origin table contains:</p>
 
             <ul class="govuk-list--bullet">
@@ -290,6 +274,22 @@
 
             <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or
               processed (if columns 3 and 4 are present), you can apply either rule.</p>
+            {% if roo_footnotes %}
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                  Footnotes
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <ul class="govuk-list govuk-body-s app-footnotes">
+                    {% for footnote in roo_footnotes %}
+                      <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
+                    {% endfor %}
+                </ul>
+                </div>
+              </details>
+              {% endif %}
           </div>
         </details>
       </div>
