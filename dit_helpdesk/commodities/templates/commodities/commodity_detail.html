@@ -234,17 +234,23 @@
               {% endspaceless %}
             </tbody>
           </table>
-
-            <h3>Footnotes</h3>
-            <ul>
-            {% for footnote in roo_footnotes %}
-
-                <li>{{ footnote.link_html | safe }} {{ footnote.note | safe }}</li>
-
-            {% endfor %}
-            </ul>
-
         </div>
+        {% if roo_footnotes %}
+        <details class="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+            Footnotes
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <ul class="govuk-list govuk-body-s app-footnotes">
+              {% for footnote in roo_footnotes %}
+                <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
+              {% endfor %}
+          </ul>
+          </div>
+        </details>
+        {% endif %}
       </div>
       <div class="govuk-grid-column-three-quarters">
         <details class="govuk-details govuk-!-margin-bottom-9">
