@@ -79,6 +79,10 @@ def commodity_detail(request, commodity_code, country_code):
     except Exception as ex:
         print(ex.args)
 
+    regulations = commodity.regulation_set.all()    
+    if not regulations and commodity.parent_subheading:
+        regulations = commodity.parent_subheading.regulation_set.all()
+        
     context = {
         'selected_origin_country': selected_country,
         'commodity': commodity,
@@ -86,7 +90,7 @@ def commodity_detail(request, commodity_code, country_code):
         'rules_of_origin': rules,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
-        'regulations': commodity.regulation_set.all()
+        'regulations': regulations
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
