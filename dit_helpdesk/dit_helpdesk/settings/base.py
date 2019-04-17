@@ -233,6 +233,8 @@ TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", 
 REGULATIONS_MODEL_ARG=["Regulation"]
 REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
+RULES_OF_ORIGIN_DOCUMENTS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
+RULES_OF_ORIGIN_GROUPS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True

@@ -68,12 +68,16 @@ def commodity_detail(request, commodity_code, country_code):
         measure_json.get_table_row() for measure_json in import_measures
     ]
 
-    # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
     rules = []
+    roo_footnotes = None
+
     try:
         for country_code in country:
+            rules_document = country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all()
+            for doc in rules_document:
+                roo_footnotes = doc.footnotes.all().order_by('id')
             for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
-                for r in rd.rule_set.all():
+                for r in rd.rule_set.all().order_by('id'):
                     if r.chapter == commodity.get_heading().chapter:
                         rules.append(r)
     except Exception as ex:
@@ -88,6 +92,7 @@ def commodity_detail(request, commodity_code, country_code):
         'commodity': commodity,
         'selected_origin_country_name': country_name,
         'rules_of_origin': rules,
+        'roo_footnotes': roo_footnotes,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': regulations

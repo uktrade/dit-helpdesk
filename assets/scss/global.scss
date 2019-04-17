@@ -127,3 +127,14 @@ abbr {
     background-color: lighten(govuk-colour("orange"), 30%);
   }
 }
+
+.app-footnotes {
+
+  a[name] {
+    @include govuk-link-common;
+    @include govuk-link-style-default;
+    @include govuk-link-print-friendly;
+    text-decoration: underline;
+    color: $govuk-link-colour;
+  }
+}

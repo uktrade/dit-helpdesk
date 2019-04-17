@@ -226,15 +226,31 @@
                 {% for rule in rules_of_origin %}
                     <tr class="govuk-table__row app-flexible-table__row">
                     <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Harmonised System heading"><p>{{ rule.rule_id }}</p></td>
-                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Description of product"><p>{{ rule.description }}</p></td>
-                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status"><p>{{ rule.working_or_processing_one }}</p></td>
-                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">{% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two }}</p>{% endif %}</td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Description of product"><p>{{ rule.description | safe }}</p></td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status"><p>{{ rule.working_or_processing_one | safe }}</p></td>
+                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">{% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two | safe }}</p>{% endif %}</td>
                     </tr>
                 {% endfor %}
               {% endspaceless %}
             </tbody>
           </table>
         </div>
+        {% if roo_footnotes %}
+        <details class="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+            Footnotes
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <ul class="govuk-list govuk-body-s app-footnotes">
+              {% for footnote in roo_footnotes %}
+                <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
+              {% endfor %}
+          </ul>
+          </div>
+        </details>
+        {% endif %}
       </div>
       <div class="govuk-grid-column-three-quarters">
         <details class="govuk-details govuk-!-margin-bottom-9">
