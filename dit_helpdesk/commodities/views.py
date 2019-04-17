@@ -68,11 +68,9 @@ def commodity_detail(request, commodity_code, country_code):
         measure_json.get_table_row() for measure_json in import_measures
     ]
 
-    # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
     rules = []
     roo_footnotes = None
-    all_commodity_rules = commodity.get_heading().chapter.rules_of_origin.all()
-    ch_id = commodity.get_heading().chapter.id
+
     try:
         for country_code in country:
             rules_document = country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all()
@@ -80,13 +78,10 @@ def commodity_detail(request, commodity_code, country_code):
                 roo_footnotes = doc.footnotes.all().order_by('id')
             for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
                 for r in rd.rule_set.all().order_by('id'):
-                    # if r.chapter == commodity.get_heading().chapter:
-                    if r in all_commodity_rules:
+                    if r.chapter == commodity.get_heading().chapter:
                         rules.append(r)
     except Exception as ex:
         print(ex.args)
-
-    print(ch_id)
 
     context = {
         'selected_origin_country': selected_country,
