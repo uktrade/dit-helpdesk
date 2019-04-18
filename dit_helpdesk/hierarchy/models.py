@@ -3,7 +3,6 @@ import json
 from django.db import models
 from django.urls import reverse
 
-from commodities.models import Commodity
 from trade_tariff_service.tts_api import ChapterJson, CommodityHeadingJson, HeadingJson, SectionJson
 
 
