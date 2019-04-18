@@ -60,8 +60,7 @@ def commodity_detail(request, commodity_code, country_code):
         Commodity, commodity_code=commodity_code,
     )
 
-    if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
-
+    if commodity.last_updated < datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
         get_commodity_content(commodity)
 
     table_data = []

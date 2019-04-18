@@ -66,7 +66,8 @@
 
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
-      <p class="govuk-body govuk-!-font-weight-bold  govuk-!-margin-bottom-0">{{ commodity.tts_title | safe }}</p>
+      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">{{ commodity.tts_title | safe }}</p>
+        <p><strong>Last updated:</strong> {{ commodity.last_updated }}</p>
     </div>
   </div>
 
@@ -75,6 +76,7 @@
       <h3 class="govuk-heading-m">Tariffs and other measures</h3>
       <p class="govuk-body">The table below shows all the tariffs and other measures that apply for this product and the
         selected country.</p>
+
       <table class="govuk-table app-flexible-table govuk-!-margin-bottom-6">
         <caption class="govuk-table__caption govuk-visually-hidden">The table below shows all the tariffs and other
           measures that apply for this product and the selected country.</caption>

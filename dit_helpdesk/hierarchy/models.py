@@ -3,6 +3,7 @@ import json
 from django.db import models
 from django.urls import reverse
 
+from commodities.models import Commodity
 from trade_tariff_service.tts_api import ChapterJson, CommodityHeadingJson, HeadingJson, SectionJson
 
 
@@ -124,7 +125,15 @@ class Chapter(models.Model):
         return self.chapter_code
 
     def get_hierarchy_children(self):
-        return self.headings.all().order_by('heading_code')
+        children = []
+        for heading in self.headings.all().order_by('heading_code'):
+            for child in heading.get_hierarchy_children():
+                if heading.heading_code != child.commodity_code:
+                    children.append(heading)
+                else:
+                    children.append(child)
+        return children
+        # return self.headings.all().order_by('heading_code')
 
     def get_headings_url(self):
         return reverse(
