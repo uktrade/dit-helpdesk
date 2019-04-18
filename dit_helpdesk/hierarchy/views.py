@@ -58,7 +58,7 @@ def _get_expanded_context(selected_node_id):
 
 def _get_hierarchy_level_html(node, expanded, origin_country):
     if node == 'root':
-        children = Section.objects.all()
+        children = Section.objects.all().order_by('roman_numeral')
         html = '<ul class="app-hierarchy-tree">'
         end = '\n</ul>'
     else:
