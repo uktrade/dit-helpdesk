@@ -23,6 +23,7 @@ from search import views as search_views
 from cookies import views as cookie_views
 from feedback import views as feedback_views
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
+from healthcheck.views import HealthCheckView
 
 from index import views as index
 
@@ -57,6 +58,7 @@ urlpatterns = [
     path('search/', search_views.search_view, name='search-view'),
     re_path(r'search/country/(?P<country_code>\w+)/$', search_views.search_view, name='search'),
     re_path(r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)', search_views.search_hierarchy, name='search-hierarchy'),
+    re_path(r'^check/$', HealthCheckView.as_view(), name='healthcheck'),
 ]
 
 if settings.ADMIN_ENABLED:

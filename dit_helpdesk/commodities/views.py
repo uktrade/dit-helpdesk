@@ -70,26 +70,39 @@ def commodity_detail(request, commodity_code, country_code):
         measure_json.get_table_row() for measure_json in import_measures
     ]
 
-    # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
     rules = []
+    roo_footnotes = None
+
     try:
         for country_code in country:
+            rules_document = country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all()
+            for doc in rules_document:
+                roo_footnotes = doc.footnotes.all().order_by('id')
             for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
-                for r in rd.rule_set.all():
+                for r in rd.rule_set.all().order_by('id'):
                     if r.chapter == commodity.get_heading().chapter:
                         rules.append(r)
     except Exception as ex:
         print(ex.args)
 
+    regulations = commodity.regulation_set.all()    
+    if not regulations and commodity.parent_subheading:
+        regulations = commodity.parent_subheading.regulation_set.all()
+        
     context = {
         'selected_origin_country': selected_country,
         'commodity': commodity,
         'selected_origin_country_name': country_name,
         'rules_of_origin': rules,
+        'roo_footnotes': roo_footnotes,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
+<<<<<<< HEAD
         'regulations': commodity.regulation_set.all(),
         'commodity_hierarchy_context': commodity_hierarchy_context(commodity, selected_country)
+=======
+        'regulations': regulations
+>>>>>>> master
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
@@ -157,6 +170,7 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
+<<<<<<< HEAD
 
 def commodity_hierarchy_context(commodity, country_code):
     commodity_path = commodity.get_path()
@@ -173,3 +187,5 @@ def commodity_hierarchy_context(commodity, country_code):
             html += f'<a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.title.capitalize()}</a>'
         html += f'</p>'
     return html
+=======
+>>>>>>> master

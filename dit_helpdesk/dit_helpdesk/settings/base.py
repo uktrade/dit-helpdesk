@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+
 from os.path import join as join_path
 
 import dj_database_url
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'raven.contrib.django.raven_compat',
     #'psqlextra',
     'core',
     'commodities',
@@ -57,7 +59,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'authbroker_client',
     'user',
-    'regulations'
+    'regulations',
+    'healthcheck',
 ]
 
 if ADMIN_ENABLED is True:
@@ -66,6 +69,7 @@ if ADMIN_ENABLED is True:
 MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # 'django.middleware.common.CommonMiddleware',
+    'healthcheck.middleware.HealthCheckMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -229,6 +233,8 @@ TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", 
 REGULATIONS_MODEL_ARG=["Regulation"]
 REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
+RULES_OF_ORIGIN_DOCUMENTS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
+RULES_OF_ORIGIN_GROUPS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
@@ -238,5 +244,4 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_SECURE = True
 
-
-
+os.environ.get('SENTRY_DSN')

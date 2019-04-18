@@ -65,7 +65,7 @@ class Section(models.Model):
         return self.tts_obj.title
 
     def get_hierarchy_children(self):
-        return self.chapter_set.all()
+        return self.chapter_set.all().order_by('chapter_code')
 
     def get_chapters_url(self):
         return reverse(
@@ -124,7 +124,7 @@ class Chapter(models.Model):
         return self.chapter_code
 
     def get_hierarchy_children(self):
-        return self.headings.all()
+        return self.headings.all().order_by('heading_code')
 
     def get_headings_url(self):
         return reverse(
@@ -201,8 +201,8 @@ class Heading(models.Model):
     '''
 
     def get_hierarchy_children(self):
-        sub_headings = [obj for obj in self.child_subheadings.all()]
-        commodities = [obj for obj in self.children_concrete.all()]
+        sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
+        commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
         return commodities + sub_headings
 
     def get_hierarchy_url(self, country_code=None):
@@ -278,6 +278,6 @@ class SubHeading(models.Model):
         return reverse('search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
-        sub_headings = [obj for obj in self.child_subheadings.all()]
-        commodities = [obj for obj in self.children_concrete.all()]
+        sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
+        commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
         return commodities + sub_headings

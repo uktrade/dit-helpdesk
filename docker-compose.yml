@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 60s
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
     env_file: docker-compose.env
     depends_on:
       - postgres
@@ -19,6 +19,8 @@ services:
   postgres:
     image: postgres:10
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=helpdesk
 
