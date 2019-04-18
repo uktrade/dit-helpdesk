@@ -88,24 +88,31 @@ class Commodity(models.Model):
             tree = []
             parent = self
 
+        if len(tree) < level + 1:
+            tree.append([])
+
         if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
-            self.get_path(parent.parent_subheading, tree, level)
-            tree.append(parent.parent_subheading)
+            self.get_path(parent.parent_subheading, tree, level+1)
+            logging.warning(level)
+            tree.insert(1, [parent.parent_subheading])
         if hasattr(parent, 'heading') and parent.heading is not None:
-            self.get_path(parent.heading, tree, level)
-            tree.append(parent.heading)
+            self.get_path(parent.heading, tree, level+1)
+            logging.warning(level)
+            tree[level].append(parent.heading)
         elif hasattr(parent, 'chapter') and parent.chapter is not None:
-            self.get_path(parent.chapter, tree, level)
-            tree.append(parent.chapter)
+            self.get_path(parent.chapter, tree, level+1)
+            logging.warning(level)
+            tree[level].append(parent.chapter)
         elif hasattr(parent, 'section') and parent.section is not None:
-            tree.append(parent.section)
+            logging.warning(level)
+            tree[level].append(parent.section)
         elif self.parent_subheading is not parent:
-            self.append_path_children(self.parent_subheading, tree)
+            self.append_path_children(self.parent_subheading, tree, level)
 
         return tree
 
-    def append_path_children(self, parent, tree):
+    def append_path_children(self, parent, tree,  level):
         children = parent.get_hierarchy_children()
         for child in children:
             # if type(child) is Commodity:
-            tree.append(child)
+            tree[level].append(child)

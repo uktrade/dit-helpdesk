@@ -78,6 +78,11 @@ python dit_helpdesk/manage.py scrape_section_hierarchy_v2
 
 To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
 
+#### Update Environment variables in case you get Sentry exceptions (Optional)
+If `docker-compose.env` file does not exists, create it by copying `docker-compose.conf.env`
+
+You will need to access [Helpdesk Vault](`https://vault.ci.uktrade.io/ui/vault/secrets/dit%2Ftrade-helpdesk/list/helpdesk/`) to get the required enviroment variable secrets to use them in the file. To do so you will to generate a github personal access token. This is needed to log into vault. Go here: [Vault](`https://github.com/settings/tokens`) click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. Once you've done that, head over to [Vault](`https://vault.ci.uktrade.io`) and login with the token. You'll need to select github as your login option.
+
 ### Running
 
 Starting the server again is the same command as installing:
@@ -182,25 +187,25 @@ The source for the static assets is in `assets` in the root of the project folde
 
 All of the dependencies have been compiled and are included in the git repository because the Jenkins build process that deploys the site doesn't run Node. This means that you won’t need to build the CSS and JavaScript unless you change anything. Any changes should be tested before merging into the master branch, so this should help ensure that any frontend problems are not during the Jenkins build process.
 
-Before changing anything, make sure that the dependencies are installed. Once that’s done, 
-```bash 
+Before changing anything, make sure that the dependencies are installed. Once that’s done,
+```bash
 npm run build
-``` 
+```
 will run the process that builds the CSS and JavaScript.
 
 Not all of GOV.UK Frontend is included, since this service doesn’t use all of the components. The components that aren’t being used are commented out in `global.scss` - when editing them, remember to re-run
- 
+
  ```bash
  npm run build
-``` 
+```
 to build the styles.
 
 GOV.UK Frontend CSS is namespaced with `govuk-` at the start of every class name. The namespace for Sass specific to this service is `app-`. All of the `app-` Sass is in the `assets/scss` folder. See the Design System team’s guidance on Extending and modifying components in production for building on top of GOV.UK Frontend.
 
-If things are looking broken, first run 
+If things are looking broken, first run
 ```bash
 npm run build
-``` 
+```
 this will rebuild and recompile all of the frontend static assets.
 
 If the country autocomplete is not working, first:  open up the browser console to see if there are any error messages - it could be anything from a 404 file not found to a script loaded by Google Tag Manager clashing with existing JavaScript
@@ -209,10 +214,10 @@ If the country autocomplete is blank:
 
 Turn off JavaScript in your browser, visit the choose country page (`/choose-country`) and see if a <select> dropdown is there
 If a select is not present, then the problem is in the template file - look at `dit_helpdesk/countries/templates/countries/choose_country.html` to see why it’s been left out
-If the select is empty, or has an incomplete list of countries, then the problem is on the server-side list of countries. On the server, run 
+If the select is empty, or has an incomplete list of countries, then the problem is on the server-side list of countries. On the server, run
 ```bash
 python dit_helpdesk/manage.py loaddata countries_data
-``` 
+```
 to repopulate the list of countries.
 
 If the select is present, but the autocomplete isn’t working:
@@ -224,15 +229,15 @@ Run `python dit_helpdesk/manage.py loaddata countries_data`
 
 If the autocomplete is not using the correct synonyms:
 Open `assets/countries/add-synonyms.js` and check that the `countriesToAddSynonymsTo` array of objects is correct.
-If any corrections are needed, make them - then run 
+If any corrections are needed, make them - then run
 ```bash
 npm run build
 ```
-followed by 
+followed by
 ```bash
 npm run update-countries
 ```
-and then 
+and then
 ```bash
 python dit_helpdesk/manage.py loaddata countries_data
 ```
@@ -245,7 +250,7 @@ npm run build
 The autocomplete is set up to enhance a select - check that the `id` of the select element and in the JavaScript match up. These are in `dit_helpdesk/countries/templates/choose_country.html`
 
 
-Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-territory-autocomplete/dist/location-autocomplete.min`. If not, add in `@import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";` and re-run 
+Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-territory-autocomplete/dist/location-autocomplete.min`. If not, add in `@import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";` and re-run
 
 ```bash
 npm run build
