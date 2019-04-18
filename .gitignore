@@ -121,3 +121,4 @@ node_modules/
 **/*.js.gz
 src/
 .vscode
+docker-compose.env
