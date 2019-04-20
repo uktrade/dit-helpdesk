@@ -122,3 +122,5 @@ node_modules/
 src/
 .vscode
 docker-compose.env
+
+.DS_Store
