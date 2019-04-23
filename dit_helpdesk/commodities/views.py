@@ -213,7 +213,7 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
             if index is listSize:
                 for i in range(0, listSize):
                     # close
-                    html += '</ul></li>'
+                    html += '</ul>'
 
     return html
 
