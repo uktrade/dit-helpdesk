@@ -39,6 +39,8 @@ class Section(models.Model):
     title = models.TextField(blank=True, null=True)
     position = models.IntegerField(null=True)
 
+    def __str__(self):
+        return "Section {0}".format(self.roman_numeral)
 
     @property
     def hierarchy_key(self):
@@ -103,6 +105,9 @@ class Chapter(models.Model):
         'Section', blank=True, null=True, on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return "Chapter {0}".format(self.chapter_code)
+
     @property
     def title(self):
         return self.description
@@ -132,7 +137,6 @@ class Chapter(models.Model):
                 else:
                     children.append(child)
         return children
-        # return self.headings.all().order_by('heading_code')
 
     def get_headings_url(self):
         return reverse(
@@ -191,13 +195,14 @@ class Heading(models.Model):
         return self.heading_code
 
     def __str__(self):
-        return 'Heading ' + self.heading_code[:4] or self.heading_code
+        return "Heading {0}".format(self.heading_code)
 
     def get_absolute_url(self):
         kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
         return reverse('heading-detail', kwargs=kwargs)
 
-    '''
+    # TODO: remove
+    '''    
     # this was used for indexing Headings for search
     def get_search_index_words(self):
         words = self.tts_title
@@ -250,7 +255,10 @@ class SubHeading(models.Model):
     )
 
     class Meta:
-        unique_together = ('commodity_code', 'goods_nomenclature_sid')
+        unique_together = ('commodity_code', 'description')
+
+    def __str__(self):
+        return "Sub Heading {0}".format(self.commodity_code)
 
     @property
     def hierarchy_key(self):

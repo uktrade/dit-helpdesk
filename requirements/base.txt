@@ -42,4 +42,4 @@ redis==2.10.6, < 3  # pyup: < 3 # https://github.com/antirez/redis
 Django==2.1.5
 django-environ==0.4.5  # https://github.com/joke2k/django-environ
 django-redis==4.10.0  # https://github.com/niwinz/django-redis
-#django-redis-cache==1.8.1
+django-redis-cache==1.8.1

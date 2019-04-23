@@ -14,3 +14,8 @@ DATABASES = {
 SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 RESTRICT_ADMIN = False
 DEBUG=True
+
+# Secure cookie settings.
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = False

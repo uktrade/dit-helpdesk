@@ -161,6 +161,8 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=selected_country)
     conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
 
+
+
     context = {
         'selected_origin_country': selected_country,
         'commodity': commodity,
@@ -213,7 +215,7 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
             if index is listSize:
                 for i in range(0, listSize):
                     # close
-                    html += '</ul></li>'
+                    html += '</ul>'
 
     return html
 

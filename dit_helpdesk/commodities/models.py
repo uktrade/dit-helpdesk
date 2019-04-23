@@ -9,6 +9,7 @@ from hierarchy.models import SubHeading, Heading, Chapter, Section
 
 COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
 
+
 class Commodity(models.Model):
 
     commodity_code = models.CharField(max_length=10, unique=True)
@@ -40,6 +41,7 @@ class Commodity(models.Model):
 
     class Meta:
         unique_together = ('commodity_code', 'goods_nomenclature_sid')
+        verbose_name_plural = "commodities"
 
     @property
     def hierarchy_key(self):

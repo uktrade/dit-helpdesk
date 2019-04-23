@@ -5,7 +5,7 @@ from django.db import models
 
 class Regulation(models.Model):
 
-    title = models.TextField(null=True)
+    title = models.TextField()
     sections = models.ManyToManyField("hierarchy.Section")
     commodities = models.ManyToManyField("commodities.Commodity")
     subheadings = models.ManyToManyField("hierarchy.SubHeading")
@@ -20,7 +20,7 @@ class Regulation(models.Model):
 
 
 class Document(models.Model):
-    title = models.TextField(null=True, blank=True)
+    title = models.TextField()
     regulations = models.ManyToManyField(Regulation)
     type = models.CharField(max_length=255)
     celex = models.CharField(max_length=20)

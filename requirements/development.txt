@@ -1,7 +1,11 @@
 -r ./base.txt
 
-werkzeug==0.14.1 # https://github.com/pallets/werkzeug
+# Interactive shell enhancements
 ipdb==0.11 # https://github.com/gotcha/ipdb
+
+werkzeug==0.14.1 # https://github.com/pallets/werkzeug
+
+# database adapter
 psycopg2==2.7.6.1 # https://github.com/psycopg/psycopg2
 
 # Code quality
