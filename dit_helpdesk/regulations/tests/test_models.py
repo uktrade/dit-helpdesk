@@ -32,3 +32,4 @@ class DocumentTestCase(TestCase):
 
     def test_str(self):
         self.assertEquals(self.document.__str__(), self.document.url)
+

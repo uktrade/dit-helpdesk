@@ -237,7 +237,6 @@ class TestCommodityModel(TestCase):
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))
 
-
 """
 #TODO: move to tts_serivce tests
     def test_commodity_structure_file_exists(self):
@@ -293,4 +292,5 @@ class TestCommodityModel(TestCase):
         struct_data = self.get_data(HEADING_STRUCTURE)
         instance = self.create_instance(struct_data, 'hierarchy', 'Heading')
         self.assertTrue(isinstance(instance, Heading))
+
 """

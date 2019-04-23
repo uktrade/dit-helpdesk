@@ -16,6 +16,7 @@ from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
 
+
 class Commodity(models.Model):
     """
     Commodity model

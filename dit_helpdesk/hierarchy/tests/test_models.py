@@ -5,6 +5,7 @@ from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter, ROMAN_NUMERALS
+
 # from trade_tariff_service.tts_api import HeadingJson
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class SectionTestCase(TestCase):
     """
     Test Section model
     """
+
     def setUp(self):
 
         self.section = mixer.blend(
@@ -30,6 +32,7 @@ class SectionTestCase(TestCase):
         self.assertEquals(str(self.section), "Section {0}".format(self.section.roman_numeral))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
+
         # TODO: remove field from Section Model
         self.assertTrue(isinstance(self.section.tts_json, str))
         self.assertEquals(self.section.tts_json, "{}")
@@ -96,8 +99,7 @@ class SectionTestCase(TestCase):
 class ChapterTestCase(TestCase):
 
     """
-    Tes
-    t Chapter Model
+    Test Chapter Model
     """
     def setUp(self):
 
@@ -214,7 +216,6 @@ class ChapterTestCase(TestCase):
             commodity_code=(x for x in [4911910010, 4911910090, 4911990000])
         )
         self.assertTrue(chapters[2].get_hierarchy_children())
-
         self.assertIn(parent_subheadings, [subheading.get_hierarchy_children() for subheading in headings])
         self.assertIn(subheadings, [subheading.get_hierarchy_children() for subheading in parent_subheadings])
         self.assertIn(sub_subheadings, [subheading.get_hierarchy_children() for subheading in subheadings])

@@ -98,6 +98,8 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=country_code)
     conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
 
+
+
     context = {
         'selected_origin_country': country.country_code,
         'commodity': commodity,

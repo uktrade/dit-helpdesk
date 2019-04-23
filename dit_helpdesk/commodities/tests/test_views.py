@@ -1,7 +1,6 @@
 import json
 import logging
 from datetime import datetime, timezone, timedelta
-
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase, Client
@@ -26,7 +25,6 @@ def get_data(file_path):
 
 
 class CommodityViewTestCase(TestCase):
-
     """
     Test Commodity View
     """
@@ -43,7 +41,6 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-
         self.section = self.create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
 
         self.chapter = self.create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
@@ -240,3 +237,4 @@ class MeasureConditionDetailTestCase(TestCase):
                                                "measure_id": 1}))
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, "/choose-country/")
+

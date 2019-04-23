@@ -1,10 +1,8 @@
 import json
 import logging
-
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase, Client
-
 from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
@@ -30,7 +28,6 @@ class HierarchyViewTestCase(TestCase):
     """
     Test Hierarchy view
     """
-
     def setUp(self):
         """
         To test fully test a commodity we need to load a parent subheading and its parent heading and save the
@@ -130,3 +127,4 @@ def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
     return json_data
+
