@@ -2,8 +2,8 @@ from django.test import TestCase, Client, RequestFactory, override_settings
 from django.http import HttpResponse
 from django.conf import settings
 
-from .ip_filter import get_client_ip
-from .middleware import AdminIpRestrictionMiddleware
+from core.ip_filter import get_client_ip
+from core.middleware import AdminIpRestrictionMiddleware
 
 
 class AdminIPMiddlewareTestCase(TestCase):
