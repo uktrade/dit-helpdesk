@@ -16,6 +16,7 @@ class FeedbackViewTestCase(TestCase):
         )
         self.assertRedirects(resp, reverse('feedback-success-view'))
 
+
 class FeedbackSuccessViewTestCase(TestCase):
 
     def test_get_success_view(self):
