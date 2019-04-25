@@ -4,11 +4,9 @@ from countries.models import Country
 
 
 class CountryModelTestCase(TestCase):
-
     """
     model tests
     """
-
     def setUp(self):
         self.country = Country.objects.create(country_code="UK", name="United Kingdom")
 

@@ -1,5 +1,4 @@
 import logging
-
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
@@ -12,7 +11,6 @@ logger.setLevel(logging.INFO)
 
 
 class CountriesViewsTestCase(TestCase):
-
     """
     Views tests
     """
