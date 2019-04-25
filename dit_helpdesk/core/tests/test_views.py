@@ -9,7 +9,6 @@ from core.views import error500handler
 
 
 class CoreViewsTestCase(TestCase):
-
     """
     Test Error pages
     """
@@ -24,3 +23,4 @@ class CoreViewsTestCase(TestCase):
         resp = error500handler(req)
         self.assertEqual(resp.status_code, 500)
         self.assertTemplateUsed('core/500.html')
+
