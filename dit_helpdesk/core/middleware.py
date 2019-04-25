@@ -13,7 +13,6 @@ def AdminIpRestrictionMiddleware(get_response):
         if resolve(request.path).app_name == 'admin':
             if settings.RESTRICT_ADMIN:
                 client_ip = get_client_ip(request)
-
                 if not is_valid_admin_ip(client_ip):
                     return HttpResponse('Unauthorized', status=401)
 
