@@ -8,6 +8,19 @@ from django.utils.log import DEFAULT_LOGGING
 
 from .base import *
 
+ADMIN_ENABLED = True
+
+if ADMIN_ENABLED is True:
+    INSTALLED_APPS.append('django.contrib.admin',)
+
+if ADMIN_ENABLED is True:
+    RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
+    ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
+    ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
+
+if ADMIN_ENABLED is True:
+    LOGIN_REDIRECT_URL = '/admin/login/'
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
