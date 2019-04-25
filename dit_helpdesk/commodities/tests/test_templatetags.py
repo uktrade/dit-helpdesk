@@ -5,7 +5,6 @@ from commodities.templatetags.cell_cleaner import cell_cleaner
 
 
 class TemplateTagsTestCase(TestCase):
-
     """
     Test Commodities Template Tags
     """
