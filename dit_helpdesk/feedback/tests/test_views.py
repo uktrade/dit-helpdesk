@@ -29,3 +29,4 @@ class FeedbackSuccessViewTestCase(TestCase):
         resp = self.client.get(reverse('feedback-success-view'))
         self.assertEquals(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'feedback_success.html')
+

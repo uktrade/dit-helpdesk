@@ -5,11 +5,9 @@ from feedback.models import Feedback
 
 
 class FeedbackModelTestCase(TestCase):
-
     """
     Test Models
     """
-
     def setUp(self):
         self.feedback = mixer.blend(
             Feedback
