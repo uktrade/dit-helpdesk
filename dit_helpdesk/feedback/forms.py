@@ -16,7 +16,7 @@ class FeedbackForm(forms.ModelForm):
                 'max_length': 'Name entered needs to be less than 255 characters'
             },
             'email': {
-                'invalid' : 'Enter an email address in the correct format, like name@example.com'
+                'invalid': 'Enter an email address in the correct format, like name@example.com'
             }
         }
 
