@@ -153,6 +153,7 @@ class Commodity(models.Model):
 
         if tree is None:
             tree = []
+
         if not parent:
             tree = []
             parent = self
@@ -301,3 +302,4 @@ class Commodity(models.Model):
 
         self.tts_json = resp_content
         self.save()
+

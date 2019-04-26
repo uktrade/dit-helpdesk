@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-
 def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
@@ -176,6 +175,7 @@ class CommodityViewTestCase(TestCase):
     def test_commodity_hierarchy_context(self):
         html = commodity_hierarchy_context(self.commodity.get_path(), settings.TEST_COUNTRY_CODE,
                                            self.commodity.commodity_code)
+
         self.assertInHTML("Live animals" and
                           "Live horses, asses, mules and hinnies" and
                           "Horses" and
@@ -203,7 +203,6 @@ class CommodityViewTestCase(TestCase):
 
 
 class MeasureConditionDetailTestCase(TestCase):
-
     """
     Test Measure Condition Detail View
     """
@@ -237,4 +236,3 @@ class MeasureConditionDetailTestCase(TestCase):
                                                "measure_id": 1}))
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, "/choose-country/")
-
