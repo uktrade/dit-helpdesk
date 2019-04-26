@@ -236,6 +236,16 @@ RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DOCUMENTS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
 RULES_OF_ORIGIN_GROUPS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 
+COMMODITY_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
+
+HEADING_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
+
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True

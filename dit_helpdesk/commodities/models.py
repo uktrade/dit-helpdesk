@@ -1,9 +1,12 @@
 import json
 import re
 
+import requests
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
+from countries.models import Country
 from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 from hierarchy.models import SubHeading, Heading, Chapter, Section
 
@@ -84,6 +87,30 @@ class Commodity(models.Model):
             obj = obj.get_parent()
         return obj
 
+    def get_regulations(self):
+
+        regulations = self.regulation_set.all()
+
+        if not regulations and self.parent_subheading:
+            regulations = self.parent_subheading.regulation_set.all()
+
+        return regulations
+
+    def get_rules_of_origin(self, country_code):
+
+        country = Country.objects.get(country_code=country_code)
+        rules_of_origin = {
+            "rules": [],
+            "footnotes": []
+        }
+        for group_member in country.rulesgroupmember_set.all():
+            for document in group_member.rules_group.rulesdocument_set.all():
+                rules_of_origin['footnotes'] = document.footnotes.all().order_by('id')
+                for rule in document.rule_set.all().order_by('id'):
+                    if rule.chapter == self.get_heading().chapter:
+                        rules_of_origin['rules'].append(rule)
+        return rules_of_origin
+
     def get_path(self, parent = None, tree = [], level = 0):
         if not parent:
             tree = []
@@ -113,3 +140,33 @@ class Commodity(models.Model):
         for child in children:
             # if type(child) is Commodity:
             tree[level].append(child)
+
+    def amend_measure_conditions(self, resp_content):
+
+        obj = json.loads(resp_content)
+        for idx, measure in enumerate(obj['import_measures']):
+            measure['measure_id'] = idx
+            for i, condition in enumerate(measure['measure_conditions']):
+                if isinstance(condition, dict):
+                    condition['measure_id'] = idx
+                    condition['condition_id'] = i
+
+        return json.dumps(obj)
+
+    def update_content(self):
+
+        url = settings.COMMODITY_URL % self.commodity_code
+        resp = requests.get(url, timeout=10)
+        resp_content = None
+
+        if resp.status_code == 200:
+            resp_content = resp.content.decode()
+        elif resp.status_code == 404:
+            url = settings.HEADING_URL % self.commodity_code[:4]
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200:
+                resp_content = resp.content.decode()
+
+        resp_content = self.amend_measure_conditions(resp_content)
+        self.tts_json = resp_content
+        self.save()
