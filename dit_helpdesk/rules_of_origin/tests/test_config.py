@@ -11,3 +11,4 @@ class RulesOfOriginConfigTestCase(TestCase):
     def test_apps(self):
         self.assertEqual(RulesOfOriginConfig.name, 'rules_of_origin')
         self.assertEqual(apps.get_app_config('rules_of_origin').name, 'rules_of_origin')
+

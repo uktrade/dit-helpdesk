@@ -4,6 +4,7 @@ from search.apps import SearchConfig
 
 
 class SearchConfigTestCase(TestCase):
+
     """
     Test Search app config
     """

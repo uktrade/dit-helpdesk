@@ -4,7 +4,6 @@ from countries.apps import CountriesConfig
 
 
 class CountriesConfigTestCase(TestCase):
-
     """
     Config tests
     """
@@ -14,3 +13,4 @@ class CountriesConfigTestCase(TestCase):
 
     def test_app_name_is_countries(self):
         self.assertEqual(apps.get_app_config('countries').name, 'countries')
+

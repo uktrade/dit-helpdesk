@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
+
 def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)

@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-
 def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
@@ -149,7 +148,6 @@ class TestCommodityModel(TestCase):
             commodity_code="0101210000",
             heading=self.heading,
             tts_json=json.dumps(get_data(settings.SUBHEADING_STRUCTURE)),
-
         )
         self.commodity = mixer.blend(
             Commodity,
@@ -196,6 +194,7 @@ class TestCommodityModel(TestCase):
         self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
 
     # def test_commodity_parent_subheading_has_parent_heading(self):
+
         self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 
     def test_subheading_has_heading_parent(self):
