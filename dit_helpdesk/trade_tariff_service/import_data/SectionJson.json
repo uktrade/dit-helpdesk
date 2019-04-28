@@ -1,0 +1,103 @@
+{
+  "_response_info": {
+    "links": [
+      {
+        "href": "/trade-tariff/sections/4.json",
+        "rel": "self"
+      },
+      {
+        "href": "/trade-tariff/sections",
+        "rel": "sections"
+      }
+    ]
+  },
+  "chapter_from": "16",
+  "chapter_to": "24",
+  "chapters": [
+    {
+      "chapter_note_id": 65,
+      "description": "PREPARATIONS OF MEAT, OF FISH OR OF CRUSTACEANS, MOLLUSCS OR OTHER AQUATIC INVERTEBRATES",
+      "formatted_description": "Preparations of meat, of fish or of crustaceans, molluscs or other aquatic invertebrates",
+      "goods_nomenclature_item_id": "1600000000",
+      "goods_nomenclature_sid": 32656,
+      "headings_from": "1601",
+      "headings_to": "1605"
+    },
+    {
+      "chapter_note_id": 66,
+      "description": "SUGARS AND SUGAR CONFECTIONERY",
+      "formatted_description": "Sugars and sugar confectionery",
+      "goods_nomenclature_item_id": "1700000000",
+      "goods_nomenclature_sid": 32980,
+      "headings_from": "1701",
+      "headings_to": "1704"
+    },
+    {
+      "chapter_note_id": 67,
+      "description": "COCOA AND COCOA PREPARATIONS",
+      "formatted_description": "Cocoa and cocoa preparations",
+      "goods_nomenclature_item_id": "1800000000",
+      "goods_nomenclature_sid": 33088,
+      "headings_from": "1801",
+      "headings_to": "1806"
+    },
+    {
+      "chapter_note_id": 68,
+      "description": "PREPARATIONS OF CEREALS, FLOUR, STARCH OR MILK; PASTRYCOOKSs PRODUCTS",
+      "formatted_description": "Preparations of cereals, flour, starch or milk; pastrycooks' products",
+      "goods_nomenclature_item_id": "1900000000",
+      "goods_nomenclature_sid": 33158,
+      "headings_from": "1901",
+      "headings_to": "1905"
+    },
+    {
+      "chapter_note_id": 69,
+      "description": "PREPARATIONS OF VEGETABLES, FRUIT, NUTS OR OTHER PARTS OF PLANTS",
+      "formatted_description": "Preparations of vegetables, fruit, nuts or other parts of plants",
+      "goods_nomenclature_item_id": "2000000000",
+      "goods_nomenclature_sid": 33378,
+      "headings_from": "2001",
+      "headings_to": "2009"
+    },
+    {
+      "chapter_note_id": 70,
+      "description": "MISCELLANEOUS EDIBLE PREPARATIONS",
+      "formatted_description": "Miscellaneous edible preparations",
+      "goods_nomenclature_item_id": "2100000000",
+      "goods_nomenclature_sid": 34458,
+      "headings_from": "2101",
+      "headings_to": "2106"
+    },
+    {
+      "chapter_note_id": 71,
+      "description": "BEVERAGES, SPIRITS AND VINEGAR",
+      "formatted_description": "Beverages, spirits and vinegar",
+      "goods_nomenclature_item_id": "2200000000",
+      "goods_nomenclature_sid": 34628,
+      "headings_from": "2201",
+      "headings_to": "2209"
+    },
+    {
+      "chapter_note_id": 72,
+      "description": "RESIDUES AND WASTE FROM THE FOOD INDUSTRIES; PREPARED ANIMAL FODDER",
+      "formatted_description": "Residues and waste from the food industries; prepared animal fodder",
+      "goods_nomenclature_item_id": "2300000000",
+      "goods_nomenclature_sid": 35125,
+      "headings_from": "2301",
+      "headings_to": "2309"
+    },
+    {
+      "chapter_note_id": 73,
+      "description": "TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES",
+      "formatted_description": "Tobacco and manufactured tobacco substitutes",
+      "goods_nomenclature_item_id": "2400000000",
+      "goods_nomenclature_sid": 35246,
+      "headings_from": "2401",
+      "headings_to": "2403"
+    }
+  ],
+  "id": 4,
+  "numeral": "IV",
+  "position": 4,
+  "title": "Prepared foodstuffs; beverages, spirits and vinegar; tobacco and manufactured tobacco substitutes"
+}

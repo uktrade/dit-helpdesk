@@ -9,23 +9,6 @@ from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading
 from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 
-TEST_COMMODITY_CODE = "0101210000"
-TEST_COMMODITY_CODE_SPLIT = list(re.search('([0-9]{6})([0-9]{2})([0-9]{2})', TEST_COMMODITY_CODE).groups())
-TEST_SUBHEADING_CODE = "0101210000"
-TEST_HEADING_CODE = "0101000000"
-TEST_CHAPTER_CODE = "0100000000"
-TEST_SECTION_ID = "1"
-TEST_COUNTRY_CODE = "AU"
-TEST_COUNTRY_NAME = "Australia"
-TEST_COMMODITY_DESCRIPTION = "Pure-bred breeding animals"
-TEST_HEADING_DESCRIPTION = "Live horses, asses, mules and hinnies"
-TEST_SUBHEADING_DESCRIPTION = "Horses"
-
-COMMODITY_DATA = settings.BASE_DIR+"/commodities/tests/commodity_{0}.json".format(TEST_COMMODITY_CODE)
-COMMODITY_STRUCTURE = settings.BASE_DIR+"/commodities/tests/structure_{0}.json".format(TEST_COMMODITY_CODE)
-SUBHEADING_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/subheading_{0}_structure.json".format(TEST_SUBHEADING_CODE)
-HEADING_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/heading_{0}_structure.json".format(TEST_HEADING_CODE)
-
 
 class TestCommodityModel(TestCase):
 
@@ -48,15 +31,15 @@ class TestCommodityModel(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.heading = self.create_instance(self.get_data(settings.HEADING_STRUCTURE), 'hierarchy', 'Heading')
 
-        self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading = self.create_instance(self.get_data(settings.SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
-        self.commodity = self.create_instance(self.get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity = self.create_instance(self.get_data(settings.COMMODITY_STRUCTURE), 'commodities', 'Commodity')
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(self.get_data(COMMODITY_DATA))
+        self.commodity.tts_json = json.dumps(self.get_data(settings.COMMODITY_DATA))
 
         self.commodity.save()
 
@@ -64,13 +47,13 @@ class TestCommodityModel(TestCase):
         self.assertTrue(isinstance(self.commodity, Commodity))
 
     def test_commodity_instance_exists(self):
-        self.assertTrue(Commodity.objects.get(commodity_code=TEST_COMMODITY_CODE))
+        self.assertTrue(Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE))
 
     def test_commodity_in_db_and_self_commodity_are_the_same(self):
-        self.assertEquals(Commodity.objects.get(commodity_code=TEST_COMMODITY_CODE), self.commodity)
+        self.assertEquals(Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE), self.commodity)
 
     def test_string_representation_a_commodity(self):
-        self.assertEqual(str(self.commodity), "Commodity {0}".format(TEST_COMMODITY_CODE))
+        self.assertEqual(str(self.commodity), "Commodity {0}".format(settings.TEST_COMMODITY_CODE))
 
     def test_verbose_name_plural_of_the_Commodity_model(self):
         self.assertEqual(str(Commodity._meta.verbose_name_plural), "commodities")
@@ -86,16 +69,16 @@ class TestCommodityModel(TestCase):
         self.assertEqual(self.commodity.heading, None)
 
     def test_commodity_parent_subheading_description_is_correct(self):
-        self.assertTrue(self.commodity.parent_subheading.description, TEST_SUBHEADING_DESCRIPTION)
+        self.assertTrue(self.commodity.parent_subheading.description, settings.TEST_SUBHEADING_DESCRIPTION)
 
     def test_heading_exists(self):
-        self.assertEqual(str(self.heading), "Heading {0}".format(TEST_HEADING_CODE))
+        self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
 
     def test_subheading_exists(self):
-        self.assertEqual(str(self.subheading), "Sub Heading {0}".format(TEST_SUBHEADING_CODE))
+        self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 
     def test_subheading_has_heading_parent(self):
-        self.assertEqual(str(self.subheading.heading), "Heading {0}".format(TEST_HEADING_CODE))
+        self.assertEqual(str(self.subheading.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
         self.assertTrue(self.subheading.heading)
 
     def test_commodity_parent_subheading_has_parent_heading(self):
@@ -105,15 +88,15 @@ class TestCommodityModel(TestCase):
 
         heading = self.commodity.get_heading()
         self.assertEquals(
-            TEST_HEADING_DESCRIPTION,
+            settings.TEST_HEADING_DESCRIPTION,
             heading.description
         )
 
     def test_commodity_tts_title_is_correct(self):
-        self.assertEqual(self.commodity.tts_title, TEST_COMMODITY_DESCRIPTION)
+        self.assertEqual(self.commodity.tts_title, settings.TEST_COMMODITY_DESCRIPTION)
 
     def test_commodity_tts_heading_description(self):
-        self.assertEqual(self.commodity.tts_heading_description, TEST_COMMODITY_DESCRIPTION)
+        self.assertEqual(self.commodity.tts_heading_description, settings.TEST_COMMODITY_DESCRIPTION)
 
     def test_commodity_tts_obj_is_not_empty(self):
         self.assertNotEqual(self.commodity.tts_obj, None)
@@ -122,10 +105,11 @@ class TestCommodityModel(TestCase):
         self.assertTrue(isinstance(self.commodity.tts_obj, CommodityJson))
 
     def test_commodity_code_splt_is_correct(self):
-        self.assertTrue(self.commodity.commodity_code_split, TEST_COMMODITY_CODE_SPLIT)
+        self.assertTrue(self.commodity.commodity_code_split, settings.TEST_COMMODITY_CODE_SPLIT)
 
     def test_commodity_get_absolute_url(self):
-        self.assertEqual(self.commodity.get_absolute_url(TEST_COUNTRY_CODE), "/country/au/commodity/{0}".format(TEST_COMMODITY_CODE))
+        self.assertEqual(self.commodity.get_absolute_url(settings.TEST_COUNTRY_CODE),
+                         "/country/au/commodity/{0}".format(settings.TEST_COMMODITY_CODE))
 
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))

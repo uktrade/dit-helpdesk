@@ -58,7 +58,8 @@ class HierarchyBuilder:
             }
         }
 
-    def file_loader(self, model_name):
+    @staticmethod
+    def file_loader(model_name):
 
         file_name = hierarchy_model_map[model_name]['file_name']
         file_path = settings.IMPORT_DATA_PATH.format(file_name)
@@ -107,8 +108,8 @@ class HierarchyBuilder:
         instance = model(**data)
         return instance
 
-    def check_model_names(self, model_names):
-        return set([name in hierarchy_model_map.keys() for name in model_names])
+    # def check_model_names(self, model_names):
+    #     return set([name in hierarchy_model_map.keys() for name in model_names])
 
     def data_scanner(self, model_names=[]):
 
@@ -117,8 +118,7 @@ class HierarchyBuilder:
             # if model_name == "Section":
             #     self.get_section_data_from_api()
 
-            json_data = self.file_loader(model_name)
-            self.data[model_name]["data"] = json_data
+            json_data = self.load_data(model_name)
 
             model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
 
@@ -131,34 +131,39 @@ class HierarchyBuilder:
             else:
                 sys.exit()
 
-    def get_section_data_from_api(self):
-        retry = []
-        data = []
-        urls = []
+    def load_data(self, model_name):
+        json_data = self.file_loader(model_name)
+        self.data[model_name]["data"] = json_data
+        return json_data
 
-        def poll_api(url_list):
-            for url in url_list:
-                resp = requests.get(url)
-                if resp.status_code == 200:
-                    section = {}
-                    section["section_id"] = resp.json()["id"]
-                    section["roman_numeral"] = resp.json()["numeral"]
-                    section["title"] = resp.json()["title"]
-                    section["child_goods_nomenclature_sids"] = [chapter["goods_nomenclature_sid"]
-                                                                for chapter in resp.json()["chapters"]]
-                    section["position"] = resp.json()["position"]
-                    data.append(section)
-                else:
-                    print("RESPONSE: ", resp.status_code)
-                    retry.append(url)
-
-        for i in range(1, 22):
-            urls.append(section_url.format(i))
-
-        poll_api(urls)
-
-        with open(data_path.format("hierarchy_sections.json"), 'w') as outfile:
-            json.dump(data, outfile)
+    # def get_section_data_from_api(self):
+    #     retry = []
+    #     data = []
+    #     urls = []
+    #
+    #     def poll_api(url_list):
+    #         for url in url_list:
+    #             resp = requests.get(url)
+    #             if resp.status_code == 200:
+    #                 section = {}
+    #                 section["section_id"] = resp.json()["id"]
+    #                 section["roman_numeral"] = resp.json()["numeral"]
+    #                 section["title"] = resp.json()["title"]
+    #                 section["child_goods_nomenclature_sids"] = [chapter["goods_nomenclature_sid"]
+    #                                                             for chapter in resp.json()["chapters"]]
+    #                 section["position"] = resp.json()["position"]
+    #                 data.append(section)
+    #             else:
+    #                 print("RESPONSE: ", resp.status_code)
+    #                 retry.append(url)
+    #
+    #     for i in range(1, 22):
+    #         urls.append(section_url.format(i))
+    #
+    #     poll_api(urls)
+    #
+    #     with open(data_path.format("hierarchy_sections.json"), 'w') as outfile:
+    #         json.dump(data, outfile)
 
     def lookup_parent(self, model, code):
 
@@ -176,13 +181,16 @@ class HierarchyBuilder:
     def process_orphaned_subheadings(self):
 
         subheadings = SubHeading.objects.filter(heading_id=None, parent_subheading_id=None)
-
+        print([sub.goods_nomenclature_sid for sub in subheadings])
+        count = 0
         for subheading in subheadings:
             parent_sid = subheading.parent_goods_nomenclature_sid
+            print(type(subheading.goods_nomenclature_sid), type(parent_sid))
             parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
             subheading.parent_subheading_id = parent.pk
             subheading.save()
-
+            count = count + 1
+        return count
 
     def process_orphaned_commodities(self):
 

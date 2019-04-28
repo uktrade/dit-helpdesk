@@ -18,21 +18,6 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.DEBUG)
 
-TEST_COMMODITY_CODE = "0101210000"
-TEST_SUBHEADING_CODE = "0101210000"
-TEST_HEADING_CODE = "0101000000"
-TEST_CHAPTER_CODE = "0100000000"
-TEST_SECTION_ID = "1"
-TEST_COUNTRY_CODE = "AU"
-TEST_COUNTRY_NAME = "Australia"
-
-COMMODITY_DATA = settings.BASE_DIR + "/commodities/tests/commodity_{0}.json".format(TEST_COMMODITY_CODE)
-COMMODITY_STRUCTURE = settings.BASE_DIR + "/commodities/tests/structure_{0}.json".format(TEST_COMMODITY_CODE)
-SUBHEADING_STRUCTURE = settings.BASE_DIR + "/hierarchy/tests/subheading_{0}_structure.json".format(TEST_SUBHEADING_CODE)
-HEADING_STRUCTURE = settings.BASE_DIR + "/hierarchy/tests/heading_{0}_structure.json".format(TEST_HEADING_CODE)
-CHAPTER_STRUCTURE = settings.BASE_DIR + "/hierarchy/tests/chapter_{0}_structure.json".format(TEST_CHAPTER_CODE)
-SECTION_STRUCTURE = settings.BASE_DIR + "/hierarchy/tests/section_{}_structure.json".format(TEST_SECTION_ID)
-
 
 def get_data(file_path):
     with open(file_path) as f:
@@ -54,31 +39,31 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.section = self.create_instance(get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
+        self.section = self.create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
 
-        self.chapter = self.create_instance(get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
+        self.chapter = self.create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
-        self.heading = self.create_instance(get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.heading = self.create_instance(get_data(settings.HEADING_STRUCTURE), 'hierarchy', 'Heading')
         self.heading.chapter_id = self.chapter.id
         self.heading.save()
 
-        self.subheading = self.create_instance(get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading = self.create_instance(get_data(settings.SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
-        self.commodity = self.create_instance(get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity = self.create_instance(get_data(settings.COMMODITY_STRUCTURE), 'commodities', 'Commodity')
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(get_data(COMMODITY_DATA))
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
 
         self.commodity.save()
 
         self.client = Client()
-        self.url = reverse('commodity-detail', kwargs={"commodity_code": TEST_COMMODITY_CODE,
-                                                       "country_code": TEST_COUNTRY_CODE})
+        self.url = reverse('commodity-detail', kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
+                                                       "country_code": settings.TEST_COUNTRY_CODE})
 
-    fixtures = ['../../countries/fixtures/countries_data.json']
+    fixtures = [settings.COUNTRIES_DATA]
 
     # fixtures = ['hierarchy/fixtures/hierarchy.json']
     # fixtures = ['commodities/fixtures/commodities.json']
@@ -116,15 +101,15 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_receives_the_correct_country_code(self):
         resp = self.client.get(self.url)
-        self.assertEqual(resp.context['selected_origin_country'], TEST_COUNTRY_CODE)
+        self.assertEqual(resp.context['selected_origin_country'], settings.TEST_COUNTRY_CODE)
 
     def test_commodity_detail_has_the_correct_commodity_code(self):
         resp = self.client.get(self.url)
-        self.assertEqual(resp.context['commodity'].commodity_code, TEST_COMMODITY_CODE)
+        self.assertEqual(resp.context['commodity'].commodity_code, settings.TEST_COMMODITY_CODE)
 
     def test_commodity_detail_has_the_selected_country_origin_name(self):
         resp = self.client.get(self.url)
-        self.assertEqual(resp.context['selected_origin_country_name'], TEST_COUNTRY_NAME)
+        self.assertEqual(resp.context['selected_origin_country_name'], settings.TEST_COUNTRY_NAME)
 
     def test_commodity_column_titles_are_correct(self):
         resp = self.client.get(self.url)
@@ -135,24 +120,24 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_without_country_code(self):
         self.assertRaises(NoReverseMatch, lambda: self.client.get(reverse('commodity-detail'),
-                                                                  kwargs={"commodity_code": TEST_COMMODITY_CODE}))
+                                                                  kwargs={"commodity_code": settings.TEST_COMMODITY_CODE}))
 
     def test_commodity_detail_without_commodity_code(self):
         self.assertRaises(NoReverseMatch, lambda: self.client.get(reverse('commodity-detail'),
-                                                                  kwargs={"country_code": TEST_COUNTRY_CODE}))
+                                                                  kwargs={"country_code": settings.TEST_COUNTRY_CODE}))
 
     def test_commodity_detail_with_nonexisting_country_code(self):
-        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": TEST_COMMODITY_CODE,
+        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
                                                                    "country_code": "XY"}))
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, "/choose-country/")
 
     def test_commodity_detail_update(self):
-        commodity = Commodity.objects.get(commodity_code=TEST_COMMODITY_CODE)
+        commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
         commodity.tts_json = None
         commodity.save()
-        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": TEST_COMMODITY_CODE,
-                                                                   "country_code": TEST_COUNTRY_CODE}))
+        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
+                                                                   "country_code": settings.TEST_COUNTRY_CODE}))
         self.assertEqual(resp.status_code, 200)
         logger.info(commodity.last_updated.toordinal())
         logger.info(datetime.now(timezone.utc).toordinal())
@@ -180,14 +165,15 @@ class CommodityViewTestCase(TestCase):
             rules_document=rules_document,
             chapter=self.chapter
         )
-        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": TEST_COMMODITY_CODE,
+        resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
                                                                    "country_code": "AF"}))
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('rules_of_origin' in resp.context)
         self.assertTrue(resp.context['rules_of_origin'])
 
     def test_commodity_hierarchy_context(self):
-        html = commodity_hierarchy_context(self.commodity.get_path(), TEST_COUNTRY_CODE, self.commodity.commodity_code)
+        html = commodity_hierarchy_context(self.commodity.get_path(), settings.TEST_COUNTRY_CODE,
+                                           self.commodity.commodity_code)
         self.assertInHTML("Live animals" and
                           "Live horses, asses, mules and hinnies" and
                           "Horses" and
@@ -229,14 +215,14 @@ class MeasureConditionDetailTestCase(TestCase):
     def setUp(self):
         self.commodity = mixer.blend(
             Commodity,
-            commodity_code=TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(COMMODITY_DATA))
+            commodity_code=settings.TEST_COMMODITY_CODE,
+            tts_json=json.dumps(get_data(settings.COMMODITY_DATA))
         )
 
     fixtures = ['../../countries/fixtures/countries_data.json']
 
     def test_commodity_has_tts_json(self):
-        logger.info(self.commodity.tts_obj.get_import_measure_by_id(int(1), country_code=TEST_COUNTRY_CODE))
+        logger.info(self.commodity.tts_obj.get_import_measure_by_id(int(1), country_code=settings.TEST_COUNTRY_CODE))
         self.assertTrue(self.commodity.tts_obj)
 
     def test_commodity_json_has_measure_conditions(self):
@@ -244,14 +230,14 @@ class MeasureConditionDetailTestCase(TestCase):
 
     def test_measure_condition_detail_http_status_is_200(self):
         resp = self.client.get(reverse('commodity-measure-conditions',
-                                       kwargs={"commodity_code": TEST_COMMODITY_CODE,
-                                               "country_code": TEST_COUNTRY_CODE,
+                                       kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
+                                               "country_code": settings.TEST_COUNTRY_CODE,
                                                "measure_id": 1}))
         self.assertEqual(resp.status_code, 200)
 
     def test_measure_condition_detail_with_nonexisting_country_code(self):
         resp = self.client.get(reverse('commodity-measure-conditions',
-                                       kwargs={"commodity_code": TEST_COMMODITY_CODE,
+                                       kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
                                                "country_code": "XY",
                                                "measure_id": 1}))
         self.assertEqual(resp.status_code, 302)
