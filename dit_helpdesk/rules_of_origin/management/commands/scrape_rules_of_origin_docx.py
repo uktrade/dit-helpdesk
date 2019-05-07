@@ -1,21 +1,14 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-from collections import defaultdict
-import json
-import re
 import os
 
-from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from docx.opc.exceptions import PackageNotFoundError
+from django.core.management.base import BaseCommand, CommandError
 
-from rules_of_origin.importer import RulesOfOriginImporter
 from rules_of_origin.ms_word_docx_scraper import DocxScraper
 
 
 class Command(BaseCommand):
-
     requires_migrations_checks = True
     requires_system_checks = True
 
@@ -37,8 +30,7 @@ class Command(BaseCommand):
             raise CommandError("\nThe file path below does not exist."
                                "\n\n\t{0}\n"
                                "\nPlease provide a correct path relative to that shown below and run the command again"
-                               "\n\n\t{1}\n\n".format(
-                path, settings.RULES_OF_ORIGIN_DATA_PATH[:-3]))
+                               "\n\n\t{1}\n\n".format(path, settings.RULES_OF_ORIGIN_DATA_PATH[:-3]))
 
         else:
             scraper = DocxScraper()
@@ -46,8 +38,7 @@ class Command(BaseCommand):
 
                 for root, dirs, files in os.walk(path):
                     if not all([True if file.endswith('.docx') else False for file in files
-                                                                if not file.startswith('~$')
-                                                                and not file.startswith('.')]):
+                                if not file.startswith('~$') and not file.startswith('.')]):
                         raise CommandError("\nThis command only works with MS Word .docx files."
                                            "\nPlease remove any non .docx files from the following location"
                                            "and run the command again\n\n\t{}\n\n".format(path))
@@ -58,5 +49,3 @@ class Command(BaseCommand):
 
             else:
                 scraper.load(docx_file=options['docx_path'])
-
-

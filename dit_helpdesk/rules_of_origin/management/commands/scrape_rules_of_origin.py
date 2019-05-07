@@ -116,9 +116,9 @@ def get_keys(st, category, match_obj):
         return keys
     return ''
 
-#origin_id : 'L_2013054EN.01003001'
-class Command(BaseCommand):
 
+class Command(BaseCommand):
+    # origin_id : 'L_2013054EN.01003001'
     def handle(self, *args, **options):
         print("HANDLE")
         # html from: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2013.054.01.0003.01.ENG
