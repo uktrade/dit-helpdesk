@@ -129,7 +129,7 @@ class HierarchyBuilderTestCase(TestCase):
         child_model_code = "0100000000"
         parent_model = apps.get_model(app_label=hierarchy_model_map[parent_model_name]["app_name"],
                                       model_name=parent_model_name)
-
+        
         for parent in builder.data[parent_model_name]["data"]:
             if child_model_code == parent['goods_nomenclature_item_id']:
                 parent_instance_data = builder.rename_key(parent, 'goods_nomenclature_item_id', 'chapter_code')
@@ -201,3 +201,8 @@ class HierarchyBuilderTestCase(TestCase):
     #     builder.
 
         self.assertEqual(builder.process_orphaned_subheadings(), 1)
+
+    @staticmethod
+    def test_get_section_data_from_api():
+        builder = HierarchyBuilder()
+        builder.get_section_data_from_api()

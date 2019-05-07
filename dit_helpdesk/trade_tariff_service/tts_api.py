@@ -428,4 +428,4 @@ class MeasureCondition(object):
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
-<<<
+
