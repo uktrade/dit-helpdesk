@@ -67,3 +67,4 @@ class DocumentScraper:
 
     def append_url_title(self, url):
         self.documents[url] = extract_html_title(url)
+
