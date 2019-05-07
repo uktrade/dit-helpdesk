@@ -228,3 +228,4 @@ class CommodityTestCase(TestCase):
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
         self.assertAlmostEqual(self.commodity.last_updated > test_time and check < datetime.timedelta(minutes=2), False)
+

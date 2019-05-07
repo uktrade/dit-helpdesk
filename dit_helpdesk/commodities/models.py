@@ -249,7 +249,6 @@ class Commodity(models.Model):
         except Exception as err:
             logger.debug("_append descendant data".format(err.args))
 
-
     @staticmethod
     def _append_path_children(parent, tree, level):
         """
@@ -302,4 +301,3 @@ class Commodity(models.Model):
 
         self.tts_json = resp_content
         self.save()
-
