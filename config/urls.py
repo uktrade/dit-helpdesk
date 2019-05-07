@@ -26,7 +26,6 @@ from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 
-
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
