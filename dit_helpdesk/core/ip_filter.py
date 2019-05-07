@@ -7,6 +7,11 @@ logger = logging.getLogger(__file__)
 
 
 def is_valid_admin_ip(client_ip):
+    """
+    Middleware helper function to filter out client IPs that are not allowed access to the django admin system
+    :param client_ip: string
+    :return: boolean
+    """
 
     if not client_ip:
         return False
@@ -23,6 +28,12 @@ def is_valid_admin_ip(client_ip):
 
 
 def get_client_ip(request):
+    """
+    Middleware helper function to extract the IP from the client request object, throws and exception if the
+    X-Forwarded-For header is not present or does not contain enough information to determine the IP
+    :param request: django http request
+    :return: string or None
+    """
 
     try:
         return request.META['HTTP_X_FORWARDED_FOR'].split(',')[settings.IP_SAFELIST_XFF_INDEX].strip()

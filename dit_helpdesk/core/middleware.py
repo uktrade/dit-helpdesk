@@ -7,7 +7,12 @@ from .ip_filter import is_valid_admin_ip, get_client_ip
 
 
 def AdminIpRestrictionMiddleware(get_response):
-    """Apply IP white listing to the admin only"""
+    """
+    Middleware to check if a client IP address has authority to view the admin or not, returning an HTTP 401 error
+    response if not.
+    :param get_response: django http request
+    :return: django http response
+    """
 
     def middleware(request):
         if resolve(request.path).app_name == 'admin':
