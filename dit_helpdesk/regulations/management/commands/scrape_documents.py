@@ -1,10 +1,6 @@
-import json
-from time import sleep
-
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from regulations.documents_scraper import DocumentsScraper
+from regulations.documents_scraper import DocumentScraper
 
 
 class Command(BaseCommand):
@@ -15,5 +11,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        scraper = DocumentsScraper()
+        scraper = DocumentScraper()
         scraper.load()

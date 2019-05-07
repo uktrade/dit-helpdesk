@@ -1,6 +1,3 @@
-import json
-from time import sleep
-
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -19,3 +16,4 @@ class Command(BaseCommand):
 
         importer = RegulationsImporter()
         importer.load(data_path)
+        importer.process()

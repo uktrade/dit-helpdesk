@@ -1,10 +1,10 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Regulation(models.Model):
-
+    """
+    Regulation model
+    """
     title = models.TextField()
     sections = models.ManyToManyField("hierarchy.Section")
     commodities = models.ManyToManyField("commodities.Commodity")
@@ -13,13 +13,16 @@ class Regulation(models.Model):
     chapters = models.ManyToManyField("hierarchy.Chapter")
 
     class Meta:
-        pass
+        verbose_name_plural = "regulations"
 
     def __str__(self):
         return self.title
 
 
 class Document(models.Model):
+    """
+    Regulation Document model
+    """
     title = models.TextField()
     regulations = models.ManyToManyField(Regulation)
     type = models.CharField(max_length=255)
@@ -27,7 +30,8 @@ class Document(models.Model):
     url = models.URLField()
 
     class Meta:
-        pass
+        verbose_name = "regulation document"
+        verbose_name_plural = "regulations documents"
 
     def __str__(self):
         return self.url
