@@ -2,4 +2,8 @@ from django.views.generic.base import RedirectView
 
 
 class IndexRedirect(RedirectView):
-  url = 'https://gov.uk/get-rules-tariffs-trade-with-uk/'
+    """
+    Placeholder class based generic view redirecting to the DNS entry for the application
+
+    """
+    url = 'https://gov.uk/get-rules-tariffs-trade-with-uk/'
