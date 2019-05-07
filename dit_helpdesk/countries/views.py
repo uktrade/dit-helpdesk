@@ -5,7 +5,6 @@ from countries.models import Country
 
 
 def choose_country_view(request):
-
     countries = Country.objects.all()
     country_not_selected_summary_error_message = 'Enter a country'
     country_not_selected_input_error_message = 'Enter a country'

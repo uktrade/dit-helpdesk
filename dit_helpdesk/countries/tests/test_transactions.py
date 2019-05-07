@@ -1,12 +1,16 @@
-from unittest import TestCase
-from django.test import TransactionTestCase
+import logging
+from django.conf import settings
+from django.test import TestCase
 
 from countries.models import Country
 
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
-class CountryModelTransactionTestCase(TransactionTestCase):
 
-    fixtures = ['../fixtures/countries_data.json']
+class CountryModelTransactionTestCase(TestCase):
+    fixtures = [settings.BASE_DIR + '/countries/fixtures/countries_data.json']
 
     def test_fixtures_load_countries_data(self):
         self.assertTrue(Country.objects.count() > 0)
