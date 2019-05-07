@@ -1,5 +1,6 @@
 import json
 import logging
+
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase, Client
@@ -127,4 +128,3 @@ def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
     return json_data
-

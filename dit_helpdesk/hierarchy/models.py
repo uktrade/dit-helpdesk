@@ -470,7 +470,6 @@ class Heading(models.Model):
     #     except Exception as err:
     #         logger.debug(err.args)
 
-
 class SubHeading(models.Model):
     productline_suffix = models.CharField(max_length=2, null=True)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
