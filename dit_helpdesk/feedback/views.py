@@ -5,6 +5,9 @@ from feedback.forms import FeedbackForm
 
 
 class FeedbackView(CreateView):
+    """
+    Generic class based View to create an instance of the data submitted in the feedback form
+    """
     template_name = 'feedback_form.html'
     form_class = FeedbackForm
 
@@ -13,4 +16,7 @@ class FeedbackView(CreateView):
 
 
 class FeedbackSuccessView(TemplateView):
+    """
+    Generic class based View for a successful form response
+    """
     template_name = 'feedback_success.html'
