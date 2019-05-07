@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
-    #'psqlextra',
     'core',
     'commodities',
     'cookies',
@@ -64,11 +63,9 @@ INSTALLED_APPS = [
 ]
 
 if ADMIN_ENABLED is True:
-    INSTALLED_APPS.append('django.contrib.admin',)
+    INSTALLED_APPS.append('django.contrib.admin', )
 
 MIDDLEWARE = [
-    # 'django.middleware.cache.UpdateCacheMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
     'healthcheck.middleware.HealthCheckMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -79,8 +76,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.AdminIpRestrictionMiddleware',
-    #'requirements_documents.middleware.RedirectExceptionMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'dit_helpdesk.urls'
@@ -104,18 +99,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
 
 DATABASES = {
-   'default': dj_database_url.config()
+    'default': dj_database_url.config()
 }
 
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        #'LOCATION': '/var/run/redis/redis.sock',
         'LOCATION': 'localhost:6379',
     },
 }
@@ -127,7 +120,6 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -147,12 +139,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'authbroker_client.backends.AuthbrokerBackend',
 ]
-
 
 FIXTURE_DIRS = (
     'countries/fixtures/',
@@ -175,7 +165,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
@@ -192,11 +181,8 @@ MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    #'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'sass_processor.finders.CssFinder',
 ]
 
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # compression and cachine
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
 
 # The correct index of the client IP in the X-Forwarded-For header.  It should be set to
@@ -223,22 +209,25 @@ AUTH_USER_MODEL = 'user.User'
 FEEDBACK_MAX_LENGTH = 1000
 
 # trade tariff service arguments
-IMPORT_DATA_PATH = BASE_DIR+"/trade_tariff_service/import_data/{0}"
+IMPORT_DATA_PATH = BASE_DIR + "/trade_tariff_service/import_data/{0}"
 TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
 TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
 TRADE_TARIFF_SERVICE_SECTION_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
-TRADE_TARIFF_SERVICE_MODEL_ARGS=["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+TRADE_TARIFF_SERVICE_MODEL_ARGS = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
 
 # regulation import arguments
-REGULATIONS_MODEL_ARG=["Regulation"]
-REGULATIONS_DATA_PATH=BASE_DIR+"/regulations/data/{0}"
-RULES_OF_ORIGIN_DATA_PATH=BASE_DIR+"/rules_of_origin/data/{0}"
-RULES_OF_ORIGIN_DOCUMENTS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
-RULES_OF_ORIGIN_GROUPS_FILE=RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
+REGULATIONS_MODEL_ARG = ["Regulation"]
+REGULATIONS_DATA_PATH = BASE_DIR + "/regulations/data/{0}"
+RULES_OF_ORIGIN_DATA_PATH = BASE_DIR + "/rules_of_origin/data/{0}"
+RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
+RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 
-COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+SECTION_URL = (
+    "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
+)
+
+CHAPTER_URL = (
+    "https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/{0}.json"
 )
 
 HEADING_URL = (
@@ -246,9 +235,15 @@ HEADING_URL = (
     'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
 )
 
+COMMODITY_URL = (
+    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
+    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+)
+
+COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
+
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = 'Strict'
