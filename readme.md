@@ -4,7 +4,7 @@ This service is used to help people find the correct Harmonised System (HS) code
 
 ## Requirements
  - Python 3
- - Node [Active LTS](https://nodejs.org/en/about/releases/) version (Current Active version is v10)
+ - Node [Active LTS][1] version (Current Active version is v10)
  - Docker
 
  You can install and run this outside of Docker, but currently there is no documentation for this.
@@ -23,8 +23,8 @@ If you have Docker installed, you can run this service without needing to set up
 
 #### Frontend static asset installation
 
-First we need to install [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend) and
-[GOV.UK country and territory autocomplete](https://github.com/alphagov/govuk-country-and-territory-autocomplete) (Which will also also install the required [Accessible Autocomplete](https://github.com/alphagov/accessible-autocomplete) dependency), and other front end dependencies.
+First we need to install [GOV.UK Frontend][2] and
+[GOV.UK country and territory autocomplete][3] (Which will also also install the required [Accessible Autocomplete][4] dependency), and other front end dependencies.
 
 This is all done by going to the project root folder, which contains `package.json`. Then run:
 
@@ -70,21 +70,45 @@ We need to populate the database with products. Shell into Docker by running:
 docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
 
-You should now be in the root of the app. To populate the products in the database, we need to run a scrape. To get the products in Section I, run:
+You should now be in the root of the app. 
+#### Importing Content Data
+##### Commodities and Hierarchy
+To populate the commodities in the database, we need to run a management command to import the data. 
+To import the commodity data and its hierarchy, run:
 
 ```bash
 python dit_helpdesk/manage.py scrape_section_hierarchy_v2
 ```
+This should take approximately 6 to 8 minutes
+##### Rules of Origin
+To import Rules of Origin run:
+```bash
+python dit_helpdesk/manage.py import_rules_of_origin
+```
+This should take approximately 1 minutes 
 
-To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
+There is a management command for extracting data from word documents that may be supplied for new content, from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the `scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the `rules_of_origin/import_folder`where the importer command will read them from. 
+Be sure to archive any existing word files and/or json files should there be anyone clear the two folders. 
+To extract data from word docx source content, run:
+```bash
+python dit_helpdesk/manage.py scrape_rules_of_origin_docx
+```
+This should take a couple of minutes per word document.
+
+##### Documents and Regulations
+The source data for this content should be in a json format. #TODO: add detail here
+To import Documents and regulations run:
+```bash
+python dit_helpdesk/manage.py import_regulations
+```
+This should take approximately 60 minutes. (#TODO: redo the code to reduce this time.
 
 #### Update Environment variables in case you get Sentry exceptions (Optional)
 If `docker-compose.env` file does not exists, create it by copying `docker-compose.conf.env`
 
-You will need to access [Helpdesk Vault](`https://vault.ci.uktrade.io/ui/vault/secrets/dit%2Ftrade-helpdesk/list/helpdesk/`) to get the required enviroment variable secrets to use them in the file. To do so you will to generate a github personal access token. This is needed to log into vault. Go here: [Vault](`https://github.com/settings/tokens`) click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. Once you've done that, head over to [Vault](`https://vault.ci.uktrade.io`) and login with the token. You'll need to select github as your login option.
+You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. To do so you will need to generate a github personal access token. This is needed to log into vault. Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github as your login option.
 
 ### Running
-
 Starting the server again is the same command as installing:
 
 ```bash
@@ -127,6 +151,11 @@ The list of all countries that need to be listed is in `assets/countries/countri
 ### Install locally
 To run, we need to create a Python virtual environment and install any requirements.
 
+## Requirements
+ - Python 3
+ - Node [Active LTS][8] version (Current Active version is v10)
+ - postgresql 
+
 When in the project folder, create a virtual environment.
 
 ```bash
@@ -148,7 +177,7 @@ If the virtual environment has been activated correctly your terminal should hav
 With the virtual environment working, we can now install everything this project needs using Python's package manager `pip`:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements/local.txt
 ```
 
 Once that's done, we now have to configure the development set up. `cd` into `dit_helpdesk`, then run these three commands:
@@ -162,7 +191,7 @@ export DJANGO_BASE_DIR=$(pwd)
 ```
 
 ```bash
-export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings.dev
+export DJANGO_SETTINGS_MODULE=dit_helpdesk.settings.local
 ```
 
 To populate the products in the database, we need to run a scrape. To get the products in Section I, run:
@@ -173,7 +202,7 @@ python manage.py scrape_section_hierarchy 1
 
 To get Section II, replace 1 with 2; Section III, use 3 - and so on. Recommend scraping at least one section. The scrape will take a while.
 
-Now we need to [build the front end static assets](#frontend-build).
+Now we need to [build the front end static assets][9].
 
 Once the scraping has finished and the front end assets are in place, start the server:
 
@@ -195,8 +224,8 @@ will run the process that builds the CSS and JavaScript.
 
 Not all of GOV.UK Frontend is included, since this service doesn’t use all of the components. The components that aren’t being used are commented out in `global.scss` - when editing them, remember to re-run
 
- ```bash
- npm run build
+```bash
+npm run build
 ```
 to build the styles.
 
@@ -256,3 +285,12 @@ Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-ter
 npm run build
 ```
 
+[1]:	https://nodejs.org/en/about/releases/
+[2]:	https://github.com/alphagov/govuk-frontend
+[3]:	https://github.com/alphagov/govuk-country-and-territory-autocomplete
+[4]:	https://github.com/alphagov/accessible-autocomplete
+[5]:	%60https://vault.ci.uktrade.io/ui/vault/secrets/dit%2Ftrade-helpdesk/list/helpdesk/%60
+[6]:	%60https://github.com/settings/tokens%60
+[7]:	%60https://vault.ci.uktrade.io%60
+[8]:	https://nodejs.org/en/about/releases/
+[9]:	#frontend-build
