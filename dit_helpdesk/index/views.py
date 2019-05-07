@@ -7,3 +7,4 @@ class IndexRedirect(RedirectView):
 
     """
     url = 'http://www.get-rules-tariffs-trade-with-uk.service.gov.uk/'
+
