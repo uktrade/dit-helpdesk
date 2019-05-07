@@ -1,4 +1,5 @@
 import logging
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
@@ -74,7 +75,8 @@ class CountriesViewsTestCase(TestCase):
         resp = self.client.post(reverse('choose-country'), data={"origin_country": "au"})
         self.assertEqual(self.client.session['origin_country'], "AU")
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, reverse('search-view') + "country/{0}".format(self.client.session['origin_country'].lower()))
+        self.assertEqual(resp.url,
+                         reverse('search-view') + "country/{0}".format(self.client.session['origin_country'].lower()))
 
     def test_post_with_country_selected_and_country_not_exist(self):
         resp = self.client.post(reverse('choose-country'), data={"origin_country": "au"})

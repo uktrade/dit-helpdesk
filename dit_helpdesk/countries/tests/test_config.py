@@ -6,5 +6,5 @@ from countries.apps import CountriesConfig
 class CountriesConfigTestCase(TestCase):
 
     def test_apps(self):
-        self.assertEqual(CountriesConfig.name,'countries')
+        self.assertEqual(CountriesConfig.name, 'countries')
         self.assertEqual(apps.get_app_config('countries').name, 'countries')
