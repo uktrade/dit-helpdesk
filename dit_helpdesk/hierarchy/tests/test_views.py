@@ -1,9 +1,10 @@
 import json
 import logging
+
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase, Client
-from django.urls import reverse
+
 from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
@@ -34,20 +35,15 @@ CHAPTER_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/chapter_{0}_structure.js
 SECTION_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/section_{}_structure.json".format(TEST_SECTION_ID)
 
 
+def create_instance(data, app_name, model_name):
+
+    model = apps.get_model(app_label=app_name, model_name=model_name)
+    instance = model(**data)
+    instance.save()
+    return instance
+
+
 class HierarchyViewTestCase(TestCase):
-
-    def get_data(self, file_path):
-
-        with open(file_path) as f:
-            json_data = json.load(f)
-        return json_data
-
-    def create_instance(self, data, app_name, model_name):
-
-        model = apps.get_model(app_label=app_name, model_name=model_name)
-        instance = model(**data)
-        instance.save()
-        return instance
 
     def setUp(self):
         """
@@ -55,23 +51,23 @@ class HierarchyViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.section = self.create_instance(self.get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
+        self.section = create_instance(get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
 
-        self.chapter = self.create_instance(self.get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
+        self.chapter = create_instance(get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
-        self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.heading = create_instance(get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
         self.heading.chapter_id = self.chapter.pk
         self.heading.save()
 
-        self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading = create_instance(get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
-        self.commodity = self.create_instance(self.get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity = create_instance(get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(self.get_data(COMMODITY_DATA))
+        self.commodity.tts_json = json.dumps(get_data(COMMODITY_DATA))
 
         self.commodity.save()
 
@@ -141,3 +137,10 @@ class HierarchyViewTestCase(TestCase):
         node_id = '#sub_heading-{0}'.format(subheading_id)
         logger.info(_get_expanded_context(node_id))
         self.assertFalse(_get_expanded_context(node_id))
+
+
+def get_data(file_path):
+
+    with open(file_path) as f:
+        json_data = json.load(f)
+    return json_data

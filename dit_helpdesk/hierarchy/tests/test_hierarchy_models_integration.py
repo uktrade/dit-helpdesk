@@ -30,23 +30,25 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.DEBUG)
 
 
+def create_instance(data, app_name, model_name):
+
+    model = apps.get_model(app_label=app_name, model_name=model_name)
+    instance = model(**data)
+    instance.save()
+    return instance
+
+
+def get_data(file_path):
+
+    with open(file_path) as f:
+        json_data = json.load(f)
+    return json_data
+
+
 class HierarchyModelsTestCase(TestCase):
     """
     test the integration between models that make up the full hierarchy
     """
-
-    def get_data(self, file_path):
-
-        with open(file_path) as f:
-            json_data = json.load(f)
-        return json_data
-
-    def create_instance(self, data, app_name, model_name):
-
-        model = apps.get_model(app_label=app_name, model_name=model_name)
-        instance = model(**data)
-        instance.save()
-        return instance
 
     def setUp(self):
         """
@@ -54,23 +56,23 @@ class HierarchyModelsTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.section = self.create_instance(self.get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
+        self.section = create_instance(get_data(SECTION_STRUCTURE), 'hierarchy', 'Section')
 
-        self.chapter = self.create_instance(self.get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
+        self.chapter = create_instance(get_data(CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
         self.chapter.section_id = self.chapter.pk
         self.chapter.save()
 
-        self.heading = self.create_instance(self.get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.heading = create_instance(get_data(HEADING_STRUCTURE), 'hierarchy', 'Heading')
         self.heading.chapter_id = self.chapter.id
         self.heading.save()
 
-        self.subheading = self.create_instance(self.get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading = create_instance(get_data(SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
-        self.commodity = self.create_instance(self.get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity = create_instance(get_data(COMMODITY_STRUCTURE), 'commodities', 'Commodity')
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(self.get_data(COMMODITY_DATA))
+        self.commodity.tts_json = json.dumps(get_data(COMMODITY_DATA))
 
         self.commodity.save()
 
@@ -101,7 +103,6 @@ class HierarchyModelsTestCase(TestCase):
         self.assertEqual(self.section.title, TEST_SECTION_DESCRIPTION)
 
     def test_section_has_tts_obj(self):
-        # self.assertTrue(isinstance(self.section.tts_obj, SectionJson))
         self.assertTrue(isinstance(self.section.tts_json, list))
 
 # Chapters
@@ -161,10 +162,6 @@ class HierarchyModelsTestCase(TestCase):
         self.assertEqual(self.heading.get_hierarchy_url(TEST_COUNTRY_CODE),
                          "/search/country/au/hierarchy/heading-{0}".format(self.heading.pk))
 
-    # def test_heading_has_correct_absolute_url(self):
-    #     kwargs = {'heading_code': TEST_HEADING_CODE}
-    #     self.assertEqual(self.heading.get_absolute_url(), "/search/country/au/hierarchy/heading-8")
-
 # SUBHEADINGS
     def test_subheading_instance_exists(self):
         self.assertTrue(SubHeading.objects.get(commodity_code=TEST_SUBHEADING_CODE))
@@ -195,4 +192,3 @@ class HierarchyModelsTestCase(TestCase):
     def test_subheading_has_parent(self):
         self.assertTrue(isinstance(self.subheading.get_parent(), SubHeading) or
                         isinstance(self.subheading.get_parent(), Heading))
-

@@ -26,7 +26,7 @@ class SectionTestCase(TestCase):
         self.assertEquals(str(self.section), "Section {0}".format(self.section.roman_numeral))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        #TODO: remove field from Section Model
+        # TODO: remove field from Section Model
         self.assertTrue(isinstance(self.section.tts_json, str))
         self.assertEquals(self.section.tts_json, "{}")
 
@@ -67,9 +67,6 @@ class SectionTestCase(TestCase):
                           "/search/country/au/hierarchy/{0}".format(self.section.hierarchy_key))
 
     def test_chapter_range_str_without_child_chapters_returns_None_as_str(self):
-        logger.info("No CHILD: {0}".format(len(self.section.get_hierarchy_children())))
-        logger.info(self.section.chapter_range_str)
-        # children = self.section.get_hierarchy_children()
         self.assertEquals(self.section.chapter_range_str, 'None')
 
     def test_chapter_range_str_with_one_child_chapter_with_chapter_id_1(self):
@@ -78,9 +75,6 @@ class SectionTestCase(TestCase):
             section=self.section,
             chapter_code=seq(0)
         )
-        logger.info("ONE CHILD: {0}".format(len(self.section.get_hierarchy_children())))
-        logger.info(self.section.chapter_range_str)
-        # children = self.section.get_hierarchy_children()
         self.assertEquals(self.section.chapter_range_str, "1")
 
     def test_chapter_range_str_with_5_chapters_returns_1_to_5_as_str(self):
@@ -89,8 +83,6 @@ class SectionTestCase(TestCase):
             section=self.section,
             chapter_code=seq(0)
         )
-        children = self.section.get_hierarchy_children()
-        logger.info("Muletiple CHILDren: {0}".format(len(self.section.get_hierarchy_children())))
         self.assertEquals(self.section.chapter_range_str, "1 to 5")
 
     def test_empty_tts_obj_tts_title_raises_key_error(self):
@@ -105,21 +97,6 @@ class ChapterTestCase(TestCase):
             tts_json="{}",
         )
 
-        # self.headings = mixer.cycle(5).blend(
-        #     Heading,
-        #     chapter=self.chapter
-        # )
-        #
-        # self.parent_subheadings = mixer.cycle(5).blend(
-        #     SubHeading,
-        #     heading=self.headings[0]
-        # )
-        #
-        # self.heading_commodities = mixer.cycle(5).blend(
-        #     Commodity,
-        #     heading=self.headings[0]
-        # )
-
     def test_str(self):
         self.assertEquals(str(self.chapter), "Chapter {0}".format(self.chapter.chapter_code))
 
@@ -130,7 +107,7 @@ class ChapterTestCase(TestCase):
         self.assertEquals(self.chapter.hierarchy_key, 'chapter-{0}'.format(self.chapter.pk))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        #TODO: remove field from Chapter Model
+        # TODO: remove field from Chapter Model
         self.assertTrue(isinstance(self.chapter.tts_json, str))
         self.assertEquals(self.chapter.tts_json, "{}")
 
@@ -172,8 +149,6 @@ class ChapterTestCase(TestCase):
             Heading,
             chapter=self.chapter
         )
-        logger.info("Headings: {0}".format(len(self.headings)))
-        logger.info("Children: {0} ".format(len(self.chapter.headings.all())))
         self.assertTrue(len(self.chapter.headings.all()) == 5)
 
     def test_chapter_has_child_headings(self):
@@ -181,7 +156,6 @@ class ChapterTestCase(TestCase):
             Heading,
             chapter=self.chapter
         )
-        logger.info(self.chapter.headings.all())
         self.assertTrue(self.chapter.headings.all())
 
     def test_get_hierarchy_children_returns_list_of_child_items(self):
@@ -232,6 +206,11 @@ class ChapterTestCase(TestCase):
         )
         self.assertTrue(chapters[2].get_hierarchy_children())
 
+        self.assertIn(parent_subheadings, [subheading.get_hierarchy_children() for subheading in headings])
+        self.assertIn(subheadings, [subheading.get_hierarchy_children() for subheading in parent_subheadings])
+        self.assertIn(sub_subheadings, [subheading.get_hierarchy_children() for subheading in subheadings])
+        self.assertIn(commodities, [subheading.get_hierarchy_children() for subheading in sub_subheadings])
+
 
 class HeadingTestCase(TestCase):
     def setUp(self):
@@ -267,7 +246,7 @@ class HeadingTestCase(TestCase):
                           "/search/country/au/hierarchy/{0}".format(self.heading.hierarchy_key))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        #TODO: remove field from Heading Model
+        # TODO: remove field from Heading Model
         self.assertTrue(isinstance(self.heading.tts_json, str))
         self.assertEquals(self.heading.tts_json, "{}")
 
@@ -289,20 +268,16 @@ class HeadingTestCase(TestCase):
         self.assertRaises(NoReverseMatch, lambda: self.heading.get_absolute_url())
 
     def test_hierarchy_url(self):
-        logger.info(self.heading.get_hierarchy_url(country_code="au"))
         self.assertEquals(self.heading.get_hierarchy_url(country_code="au"),
                           "/search/country/au/hierarchy/{0}".format(self.heading.hierarchy_key))
 
     def test_heading_has_child_subheadings(self):
-        logger.info(self.heading.child_subheadings.all())
         self.assertTrue(self.heading.child_subheadings.all())
 
     def test_heading_has_child_commodities(self):
-        logger.info(self.heading.children_concrete.all())
         self.assertTrue(self.heading.children_concrete.all())
 
     def test_get_hierarchy_children_returns_list_of_child_items(self):
-        logger.info(self.heading.get_hierarchy_children())
         self.assertTrue(self.heading.get_hierarchy_children())
 
 
@@ -338,7 +313,7 @@ class SubHeadingTestCase(TestCase):
         self.assertEquals(self.subheading.hierarchy_key, 'sub_heading-{0}'.format(self.subheading.pk))
 
     def test_tts_heading_json_is_a_string_representing_an_empty_json_object(self):
-        #TODO: remove field from SubHeading Model
+        # TODO: remove field from SubHeading Model
         self.assertTrue(isinstance(self.subheading.tts_heading_json, str))
         self.assertEquals(self.subheading.tts_heading_json, "{}")
 
@@ -368,7 +343,6 @@ class SubHeadingTestCase(TestCase):
         self.assertEquals(self.child_subheadings[0].get_parent(), self.subheading)
 
     def test_hierarchy_url(self):
-        logger.info(self.subheading.get_hierarchy_url(country_code="au"))
         self.assertEquals(self.subheading.get_hierarchy_url(country_code="au"),
                           "/search/country/au/hierarchy/{0}".format(self.subheading.hierarchy_key))
 
@@ -380,13 +354,10 @@ class SubHeadingTestCase(TestCase):
                           "/search/country/au/hierarchy/{0}".format(self.subheading.hierarchy_key))
 
     def test_subheading_has_child_subheadings(self):
-        logger.info(self.subheading.child_subheadings.all())
         self.assertTrue(self.subheading.child_subheadings.all())
 
     def test_subheading_has_child_commodities(self):
-        logger.info(self.subheading.children_concrete.all())
         self.assertTrue(self.subheading.children_concrete.all())
 
     def test_get_hierarchy_children_returns_list_of_child_items(self):
-        logger.info(self.subheading.get_hierarchy_children())
         self.assertTrue(self.subheading.get_hierarchy_children())
