@@ -82,7 +82,6 @@ class CommodityJsonTestCase(TestCase):
 class CommodityHeadingJsonTestCase(TestCase):
 
     def setUp(self):
-
         self.commodity_heading = CommodityHeadingJson(get_data(settings.COMMODITYHEADINGJSON_DATA))
 
     def test_commodity_heading_json_title(self):
@@ -97,7 +96,6 @@ class CommodityHeadingJsonTestCase(TestCase):
 class SectionJsonTestCase(TestCase):
 
     def setUp(self):
-
         self.section = SectionJson(get_data(settings.SECTIONJSON_DATA))
 
     def test_section_json_title(self):
@@ -133,7 +131,6 @@ class SectionJsonTestCase(TestCase):
 class ChapterJsonTestCase(TestCase):
 
     def setUp(self):
-
         self.chapter = ChapterJson(get_data(settings.CHAPTERJSON_DATA))
 
     def test_chapter_json_title(self):
@@ -159,7 +156,6 @@ class ChapterJsonTestCase(TestCase):
 class HeadingJsonTestCase(TestCase):
 
     def setUp(self):
-
         self.heading = HeadingJson(get_data(settings.HEADINGJSON_DATA))
 
     def test_heading_json_title(self):
@@ -191,11 +187,21 @@ class HeadingJsonTestCase(TestCase):
     def test_heading_json_commodity_urls(self):
         self.assertEqual(
             self.heading.commodity_urls,
-            [('https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402100000.json?currency=EUR&day=1&month=1&year=2019', True),
-             ('https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402200000.json?currency=EUR&day=1&month=1&year=2019', False),
-             ('https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402201000.json?currency=EUR&day=1&month=1&year=2019', True),
-             ('https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402209000.json?currency=EUR&day=1&month=1&year=2019', True),
-             ('https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402900000.json?currency=EUR&day=1&month=1&year=2019', True)
+            [(
+             'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402100000.json?currency=EUR&day=1&month=1&year=2019',
+             True),
+             (
+             'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402200000.json?currency=EUR&day=1&month=1&year=2019',
+             False),
+             (
+             'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402201000.json?currency=EUR&day=1&month=1&year=2019',
+             True),
+             (
+             'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402209000.json?currency=EUR&day=1&month=1&year=2019',
+             True),
+             (
+             'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402900000.json?currency=EUR&day=1&month=1&year=2019',
+             True)
              ])
 
     def test_heading_json_commodity_urls_when_non_exists(self):
@@ -204,10 +210,10 @@ class HeadingJsonTestCase(TestCase):
         updated_heading_data = HeadingJson(heading_data)
         self.assertEqual(updated_heading_data.commodity_urls, [])
 
+
 class ImportMeasureJsonTestCase(TestCase):
 
     def setUp(self):
-
         self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE)
 
     def test_repr(self):
@@ -273,7 +279,7 @@ class ImportMeasureJsonTestCase(TestCase):
 
     def test_order_number_definition_summary_with_definistion(self):
         json_data = get_data(settings.IMPORTMEASUREJSON_DATA)
-        json_data['order_number'] = {'definition' : {'status': 'xyz'}}
+        json_data['order_number'] = {'definition': {'status': 'xyz'}}
         json_data['order_number']['definition']['description'] = "lipsuLorem ipsum dolor sit amet"
         import_measure = ImportMeasureJson(json_data, settings.TEST_COMMODITY_CODE)
         self.assertTrue(isinstance(import_measure.order_number_definition_summary, tuple))
@@ -303,7 +309,14 @@ class ImportMeasureJsonTestCase(TestCase):
         self.assertTrue(isinstance(self.import_measure.vue__footnotes_html, str))
 
     def test_get_table_dict(self):
-        self.assertEqual(self.import_measure.get_table_dict(), {'country': 'ERGA OMNES', 'measure_description': 'VAT standard rate', 'conditions_html': '-', 'measure_value': '20.00 %', 'excluded_countries': '', 'start_end_date': '2015-02-01', 'legal_base_html': '-', 'footnotes_html': '<a href="#">03020</a>'})
+        self.assertEqual(self.import_measure.get_table_dict(), {'country': 'ERGA OMNES',
+                                                                'measure_description': 'VAT standard rate',
+                                                                'conditions_html': '-',
+                                                                'measure_value': '20.00 %',
+                                                                'excluded_countries': '',
+                                                                'start_end_date': '2015-02-01',
+                                                                'legal_base_html': '-',
+                                                                'footnotes_html': '<a href="#">03020</a>'})
         self.assertTrue(isinstance(self.import_measure.get_table_dict(), dict))
 
     def test_get_table_row(self):

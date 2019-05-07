@@ -1,9 +1,7 @@
-from datetime import datetime
 import re
-from dateutil.parser import parse as parse_dt
+from datetime import datetime
 
-from django.conf import settings
-from django.urls import reverse
+from dateutil.parser import parse as parse_dt
 
 COMMODITY_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
@@ -11,7 +9,6 @@ COMMODITY_URL = (
 )
 CHAPTER_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/%s.json'
 HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.json'
-
 
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
@@ -72,6 +69,7 @@ class CommodityJson(object):
         measures = [
             ImportMeasureJson(d, self.code) for d in self.di['import_measures']
         ]
+
         measures = [
             json_obj for json_obj in measures
             if json_obj.is_relevant_for_origin_country(origin_country)
@@ -314,10 +312,10 @@ class ImportMeasureJson(object):
 
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di['geographical_area']
-        if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code:
+        if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code.upper():
             return True
         for child_area in geo_area['children_geographical_areas']:
-            if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code:
+            if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code.upper():
                 return True
         return False
 
@@ -343,7 +341,11 @@ class ImportMeasureJson(object):
 
     @property
     def vue__footnotes_html(self):
-        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation (EU) 2017/1585.'}
+        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the
+        # presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation
+        # (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject
+        # to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with
+        # Regulation (EU) 2017/1585.'}
         if not self.di['footnotes']:
             return '-'
 
@@ -441,6 +443,7 @@ class ImportMeasureJson(object):
         ]
 
     def get_measure_conditions_by_measure_id(self, measure_id):
+
         return [
             condition for condition in self.get_measure_conditions() if condition.di['measure_id'] == measure_id
         ]
@@ -451,5 +454,3 @@ class MeasureCondition(object):
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
-
-

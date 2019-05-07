@@ -1,16 +1,22 @@
 import json
-import os
+import logging
 import sys
+
 import requests
 from django.apps import apps
-from commodities.models import Commodity
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+
+from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 hierarchy_model_map = {
     "Commodity": {
-        "file_name":"hierarchy_subheading_commodities.json",
+        "file_name": "hierarchy_subheading_commodities.json",
         "app_name": "commodities"
     },
     "Chapter": {
@@ -68,7 +74,8 @@ class HierarchyBuilder:
             json_data = json.load(f)
         return json_data
 
-    def rename_key(self, old_dict, old_name, new_name):
+    @staticmethod
+    def rename_key(old_dict, old_name, new_name):
         new_dict = {}
         for key, value in zip(old_dict.keys(), old_dict.values()):
             new_key = key if key != old_name else new_name
@@ -111,7 +118,10 @@ class HierarchyBuilder:
     # def check_model_names(self, model_names):
     #     return set([name in hierarchy_model_map.keys() for name in model_names])
 
-    def data_scanner(self, model_names=[]):
+    def data_scanner(self, model_names=None):
+
+        if model_names is None:
+            model_names = []
 
         for model_name in model_names:
 
@@ -136,34 +146,35 @@ class HierarchyBuilder:
         self.data[model_name]["data"] = json_data
         return json_data
 
-    # def get_section_data_from_api(self):
-    #     retry = []
-    #     data = []
-    #     urls = []
-    #
-    #     def poll_api(url_list):
-    #         for url in url_list:
-    #             resp = requests.get(url)
-    #             if resp.status_code == 200:
-    #                 section = {}
-    #                 section["section_id"] = resp.json()["id"]
-    #                 section["roman_numeral"] = resp.json()["numeral"]
-    #                 section["title"] = resp.json()["title"]
-    #                 section["child_goods_nomenclature_sids"] = [chapter["goods_nomenclature_sid"]
-    #                                                             for chapter in resp.json()["chapters"]]
-    #                 section["position"] = resp.json()["position"]
-    #                 data.append(section)
-    #             else:
-    #                 print("RESPONSE: ", resp.status_code)
-    #                 retry.append(url)
-    #
-    #     for i in range(1, 22):
-    #         urls.append(section_url.format(i))
-    #
-    #     poll_api(urls)
-    #
-    #     with open(data_path.format("hierarchy_sections.json"), 'w') as outfile:
-    #         json.dump(data, outfile)
+    @staticmethod
+    def get_section_data_from_api():
+        retry = []
+        data = []
+        urls = []
+
+        def poll_api(url_list):
+            for url in url_list:
+                resp = requests.get(url)
+                if resp.status_code == 200:
+                    section = {}
+                    section["section_id"] = resp.json()["id"]
+                    section["roman_numeral"] = resp.json()["numeral"]
+                    section["title"] = resp.json()["title"]
+                    section["child_goods_nomenclature_sids"] = [chapter["goods_nomenclature_sid"]
+                                                                for chapter in resp.json()["chapters"]]
+                    section["position"] = resp.json()["position"]
+                    data.append(section)
+                else:
+                    print("RESPONSE: ", resp.status_code)
+                    retry.append(url)
+
+        for i in range(1, 22):
+            urls.append(settings.SECTION_URL.format(i))
+
+        poll_api(urls)
+
+        with open(settings.IMPORT_DATA_PATH.format("test_hierarchy_sections.json"), 'w') as outfile:
+            json.dump(data, outfile)
 
     def lookup_parent(self, model, code):
 
@@ -174,25 +185,26 @@ class HierarchyBuilder:
             else:
                 try:
                     return model.objects.get(goods_nomenclature_sid=code)
-                except Exception as e:
-                    print(e.args)
+                except ObjectDoesNotExist as exception:
+                    logger.debug(exception.args)
                     return None
 
-    def process_orphaned_subheadings(self):
+    @staticmethod
+    def process_orphaned_subheadings():
 
         subheadings = SubHeading.objects.filter(heading_id=None, parent_subheading_id=None)
-        print([sub.goods_nomenclature_sid for sub in subheadings])
+
         count = 0
         for subheading in subheadings:
             parent_sid = subheading.parent_goods_nomenclature_sid
-            print(type(subheading.goods_nomenclature_sid), type(parent_sid))
             parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
             subheading.parent_subheading_id = parent.pk
             subheading.save()
             count = count + 1
         return count
 
-    def process_orphaned_commodities(self):
+    @staticmethod
+    def process_orphaned_commodities():
 
         commodities = Commodity.objects.filter(heading_id=None, parent_subheading_id=None)
 
@@ -201,10 +213,8 @@ class HierarchyBuilder:
             try:
                 parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
                 commodity.parent_subheading_id = parent.pk
-            except:
+            except ObjectDoesNotExist as exception:
+                logger.debug(exception.args)
                 parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
                 commodity.heading_id = parent.pk
             commodity.save()
-
-
-
