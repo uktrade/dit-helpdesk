@@ -139,9 +139,6 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(reverse('commodity-detail', kwargs={"commodity_code": settings.TEST_COMMODITY_CODE,
                                                                    "country_code": settings.TEST_COUNTRY_CODE}))
         self.assertEqual(resp.status_code, 200)
-        logger.info(commodity.last_updated.toordinal())
-        logger.info(datetime.now(timezone.utc).toordinal())
-
         self.assertAlmostEqual(commodity.last_updated.toordinal(), datetime.now(timezone.utc).toordinal())
 
     def test_commodity_detail_with_rules_or_origin(self):
@@ -181,32 +178,22 @@ class CommodityViewTestCase(TestCase):
 
     def test_generate_commodity_code_html_for_commodity(self):
         html = _generate_commodity_code_html(self.commodity)
-        logger.info(self.commodity)
-        logger.info(html)
         self.assertInHTML('010121', html)
 
     def test_generate_commodity_code_html_for_section(self):
         html = _generate_commodity_code_html(self.section)
-        logger.info(self.section)
-        logger.info(html)
         self.assertEqual(html, '')
 
     def test_generate_commodity_code_html_for_heading(self):
         html = _generate_commodity_code_html(self.heading)
-        logger.info(self.heading)
-        logger.info(html)
         self.assertInHTML('010100', html)
 
     def test_generate_commodity_code_html_for_sub_heading(self):
         html = _generate_commodity_code_html(self.subheading)
-        logger.info(self.subheading)
-        logger.info(html)
         self.assertInHTML('010121', html)
 
     def test_generate_commodity_code_html_for_chapter(self):
         html = _generate_commodity_code_html(self.chapter)
-        logger.info(self.chapter)
-        logger.info(html)
         self.assertInHTML('010000', html)
 
 
@@ -222,7 +209,6 @@ class MeasureConditionDetailTestCase(TestCase):
     fixtures = ['../../countries/fixtures/countries_data.json']
 
     def test_commodity_has_tts_json(self):
-        logger.info(self.commodity.tts_obj.get_import_measure_by_id(int(1), country_code=settings.TEST_COUNTRY_CODE))
         self.assertTrue(self.commodity.tts_obj)
 
     def test_commodity_json_has_measure_conditions(self):

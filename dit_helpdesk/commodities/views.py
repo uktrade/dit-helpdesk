@@ -24,6 +24,16 @@ TABLE_COLUMN_TITLES = [
 
 
 def commodity_detail(request, commodity_code, country_code):
+    """
+    View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
+    display and the two character country code to provide the exporter geographical context which is
+    used to display the appropriate related supporting content
+
+    :param request: django http request object
+    :param commodity_code: string
+    :param country_code: string
+    :return:
+    """
 
     country = Country.objects.filter(
         country_code=country_code.upper()
@@ -66,6 +76,16 @@ def commodity_detail(request, commodity_code, country_code):
 
 
 def measure_condition_detail(request, commodity_code, country_code, measure_id):
+    """
+    View for an individual measure condition detail page template which takes three arguments, the commodity code that
+    the measure belongs to, the measure id of the individual measure being presented and the country code to
+    provide the exporter geographical context
+    :param request: django http request object
+    :param commodity_code: string
+    :param country_code: string
+    :param measure_id: int
+    :return:
+    """
 
     country = Country.objects.filter(
         country_code=country_code.upper()
@@ -91,6 +111,15 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
 
 
 def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
+    """
+    View helper function that returns an html representation of the context of the commodity within the
+    hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
+    commodity code
+    :param commodity_path: string
+    :param country_code: string
+    :param commodity_code: string
+    :return: html
+    """
     listSize = len(commodity_path) - 1
     html = ''
     reversedList = reversed(commodity_path)
@@ -139,6 +168,12 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
 
 
 def _generate_commodity_code_html(item):
+    """
+    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
+    of 6, 2 and  digits and colour code formatted
+    :param item: model instance
+    :return: html
+    """
     commodity_code_html = ''
     if (type(item) is not Section):
         commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
@@ -163,6 +198,12 @@ def _generate_commodity_code_html(item):
 
 
 def commodity_hierarchy_section_header(reversed_commodity_tree):
+    """
+    View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
+    and returned as formatted html string
+    :param reversed_commodity_tree: list
+    :return: html
+    """
     section_index = len(reversed_commodity_tree) - 1
     item = reversed_commodity_tree[section_index][0]
     html = f'Section {item.roman_numeral}: {item.title.capitalize()}'

@@ -195,4 +195,4 @@ class CommodityTestCase(TestCase):
                                       for item_list in self.commodity.get_path()])
 
     def test_append_path_children(self):
-        self.assertTrue(self.commodity.append_path_children)
+        self.assertTrue(self.commodity._append_path_children)
