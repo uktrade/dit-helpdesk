@@ -157,11 +157,11 @@ class ImporterTestCase(TestCase):
         code = importer.normalise_commodity_code({"commodity_id": "0101210000"})
         self.assertEqual(code, "0101210000")
 
-    # def test_text_sanitiser(self):
-    #     importer = RulesOfOriginImporter()
-    #     test = importer.text_sanitiser("some text with one of these\uf0b7in the middle")
-    #     logger.info(test)
-    #     self.assertEqual(test, "some text with one of these&#45;in the middle")
+    def test_text_sanitiser(self):
+        importer = RulesOfOriginImporter()
+        test = importer.text_sanitiser("some text with one of these\uf0b7in the middle")
+        logger.info(test)
+        self.assertEqual(test, "some text with one of these&#45;in the middle")
 
     def test_rename_key(self):
         importer = RulesOfOriginImporter()

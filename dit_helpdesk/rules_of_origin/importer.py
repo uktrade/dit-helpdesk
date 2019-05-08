@@ -226,10 +226,17 @@ class RulesOfOriginImporter:
         :param text: string to replace
         :return: replacement string
         """
-        text.replace('\uf0b7', "&#45;")
-        text.replace('\00e9', "&eacute;")
+        ord_chars = {
+            61623: "&#45;"
+        }
+        new_text = ''
+        for idx, character in enumerate(text):
+            if ord(character) in ord_chars.keys():
+                new_text += ord_chars[ord(character)]
+            else:
+                new_text += character
 
-        return text
+        return new_text
 
     def rename_key(self, old_dict, old_name, new_name):
         """
