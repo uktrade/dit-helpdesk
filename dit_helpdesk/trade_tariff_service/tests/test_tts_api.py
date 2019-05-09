@@ -13,7 +13,7 @@ from trade_tariff_service.tts_api import ImportMeasureJson, CommodityHeadingJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def get_data(file_path):

@@ -138,6 +138,7 @@ class RulesOfOriginImporter:
                         logger.debug("{0} instance created".format(group_member._meta.model_name))
                     else:
                         logger.debug("{0} instance already exists".format(group_member._meta.model_name))
+
                 except ObjectDoesNotExist as exception:
                     logger.debug("country {0} does not exist {1}".format(country_code, str(exception)))
         except KeyError as exception:
@@ -184,6 +185,7 @@ class RulesOfOriginImporter:
                     try:
                         related_chapter = Chapter.objects.get(chapter_code=rule['chapter_code'])
                     except ObjectDoesNotExist as odne:
+
                         logger.debug("no chapter objects {0} for chapter code {1}".format(odne.args, rule['chapter_code']))
                         related_chapter = None
 

@@ -18,6 +18,7 @@ class AdminSSOLoginTestCase(TestCase):
             is_superuser=False
         )
 
+
     def test_login_authenticated_but_not_staff_leads_to_403_when_admin_enabled(self):
         self.client.force_login(self.user)
         response = self.client.get('/admin/login/')
