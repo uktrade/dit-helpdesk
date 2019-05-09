@@ -1,7 +1,12 @@
+import logging
 import re
 from datetime import datetime
 
 from dateutil.parser import parse as parse_dt
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 COMMODITY_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
@@ -195,7 +200,7 @@ class HeadingJson(object):
     def commodity_ids(self):
         if 'commodities' not in self.di:
             tup = (self.code, self.title)
-            print('warning: no commodities found for Heading: %s "%s"' % tup)
+            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
             return []
 
         return [
@@ -402,7 +407,7 @@ class ImportMeasureJson(object):
         try:
             data = self.reformat_date(data)
         except Exception as e:
-            print(e.args)
+            logger.debug(e.args)
 
         data_with_headings = []
 

@@ -32,8 +32,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
         commodity_code_list = ["9401300000", "9401590000"]
@@ -42,8 +42,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Voluntary - Eco-label for furniture"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
         commodity_code_list = ["9619007100"]
@@ -52,8 +52,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Voluntary - Eco-label for absorbent hygiene products"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
         commodity_code_list = ["3922100000", "4001100000", "4002410000", "4407229900", "4407913100"]
@@ -61,8 +61,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Voluntary - Eco-label for sanitary tapware"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             # self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
         commodity_code_list = ["7102310000"]
@@ -70,8 +70,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Import restrictions for rough diamonds (Kimberley Scheme)"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
         commodity_code_list = ["3602000000", "3603004000", "8486100000"]
@@ -79,8 +79,8 @@ class RegulationsImporterTestCase(TestCase):
         regulation_title = "Import requirements for firearms and warlike material"
 
         for item in commodities:
-            logger.info(regulation_title)
-            logger.info([regulation.title for regulation in item.get_regulations()])
+            logger.debug(regulation_title)
+            logger.debug([regulation.title for regulation in item.get_regulations()])
             self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
     def test_data_loader_with_csv(self):

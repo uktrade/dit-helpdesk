@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.core.management.base import BaseCommand
 import requests
@@ -7,6 +8,10 @@ from hierarchy.models import Section, Chapter, Heading
 
 from trade_tariff_service.tts_api import SectionJson, ChapterJson, HeadingJson
 from trade_tariff_service.util_scraper import scrape_heading_hierarchy
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 SECTION_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/sections/%s.json'
 
@@ -33,7 +38,7 @@ def get_and_update_chapter(chapter_url, section_db_obj):
     resp = requests.get(chapter_url)
     resp_content = resp.content.decode()
     if resp.status_code != 200:
-        print('url failed: ' + chapter_url)
+        logger.debug('url failed: ' + chapter_url)
         return None, None
 
     chapter_json_obj = ChapterJson(json.loads(resp_content))
@@ -43,7 +48,7 @@ def get_and_update_chapter(chapter_url, section_db_obj):
     if created:
         chapter_db_obj.section = section_db_obj
     elif chapter_db_obj.section and chapter_db_obj.section != section_db_obj:
-        print('multiple parent sections?')
+        logger.debug('multiple parent sections?')
 
     chapter_db_obj.tts_json = resp_content  # json.dumps(chapter_json_obj.di)
     chapter_db_obj.save()
@@ -56,7 +61,7 @@ def get_and_update_heading(heading_url, chapter_db_obj):
     resp = requests.get(heading_url)
     resp_content = resp.content.decode()
     if resp.status_code != 200:
-        print('url failed: ' + heading_url)
+        logger.debug('url failed: ' + heading_url)
         return None, None
 
     heading_json_obj = HeadingJson(json.loads(resp_content))
@@ -67,7 +72,7 @@ def get_and_update_heading(heading_url, chapter_db_obj):
     if created:
         heading_db_obj.chapter = chapter_db_obj
     elif heading_db_obj.chapter and heading_db_obj.chapter != chapter_db_obj:
-        print('multiple parent chapters?')
+        logger.debug('multiple parent chapters?')
 
     heading_db_obj.tts_json = resp_content  # json.dumps(heading_json_obj.di)
     heading_db_obj.save()
@@ -92,8 +97,8 @@ class Command(BaseCommand):
             exit('Failed to query for section %s' % section_id)
 
         for chapter_url in section_json_obj.chapter_urls:
-            print('----------------------------------------------')
-            print('CHAPTER ' + chapter_url)
+            logger.debug('----------------------------------------------')
+            logger.debug('CHAPTER ' + chapter_url)
 
             chapter_json_obj, chapter_db_obj = get_and_update_chapter(
                 chapter_url, section_db_obj
@@ -102,7 +107,7 @@ class Command(BaseCommand):
                 continue
 
             for heading_url in chapter_json_obj.heading_urls:
-                print('    HEADING ' + heading_url)
+                logger.debug('    HEADING ' + heading_url)
 
                 heading_json_obj, heading_db_obj = get_and_update_heading(
                     heading_url, chapter_db_obj

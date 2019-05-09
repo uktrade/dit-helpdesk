@@ -165,7 +165,7 @@ class HierarchyBuilder:
                     section["position"] = resp.json()["position"]
                     data.append(section)
                 else:
-                    print("RESPONSE: ", resp.status_code)
+                    logger.debug("RESPONSE: ", resp.status_code)
                     retry.append(url)
 
         for i in range(1, 22):

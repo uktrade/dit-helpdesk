@@ -73,8 +73,6 @@ class RegulationsImporter:
         document.regulations.add(regulation)
         document.save()
 
-        print(regulation, document.regulations.all())
-
     @staticmethod
     def get_subheading_parents(commodities, data_map):
         seen_codes = [commodity.commodity_code for commodity in commodities]
@@ -95,9 +93,9 @@ class RegulationsImporter:
             **field_data
         )
         if created:
-            print("{0} instance created".format(model_name))
+            logger.debug("{0} instance created".format(model_name))
         else:
-            print("Returning existing {0}".format(model_name))
+            logger.debug("Returning existing {0}".format(model_name))
         return instance
 
     @staticmethod
@@ -162,7 +160,7 @@ class RegulationsImporter:
                         }
                     )
             except KeyError as key_err:
-                logger.info("Missing regulations documents for {0}: with error {1} ".format(item[0], key_err.args))
+                logger.debug("Missing regulations documents for {0}: with error {1} ".format(item[0], key_err.args))
 
         return map_list
 

@@ -7,7 +7,7 @@ from trade_tariff_service.importer import HierarchyBuilder, hierarchy_model_map
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class HierarchyBuilderTestCase(TestCase):
@@ -87,7 +87,7 @@ class HierarchyBuilderTestCase(TestCase):
         parent_model = apps.get_model(app_label=hierarchy_model_map[parent_model_name]["app_name"],
                                       model_name=parent_model_name)
         for parent in builder.data[parent_model_name]["data"]:
-            # logger.info(parent['child_goods_nomenclature_sids'])
+            # logger.debug(parent['child_goods_nomenclature_sids'])
             if child_model_code in parent['child_goods_nomenclature_sids']:
                 parent_instance_data = builder.rename_key(parent, 'child_goods_nomenclature_sids', 'tts_json')
                 parent_model.objects.create(**parent_instance_data)

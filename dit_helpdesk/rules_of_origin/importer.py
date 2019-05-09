@@ -16,7 +16,7 @@ from rules_of_origin.models import Rule, RulesDocument, RulesGroup, RulesGroupMe
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 CHAPTER_MATCHES = (
     ('^ex Chapter (?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # ex Chapter 4
@@ -120,9 +120,9 @@ class RulesOfOriginImporter:
         )
 
         if created:
-            logger.info("{} instance created".format(rules_group._meta.model_name))
+            logger.debug("{} instance created".format(rules_group._meta.model_name))
         else:
-            logger.info("{} instance already exists".format(rules_group._meta.model_name))
+            logger.debug("{} instance already exists".format(rules_group._meta.model_name))
 
         try:
             for country_code in self.rules_groups[self.working_group_name]:
@@ -135,18 +135,18 @@ class RulesOfOriginImporter:
                         start_date=datetime.today()
                     )
                     if created:
-                        logger.info("{0} instance created".format(group_member._meta.model_name))
+                        logger.debug("{0} instance created".format(group_member._meta.model_name))
                     else:
-                        logger.info("{0} instance already exists".format(group_member._meta.model_name))
+                        logger.debug("{0} instance already exists".format(group_member._meta.model_name))
                 except ObjectDoesNotExist as odne:
-                    logger.info("{0} does not exist {1}".format(country_code, str(odne)))
+                    logger.debug("{0} does not exist {1}".format(country_code, str(odne)))
         except KeyError as ke:
-            logger.info("{0}".format(ke.args))
+            logger.debug("{0}".format(ke.args))
 
         try:
             doc_url = self.rules_documents[self.working_group_name]
         except Exception as ex:
-            logger.info(ex.args)
+            logger.debug(ex.args)
             doc_url = None
 
         rules_document, created = RulesDocument.objects.get_or_create(
@@ -156,9 +156,9 @@ class RulesOfOriginImporter:
         )
 
         if created:
-            logger.info("{0} instance created".format(rules_document._meta.model_name))
+            logger.debug("{0} instance created".format(rules_document._meta.model_name))
         else:
-            logger.info("{0} instance already exists".format(rules_document._meta.model_name))
+            logger.debug("{0} instance already exists".format(rules_document._meta.model_name))
 
         if self.footnotes:
             for footnote in self.footnotes:
@@ -171,9 +171,9 @@ class RulesOfOriginImporter:
                 )
 
                 if created:
-                    logger.info("{0} instance created".format(footnote._meta.model_name))
+                    logger.debug("{0} instance created".format(footnote._meta.model_name))
                 else:
-                    logger.info("{0} instance already exists".format(footnote._meta.model_name))
+                    logger.debug("{0} instance already exists".format(footnote._meta.model_name))
 
         for rules_chapter in self.data:
 
@@ -184,7 +184,7 @@ class RulesOfOriginImporter:
                     try:
                         related_chapter = Chapter.objects.get(chapter_code=rule['chapter_code'])
                     except ObjectDoesNotExist as odne:
-                        logger.info(odne.args)
+                        logger.debug(odne.args)
                         related_chapter = None
 
                     rule_instance, created = Rule.objects.get_or_create(
@@ -202,9 +202,9 @@ class RulesOfOriginImporter:
                         rules_document=rules_document
                     )
                     if created:
-                        logger.info("{0} instance created".format(rule_instance._meta.model_name))
+                        logger.debug("{0} instance created".format(rule_instance._meta.model_name))
                     else:
-                        logger.info("{0} instance already exists".format(rule_instance._meta.model_name))
+                        logger.debug("{0} instance already exists".format(rule_instance._meta.model_name))
 
     @staticmethod
     def normalise_commodity_code(data):
@@ -213,7 +213,7 @@ class RulesOfOriginImporter:
         :param data:
         :return:
         """
-        print(data)
+
         if len(str(data['commodity_id'])) == 9:
             commodity_code = "0{0}".format(data['commodity_id'])
         else:
@@ -260,8 +260,8 @@ class RulesOfOriginImporter:
         :param input_file: rules from rules document to be processed
         :param output_file: location of output log
         """
-        logger.info("importing file:{0}".format(input_file))
-        logger.info("priority:{0}".format(priority))
+        logger.debug("importing file:{0}".format(input_file))
+        logger.debug("priority:{0}".format(priority))
 
         self.priority = priority
 
@@ -271,7 +271,7 @@ class RulesOfOriginImporter:
         self.working_group_name = Path(input_file).stem.upper()
 
         if self.working_group_name not in self.rules_groups.keys():
-            logger.info("{0} is not part of the Priority {1} group so there will no data to import".format(
+            logger.debug("{0} is not part of the Priority {1} group so there will no data to import".format(
                 Path(input_file).name, priority))
             return
 
@@ -443,7 +443,7 @@ class RulesOfOriginImporter:
                                                                              code_range=code_range)
 
             else:
-                logger.info("MATCH TYPE: {0}".format(regex_match.groupdict()))
+                logger.debug("MATCH TYPE: {0}".format(regex_match.groupdict()))
 
         elif {'heading_num', } <= set(match_results.keys()):
 
@@ -472,7 +472,7 @@ class RulesOfOriginImporter:
 
             related_hierarchy_levels = self.get_related_hierarchy_levels("SubHeading", code_range=code_range)
         else:
-            logger.info("{0}, {1}".format(item['id'], regex_match.groupdict()))
+            logger.debug("{0}, {1}".format(item['id'], regex_match.groupdict()))
 
         self.clean_id(item)
 
@@ -559,6 +559,6 @@ class RulesOfOriginImporter:
                                      } for subheading in SubHeading.objects.filter(commodity_code__in=code_range)])
 
         else:
-            logger.info("no level")
+            logger.debug("no level")
 
         return related_objects

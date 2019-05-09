@@ -8,7 +8,7 @@ from user.models import User
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class UserCreationFormTestCase(TestCase):

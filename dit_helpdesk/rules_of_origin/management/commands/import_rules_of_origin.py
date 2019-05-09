@@ -17,8 +17,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        print(options)
-
         if options['data_path'] is None:
             raise CommandError("\nNo value has been provided for the argument --data_path.\n\n")
 

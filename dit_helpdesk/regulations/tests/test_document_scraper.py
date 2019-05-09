@@ -17,7 +17,7 @@ class RegulationsDocumentScraperTestCase(TestCase):
     def test_data_loader_with_csv(self):
 
         file_path = settings.REGULATIONS_DATA_PATH.format('product_specific_regulations.csv')
-        logger.info(file_path)
+        logger.debug(file_path)
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 

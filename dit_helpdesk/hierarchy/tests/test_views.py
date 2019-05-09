@@ -12,7 +12,7 @@ from hierarchy.views import _get_expanded_context
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 TEST_COMMODITY_CODE = "0101210000"
 TEST_SUBHEADING_CODE = "0101210000"
@@ -110,7 +110,7 @@ class HierarchyViewTestCase(TestCase):
     def test_hierarchy_data_at_chapter(self):
         chapter_id = Chapter.objects.get(chapter_code=TEST_CHAPTER_CODE).pk
         response = self.client.get('/search/country/au/hierarchy/chapter-{0}#chapter-{0}'.format(chapter_id))
-        logger.info(response.context['hierarchy_html'])
+        logger.debug(response.context['hierarchy_html'])
         self.assertInHTML(TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
         self.assertInHTML(TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
         self.assertEqual(response.context['country_code'], TEST_COUNTRY_CODE.lower())
@@ -135,7 +135,7 @@ class HierarchyViewTestCase(TestCase):
     def test_expanded_context_with_subheading_node(self):
         subheading_id = SubHeading.objects.get(commodity_code=TEST_SUBHEADING_CODE).pk
         node_id = '#sub_heading-{0}'.format(subheading_id)
-        logger.info(_get_expanded_context(node_id))
+        logger.debug(_get_expanded_context(node_id))
         self.assertFalse(_get_expanded_context(node_id))
 
 

@@ -5,7 +5,7 @@ from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class FeedbackFormTestCase(TestCase):
@@ -17,7 +17,7 @@ class FeedbackFormTestCase(TestCase):
 
         form = resp.context['form']
         self.assertFalse(form.is_valid())
-        logger.info(form.errors)
+        logger.debug(form.errors)
         self.assertEquals(form.errors, {'message': ['Enter a message']},)
 
     def test_message_field_limit(self):
@@ -62,5 +62,5 @@ class FeedbackFormTestCase(TestCase):
 
         form = resp.context['form']
         self.assertFalse(form.is_valid())
-        logger.info(form.errors)
+        logger.debug(form.errors)
         self.assertEquals(form.errors, {'name': ['Enter your full name']}, )

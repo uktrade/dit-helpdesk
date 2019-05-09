@@ -14,7 +14,7 @@ from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class CommodityTestCase(TestCase):
@@ -106,7 +106,7 @@ class CommodityTestCase(TestCase):
         tree = [[self.section], [self.chapter], [self.heading], [self.subheading], [self.commodity]]
         level = 2
         parent = self.heading
-        logger.info(self.commodity.get_path(parent=parent, tree=tree, level=level))
+        logger.debug(self.commodity.get_path(parent=parent, tree=tree, level=level))
         self.assertTrue(self.commodity.get_path(parent=parent, tree=tree, level=level))
 
     def test_get_path_returns_list_with_no_parent_subheading(self):

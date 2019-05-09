@@ -9,7 +9,7 @@ from trade_tariff_service.tts_api import CommodityHeadingJson, ChapterJson, Head
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class SectionTestCase(TestCase):
@@ -37,7 +37,7 @@ class SectionTestCase(TestCase):
 
     def test_section_has_correct_roman_numeral(self):
         # TODO: remove field and create a property method
-        logger.info("{0}, {1}".format(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral))
+        logger.debug("{0}, {1}".format(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral))
         self.assertEquals(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral)
 
     def test_hierarchy_key(self):
@@ -133,7 +133,7 @@ class ChapterTestCase(TestCase):
         self.assertRaises(NoReverseMatch, lambda: self.chapter.get_headings_url())
 
     def test_hierarchy_url(self):
-        logger.info(self.chapter.get_hierarchy_url(country_code="au"))
+        logger.debug(self.chapter.get_hierarchy_url(country_code="au"))
         self.assertEquals(self.chapter.get_hierarchy_url(country_code="au"),
                           "/search/country/au/hierarchy/{0}".format(self.chapter.hierarchy_key))
 

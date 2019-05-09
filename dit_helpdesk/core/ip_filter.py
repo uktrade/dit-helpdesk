@@ -4,6 +4,8 @@ import logging
 from django.conf import settings
 
 logger = logging.getLogger(__file__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.ERROR)
 
 
 def is_valid_admin_ip(client_ip):

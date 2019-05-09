@@ -27,7 +27,7 @@ SECTION_STRUCTURE = settings.BASE_DIR+"/hierarchy/tests/section_{}_structure.jso
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def create_instance(data, app_name, model_name):

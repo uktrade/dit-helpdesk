@@ -16,7 +16,7 @@ from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocu
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def get_data(file_path):

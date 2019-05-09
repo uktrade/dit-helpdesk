@@ -209,7 +209,7 @@ class DocxScraper:
         """
         item = {}
         item_keys = ["id", "description", "workingLeft", "workingRight"]
-        # print(cells)
+
         if len(cells) == 4:
             for i in range(len(item_keys)):
                 item[item_keys[i]] = [self.process_footnote(text) for text in cells[i]]

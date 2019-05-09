@@ -8,7 +8,7 @@ from countries.models import Country
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class CountriesViewsTestCase(TestCase):
