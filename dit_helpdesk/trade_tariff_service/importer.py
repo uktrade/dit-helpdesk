@@ -173,7 +173,7 @@ class HierarchyBuilder:
 
         poll_api(urls)
 
-        with open(settings.IMPORT_DATA_PATH.format("test_hierarchy_sections.json"), 'w') as outfile:
+        with open(settings.IMPORT_DATA_PATH.format("hierarchy_subheading_sections.json"), 'w') as outfile:
             json.dump(data, outfile)
 
     def lookup_parent(self, model, code):
