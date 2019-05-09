@@ -50,9 +50,9 @@ TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG  # noqa F405
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'helpdesk2',
-        'USER': 'ldluser',
-        'PASSWORD': 'ldluser',
+        'NAME': os.environ.get('DJANGO_POSTGRES_DATABASE'),
+        'USER': os.environ.get('DJANGO_POSTGRES_USER'),
+        'PASSWORD': os.environ.get('DJANGO_POSTGRES_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432'
     }
