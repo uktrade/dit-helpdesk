@@ -71,7 +71,10 @@ docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
 
 You should now be in the root of the app. 
-#### Importing Content Data
+#### Importing Content Data Overview
+
+Note: See below for more details including generating data import files and clearing the database
+
 ##### Commodities and Hierarchy
 To populate the commodities in the database, we need to run a management command to import the data. 
 To import the commodity data and its hierarchy, run:
@@ -284,6 +287,165 @@ Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-ter
 ```bash
 npm run build
 ```
+
+## Management Import Commands
+
+
+### Countries
+
+
+The project has a django fixtures file for populating the countries database table with country code and name values
+
+These would normally be imported on deployment, however, in the case where countries need to be added to the
+```bash
+countries/fixtures/countries.json
+```
+file they can be reloaed with the command:
+```bash
+python dit_helpdesk/manage.py loaddata countries_data
+```
+
+### Commodity Hierarchy
+
+
+#### Importing Commodity Hierarchy Data
+
+
+To import commodity hierarchy content run:
+```bash
+python dit_helpdesk/manage.py scrape_section_hierarchy_v2
+```
+The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
+
+The source data for this command can be found in the directory `trade_tarrif_service/import_data`
+
+
+#### Generating Commodity Hierarchy Data for Import
+
+The json files that are generated from the tarrifs project database are placed in the directory`trade_tarrif_service/import_data`
+
+This include the data files for Chapters, Headings, SubHeadings and Commodities
+
+There is a method in the class that collects the section data from the trade tariff api and generates a json file.
+
+Use this in the case where the sections data needs to be refreshed before import of the hierarchy:
+```bash
+python dit_helpdesk/manage.py scrape_section_json
+```
+
+This command uses a method `get_section_data_from_api()` of the main python class found in the python module `trade_tarrif_service/importer.py`
+
+#### Clearing the Data from the Database
+
+To clear the data from the database before re-importing use the following sql statement in a psql shell:
+```sql
+truncate table hierarchy_section CASCADE;
+```
+
+This Cascades to tables:
+
+* regulations_regulation_commodities
+* regulations_regulation_sections
+* regulations_document_regulations
+* regulations_regulation_chapters
+* regulations_regulation_headings
+* regulations_regulation_subheadings
+
+### Rules of Origins Documents
+
+Each commodity has an associated list of rules of origin data which we need to generate from source dcouments
+and import into the database.
+
+#### Generating Rules of Origin Data
+
+New rules of origin documents get placed in the directory `rules_of_origin/data/source`
+
+To process all rules of origin documents use:
+```bash
+python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path source
+```
+
+To import an individual rules of origin data file use:
+```bash
+python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path "source/Chile ROO v2.docx"
+```
+
+The main python class used by this command can be found in the python module `rules_of_origin/ms_word_docx_scraper.py`
+
+
+#### Importing Rules of Origin Data
+
+
+Rules of origin data generated for import get placed in the directory `rules_of_origin/data/import`
+
+To import all rules of origin data files use:
+```bash
+python dit_helpdesk/manage.py import_rules_or_origin --data_path import
+```
+
+To import an individual rules of origin data file use:
+```bash
+python dit_helpdesk/manage.py import_rules_or_origin --data_path "import/CHILE ROO V2.json"
+```
+
+The main python class used by this command can be found in the python module `rules_of_origin/importer.py`
+
+#### Clearing the Data from the Database
+
+To clear the data from the database before re-importing use the following sql statement in a psql shell:
+```sql
+truncate table rules_of_origin_rulesgroup CASCADE;
+```
+
+This cascades to tables:
+
+* rules_of_origin_rulesdocument
+* rules_of_origin_rulesgroupmember
+* rules_of_origin_rule
+* rules_of_origin_rulesdocumentfootnote
+
+
+### Regulations and Documents
+
+Each commodity has an associated list of regulations which we need to fetch and populate the database.
+
+Regulations and documents data gets placed in the directory `regulations/data`
+
+#### Generating Regulations and Documents data
+
+To get the regaulation documents titles for the supplied document urls run:
+```bash
+python dit_helpdesk/manage.py scrape_documents
+```
+
+The source file is `product_specific_regulations.csv`
+
+The output file is `urls_with_text_description.json`
+
+#### Importing Regulations and Documents
+
+To import the regulations and documents data into the database run:
+```bash
+python dit_helpdesk/manage.py import_regulations
+```
+
+#### Clearing the Data from the Database
+
+To clear the data from the database before re-importing use the following sql statement in a psql shell:
+```sql
+truncate table regulations_document CASCADE;
+truncate table regulations_regulation CASCADE;
+```
+
+This cascades to tables:
+
+* regulations_regulation_commodities
+* regulations_regulation_sections
+* regulations_document_regulations
+* regulations_regulation_chapters
+* regulations_regulation_headings
+* regulations_regulation_subheadings
+
 
 [1]:	https://nodejs.org/en/about/releases/
 [2]:	https://github.com/alphagov/govuk-frontend
