@@ -389,7 +389,11 @@ python dit_helpdesk/manage.py loaddata countries_data
 
 To import commodity hierarchy content run:
 ```bash
+<<<<<<< HEAD
 python dit_helpdesk/manage.py scrape_section_hierarchy
+=======
+python dit_helpdesk/manage.py scrape_section_hierarchy_v2
+>>>>>>> updated readme
 ```
 The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
 
