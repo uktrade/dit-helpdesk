@@ -3,7 +3,6 @@
 This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the 
 products that they want to export to the UK.
 
-
 ## Requirements
  - Python 3
  - Node [Active LTS][1] version (Current Active version is v10)
@@ -389,11 +388,7 @@ python dit_helpdesk/manage.py loaddata countries_data
 
 To import commodity hierarchy content run:
 ```bash
-<<<<<<< HEAD
 python dit_helpdesk/manage.py scrape_section_hierarchy
-=======
-python dit_helpdesk/manage.py scrape_section_hierarchy_v2
->>>>>>> updated readme
 ```
 The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
 
