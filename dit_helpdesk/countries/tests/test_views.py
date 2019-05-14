@@ -7,11 +7,15 @@ from django.utils.functional import SimpleLazyObject
 from countries.models import Country
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
+# logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
 class CountriesViewsTestCase(TestCase):
+
+    """
+    Views tests
+    """
 
     def test_get_choose_country_returns_http_200_and_renders_correct_template(self):
         resp = self.client.get(reverse('choose-country'))
