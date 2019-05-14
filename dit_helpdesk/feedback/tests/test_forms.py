@@ -9,6 +9,9 @@ logger.setLevel(logging.INFO)
 
 
 class FeedbackFormTestCase(TestCase):
+    """
+    Test Form
+    """
 
     def test_submit_empty_message_form_returns_required_fields(self):
         resp = self.client.post(reverse('feedback-view'), {'name': 'test', 'email': 'test@test.com'})

@@ -3,6 +3,9 @@ from django.urls import reverse
 
 
 class FeedbackViewTestCase(TestCase):
+    """
+    Test Feedback View
+    """
 
     def test_get_feedback_view(self):
         resp = self.client.get(reverse('feedback-view'))
@@ -18,6 +21,9 @@ class FeedbackViewTestCase(TestCase):
 
 
 class FeedbackSuccessViewTestCase(TestCase):
+    """
+    Test Feedback Success View
+    """
 
     def test_get_success_view(self):
         resp = self.client.get(reverse('feedback-success-view'))
