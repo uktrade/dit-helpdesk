@@ -134,4 +134,3 @@ reports/*
 !.envs/.development/.django.template
 !.envs/.test/.postgres.template
 !.envs/.test/.django.template
-
