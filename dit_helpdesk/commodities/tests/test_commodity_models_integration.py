@@ -98,7 +98,6 @@ class TestSubHeadingModel(TestCase):
 
         )
 
-
     def test_subheading_exists(self):
         self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 

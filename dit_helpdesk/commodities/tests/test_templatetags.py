@@ -9,6 +9,10 @@ class TemplateTagsTestCase(TestCase):
     Test Commodities Template Tags
     """
 
+    """
+    Test Commodities Template Tags
+    """
+
     def test_cell_cleaner_tag_filter_with_empty_value(self):
         result = cell_cleaner('')
         self.assertEqual(result, '-')

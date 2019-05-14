@@ -29,6 +29,10 @@ class CommodityViewTestCase(TestCase):
     Test Commodity View
     """
 
+    """
+    Test Commodity View
+    """
+
     def create_instance(self, data, app_name, model_name):
         model = apps.get_model(app_label=app_name, model_name=model_name)
         instance = model(**data)
@@ -204,6 +208,10 @@ class CommodityViewTestCase(TestCase):
 
 
 class MeasureConditionDetailTestCase(TestCase):
+    """
+    Test Measure Condition Detail View
+    """
+
     """
     Test Measure Condition Detail View
     """

@@ -28,6 +28,10 @@ class CommodityTestCase(TestCase):
     Test Commodities Models
     """
 
+    """
+    Test Commodities Models
+    """
+
     def setUp(self):
         self.section = mixer.blend(
             Section,
