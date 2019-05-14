@@ -7,6 +7,10 @@ from healthcheck.middleware import HealthCheckMiddleware
 
 class TestMiddleware(TestCase):
 
+    """
+    Test Healthcheck Middleware
+    """
+
     def setUp(self):
         get_response = Mock()
         self.middleware = HealthCheckMiddleware(get_response)
