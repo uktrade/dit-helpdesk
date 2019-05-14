@@ -20,8 +20,8 @@ DEBUG = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default="0GU5hi1N7kOZ3jcKZbVrk1CXX9MAnLOiuDyEyqIvAej2Tj7KlrA3Ey7jGgeW3NVd")
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
-TEST_RUNNER = "django.test.runner.DiscoverRunner"
-
+# TEST_RUNNER = "django.test.runner.DiscoverRunner"
+#
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -34,7 +34,17 @@ CACHES = {
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
-TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG  # noqa F405
+TEMPLATES[0]["OPTIONS"]["debug"] = True  # noqa F405
+TEMPLATES[0]['APP_DIRS']: False
+TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
+    (
+        "django.template.loaders.cached.Loader",
+        [
+            "django.template.loaders.filesystem.Loader",
+            "django.template.loaders.app_directories.Loader",
+        ],
+    )
+]
 
 
 DATABASES = {
@@ -49,22 +59,15 @@ DATABASES = {
 }
 
 INSTALLED_APPS.append('django_nose')
-INSTALLED_APPS.append('django_coverage')
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEST_OUTPUT_DIR = os.environ.get('TEST_OUTPUT_DIR', '.')
 NOSE_ARGS = [
-    '--verbosity=0',
+    '--verbosity=3',
     '--nologcapture',
-    '--nocapture',
-    '--with-coverage',
-    # '--cover-package=admin, core, commodities, countries, feedback, healthcheck, hierarchy, index, regulations, search, trade_tariff_service, user',
     '--with-spec',
     '--spec-color',
-    '--with-id',
     '--with-xunit',
-    '--xunit-file=%s/unittests.xml' % TEST_OUTPUT_DIR,
-    '--cover-xml',
-    '--cover-xml-file=%s/coverage.xml' % TEST_OUTPUT_DIR
+    '--xunit-file=%s/unittests.xml' % TEST_OUTPUT_DIR
 ]
 
 # Disable Django's logging setup

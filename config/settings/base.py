@@ -76,29 +76,29 @@ MIDDLEWARE = [
     'core.middleware.AdminIpRestrictionMiddleware',
 ]
 
-ROOT_URLCONF = 'dit_helpdesk.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        'APP_DIRS': False,
         'OPTIONS': {
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
-            'libraries': {
-                'cell_cleaner': 'commodities.templatetags.cell_cleaner',
-
-            }
+            ]
         },
     },
 ]
 
-WSGI_APPLICATION = 'dit_helpdesk.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config()
