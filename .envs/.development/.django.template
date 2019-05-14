@@ -2,5 +2,5 @@ DEBUG=True
 DJANGO_SECRET_KEY=#add value here
 DJANGO_SETTINGS_MODULE=config.settings.development
 DJANGO_BASE_DIR=/app/dit_helpdesk
-DIT_HELPDESK_ADMIN_PASSWORD=#add value here
-SENTRY_DSN=#add value here
+DIT_HELPDESK_ADMIN_PASSWORD=<<CHECK_VAULT>>
+SENTRY_DSN=<<CHECK_VAULT>>
