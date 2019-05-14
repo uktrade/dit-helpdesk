@@ -2,6 +2,7 @@ from .base import *
 
 DEBUG = True
 RESTRICT_ADMIN = False
+
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
@@ -48,3 +49,4 @@ ELASTICSEARCH_DSL = {
 #     'search.documents.subheading': 'dev_subheadings',
 #     'search.documents.commodity': 'dev_commodities',
 # }
+

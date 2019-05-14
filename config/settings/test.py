@@ -151,7 +151,6 @@ HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/HeadingJson.jso
 COMMODITYHEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/CommodityHeadingJson.json"
 IMPORTMEASUREJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/ImportMeasureJson.json"
 
-
 ELASTICSEARCH_INDEX_NAMES = {
     'search.documents.section': 'test_sections',
     'search.documents.chapter': 'test_chapters',
