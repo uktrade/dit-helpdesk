@@ -13,6 +13,9 @@ logger.setLevel(logging.INFO)
 
 
 class RegulationsDocumentScraperTestCase(TestCase):
+    """
+    Test Regulations document scraper
+    """
 
     def test_data_loader_with_csv(self):
 
@@ -21,12 +24,13 @@ class RegulationsDocumentScraperTestCase(TestCase):
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 
-    def test_load(self):
+    def test_appending_url_title(self):
         scraper = DocumentScraper()
+        scraper.source_file = 'test_product_specific_regulations.csv'
         scraper.load()
 
         self.assertIsInstance(scraper.documents, dict)
-        self.assertEqual(len(scraper.documents.keys()), 610)
+        self.assertEqual(len(scraper.documents.keys()), 1)
 
     def test_data_writer(self):
         file_path = settings.REGULATIONS_DATA_PATH.format("test.json")

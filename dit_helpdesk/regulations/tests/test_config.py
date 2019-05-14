@@ -4,6 +4,9 @@ from regulations.apps import RegulationsConfig
 
 
 class RegulationsConfigTestCase(TestCase):
+    """
+    Test app config
+    """
 
     def test_apps(self):
         self.assertEqual(RegulationsConfig.name,'regulations')

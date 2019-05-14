@@ -43,7 +43,7 @@ def data_loader(file_path):
 class DocumentScraper:
 
     def __init__(self):
-        self.sourceFile = 'product_specific_regulations.csv'
+        self.source_file = 'product_specific_regulations.csv'
         self.output_file = 'urls_with_text_description.json'
         self.documents = {}
 
@@ -57,10 +57,13 @@ class DocumentScraper:
         :return:
         """
 
-        data = data_loader(settings.REGULATIONS_DATA_PATH.format(self.sourceFile))
+        data = data_loader(settings.REGULATIONS_DATA_PATH.format(self.source_file))
         urls = list(data["UK Reg"])
         for url in urls:
             if url is not nan:
-                self.documents[url] = extract_html_title(url)
+                self.append_url_title(url)
 
         data_writer(settings.REGULATIONS_DATA_PATH.format(self.output_file), self.documents)
+
+    def append_url_title(self, url):
+        self.documents[url] = extract_html_title(url)

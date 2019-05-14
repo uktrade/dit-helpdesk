@@ -134,8 +134,9 @@ class RegulationsImporter:
     @staticmethod
     def clean_and_extend_regulations_data(documents, regulations_data):
         data_table = regulations_data[['Title', 'UK Reg']].values.tolist()
+
         for item in data_table:
-            if item[1] is not nan:
+            if item[1] is not nan and item[1] in documents.keys():
                 item.append(documents[item[1]])
             else:
                 item[1] = None
