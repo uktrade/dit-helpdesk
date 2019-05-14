@@ -1,0 +1,40 @@
+version: '2'
+services:
+
+  helpdesk:
+    build:
+      context: .
+      dockerfile: ./compose/development/django/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
+    env_file:
+      - ./.envs/.development/.django
+      - ./.envs/.development/.postgres
+    depends_on:
+      - postgres
+      - es
+      - redis
+    command: /app/compose/development/django/start.sh
+
+  postgres:
+    image: postgres:10
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=helpdesk
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+    restart: always
+    ports:
+      - "9200:9200"
+
+  redis:
+    image: redis:3.2
+    restart: always
+    ports:
+      - "6379:6379"

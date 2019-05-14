@@ -1,0 +1,7 @@
+DEBUG=True
+DJANGO_SECRET_KEY=#add value here
+DJANGO_SETTINGS_MODULE=config.settings.test
+DJANGO_BASE_DIR=/app/dit_helpdesk
+DIT_HELPDESK_ADMIN_PASSWORD=#add value here
+SENTRY_DSN=#add value here
+TEST_OUTPUT_DIR=/app/reports

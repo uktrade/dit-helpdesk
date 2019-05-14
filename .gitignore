@@ -124,3 +124,9 @@ src/
 docker-compose.env
 
 .DS_Store
+
+reports/html_coverage/*
+reports/coverage.xml
+reports/unittests.xml
+.envs/**/.postgres
+.envs/**/.django

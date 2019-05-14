@@ -14,11 +14,11 @@ EXPOSE 8000
 RUN mkdir -p /app
 WORKDIR /app
 
-Volume /reports
+VOLUME /reports
 
 ADD requirements/ ./requirements/
-RUN pip install --no-cache-dir -r requirements/test.txt
+RUN pip install --no-cache-dir -r requirements/development.txt
 
 ADD . /app/
 
-CMD /app/compose/test/django/start.sh
+CMD /app/compose/development/django/start.sh
