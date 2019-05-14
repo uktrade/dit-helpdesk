@@ -127,7 +127,8 @@ docker-compose.env
 
 # exclude everything
 reports/*
-.envs/*
+.envs/.development/*
+.envs/.test/*
 !reports/.gitkeep
 !.envs/.development/.postgres.template
 !.envs/.development/.django.template
