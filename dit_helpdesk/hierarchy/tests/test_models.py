@@ -18,7 +18,6 @@ class SectionTestCase(TestCase):
     """
     Test Section model
     """
-
     def setUp(self):
 
         self.section = mixer.blend(
