@@ -11,6 +11,9 @@ logger.setLevel(logging.INFO)
 
 
 class HierarchyBuilderTestCase(TestCase):
+    """
+    Test Hierarchy Importer
+    """
 
     def test_file_loader(self):
         sections = HierarchyBuilder().file_loader(model_name="Section")
@@ -139,7 +142,7 @@ class HierarchyBuilderTestCase(TestCase):
 
         self.assertEqual(builder.process_orphaned_subheadings(), 1)
 
-    @staticmethod
-    def test_get_section_data_from_api():
-        builder = HierarchyBuilder()
-        builder.get_section_data_from_api()
+    # @staticmethod
+    # def test_get_section_data_from_api():
+    #     builder = HierarchyBuilder()
+    #     builder.get_section_data_from_api()

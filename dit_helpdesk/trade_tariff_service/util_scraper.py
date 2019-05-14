@@ -11,8 +11,8 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+    'https://www.trade-tariff.service.gov.uk/'
+    'commodities/%s.json'
 )
 
 

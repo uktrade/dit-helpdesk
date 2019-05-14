@@ -23,6 +23,9 @@ def get_data(file_path):
 
 
 class CommodityJsonTestCase(TestCase):
+    """
+    Test CommodityJson class
+    """
 
     def setUp(self):
         self.commodity = mixer.blend(
@@ -80,6 +83,9 @@ class CommodityJsonTestCase(TestCase):
 
 
 class CommodityHeadingJsonTestCase(TestCase):
+    """
+    Test CommodityHeadingJson class
+    """
 
     def setUp(self):
         self.commodity_heading = CommodityHeadingJson(get_data(settings.COMMODITYHEADINGJSON_DATA))
@@ -94,6 +100,9 @@ class CommodityHeadingJsonTestCase(TestCase):
 
 
 class SectionJsonTestCase(TestCase):
+    """
+    Test SectionJson class
+    """
 
     def setUp(self):
         self.section = SectionJson(get_data(settings.SECTIONJSON_DATA))
@@ -129,6 +138,9 @@ class SectionJsonTestCase(TestCase):
 
 
 class ChapterJsonTestCase(TestCase):
+    """
+    Test ChapterJson class
+    """
 
     def setUp(self):
         self.chapter = ChapterJson(get_data(settings.CHAPTERJSON_DATA))
@@ -154,6 +166,9 @@ class ChapterJsonTestCase(TestCase):
 
 
 class HeadingJsonTestCase(TestCase):
+    """
+    Test HeadingJson class
+    """
 
     def setUp(self):
         self.heading = HeadingJson(get_data(settings.HEADINGJSON_DATA))
@@ -212,6 +227,9 @@ class HeadingJsonTestCase(TestCase):
 
 
 class ImportMeasureJsonTestCase(TestCase):
+    """
+    Test ImportMaasureJson class
+    """
 
     def setUp(self):
         self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE)
