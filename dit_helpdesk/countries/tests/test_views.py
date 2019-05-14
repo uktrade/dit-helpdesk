@@ -16,6 +16,10 @@ class CountriesViewsTestCase(TestCase):
     Views tests
     """
 
+    """
+    Views tests
+    """
+
     def test_get_choose_country_returns_http_200_and_renders_correct_template(self):
         resp = self.client.get(reverse('choose-country'))
         self.assertTrue(resp.status_code, 200)

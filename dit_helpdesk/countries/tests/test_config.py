@@ -7,7 +7,6 @@ class CountriesConfigTestCase(TestCase):
     """
     Config tests
     """
-
     def test_config_name_is_countries(self):
         self.assertEqual(CountriesConfig.name, 'countries')
 
