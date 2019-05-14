@@ -19,6 +19,10 @@ logger.setLevel(logging.INFO)
 
 class CommodityTestCase(TestCase):
 
+    """
+    Test Commodities Models
+    """
+
     def setUp(self):
         self.section = mixer.blend(
             Section,

@@ -12,6 +12,10 @@ from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
 
 class TestCommodityModel(TestCase):
 
+    """
+    Test Commodity Integration
+    """
+
     def get_data(self, file_path):
 
         with open(file_path) as f:

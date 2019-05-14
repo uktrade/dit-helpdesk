@@ -10,8 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n %}
-{% load cell_cleaner %}
+{% load static staticfiles i18n cell_cleaner %}
 
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 

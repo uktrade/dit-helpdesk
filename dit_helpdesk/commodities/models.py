@@ -233,6 +233,7 @@ class Commodity(models.Model):
 
         """
         url = settings.COMMODITY_URL % self.commodity_code
+
         resp = requests.get(url, timeout=10)
         resp_content = None
 
@@ -245,5 +246,6 @@ class Commodity(models.Model):
                 resp_content = resp.content.decode()
 
         resp_content = self._amend_measure_conditions(resp_content)
+
         self.tts_json = resp_content
         self.save()
