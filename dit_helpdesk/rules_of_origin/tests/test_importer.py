@@ -2,7 +2,9 @@ import logging
 
 from django.conf import settings
 from django.test import TestCase
+from mixer.backend.django import mixer
 
+from hierarchy.models import Chapter, Heading, Section
 from rules_of_origin.importer import RulesOfOriginImporter
 from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocumentFootnote
 from trade_tariff_service.importer import HierarchyBuilder
@@ -13,6 +15,9 @@ logger.setLevel(logging.INFO)
 
 
 class ImporterTestCase(TestCase):
+    """
+    Test Rules of Origin Importer
+    """
 
     def test_load(self):
         importer = RulesOfOriginImporter()
@@ -57,15 +62,34 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_for_existing_items_with_hierarchy(self):
-        model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder = HierarchyBuilder()
 
-        builder.data_scanner(model_names)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/GSP.json')
+        section = mixer.blend(
+            Section,
+            section_id=1
+        )
+
+        chapters = mixer.cycle(3).blend(
+            Chapter,
+            chapter_code=(x for x in ["0100000000", "0200000000", "0300000000"]),
+            section=section
+        )
+
+        headings = mixer.cycle(4).blend(
+            Heading,
+            heading_code=(x for x in ["0304000000", "0305000000", "0306000000", "0307000000"]),
+            chapter=chapters[2]
+        )
+
+
+        # model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+        # builder = HierarchyBuilder()
+        #
+        # builder.data_scanner(model_names)
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('test_import/GSP.json')
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
-        self.assertEqual(len(Rule.objects.all()), 266)
+        self.assertEqual(len(Rule.objects.all()), 7)
         self.assertEqual(len(RulesGroup.objects.all()), 1)
         self.assertEqual(len(RulesGroupMember.objects.all()), 82)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)

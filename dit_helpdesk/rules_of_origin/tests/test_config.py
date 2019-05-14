@@ -4,6 +4,9 @@ from rules_of_origin.apps import RulesOfOriginConfig
 
 
 class RulesOfOriginConfigTestCase(TestCase):
+    """
+    Test app config
+    """
 
     def test_apps(self):
         self.assertEqual(RulesOfOriginConfig.name, 'rules_of_origin')

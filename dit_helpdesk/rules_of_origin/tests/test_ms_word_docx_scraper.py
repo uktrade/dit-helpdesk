@@ -10,10 +10,9 @@ logger.setLevel(logging.INFO)
 
 
 class MsWrodDocxScraperTestCase(TestCase):
-
-    def setUp(self):
-        self.scraper = DocxScraper()
-        self.scraper.load("source/GSP ROO v2.docx")
+    """
+    Test MS Word Docx Scraper
+    """
 
     def test_processing_text_with_footnote_returns_text_with_formatted_html_footnote_link(self):
         scraper = DocxScraper()
@@ -22,4 +21,6 @@ class MsWrodDocxScraperTestCase(TestCase):
         self.assertEqual(result_text, 'This is some text with a footnote(<a href="#footnote_1">1</a>)')
 
     def test_footnotes_exist(self):
+        self.scraper = DocxScraper()
+        self.scraper.load("test_source/GSP ROO v2.docx")
         self.assertTrue(len(self.scraper.footnotes) > 0)

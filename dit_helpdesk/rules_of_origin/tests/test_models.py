@@ -9,6 +9,9 @@ logger.setLevel(logging.INFO)
 
 
 class RulesGroupTestCase(TestCase):
+    """
+    Test Rules Group model
+    """
 
     def setUp(self):
         self.rulesgroup = mommy.make('RulesGroup')
@@ -18,6 +21,9 @@ class RulesGroupTestCase(TestCase):
 
 
 class RulesGroupMemberTestCase(TestCase):
+    """
+    Test Rules Group Member model
+    """
 
     def setUp(self):
         self.rulesgroupmember = mommy.make('RulesGroupMember')
@@ -34,6 +40,9 @@ class RulesGroupMemberTestCase(TestCase):
 
 
 class RulesDocumentCase(TestCase):
+    """
+    Test Rules Document model
+    """
 
     def setUp(self):
         self.rulesdocument = mommy.make('RulesDocument')
@@ -43,6 +52,9 @@ class RulesDocumentCase(TestCase):
 
 
 class RuleTestCase(TestCase):
+    """
+    Test Rule model
+    """
 
     def setUp(self):
         self.rule = mommy.make('Rule')
@@ -52,6 +64,9 @@ class RuleTestCase(TestCase):
 
 
 class RulesDocumentFootnoteTestCase(TestCase):
+    """
+    Test Rules Document Footnote model
+    """
 
     def setUp(self):
         self.rulesdocumentfootnote = mommy.make('RulesDocumentFootnote')
