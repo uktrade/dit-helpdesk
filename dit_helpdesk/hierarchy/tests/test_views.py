@@ -44,6 +44,9 @@ def create_instance(data, app_name, model_name):
 
 
 class HierarchyViewTestCase(TestCase):
+    """
+    Test Hierarchy view
+    """
 
     def setUp(self):
         """

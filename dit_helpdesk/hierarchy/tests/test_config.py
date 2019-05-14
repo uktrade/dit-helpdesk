@@ -4,6 +4,9 @@ from hierarchy.apps import HierarchyConfig
 
 
 class HierarchyConfigTestCase(TestCase):
+    """
+    Test app config
+    """
 
     def test_apps(self):
         self.assertEqual(HierarchyConfig.name, 'hierarchy')

@@ -13,6 +13,10 @@ logger.setLevel(logging.INFO)
 
 
 class SectionTestCase(TestCase):
+
+    """
+    Test Section model
+    """
     def setUp(self):
 
         self.section = mixer.blend(
@@ -90,6 +94,10 @@ class SectionTestCase(TestCase):
 
 
 class ChapterTestCase(TestCase):
+
+    """
+    Test Chapter Model
+    """
     def setUp(self):
 
         self.chapter = mixer.blend(
@@ -213,6 +221,9 @@ class ChapterTestCase(TestCase):
 
 
 class HeadingTestCase(TestCase):
+    """
+    Test Heading Model
+    """
     def setUp(self):
         self.heading = mixer.blend(
             Heading,
@@ -282,6 +293,9 @@ class HeadingTestCase(TestCase):
 
 
 class SubHeadingTestCase(TestCase):
+    """
+    Test Subheading Model
+    """
     def setUp(self):
 
         self.heading = mixer.blend(
