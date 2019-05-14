@@ -5,6 +5,9 @@ from user.models import User
 
 
 class UserModelsTestCase(TestCase):
+    """
+    Test User model
+    """
 
     def setUp(self):
         self.user = mixer.blend(

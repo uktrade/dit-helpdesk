@@ -12,6 +12,9 @@ logger.setLevel(logging.INFO)
 
 
 class UserCreationFormTestCase(TestCase):
+    """
+    Test User Creation form
+    """
 
     def test_saving_user_created_via_form(self):
         email = 'test@user.com'
