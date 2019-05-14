@@ -1,21 +1,14 @@
 #!/bin/bash -xe
-# pip install -r requirements.txt
-python dit_helpdesk/manage.py collectstatic --noinput
-python dit_helpdesk/manage.py migrate
-python dit_helpdesk/manage.py loaddata countries_data
-# sleep infinity
-python dit_helpdesk/manage.py scrape_section_hierarchy_v2
-python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
 
-echo "docker exec -it dit-helpdesk_helpdesk_1 /bin/bash"
-echo "python dit_helpdesk/manage.py scrape_section_hierarchy_v2"
-#python dit_helpdesk/manage.py scrape_section_hierarchy_v2
-
+coverage run manage.py test dit_helpdesk --settings=config.settings.test --noinput
+coverage report -m
+coverage xml
+coverage html -d $TEST_OUTPUT_DIR/coverage_html
 # -----------------------------------------------------------------------------
 # To destroy and rebuild:
 # -----------------------------------------------------------------------------
-# $ docker-compose stop
-# $ docker-compose rm
-# $ docker-compose build
-# $ docker-compose up
+# $ docker-compose -f test.yml stop
+# $ docker-compose -f test.yml rm
+# $ docker-compose -f test.yml build
+# $ docker-compose -f test.yml up
 # -----------------------------------------------------------------------------

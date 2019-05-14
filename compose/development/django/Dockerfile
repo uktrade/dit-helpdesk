@@ -32,6 +32,3 @@ CMD /app/compose/development/django/start.sh
 #RUN virtualenv venv -p python3.6
 #RUN . venv/bin/activate
 #RUN pip install -r requirements_test.txt
-
-
-

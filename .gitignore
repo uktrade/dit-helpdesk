@@ -123,7 +123,6 @@ src/
 .vscode
 docker-compose.env
 
-
 .DS_Store
 
 # exclude everything
@@ -135,3 +134,4 @@ reports/*
 !.envs/.development/.django.template
 !.envs/.test/.postgres.template
 !.envs/.test/.django.template
+
