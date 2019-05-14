@@ -7,6 +7,10 @@ from core.middleware import AdminIpRestrictionMiddleware
 
 
 class AdminIPMiddlewareTestCase(TestCase):
+
+    """
+    Test Admin IP Middleware
+    """
     def setUp(self):
         self.rf = RequestFactory()
         self.client = Client()

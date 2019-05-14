@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 
-def error404handler(request):
+def error404handler(request, exception):
     """
     Http 404 page not found error handler
     :param request: django http request
