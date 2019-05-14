@@ -33,12 +33,13 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
-ADMIN_ENABLED = False
+ADMIN_ENABLED = True
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -61,9 +62,6 @@ INSTALLED_APPS = [
     'regulations',
     'healthcheck',
 ]
-
-if ADMIN_ENABLED is True:
-    INSTALLED_APPS.append('django.contrib.admin', )
 
 MIDDLEWARE = [
     'healthcheck.middleware.HealthCheckMiddleware',
@@ -92,6 +90,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'cell_cleaner': 'commodities.templatetags.cell_cleaner',
+
+            }
         },
     },
 ]
@@ -189,10 +191,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compr
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
 IP_SAFELIST_XFF_INDEX = int(os.environ.get('IP_SAFELIST_XFF_INDEX', '-2'))
 
-if ADMIN_ENABLED is True:
-    RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
-    ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
-    ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
+
+RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
+ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
+ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
 
 # authbroker config
 AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
@@ -201,8 +203,7 @@ AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 
 LOGIN_URL = '/auth/login/'
 
-if ADMIN_ENABLED is True:
-    LOGIN_REDIRECT_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/login/'
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -232,12 +233,12 @@ CHAPTER_URL = (
 
 HEADING_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
+    'headings/%s.json'
 )
 
 COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+    'https://www.trade-tariff.service.gov.uk/'
+    'commodities/%s.json'
 )
 
 COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'

@@ -1,0 +1,14 @@
+[run]
+branch = True
+include = dit_helpdesk/*
+omit = *tests*, *migrations*
+plugins =
+    django_coverage_plugin
+
+[xml]
+output = $TEST_OUTPUT_DIR/coverage.xml
+
+[html]
+directory = $TEST_OUTPUT_DIR/coverage_html
+title = DIT Helpdesk Coverage Report
+

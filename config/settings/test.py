@@ -5,24 +5,14 @@ import logging.config
 import os
 import re
 
-DEBUG = True
+from django.conf import settings
+
+DEBUG = False
 from django.utils.log import DEFAULT_LOGGING
 
 from .base import *
 
-ADMIN_ENABLED = True
-
-if ADMIN_ENABLED is True:
-    INSTALLED_APPS.append('django.contrib.admin',)
-
-if ADMIN_ENABLED is True:
-    RESTRICT_ADMIN = os.environ.get('RESTRICT_ADMIN', 'True') == 'True'
-    ALLOWED_ADMIN_IPS = os.environ.get('ALLOWED_ADMIN_IPS', '127.0.0.1').split(',')
-    ALLOWED_ADMIN_IP_RANGES = os.environ.get('ALLOWED_ADMIN_IP_RANGES', '127.0.0.1/32').split(',')
-
-if ADMIN_ENABLED is True:
-    LOGIN_REDIRECT_URL = '/admin/login/'
-
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -53,10 +43,29 @@ DATABASES = {
         'NAME': os.environ.get('DJANGO_POSTGRES_DATABASE'),
         'USER': os.environ.get('DJANGO_POSTGRES_USER'),
         'PASSWORD': os.environ.get('DJANGO_POSTGRES_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'HOST': os.environ.get('DJANGO_POSTGRES_HOST'),
+        'PORT': os.environ.get('DJANGO_POSTGRES_PORT')
     }
 }
+
+INSTALLED_APPS.append('django_nose')
+INSTALLED_APPS.append('django_coverage')
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_OUTPUT_DIR = os.environ.get('TEST_OUTPUT_DIR', '.')
+NOSE_ARGS = [
+    '--verbosity=0',
+    '--nologcapture',
+    '--nocapture',
+    '--with-coverage',
+    # '--cover-package=admin, core, commodities, countries, feedback, healthcheck, hierarchy, index, regulations, search, trade_tariff_service, user',
+    '--with-spec',
+    '--spec-color',
+    '--with-id',
+    '--with-xunit',
+    '--xunit-file=%s/unittests.xml' % TEST_OUTPUT_DIR,
+    '--cover-xml',
+    '--cover-xml-file=%s/coverage.xml' % TEST_OUTPUT_DIR
+]
 
 # Disable Django's logging setup
 LOGGING_CONFIG = None
