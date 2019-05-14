@@ -1,6 +1,7 @@
 # Exporting things to the UK (working title)
 
-This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the products that they want to export to the UK.
+This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the 
+products that they want to export to the UK.
 
 ## Requirements
  - Python 3
@@ -19,12 +20,14 @@ cd dit-helpdesk
 
 ### Install using Docker
 
-If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about virtual environments - it's all within the Docker instance.
+If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about 
+virtual environments - it's all within the Docker instance.
 
 #### Frontend static asset installation
 
 First we need to install [GOV.UK Frontend][2] and
-[GOV.UK country and territory autocomplete][3] (Which will also also install the required [Accessible Autocomplete][4] dependency), and other front end dependencies.
+[GOV.UK country and territory autocomplete][3] (Which will also also install the required [Accessible Autocomplete][4] 
+dependency), and other front end dependencies.
 
 This is all done by going to the project root folder, which contains `package.json`. Then run:
 
@@ -42,40 +45,59 @@ npm run build
 
 `npm run` will show a list of all of the commands available, including linting.
 
-#### Installation
+#### Install for development with Docker
 
-Make sure that Docker is installed and running. Open `start.sh` and comment back in the pip installation
-
-```bash
-pip install -r requirements.txt
-```
+Make sure that Docker is installed and running. Open `start.sh` and comment back to the terminal
 
 Then run:
 
 ```bash
-docker-compose build
+docker-compose -f development.yml build
 ```
 
-Once the build has completed, comment out the pip installation in `start.sh` - this isn't essential, but it will save you time when booting up the docker instance.
+Once the build has completed, comment out the pip installation in `start.sh` - this isn't essential, but it will 
+save you time when booting up the docker instance.
 
 Now run:
 
 ```bash
-docker-compose up
+docker-compose -f development.yml up
 ```
 
-We need to populate the database with products. Shell into Docker by running:
+The `start.sh` script will run the following django management commands 
 
 ```bash
-docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
-```
+python manage.py collectstatic --noinput
+python manage.py migrate
+python manage.py loaddata countries_data
+python manage.py scrape_section_hierarchy_v2
+python manage.py import_rules_of_origin --data_path "import"
+python manage.py import_regulations
+python manage.py runserver_plus 0.0.0.0:8000
 
-You should now be in the root of the app. 
-#### Importing Content Data Overview
+```
+`scrape_section_hierarchy_v2` will only run if there are no Sections items found. see below if you need to run this 
+manually `import_rules_of_origin` and `import_regulations` will create any new items that do not already exist.
+you can comment these three lines out after the initial out `up` to speed up the buid and deploy process locally.
+The last line starts the django server
+
+##### Preparing to Manually Install content
+If you need to populate the database with products. 
+
+first commenting out 
+```bash
+python manage.py scrape_section_hierarchy_v2
+python manage.py import_rules_of_origin --data_path "import"
+python manage.py import_regulations
+```
+refer to "Running, then shelling in" section below
+
+##### Manually Install content
+Once into the command prompt in the terminal you should now be in the root of the app. 
 
 Note: See below for more details including generating data import files and clearing the database
 
-##### Commodities and Hierarchy
+###### Commodities and Hierarchy
 To populate the commodities in the database, we need to run a management command to import the data. 
 To import the commodity data and its hierarchy, run:
 
@@ -83,14 +105,17 @@ To import the commodity data and its hierarchy, run:
 python dit_helpdesk/manage.py scrape_section_hierarchy_v2
 ```
 This should take approximately 6 to 8 minutes
-##### Rules of Origin
+###### Rules of Origin
 To import Rules of Origin run:
 ```bash
 python dit_helpdesk/manage.py import_rules_of_origin
 ```
 This should take approximately 1 minutes 
 
-There is a management command for extracting data from word documents that may be supplied for new content, from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the `scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the `rules_of_origin/import_folder`where the importer command will read them from. 
+There is a management command for extracting data from word documents that may be supplied for new content, 
+from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the 
+`scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the 
+`rules_of_origin/import_folder`where the importer command will read them from. 
 Be sure to archive any existing word files and/or json files should there be anyone clear the two folders. 
 To extract data from word docx source content, run:
 ```bash
@@ -98,7 +123,7 @@ python dit_helpdesk/manage.py scrape_rules_of_origin_docx
 ```
 This should take a couple of minutes per word document.
 
-##### Documents and Regulations
+###### Documents and Regulations
 The source data for this content should be in a json format. #TODO: add detail here
 To import Documents and regulations run:
 ```bash
@@ -106,16 +131,20 @@ python dit_helpdesk/manage.py import_regulations
 ```
 This should take approximately 60 minutes. (#TODO: redo the code to reduce this time.
 
-#### Update Environment variables in case you get Sentry exceptions (Optional)
+##### Update Environment variables in case you get Sentry exceptions (Optional)
 If `docker-compose.env` file does not exists, create it by copying `docker-compose.conf.env`
 
-You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. To do so you will need to generate a github personal access token. This is needed to log into vault. Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github as your login option.
+You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. 
+To do so you will need to generate a github personal access token. This is needed to log into vault. 
+Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. 
+Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github 
+as your login option.
 
-### Running
+### Running developement with Docker
 Starting the server again is the same command as installing:
 
 ```bash
-docker-compose up
+docker-compose -f development.yml up
 ```
 
 The site will be available at http://localhost:8000/choose-country/.
@@ -127,10 +156,11 @@ npm run watch:styles
 
 ### Running, then shelling in
 
-If you want to be able to run commands in bash within the docker instance, we need to change the start script `start.sh` slightly.
+If you want to be able to run commands in bash within the docker instance, we need to change the start 
+script `start.sh` slightly.
 
 Comment out the line that starts the app, and comment back in the sleep command. So it should read:
-```shell
+```bash
 sleep infinity
 # python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
 ```
@@ -146,9 +176,48 @@ then
 docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
 
+### Running tests with Docker development deployment
+
+In th first terminal run: 
+```bash
+docker-compose -f development.yml build
+docker-compose -f development.yml up
+```
+
+open a new terminal and run:
+```bash
+docker-compose -f development.yml run -e DJANGO_SETTINGS_MODULE=config.settings.test \
+    --no-deps --rm helpdesk \
+    coverage run manage.py test dit_helpdesk --noinput
+```
+This will run all tests and display the output in the terminal.
+
+NB: Although we are not displaying the coverage report, we use coverage to run the test here because there is an issue with
+reporting coverage of django models using noestest runner without starting the test process with coverage  
+
+### Running tests and generating coverage with Docker
+
+```bash
+docker-compose -f text.yml build
+docker-compose -f test.yml up
+
+```
+
+This will display in the shell the following: 
+- all tests, showing passes and failures
+- coverage report
+
+it will also generate the following reports into folder `reports` :
+- xunit coverage report file
+- xml coverage report file
+- html coverage report
+
 ## Country synonyms
 
-The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to add synonyms. Then run `npm run update-countries`. You should see the updated files in `dit_helpdesk/static_collected/js/`.
+The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or 
+synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to 
+add synonyms. Then run `npm run update-countries`. You should see the updated 
+files in `dit_helpdesk/static_collected/js/`.
 
 
 ### Install locally
