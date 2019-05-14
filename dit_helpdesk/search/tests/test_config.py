@@ -4,6 +4,9 @@ from search.apps import SearchConfig
 
 
 class SearchConfigTestCase(TestCase):
+    """
+    Test app config
+    """
 
     def test_apps(self):
         self.assertEqual(SearchConfig.name,'search')

@@ -4,6 +4,10 @@ from django.urls import reverse
 
 class SearchViewTestCase(TestCase):
 
+    """
+    Test Search view
+    """
+
     def setUp(self):
         pass
 
