@@ -17,9 +17,7 @@ from django.core.wsgi import get_wsgi_application
 # dit_helpdesk directory.
 app_path = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), os.pardir))
-print("APPPATH: ", app_path)
 sys.path.append(os.path.join(app_path, 'dit_helpdesk'))
-print("sys_path: ", sys.path)
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use

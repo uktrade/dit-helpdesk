@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+import logging
 import os
 
 from os.path import join as join_path
@@ -17,12 +17,10 @@ from os.path import join as join_path
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.utils.log import DEFAULT_LOGGING
 
-BASE_DIR = os.environ.get(
-    'DJANGO_BASE_DIR',
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+APPS_DIR = os.path.join(BASE_DIR, 'dit_helpdesk')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -173,12 +171,12 @@ USE_TZ = True
 
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [
-    join_path(BASE_DIR, 'static_collected'),
+    join_path(APPS_DIR, 'static_collected'),
 ]
 
-STATIC_ROOT = join_path(BASE_DIR, 'static')  # manage.py collectstatic will copy static files here
+STATIC_ROOT = join_path(APPS_DIR, 'static')  # manage.py collectstatic will copy static files here
 
-MEDIA_ROOT = join_path(BASE_DIR, 'media')
+MEDIA_ROOT = join_path(APPS_DIR, 'media')
 MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
@@ -210,7 +208,7 @@ AUTH_USER_MODEL = 'user.User'
 FEEDBACK_MAX_LENGTH = 1000
 
 # trade tariff service arguments
-IMPORT_DATA_PATH = BASE_DIR + "/trade_tariff_service/import_data/{0}"
+IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
 TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
 TRADE_TARIFF_SERVICE_SECTION_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
@@ -218,27 +216,25 @@ TRADE_TARIFF_SERVICE_MODEL_ARGS = ["Section", "Chapter", "Heading", "SubHeading"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
-REGULATIONS_DATA_PATH = BASE_DIR + "/regulations/data/{0}"
-RULES_OF_ORIGIN_DATA_PATH = BASE_DIR + "/rules_of_origin/data/{0}"
+REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
+RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
 RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 
 SECTION_URL = (
-    "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
+    "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
 )
 
 CHAPTER_URL = (
-    "https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/{0}.json"
+    "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
 )
 
 HEADING_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'headings/%s.json'
+    'https://www.trade-tariff.service.gov.uk/headings/%s.json'
 )
 
 COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/'
-    'commodities/%s.json'
+    'https://www.trade-tariff.service.gov.uk/commodities/%s.json'
 )
 
 COMMODITY_CODE_REGEX = '([0-9]{6})([0-9]{2})([0-9]{2})'
@@ -251,3 +247,54 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_SECURE = True
 
 os.environ.get('SENTRY_DSN')
+
+LOGGING_CONFIG = None
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
+    'handlers': {
+        # console logs to stderr
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        },
+        # Add Handler for Sentry for `warning` and above
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
+    },
+    'loggers': {
+        # default for all undefined Python modules
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console', 'sentry'],
+        },
+        # Our application code
+        'app': {
+            'level': LOGLEVEL,
+            'handlers': ['console', 'sentry'],
+            # Avoid double logging because of root logger
+            'propagate': False,
+        },
+        # Prevent noisy modules from logging to Sentry
+        'noisy_module': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        # Default runserver request logging
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
+    },
+})
