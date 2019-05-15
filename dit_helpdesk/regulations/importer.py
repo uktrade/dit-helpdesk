@@ -11,6 +11,7 @@ from commodities.models import Commodity
 from hierarchy.models import SubHeading
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def data_loader(file_path):
@@ -93,9 +94,9 @@ class RegulationsImporter:
             **field_data
         )
         if created:
-            logger.debug("{0} instance created".format(model_name))
+            logger.info("{0} instance created".format(model_name))
         else:
-            logger.debug("Returning existing {0}".format(model_name))
+            logger.info("Returning existing {0}".format(model_name))
         return instance
 
     @staticmethod
@@ -129,7 +130,8 @@ class RegulationsImporter:
 
     def process(self):
         for regulation_map in self.data:
-            self.instance_builder(regulation_map)
+            if not regulation_map['document']['title'] is None:
+                self.instance_builder(regulation_map)
 
     @staticmethod
     def clean_and_extend_regulations_data(documents, regulations_data):

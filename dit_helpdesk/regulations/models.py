@@ -6,11 +6,8 @@ class Regulation(models.Model):
     Regulation model
     """
     title = models.TextField()
-    sections = models.ManyToManyField("hierarchy.Section")
     commodities = models.ManyToManyField("commodities.Commodity")
     subheadings = models.ManyToManyField("hierarchy.SubHeading")
-    headings = models.ManyToManyField("hierarchy.Heading")
-    chapters = models.ManyToManyField("hierarchy.Chapter")
 
     class Meta:
         verbose_name_plural = "regulations"
