@@ -15,7 +15,7 @@ class CountryFixturesTestCase(TestCase):
     Country Fixtures tests
     """
 
-    fixtures = [settings.BASE_DIR + '/countries/fixtures/countries_data.json']
+    fixtures = [settings.COUNTRIES_DATA + '/countries/fixtures/countries_data.json']
 
     def test_fixtures_load_countries_data(self):
         self.assertTrue(Country.objects.count() > 0)
