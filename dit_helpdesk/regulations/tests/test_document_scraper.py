@@ -27,6 +27,7 @@ class RegulationsDocumentScraperTestCase(TestCase):
     def test_appending_url_title(self):
         scraper = DocumentScraper()
         scraper.source_file = 'test_product_specific_regulations.csv'
+        scraper.output_file = 'test_out_product_specific_regulations.csv'
         scraper.load()
 
         self.assertIsInstance(scraper.documents, dict)
