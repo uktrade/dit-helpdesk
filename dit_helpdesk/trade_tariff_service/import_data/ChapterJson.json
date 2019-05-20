@@ -1,0 +1,62 @@
+{
+  "_response_info": {
+    "links": [
+      {
+        "href": "/trade-tariff/chapters/24.json",
+        "rel": "self"
+      },
+      {
+        "href": "/trade-tariff/sections/4",
+        "rel": "section"
+      }
+    ]
+  },
+  "chapter_note": "* 1\\. This chapter does not cover medicinal cigarettes (Chapter 30).",
+  "chapter_note_id": 73,
+  "description": "TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES",
+  "formatted_description": "Tobacco and manufactured tobacco substitutes",
+  "goods_nomenclature_item_id": "2400000000",
+  "goods_nomenclature_sid": 35246,
+  "headings": [
+    {
+      "children": [],
+      "declarable": false,
+      "description": "Unmanufactured tobacco; tobacco refuse",
+      "description_plain": "Unmanufactured tobacco; tobacco refuse",
+      "formatted_description": "Unmanufactured tobacco; tobacco refuse",
+      "goods_nomenclature_item_id": "2401000000",
+      "goods_nomenclature_sid": 35247,
+      "leaf": true,
+      "producline_suffix": "80"
+    },
+    {
+      "children": [],
+      "declarable": false,
+      "description": "Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes",
+      "description_plain": "Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes",
+      "formatted_description": "Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes",
+      "goods_nomenclature_item_id": "2402000000",
+      "goods_nomenclature_sid": 35283,
+      "leaf": true,
+      "producline_suffix": "80"
+    },
+    {
+      "children": [],
+      "declarable": false,
+      "description": "Other manufactured tobacco and manufactured tobacco substitutes; \"homogenised\" or \"reconstituted\" tobacco; tobacco extracts and essences",
+      "description_plain": "Other manufactured tobacco and manufactured tobacco substitutes; \"homogenised\" or \"reconstituted\" tobacco; tobacco extracts and essences",
+      "formatted_description": "Other manufactured tobacco and manufactured tobacco substitutes; \"homogenised\" or \"reconstituted\" tobacco; tobacco extracts and essences",
+      "goods_nomenclature_item_id": "2403000000",
+      "goods_nomenclature_sid": 35287,
+      "leaf": true,
+      "producline_suffix": "80"
+    }
+  ],
+  "section": {
+    "id": 4,
+    "numeral": "IV",
+    "position": 4,
+    "title": "Prepared foodstuffs; beverages, spirits and vinegar; tobacco and manufactured tobacco substitutes"
+  },
+  "section_id": 4
+}

@@ -1,0 +1,10 @@
+# potentially to be used for seperate docker test build
+
+-r ./base.txt
+
+django-coverage-plugin==1.6.0  # https://github.com/nedbat/django_coverage_plugin
+django-extensions==2.1.5  # https://github.com/django-extensions/django-extensions
+mixer==6.1.3 # https://mixer.readthedocs.io/en/latest/
+model-mommy==1.6.0 #https://model-mommy.readthedocs.io/en/latest/index.html
+django-nose==1.4.6
+pinocchio==0.4.2

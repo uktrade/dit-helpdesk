@@ -6,6 +6,9 @@ import xml.etree.ElementTree as ET
 
 
 class TestViews(TestCase):
+    """
+    Test Healthcheck views
+    """
 
     def setUp(self):
         self.anonymous_client = Client()

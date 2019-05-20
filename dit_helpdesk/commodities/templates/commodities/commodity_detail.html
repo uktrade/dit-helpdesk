@@ -10,8 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n %}
-{% load cell_cleaner %}
+{% load static staticfiles i18n cell_cleaner %}
 
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
@@ -349,7 +348,6 @@
         </details>
       </div>
     {% endif %}
-
     {% if regulations %}
       <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">Product-specific regulations</h3>
@@ -357,7 +355,7 @@
         <div class="govuk-accordion"
             data-module="accordion"
             id="accordion-default">
-          {% for regulation in regulations.all %}
+          {% for regulation in regulations %}
             <div class="govuk-accordion__section ">
               <div class="govuk-accordion__section-header">
                 <h4 class="govuk-accordion__section-heading govuk-heading-s">

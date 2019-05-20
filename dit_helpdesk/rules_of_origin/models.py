@@ -18,9 +18,9 @@ class RulesGroupMember(models.Model):
     """
     Rules of Origin Group
     """
-    rules_group = models.ForeignKey("RulesGroup", on_delete=models.CASCADE, null=True, blank=True)
-    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
+    rules_group = models.ForeignKey("RulesGroup", on_delete=models.CASCADE)
+    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE)
+    start_date = models.DateField()
     finish_date = models.DateField(null=True, blank=True)
 
     class Meta:
@@ -51,7 +51,7 @@ class Rule(models.Model):
     """
     Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
     """
-    rule_id = models.CharField(max_length=255, null=True, blank=True)
+    rule_id = models.CharField(max_length=255)
     description = models.TextField()
     working_or_processing_one = models.TextField(null=True, blank=True)
     working_or_processing_two = models.TextField(null=True, blank=True)

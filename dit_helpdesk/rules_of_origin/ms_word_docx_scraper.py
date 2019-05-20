@@ -1,10 +1,9 @@
+import json
 import re
 import sys
-import json
-from pprint import pprint
+from pathlib import Path
 
 from django.conf import settings
-from pathlib import Path
 from docx import Document
 from jsonschema import validate
 
@@ -21,95 +20,94 @@ HEADINGS_LOOKUP = {
 Json schema to validate document structure before saving to file
 """
 JSON_SCHEMA = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "footnotes": {
-       "type": "array",
-       "items": [
-           {
-               "type": "object",
-               "properties": {
-                   "anchor": {
-                       "type": "string"
-                   },
-                   "note": {
-                       "type": "string"
-                   }
-               }
-           }
-       ]
-    },
-    "chapters": {
-      "type": "array",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "number": {
-              "type": "string"
-            },
-            "rows": {
-              "type": "array",
-              "items": [
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "footnotes": {
+            "type": "array",
+            "items": [
                 {
-                  "type": "object",
-                  "properties": {
-                    "descriptions": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "anchor": {
+                            "type": "string"
+                        },
+                        "note": {
+                            "type": "string"
                         }
-                      ]
-                    },
-                    "ids": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "string"
-                        }
-                      ]
-                    },
-                    "workingLeft": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "string"
-                        }
-                      ]
-                    },
-                    "workingRight": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "string"
-                        }
-                      ]
                     }
-                  },
                 }
-              ]
-            }
-          },
-          "required": [
-            "number",
-            "rows"
-          ]
+            ]
+        },
+        "chapters": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "number": {
+                            "type": "string"
+                        },
+                        "rows": {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "descriptions": {
+                                            "type": "array",
+                                            "items": [
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "ids": {
+                                            "type": "array",
+                                            "items": [
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "workingLeft": {
+                                            "type": "array",
+                                            "items": [
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "workingRight": {
+                                            "type": "array",
+                                            "items": [
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "number",
+                        "rows"
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  },
-  "required": [
-    "chapters"
-  ]
+    },
+    "required": [
+        "chapters"
+    ]
 }
 
 try:
     from xml.etree.cElementTree import XML
 except ImportError:
     from xml.etree.ElementTree import XML
-import zipfile
 
 """
 Module that extract text from MS XML Word document (.docx).
@@ -120,6 +118,7 @@ WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}
 PARA = WORD_NAMESPACE + 'p'
 TEXT = WORD_NAMESPACE + 't'
 
+
 class DocxScraper:
 
     def __init__(self):
@@ -127,16 +126,6 @@ class DocxScraper:
         self.table_heading = None
         self.footnotes = []
         self.data_path = settings.RULES_OF_ORIGIN_DATA_PATH
-
-    def data_loader(self, file_path):
-        """
-        Read a file from the filesystem as json string and convert into python dictionary
-        :param file_path:
-        :return: python dictionary
-        """
-        with open(file_path) as f:
-            json_data = json.load(f, )
-        return json_data
 
     def load(self, docx_file):
         """
@@ -173,20 +162,21 @@ class DocxScraper:
                     self.table_dict["chapters"].append(item)
 
                 else:
-                    last_chapter_idx = len(self.table_dict["chapters"]) - 1
-                    if last_chapter_idx != -1:
+                    last_chap_idx = len(self.table_dict["chapters"]) - 1
+                    if last_chap_idx != -1:
 
                         if len(row[0]) > 0:
                             if not self.is_table_heading(row):
-                                self.table_dict['chapters'][last_chapter_idx]['rows'].append(self.create_rule_item(row))
+                                self.table_dict['chapters'][last_chap_idx]['rows'].append(self.create_rule_item(row))
                         else:
-                            last_row_index = len(self.table_dict['chapters'][last_chapter_idx]['rows']) - 1
-                            keys = list(self.table_dict['chapters'][last_chapter_idx]['rows'][last_row_index].keys())
+                            last_row_index = len(self.table_dict['chapters'][last_chap_idx]['rows']) - 1
+                            keys = list(self.table_dict['chapters'][last_chap_idx]['rows'][last_row_index].keys())
 
                             for idx, cell in enumerate(row):
                                 if len(cell) > 0:
                                     for text in cell:
-                                        self.table_dict['chapters'][last_chapter_idx]['rows'][last_row_index][keys[idx]].append(text)
+                                        self.table_dict['chapters'][last_chap_idx]['rows'][last_row_index][keys[idx]] \
+                                            .append(text)
 
         self.table_dict['footnotes'] = self.footnotes
 
@@ -196,7 +186,8 @@ class DocxScraper:
         # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_columns.json')), number_cols)
         self.data_writer(self.data_path.format("import/{0}".format(docx_file)), self.table_dict)
 
-    def process_footnote(self, text):
+    @staticmethod
+    def process_footnote(text):
         """
         Match footnote `(1)` in text and replace with in page anchor link
         :param text: text string
@@ -218,7 +209,7 @@ class DocxScraper:
         """
         item = {}
         item_keys = ["id", "description", "workingLeft", "workingRight"]
-        # print(cells)
+
         if len(cells) == 4:
             for i in range(len(item_keys)):
                 item[item_keys[i]] = [self.process_footnote(text) for text in cells[i]]
@@ -232,7 +223,8 @@ class DocxScraper:
 
         return item
 
-    def iter_unique_cells(self, row):
+    @staticmethod
+    def iter_unique_cells(row):
         """
         Generate cells in *row* skipping empty grid cells.
         :param row: docx table row
@@ -247,7 +239,8 @@ class DocxScraper:
             prior_tc = this_tc
             yield cell
 
-    def is_table_heading(self, row):
+    @staticmethod
+    def is_table_heading(row):
         """
         Check if the row is a heading row we do not need return True or False
         :param row: list is lists of text
@@ -262,7 +255,8 @@ class DocxScraper:
                 match_tests.append(True if match else False)
         return True in match_tests
 
-    def get_chapter_number(self, number):
+    @staticmethod
+    def get_chapter_number(number):
         """
         create a starter chapter dictionary object template with a number formatted as a zero padded number string
         :param number: string
@@ -282,8 +276,8 @@ class DocxScraper:
         for match in footnote_matches:
             if match is not None:
                 footnote = {
-                    "anchor":  '<a name="#footnote_{0}">{0}</a>'.format(match.group(1)),
-                    "note":  match.group(2)
+                    "anchor": '<a name="#footnote_{0}">{0}</a>'.format(match.group(1)),
+                    "note": match.group(2)
                 }
                 self.footnotes.append(footnote)
 
@@ -293,7 +287,6 @@ class DocxScraper:
         :param file_path: path to the file being created
         :param data: data to use as content for the file
         """
-        print (file_path)
         if data is None:
             sys.exit()
 
@@ -302,13 +295,14 @@ class DocxScraper:
         outfile = open(self.data_path.format("import/{0}.json".format(file_name)), 'w+')
         json.dump(data, outfile)
 
-    def is_column_number_row(self, row):
+    @staticmethod
+    def is_column_number_row(row):
         """
         Check if the row is a column numbers row we do not need return True or False
         :param row: list is lists of text
         :return: Boolean
         """
-        pattern = "^\(([\d]+)\)|or$"
+        pattern = '^\(([\d]+)\)|or$'
         matched_row = [[re.search(pattern, text) for text in cell] for idx, cell in enumerate(row)]
         match_tests = []
         for cell in matched_row:
@@ -316,7 +310,8 @@ class DocxScraper:
                 match_tests.append(True if match else False)
         return all(match is True for match in match_tests)
 
-    def is_chapter_row(self, row, regex):
+    @staticmethod
+    def is_chapter_row(row, regex):
         """
         Check if the row is a chapter row we do need and return True or False
         :param row: list of lists of text

@@ -1,8 +1,9 @@
-import json
+import sys
 from time import sleep
 
 from django.core.management.base import BaseCommand
 
+from hierarchy.models import Section
 from trade_tariff_service.importer import HierarchyBuilder
 
 
@@ -13,10 +14,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        builder = HierarchyBuilder()
-        model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder.data_scanner(model_names)
-        sleep(60)
-        builder.process_orphaned_subheadings()
-        sleep(60)
-        builder.process_orphaned_commodities()
+        sections = Section.objects.all()
+        if len(sections) > 0:
+            self.stdout.write("It looks like the hierarchy already exists.")
+        else:
+            builder = HierarchyBuilder()
+            model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+            builder.data_scanner(model_names)
+            sleep(60)
+            builder.process_orphaned_subheadings()
+            sleep(60)
+            builder.process_orphaned_commodities()

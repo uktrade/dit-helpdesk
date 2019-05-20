@@ -3,6 +3,9 @@ from feedback.models import Feedback
 
 
 class FeedbackForm(forms.ModelForm):
+    """
+    ModelForm for feedback model with error message definitions
+    """
 
     class Meta:
         model = Feedback
@@ -16,11 +19,15 @@ class FeedbackForm(forms.ModelForm):
                 'max_length': 'Name entered needs to be less than 255 characters'
             },
             'email': {
-                'invalid' : 'Enter an email address in the correct format, like name@example.com'
+                'invalid': 'Enter an email address in the correct format, like name@example.com'
             }
         }
 
     def clean(self):
+        """
+        form data cleansing and validation raises validation errors on failure
+        :return: form object
+        """
         cleaned_data = super().clean()
         email = cleaned_data.get("email")
         name = cleaned_data.get("name")

@@ -1,9 +1,12 @@
-from datetime import datetime
+import logging
 import re
+from datetime import datetime
+
 from dateutil.parser import parse as parse_dt
 
-from django.conf import settings
-from django.urls import reverse
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 COMMODITY_URL = (
     'https://www.trade-tariff.service.gov.uk/trade-tariff/'
@@ -11,7 +14,6 @@ COMMODITY_URL = (
 )
 CHAPTER_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/%s.json'
 HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.json'
-
 
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
@@ -72,6 +74,7 @@ class CommodityJson(object):
         measures = [
             ImportMeasureJson(d, self.code) for d in self.di['import_measures']
         ]
+
         measures = [
             json_obj for json_obj in measures
             if json_obj.is_relevant_for_origin_country(origin_country)
@@ -85,15 +88,13 @@ class CommodityJson(object):
         return measures
 
     def get_import_measure_by_id(self, measure_id, country_code=None):
+
         measures = [
             measure for measure in self.get_import_measures(country_code) if measure.measure_id == measure_id
         ]
-        if len(measures) > 1:
-            print("query returned {0} results. There should be only only one".format(len(measures)))
-        elif len(measures)== 1:
-            return measures[0]
-        else:
-            return None
+
+        return measures[0] if len(measures) == 1 else None
+
 
 class CommodityHeadingJson(object):
     """
@@ -119,6 +120,7 @@ class CommodityHeadingJson(object):
     @property
     def harmonized_code(self):
         return self.di['goods_nomenclature_item_id']
+
 
 class SectionJson(object):
 
@@ -198,7 +200,7 @@ class HeadingJson(object):
     def commodity_ids(self):
         if 'commodities' not in self.di:
             tup = (self.code, self.title)
-            print('warning: no commodities found for Heading: %s "%s"' % tup)
+            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
             return []
 
         return [
@@ -255,7 +257,7 @@ class ImportMeasureJson(object):
             return 'ERGA OMNES'
         # NOTE: when filtering by a GA, you will need to search
         # both the top-level and any children in case the country exists
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
     @property
     def type_id(self):
@@ -315,10 +317,10 @@ class ImportMeasureJson(object):
 
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di['geographical_area']
-        if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code:
+        if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code.upper():
             return True
         for child_area in geo_area['children_geographical_areas']:
-            if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code:
+            if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code.upper():
                 return True
         return False
 
@@ -344,7 +346,11 @@ class ImportMeasureJson(object):
 
     @property
     def vue__footnotes_html(self):
-        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation (EU) 2017/1585.'}
+        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the
+        # presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation
+        # (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject
+        # to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with
+        # Regulation (EU) 2017/1585.'}
         if not self.di['footnotes']:
             return '-'
 
@@ -401,7 +407,7 @@ class ImportMeasureJson(object):
         try:
             data = self.reformat_date(data)
         except Exception as e:
-            print(e.args)
+            logger.debug(e.args)
 
         data_with_headings = []
 
@@ -442,432 +448,14 @@ class ImportMeasureJson(object):
         ]
 
     def get_measure_conditions_by_measure_id(self, measure_id):
+
         return [
             condition for condition in self.get_measure_conditions() if condition.di['measure_id'] == measure_id
         ]
+
 
 class MeasureCondition(object):
 
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
-
-
-# ========================================
-# Section response:
-
-
-    """
-    {'_response_info': {'links': [{'href': '/trade-tariff/sections/4.json',
-                               'rel': 'self'},
-                              {'href': '/trade-tariff/sections',
-                               'rel': 'sections'}]},
-    'chapter_from': '16',
-    'chapter_to': '24',
-    'chapters': [{'chapter_note_id': 65,
-               'description': 'PREPARATIONS OF MEAT, OF FISH OR OF '
-                              'CRUSTACEANS, MOLLUSCS OR OTHER AQUATIC '
-                              'INVERTEBRATES',
-               'formatted_description': 'Preparations of meat, of fish or of '
-                                        'crustaceans, molluscs or other '
-                                        'aquatic invertebrates',
-               'goods_nomenclature_item_id': '1600000000',
-               'goods_nomenclature_sid': 32656,
-               'headings_from': '1601',
-               'headings_to': '1605'},
-              {'chapter_note_id': 66,
-               'description': 'SUGARS AND SUGAR CONFECTIONERY',
-               'formatted_description': 'Sugars and sugar confectionery',
-               'goods_nomenclature_item_id': '1700000000',
-               'goods_nomenclature_sid': 32980,
-               'headings_from': '1701',
-               'headings_to': '1704'},
-              {'chapter_note_id': 67,
-               'description': 'COCOA AND COCOA PREPARATIONS',
-               'formatted_description': 'Cocoa and cocoa preparations',
-               'goods_nomenclature_item_id': '1800000000',
-               'goods_nomenclature_sid': 33088,
-               'headings_from': '1801',
-               'headings_to': '1806'},
-              {'chapter_note_id': 68,
-               'description': 'PREPARATIONS OF CEREALS, FLOUR, STARCH OR MILK; '
-                              "PASTRYCOOKS' PRODUCTS",
-               'formatted_description': 'Preparations of cereals, flour, '
-                                        "starch or milk; pastrycooks' products",
-               'goods_nomenclature_item_id': '1900000000',
-               'goods_nomenclature_sid': 33158,
-               'headings_from': '1901',
-               'headings_to': '1905'},
-              {'chapter_note_id': 69,
-               'description': 'PREPARATIONS OF VEGETABLES, FRUIT, NUTS OR '
-                              'OTHER PARTS OF PLANTS',
-               'formatted_description': 'Preparations of vegetables, fruit, '
-                                        'nuts or other parts of plants',
-               'goods_nomenclature_item_id': '2000000000',
-               'goods_nomenclature_sid': 33378,
-               'headings_from': '2001',
-               'headings_to': '2009'},
-              {'chapter_note_id': 70,
-               'description': 'MISCELLANEOUS EDIBLE PREPARATIONS',
-               'formatted_description': 'Miscellaneous edible preparations',
-               'goods_nomenclature_item_id': '2100000000',
-               'goods_nomenclature_sid': 34458,
-               'headings_from': '2101',
-               'headings_to': '2106'},
-              {'chapter_note_id': 71,
-               'description': 'BEVERAGES, SPIRITS AND VINEGAR',
-               'formatted_description': 'Beverages, spirits and vinegar',
-               'goods_nomenclature_item_id': '2200000000',
-               'goods_nomenclature_sid': 34628,
-               'headings_from': '2201',
-               'headings_to': '2209'},
-              {'chapter_note_id': 72,
-               'description': 'RESIDUES AND WASTE FROM THE FOOD INDUSTRIES; '
-                              'PREPARED ANIMAL FODDER',
-               'formatted_description': 'Residues and waste from the food '
-                                        'industries; prepared animal fodder',
-               'goods_nomenclature_item_id': '2300000000',
-               'goods_nomenclature_sid': 35125,
-               'headings_from': '2301',
-               'headings_to': '2309'},
-              {'chapter_note_id': 73,
-               'description': 'TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES',
-               'formatted_description': 'Tobacco and manufactured tobacco '
-                                        'substitutes',
-               'goods_nomenclature_item_id': '2400000000',
-               'goods_nomenclature_sid': 35246,
-               'headings_from': '2401',
-               'headings_to': '2403'}],
-    'id': 4,
-    'numeral': 'IV',
-    'position': 4,
-    'title': 'Prepared foodstuffs; beverages, spirits and vinegar; tobacco and '
-          'manufactured tobacco substitutes'}
-    """
-
-# ======================
-
-# Chapter response
-
-    """
-    Chapter:
-
-    {'_response_info': {'links': [{'href': '/trade-tariff/chapters/24.json',
-                               'rel': 'self'},
-                              {'href': '/trade-tariff/sections/4',
-                               'rel': 'section'}]},
-    'chapter_note': '* 1\\. This chapter does not cover medicinal cigarettes '
-                 '(Chapter 30).',
-    'chapter_note_id': 73,
-    'description': 'TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES',
-    'formatted_description': 'Tobacco and manufactured tobacco substitutes',
-    'goods_nomenclature_item_id': '2400000000',
-    'goods_nomenclature_sid': 35246,
-    'headings': [{'children': [],
-               'declarable': False,
-               'description': 'Unmanufactured tobacco; tobacco refuse',
-               'description_plain': 'Unmanufactured tobacco; tobacco refuse',
-               'formatted_description': 'Unmanufactured tobacco; tobacco '
-                                        'refuse',
-               'goods_nomenclature_item_id': '2401000000',
-               'goods_nomenclature_sid': 35247,
-               'leaf': True,
-               'producline_suffix': '80'},
-              {'children': [],
-               'declarable': False,
-               'description': 'Cigars, cheroots, cigarillos and cigarettes, of '
-                              'tobacco or of tobacco substitutes',
-               'description_plain': 'Cigars, cheroots, cigarillos and '
-                                    'cigarettes, of tobacco or of tobacco '
-                                    'substitutes',
-               'formatted_description': 'Cigars, cheroots, cigarillos and '
-                                        'cigarettes, of tobacco or of tobacco '
-                                        'substitutes',
-               'goods_nomenclature_item_id': '2402000000',
-               'goods_nomenclature_sid': 35283,
-               'leaf': True,
-               'producline_suffix': '80'},
-              {'children': [],
-               'declarable': False,
-               'description': 'Other manufactured tobacco and manufactured '
-                              "tobacco substitutes; 'homogenised' or "
-                              "'reconstituted' tobacco; tobacco extracts and "
-                              'essences',
-               'description_plain': 'Other manufactured tobacco and '
-                                    'manufactured tobacco substitutes; '
-                                    "'homogenised' or 'reconstituted' tobacco; "
-                                    'tobacco extracts and essences',
-               'formatted_description': 'Other manufactured tobacco and '
-                                        'manufactured tobacco substitutes; '
-                                        "'homogenised' or 'reconstituted' "
-                                        'tobacco; tobacco extracts and '
-                                        'essences',
-               'goods_nomenclature_item_id': '2403000000',
-               'goods_nomenclature_sid': 35287,
-               'leaf': True,
-               'producline_suffix': '80'}],
-    'section': {'id': 4,
-             'numeral': 'IV',
-             'position': 4,
-             'title': 'Prepared foodstuffs; beverages, spirits and vinegar; '
-                      'tobacco and manufactured tobacco substitutes'},
-    'section_id': 4}
-    """
-
-# =======================
-
-# Heading response
-
-    """
-
-    {'_response_info': {'links': [{'href': '/trade-tariff/headings/2402.json',
-                               'rel': 'self'},
-                              {'href': '/trade-tariff/chapters/24',
-                               'rel': 'chapter'},
-                              {'href': '/trade-tariff/sections/4',
-                               'rel': 'section'}]},
-    'bti_url': 'http://ec.europa.eu/taxation_customs/dds2/ebti/ebti_consultation.jsp?Lang=en&nomenc=2402000000&Expand=true',
-    'chapter': {'chapter_note': '* 1\\. This chapter does not cover medicinal '
-                             'cigarettes (Chapter 30).',
-             'description': 'TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES',
-             'formatted_description': 'Tobacco and manufactured tobacco '
-                                      'substitutes',
-             'goods_nomenclature_item_id': '2400000000'},
-    'commodities': [{'description': 'Cigars, cheroots and cigarillos, containing '
-                                 'tobacco',
-                  'description_plain': 'Cigars, cheroots and cigarillos, '
-                                       'containing tobacco',
-                  'formatted_description': 'Cigars, cheroots and cigarillos, '
-                                           'containing tobacco',
-                  'goods_nomenclature_item_id': '2402100000',
-                  'goods_nomenclature_sid': 35284,
-                  'leaf': True,
-                  'number_indents': 1,
-                  'overview_measures': [{'duty_expression': {'base': '20.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='20.0 "
-                                                                               "'>20.00</span> "
-                                                                               '%'},
-                                         'id': -488398,
-                                         'measure_type': {'description': 'VAT '
-                                                                         'standard '
-                                                                         'rate',
-                                                          'id': 'VTS'},
-                                         'vat': True},
-                                        {'duty_expression': {'base': '1000 '
-                                                                     'p/st',
-                                                             'formatted_base': '<abbr '
-                                                                               "title='1000 "
-                                                                               "items'>1000 "
-                                                                               'p/st</abbr>'},
-                                         'id': 2982268,
-                                         'measure_type': {'description': 'Supplementary '
-                                                                         'unit',
-                                                          'id': '109'},
-                                         'vat': False},
-                                        {'duty_expression': {'base': '26.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='26.0 "
-                                                                               "'>26.00</span> "
-                                                                               '%'},
-                                         'id': 2053040,
-                                         'measure_type': {'description': 'Third '
-                                                                         'country '
-                                                                         'duty',
-                                                          'id': '103'},
-                                         'vat': False}],
-                  'parent_sid': None,
-                  'producline_suffix': '80'},
-                 {'description': 'Cigarettes containing tobacco',
-                  'description_plain': 'Cigarettes containing tobacco',
-                  'formatted_description': 'Cigarettes containing tobacco',
-                  'goods_nomenclature_item_id': '2402200000',
-                  'goods_nomenclature_sid': 35285,
-                  'leaf': False,
-                  'number_indents': 1,
-                  'parent_sid': None,
-                  'producline_suffix': '80'},
-                 {'description': 'Containing cloves',
-                  'description_plain': 'Containing cloves',
-                  'formatted_description': 'Containing cloves',
-                  'goods_nomenclature_item_id': '2402201000',
-                  'goods_nomenclature_sid': 55653,
-                  'leaf': True,
-                  'number_indents': 2,
-                  'overview_measures': [{'duty_expression': {'base': '20.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='20.0 "
-                                                                               "'>20.00</span> "
-                                                                               '%'},
-                                         'id': -463662,
-                                         'measure_type': {'description': 'VAT '
-                                                                         'standard '
-                                                                         'rate',
-                                                          'id': 'VTS'},
-                                         'vat': True},
-                                        {'duty_expression': {'base': '1000 '
-                                                                     'p/st',
-                                                             'formatted_base': '<abbr '
-                                                                               "title='1000 "
-                                                                               "items'>1000 "
-                                                                               'p/st</abbr>'},
-                                         'id': 2982269,
-                                         'measure_type': {'description': 'Supplementary '
-                                                                         'unit',
-                                                          'id': '109'},
-                                         'vat': False},
-                                        {'duty_expression': {'base': '10.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='10.0 "
-                                                                               "'>10.00</span> "
-                                                                               '%'},
-                                         'id': 2053041,
-                                         'measure_type': {'description': 'Third '
-                                                                         'country '
-                                                                         'duty',
-                                                          'id': '103'},
-                                         'vat': False}],
-                  'parent_sid': 35285,
-                  'producline_suffix': '80'},
-                 {'description': 'Other',
-                  'description_plain': 'Other',
-                  'formatted_description': 'Other',
-                  'goods_nomenclature_item_id': '2402209000',
-                  'goods_nomenclature_sid': 55654,
-                  'leaf': True,
-                  'number_indents': 2,
-                  'overview_measures': [{'duty_expression': {'base': '20.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='20.0 "
-                                                                               "'>20.00</span> "
-                                                                               '%'},
-                                         'id': -488435,
-                                         'measure_type': {'description': 'VAT '
-                                                                         'standard '
-                                                                         'rate',
-                                                          'id': 'VTS'},
-                                         'vat': True},
-                                        {'duty_expression': {'base': '1000 '
-                                                                     'p/st',
-                                                             'formatted_base': '<abbr '
-                                                                               "title='1000 "
-                                                                               "items'>1000 "
-                                                                               'p/st</abbr>'},
-                                         'id': 2982269,
-                                         'measure_type': {'description': 'Supplementary '
-                                                                         'unit',
-                                                          'id': '109'},
-                                         'vat': False},
-                                        {'duty_expression': {'base': '57.60 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='57.6 "
-                                                                               "'>57.60</span> "
-                                                                               '%'},
-                                         'id': 2053042,
-                                         'measure_type': {'description': 'Third '
-                                                                         'country '
-                                                                         'duty',
-                                                          'id': '103'},
-                                         'vat': False}],
-                  'parent_sid': 35285,
-                  'producline_suffix': '80'},
-                 {'description': 'Other',
-                  'description_plain': 'Other',
-                  'formatted_description': 'Other',
-                  'goods_nomenclature_item_id': '2402900000',
-                  'goods_nomenclature_sid': 35286,
-                  'leaf': True,
-                  'number_indents': 1,
-                  'overview_measures': [{'duty_expression': {'base': '20.00 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='20.0 "
-                                                                               "'>20.00</span> "
-                                                                               '%'},
-                                         'id': -488361,
-                                         'measure_type': {'description': 'VAT '
-                                                                         'standard '
-                                                                         'rate',
-                                                          'id': 'VTS'},
-                                         'vat': True},
-                                        {'duty_expression': {'base': '57.60 %',
-                                                             'formatted_base': '<span '
-                                                                               "title='57.6 "
-                                                                               "'>57.60</span> "
-                                                                               '%'},
-                                         'id': 2053043,
-                                         'measure_type': {'description': 'Third '
-                                                                         'country '
-                                                                         'duty',
-                                                          'id': '103'},
-                                         'vat': False}],
-                  'parent_sid': None,
-                  'producline_suffix': '80'}],
-    'description': 'Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes',
-    'footnotes': [{'code': 'TN701',
-                'description': 'According to  the Council Regulation (EU) No '
-                               '692/2014 (OJ L183, p. 9) it shall be '
-                               'prohibited to import into European Union goods '
-                               'originating in Crimea or Sevastopol.\n'
-                               'The prohibition shall not apply in respect '
-                               'of: \n'
-                               '(a) the execution until 26 September 2014, of '
-                               'trade contracts concluded before 25 June 2014, '
-                               'or of ancillary contracts necessary for the '
-                               'execution of such contracts, provided that the '
-                               'natural or legal persons, entity or body '
-                               'seeking to perform the contract have notified, '
-                               'at least 10 working days in advance, the '
-                               'activity or transaction to the competent '
-                               'authority of the Member State in which they '
-                               'are established. \n'
-                               '(b) goods originating in Crimea or Sevastopol '
-                               'which have been made available to the '
-                               'Ukrainian authorities for examination, for '
-                               'which compliance with the conditions '
-                               'conferring entitlement to preferential origin '
-                               'has been verified and for which a certificate '
-                               'of origin has been issued in accordance with '
-                               'Regulation (EU) No 978/2012 and Regulation '
-                               '(EU) No 374/2014 or in accordance with the '
-                               'EU-Ukraine Association Agreement.',
-                'formatted_description': 'According to  the Council Regulation '
-                                         '(EU) No 692/2014 (OJ L183, p. 9) it '
-                                         'shall be prohibited to import into '
-                                         'European Union goods originating in '
-                                         'Crimea or Sevastopol.<br/>The '
-                                         'prohibition shall not apply in '
-                                         'respect of: <br/>(a) the execution '
-                                         'until 26 September 2014, of trade '
-                                         'contracts concluded before 25 June '
-                                         '2014, or of ancillary contracts '
-                                         'necessary for the execution of such '
-                                         'contracts, provided that the natural '
-                                         'or legal persons, entity or body '
-                                         'seeking to perform the contract have '
-                                         'notified, at least 10 working days '
-                                         'in advance, the activity or '
-                                         'transaction to the competent '
-                                         'authority of the Member State in '
-                                         'which they are established. <br/>(b) '
-                                         'goods originating in Crimea or '
-                                         'Sevastopol which have been made '
-                                         'available to the Ukrainian '
-                                         'authorities for examination, for '
-                                         'which compliance with the conditions '
-                                         'conferring entitlement to '
-                                         'preferential origin has been '
-                                         'verified and for which a certificate '
-                                         'of origin has been issued in '
-                                         'accordance with Regulation (EU) No '
-                                         '978/2012 and Regulation (EU) No '
-                                         '374/2014 or in accordance with the '
-                                         'EU-Ukraine Association Agreement.'}],
-    'formatted_description': 'Cigars, cheroots, cigarillos and cigarettes, of '
-                          'tobacco or of tobacco substitutes',
-    'goods_nomenclature_item_id': '2402000000',
-    'section': {'numeral': 'IV',
-             'position': 4,
-             'title': 'Prepared foodstuffs; beverages, spirits and vinegar; '
-                      'tobacco and manufactured tobacco substitutes'}
-    }
-    """

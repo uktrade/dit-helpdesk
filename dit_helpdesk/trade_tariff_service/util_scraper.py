@@ -1,13 +1,18 @@
 import json
+import logging
+
 import requests
 
 from commodities.models import Commodity
 from hierarchy.models import Heading, SubHeading
 
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
+    'https://www.trade-tariff.service.gov.uk/'
+    'commodities/%s.json'
 )
 
 
@@ -84,18 +89,18 @@ def _attach_to_parent(obj, parent):
         obj.parent_subheading = parent
         obj.save()
     else:
-        print('warning: cannot attach child %s to parent %s' % type_pair)
+        logger.debug('warning: cannot attach child %s to parent %s' % type_pair)
 
 
 def get_commodity_json(commodity_code):
     url = COMMODITY_URL % commodity_code
-    print('        COMMODITY: ' + url)
+    logger.debug('        COMMODITY: ' + url)
     try:
         resp = requests.get(url, timeout=10)
     except requests.exceptions.ReadTimeout:
         return None
     resp_content = resp.content.decode()
     if resp.status_code != 200:
-        print('url failed: ' + url)
+        logger.debug('url failed: ' + url)
         return None
     return resp_content

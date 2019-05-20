@@ -16,7 +16,7 @@ with open(HIERARCHY_JSON_PATH) as f:
 def _get_expanded_context(selected_node_id):
     """
     Given a selected_node_id (a location in the hierarchy), return
-    a list of currently expanded nodes.
+    a list of hierarchy ids that make up the path to the currently expanded context.
     """
     if selected_node_id == 'root':
         return []
@@ -57,6 +57,14 @@ def _get_expanded_context(selected_node_id):
 
 
 def _get_hierarchy_level_html(node, expanded, origin_country):
+    """
+    View helper function to return the html for the selected hierarchy node
+    :param node: string or model instance the current node
+    :param expanded: list of hierarchy ids that make up the currently expanded path
+    :param origin_country: string representing the origin country code
+    :return: html snippet that represents the expanded section of the hierarchy
+    """
+
     if node == 'root':
         children = Section.objects.all().order_by('roman_numeral')
         html = '<ul class="app-hierarchy-tree">'
@@ -110,6 +118,13 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
 
 
 def hierarchy_data(country_code, node_id='root'):
+    """
+    View helper function
+    :param country_code: string representing country code
+    :param node_id: string representing hierarchy node id
+    :return: html snippet that represents the expanded section of the hierarchy
+    """
+
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded, country_code)

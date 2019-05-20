@@ -122,3 +122,15 @@ node_modules/
 src/
 .vscode
 docker-compose.env
+
+.DS_Store
+
+# exclude everything
+reports/*
+.envs/.development/*
+.envs/.test/*
+!reports/.gitkeep
+!.envs/.development/.postgres.template
+!.envs/.development/.django.template
+!.envs/.test/.postgres.template
+!.envs/.test/.django.template
