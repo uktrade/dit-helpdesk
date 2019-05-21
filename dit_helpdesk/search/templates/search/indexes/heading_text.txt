@@ -1,2 +1,2 @@
-{{ object.get_search_index_words }}
+{{ object.commodity_code }}
 

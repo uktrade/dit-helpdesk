@@ -6,7 +6,6 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
-import json
 import re
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import render, get_object_or_404, redirect

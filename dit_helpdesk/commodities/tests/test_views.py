@@ -97,7 +97,7 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_view_is_using_the_correct_template(self):
         resp = self.client.get(self.url)
-        self.assertTemplateUsed('commodity_detail.html')
+        self.assertTemplateUsed(resp, 'commodity_detail.html')
         self.assertInHTML(
             resp.context['commodity'].description,
             resp.content.decode("utf-8")

@@ -26,6 +26,7 @@ from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 from search import views as search_views
+from search.views import CommoditySearchView
 
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
@@ -86,21 +87,16 @@ urlpatterns = [
          name="privacy_terms_and_conditions_views"
     ),
 
-    path(
-        'search/',
-        search_views.search_view,
+    re_path(
+        r'search/country/(?P<country_code>\w+)/$',
+        CommoditySearchView.as_view(),
         name='search-view'
     ),
 
     re_path(
-        r'search/country/(?P<country_code>\w+)/$',
-        search_views.search_view,
-        name='search'
-    ),
-
-    re_path(
         r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)',
-        search_views.search_hierarchy, name='search-hierarchy'
+        search_views.search_hierarchy,
+        name='search-hierarchy'
     ),
 
     re_path(
@@ -108,6 +104,8 @@ urlpatterns = [
         HealthCheckView.as_view(),
         name='healthcheck'
     ),
+
+    re_path('commodity', include('search.urls')),
 ]
 
 if settings.ADMIN_ENABLED:

@@ -23,4 +23,4 @@ class CoreViewsTestCase(TestCase):
         req = RequestFactory().get('/')
         resp = error500handler(req)
         self.assertEqual(resp.status_code, 500)
-        self.assertTemplateUsed('core/500.html')
+        self.assertTemplateUsed(resp, 'core/500.html')
