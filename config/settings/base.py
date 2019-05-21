@@ -102,8 +102,6 @@ DATABASES = {
     'default': dj_database_url.config()
 }
 
-HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
 CACHES = {
@@ -113,13 +111,45 @@ CACHES = {
     },
 }
 
-HAYSTACK_CONNECTIONS = {
+# HAYSTACK SETTINGS
+# INSTALLED_APPS.append('haystack')
+# HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#         'URL': 'http://es:9200',
+#         'INDEX_NAME': 'haystack',
+#     },
+# }
+# ENDHAYSTACK SETTINGS
+
+
+# ELASTICSEARCH_DSL SETTINGS
+INSTALLED_APPS.append('rest_framework')
+INSTALLED_APPS.append('django_elasticsearch_dsl')
+INSTALLED_APPS.append('django_elasticsearch_dsl_drf')
+ELASTICSEARCH_DSL = {
     'default': {
-        'ENGINE': 'haystack.backends.elasticsearch5_backend.Elasticsearch5SearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
+        'hosts': 'http://es:9200'
     },
 }
+
+# Name of the Elasticsearch index
+ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.commodity': 'commodity',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+    'ORDERING_PARAM': 'ordering',
+}
+# END ELASTICSEARCH_DSL SETTINGS
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

@@ -13,13 +13,11 @@ INDEX.settings(
     number_of_replicas=0
 )
 
-
 @INDEX.doc_type
 class CommodityDocument(DocType):
     """
     Commodity elasticsearch document
     """
-
     # heading = fields.ObjectField(properties={
     #     'heading_code': fields.TextField(),
     #     'description': fields.TextField(),
@@ -77,5 +75,4 @@ class CommodityDocument(DocType):
     #         return related_instance.children_concrete
     #     elif isinstance(related_instance, SubHeading):
     #         return related_instance.children_concrete
-
 
