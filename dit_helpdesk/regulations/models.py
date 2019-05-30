@@ -5,7 +5,7 @@ class Regulation(models.Model):
     """
     Regulation model
     """
-    title = models.TextField()
+    title = models.TextField(null=True)
     commodities = models.ManyToManyField("commodities.Commodity")
     subheadings = models.ManyToManyField("hierarchy.SubHeading")
 
@@ -20,7 +20,7 @@ class Document(models.Model):
     """
     Regulation Document model
     """
-    title = models.TextField()
+    title = models.TextField(null=True)
     regulations = models.ManyToManyField(Regulation)
     type = models.CharField(max_length=255)
     celex = models.CharField(max_length=20)

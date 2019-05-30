@@ -27,10 +27,11 @@
       </span>
       Enter the commodity code for your goods
     </h2>
-    <form action="{% url 'search-view' country_code=country_code %}" name="commodity_search" method="get">
+    <form action="{% url 'search:search-commodity' country_code=country_code %}" name="commodity_search" method="get">
         <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
             If you do not know the commodity code, you can look for it below.
+              Alternatively, try the <a href="{% url 'search:search-advanced' country_code=country_code.lower %}">Advanced search</a>.
           </label>
           {% if form.q.errors %}
             <span id="commodity-code-error" class="govuk-error-message">

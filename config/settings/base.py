@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'privacy_terms_and_conditions',
     'trade_tariff_service',
     'django_extensions',
-    'authbroker_client',
+    # 'authbroker_client',
     'user',
     'regulations',
     'healthcheck',
@@ -111,19 +111,6 @@ CACHES = {
     },
 }
 
-# HAYSTACK SETTINGS
-# INSTALLED_APPS.append('haystack')
-# HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-# HAYSTACK_CONNECTIONS = {
-#     'default': {
-#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-#         'URL': 'http://es:9200',
-#         'INDEX_NAME': 'haystack',
-#     },
-# }
-# ENDHAYSTACK SETTINGS
-
-
 # ELASTICSEARCH_DSL SETTINGS
 INSTALLED_APPS.append('rest_framework')
 INSTALLED_APPS.append('django_elasticsearch_dsl')
@@ -149,7 +136,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
     'ORDERING_PARAM': 'ordering',
 }
-# END ELASTICSEARCH_DSL SETTINGS
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -211,6 +197,7 @@ MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
@@ -250,6 +237,8 @@ REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
 RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
+
+SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 SECTION_URL = (
     "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
@@ -328,3 +317,22 @@ logging.config.dictConfig({
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
 })
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+    'ORDERING_PARAM': 'ordering',
+}
+
+ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.section': 'section',
+    'search.documents.chapter': 'chapter',
+    'search.documents.heading': 'heading',
+    'search.documents.subheading': 'subheading',
+    'search.documents.commodity': 'commodity',
+}

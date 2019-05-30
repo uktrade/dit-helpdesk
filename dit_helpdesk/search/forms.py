@@ -27,3 +27,15 @@ class CommoditySearchForm(forms.Form):
     # #         raise forms.ValidationError('Enter a commodity code')
     #     if not isinstance(q, int):
     #         raise forms.ValidationError('You have entered text, please enter a commodity code')
+
+
+class KeywordSearchForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(KeywordSearchForm, self).__init__(*args, **kwargs)
+        self.fields['q'].widget.attrs['type'] = "text"
+
+    q = forms.CharField()
+
+    country = forms.CharField(required=True, max_length=2, widget=forms.HiddenInput())
+

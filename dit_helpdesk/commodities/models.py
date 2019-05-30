@@ -26,6 +26,8 @@ class Commodity(models.Model):
     parent_productline_suffix = models.CharField(max_length=2, null=True)
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
+    keywords = models.TextField()
+    ranking = models.SmallIntegerField()
 
     tts_json = models.TextField(blank=True, null=True)
     tts_heading_json = models.TextField(blank=True, null=True)

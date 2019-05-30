@@ -40,6 +40,8 @@ class Section(models.Model):
     roman_numeral = models.CharField(max_length=5, null=True)
     title = models.TextField(blank=True, null=True)
     position = models.IntegerField(null=True)
+    keywords = models.TextField()
+    ranking = models.SmallIntegerField()
 
     def __str__(self):
         return "Section {0}".format(self.roman_numeral)
@@ -114,7 +116,7 @@ class Section(models.Model):
         if country_code is not None:
             kwargs['country_code'] = country_code.lower()
 
-        return reverse('search-hierarchy', kwargs=kwargs)
+        return reverse('search:search-hierarchy', kwargs=kwargs)
 
 
 class Chapter(models.Model):
@@ -131,6 +133,8 @@ class Chapter(models.Model):
     parent_productline_suffix = models.CharField(max_length=2, null=True)
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
+    keywords = models.TextField()
+    ranking = models.SmallIntegerField()
 
     chapter_code = models.CharField(max_length=30)
     tts_json = models.TextField(blank=True, null=True)
@@ -141,6 +145,10 @@ class Chapter(models.Model):
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
+
+    @property
+    def commodity_code(self):
+        return self.chapter_code
 
     @property
     def title(self):
@@ -220,7 +228,7 @@ class Chapter(models.Model):
         if country_code is not None:
             kwargs['country_code'] = country_code.lower()
 
-        return reverse('search-hierarchy', kwargs=kwargs)
+        return reverse('search:search-hierarchy', kwargs=kwargs)
 
 
 class Heading(models.Model):
@@ -232,6 +240,8 @@ class Heading(models.Model):
     parent_productline_suffix = models.CharField(max_length=2, null=True)
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
+    keywords = models.TextField()
+    ranking = models.SmallIntegerField()
 
     heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(
@@ -244,6 +254,10 @@ class Heading(models.Model):
         'hierarchy.Chapter', blank=True, null=True, on_delete=models.CASCADE,
         related_name='headings'
     )
+
+    @property
+    def commodity_code(self):
+        return self.heading_code
 
     @property
     def hierarchy_key(self):
@@ -311,7 +325,7 @@ class Heading(models.Model):
         if country_code is not None:
             kwargs['country_code'] = country_code.lower()
 
-        return reverse('search-hierarchy', kwargs=kwargs)
+        return reverse('search:search-hierarchy', kwargs=kwargs)
 
 
 class SubHeading(models.Model):
@@ -321,6 +335,8 @@ class SubHeading(models.Model):
     parent_productline_suffix = models.CharField(max_length=2, null=True)
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
+    keywords = models.TextField()
+    ranking = models.SmallIntegerField()
 
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
@@ -405,7 +421,7 @@ class SubHeading(models.Model):
         if country_code is not None:
             kwargs['country_code'] = country_code.lower()
 
-        return reverse('search-hierarchy', kwargs=kwargs)
+        return reverse('search:search-hierarchy', kwargs=kwargs)
 
     def get_hierarchy_children(self):
         """

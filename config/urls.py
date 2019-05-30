@@ -25,13 +25,13 @@ from feedback import views as feedback_views
 from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
-from search import views as search_views
-from search.views import CommoditySearchView
+
 
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
+
     path(
         '',
         index.IndexRedirect.as_view(),
@@ -88,28 +88,24 @@ urlpatterns = [
     ),
 
     re_path(
-        r'search/country/(?P<country_code>\w+)/$',
-        CommoditySearchView.as_view(),
-        name='search-view'
-    ),
-
-    re_path(
-        r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)',
-        search_views.search_hierarchy,
-        name='search-hierarchy'
-    ),
-
-    re_path(
         r'^check/$',
         HealthCheckView.as_view(),
         name='healthcheck'
     ),
 
-    re_path('commodity', include('search.urls')),
+    re_path('search/', include('search.urls', namespace="search")),
 ]
+
 
 if settings.ADMIN_ENABLED:
     urlpatterns += [
         path('admin/login/', admin_login_view),
         path('admin/', admin.site.urls)
     ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
