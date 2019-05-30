@@ -1,5 +1,7 @@
-from search.views import CommodityDocumentViewSet
+from django.urls import re_path
 
+from search import views
+from django.conf.urls import url, include
 from rest_framework.routers import SimpleRouter
 
 app_name = 'search'
@@ -7,8 +9,27 @@ app_name = 'search'
 router = SimpleRouter()
 router.register(
     prefix=r'',
-    base_name='commodities',
-    viewset=CommodityDocumentViewSet
+    base_name='search',
+    viewset=views.CommodityViewSet
 )
 
-urlpatterns = router.urls
+urlpatterns = [
+    re_path(r'^api/', include(router.urls)),
+
+    re_path(r'country/(?P<country_code>\w+)/advanced/',
+            views.SearchView.as_view(),
+            name="search-advanced"),
+
+    re_path(
+        r'country/(?P<country_code>\w+)/$',
+        views.CommoditySearchView.as_view(),
+        name='search-commodity'
+    ),
+
+    re_path(
+        r'country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)',
+        views.search_hierarchy,
+        name='search-hierarchy'
+    ),
+
+]

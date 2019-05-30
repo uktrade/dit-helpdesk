@@ -87,13 +87,13 @@ class CommoditySearchViewTestCase(TestCase):
         self.assertEqual(len(Commodity.objects.all()), 3)
 
     def test_commodity_search_is_using_the_correct_template(self):
-        logger.info(reverse('search-view', kwargs={"country_code": "au"}))
-        response = self.client.get(reverse('search-view', kwargs={"country_code": "au"}))
+        logger.info(reverse('search:search-commodity', kwargs={"country_code": "au"}))
+        response = self.client.get(reverse('search:search-commodity', kwargs={"country_code": "au"}))
         self.assertTemplateUsed(response, 'search/commodity_search.html')
 
 
     # def test_search_view_returns_http_200(self):
-    #     resp = self.client.get(reverse('search-view', kwargs={"country_code": "au"}))
+    #     resp = self.client.get(reverse('search:search-commodity', kwargs={"country_code": "au"}))
     #     self.assertEqual(resp.status_code, 200)
     #
     # def test_search_view_with_nonexisting_country_code_returns_http_302(self):

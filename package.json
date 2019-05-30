@@ -9,14 +9,14 @@
     "watch": "npm run watch:all",
     "lint": "npm run lint:javascript && npm run lint:sass",
     "lint:javascript": "eslint 'gulpfile.js' 'assets/**/*.js'",
-    "lint:sass": "sass-lint --config .sasslintrc './assets/**/*.scss' --verbose --no-exit",
+    "lint:sass": "sass-lint --config .sasslintrc 'assets/**/*.scss' --verbose --no-exit",
     "build:javascript": "gulp copyExternalAssets && gulp build:javascripts",
     "watch:javascript": "gulp copyExternalAssets && gulp watch:javascripts",
     "build:styles": "gulp copyExternalAssets && gulp build:styles",
     "watch:styles": "gulp copyExternalAssets && gulp watch:styles",
     "build:all": "gulp build",
     "watch:all": "gulp watch",
-    "update-countries": "node ./assets/countries/add-synonyms.js"
+    "update-countries": "node assets/countries/add-synonyms.js"
   },
   "dependencies": {
     "autoprefixer": "^9.4.10",

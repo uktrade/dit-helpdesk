@@ -38,3 +38,10 @@ services:
     restart: always
     ports:
       - "6379:6379"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.3
+    environment:
+      ELASTICSEARCH_URL: http://es:9200
+    ports:
+      - "5601:5601"
