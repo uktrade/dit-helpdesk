@@ -160,7 +160,6 @@ class Section(models.Model):
     #     except Exception as err:
     #         print(err.args)
 
-
 class Chapter(models.Model):
     """
     Model representing the second level chapters of the hierarchy
@@ -316,7 +315,6 @@ class Chapter(models.Model):
     #                                 "type": child._meta.model_name})
     #     except Exception as err:
     #         print(err.args)
-
 
 class Heading(models.Model):
     goods_nomenclature_sid = models.CharField(max_length=10, null=True)

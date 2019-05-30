@@ -34,13 +34,13 @@ def show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
+
 ES_URL = 'http://es:9200'
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': ES_URL
     },
 }
-
 
 # ELASTICSEARCH_INDEX_NAMES = {
 #     'search.documents.section': 'dev_sections',
@@ -49,4 +49,3 @@ ELASTICSEARCH_DSL = {
 #     'search.documents.subheading': 'dev_subheadings',
 #     'search.documents.commodity': 'dev_commodities',
 # }
-

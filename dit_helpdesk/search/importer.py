@@ -150,3 +150,4 @@ class SearchKeywordsImporter:
 
         logger.info("Multiples Found: ", multiples_found)
         logger.info("Not founds: ", not_found)
+

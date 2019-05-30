@@ -15,6 +15,7 @@ from django_elasticsearch_dsl_drf.filter_backends import (
     SearchFilterBackend,
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+
 from elasticsearch import Elasticsearch
 
 from countries.models import Country
@@ -36,9 +37,13 @@ from django_elasticsearch_dsl_drf.filter_backends import (
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
+from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
-from search.forms import CommoditySearchForm
-from search.serializers import CommodityDocumentSerializer
+from search.documents.heading import HeadingDocument
+from search.documents.section import SectionDocument
+from search.documents.subheading import SubHeadingDocument
+from search.forms import CommoditySearchForm, KeywordSearchForm
+from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, ChapterDocumentSerializer, SectionDocumentSerializer
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -200,7 +205,6 @@ class CommodityDocumentViewSet(DocumentViewSet):
         'commodity_code',
         'description',
     )
-
 
 class CommodityViewSet(DocumentViewSet):
 
@@ -514,6 +518,7 @@ class SubHeadingViewSet(DocumentViewSet):
     }
 
     # Specify default ordering
+
     ordering = ('ranking',)
 
 

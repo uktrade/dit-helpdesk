@@ -15,7 +15,6 @@ router.register(
 
 urlpatterns = [
     re_path(r'^api/', include(router.urls)),
-
     re_path(
         r'country/(?P<country_code>\w+)/$',
         views.CommoditySearchView.as_view(),
@@ -27,6 +26,5 @@ urlpatterns = [
         views.search_hierarchy,
         name='search-hierarchy'
     ),
-
 ]
 

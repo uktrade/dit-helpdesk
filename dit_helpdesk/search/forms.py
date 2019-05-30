@@ -15,4 +15,3 @@ class CommoditySearchForm(forms.Form):
     q = forms.CharField()
 
     country = forms.CharField(required=True, max_length=2, widget=forms.HiddenInput())
-
