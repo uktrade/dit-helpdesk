@@ -1,5 +1,6 @@
 from pprint import pprint
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import forms
 from django.shortcuts import render, redirect
@@ -349,7 +350,7 @@ class SearchView(FormView):
             if self.form.is_valid():
                 query = self.request.GET.get('q')
 
-                client = Elasticsearch(hosts=["es"])
+                client = Elasticsearch(hosts=[settings.ES_URL])
 
                 search = Search().using(client).query("match", keywords=query).sort({"ranking": {"order": "desc"}})
 
