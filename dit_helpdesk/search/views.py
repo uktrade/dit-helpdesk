@@ -349,36 +349,49 @@ class SearchView(FormView):
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
+                context["query"] = query
+
+                # if len(query.split(" ")) > 1:
+                #     query_object = {"bool": {
+                #         "must": [{"match": {"description": word}} for word in query.split(" ")],
+                #         "should": [{"match": {"keywords": word}} for word in query.split(" ")]
+                #     }}
+                # else:
+                query_object = {
+                            "multi_match": {
+                                "query": query,
+                                "type": "best_fields",
+                                "fields": ["description", "keywords"],
+                                "operator": "and" if "," not in query else "or",
+                                "tie_breaker": 0.5
+                            }}
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
-                search = Search().using(client).query("match", keywords=query).sort({"ranking": {"order": "desc"}})
+                # request = Search().using(client).query("match", keywords=query).sort({"ranking": {"order": "desc"}}).sort("_score")
 
-                total = search.count()
+                request = Search().using(client).query(query_object).sort({"ranking": {"order": "desc"}, "_score": {"order": "desc"}})
+                total = request.count()
                 context['total'] = total
-                search = search[0:total]
-                results = search.execute()
+                request = request[0:total]
+                response = request.execute()
 
-                for hit in search:
-                    print("Commodity Code: {0} , ".format(hit.commodity_code))
-                    print("Description: {0}".format(hit.description))
-                    print("Id: {0}".format(hit.id))
-                    print("keywords: {0}".format(hit.keywords))
-                    print("meta: {0}".format(hit.meta))
-                    print("ranking: {0}".format(hit.ranking))
+                seen = []
+                results = []
 
-                    print(dir(hit))
+                for hit in response:
+                    if (hit["commodity_code"], hit["description"]) not in seen:
+                        results.append(hit)
+                    seen.append((hit["commodity_code"], hit["description"]))
 
                 context["results"] = results
+                context["total"] = len(results)
 
                 return self.render_to_response(context)
             else:
-                print("Search: returning invalid form")
                 return self.form_invalid(self.form)
         else:
-            print("Search: empty form")
             return self.render_to_response(context)
-
 
     def get_context_data(self, **kwargs):
         context = super(SearchView, self).get_context_data(**kwargs)

@@ -26,22 +26,23 @@ class SectionDocument(DocType):
 
     id = fields.IntegerField(attr='id')
 
-    commodity_code = fields.StringField(
+    commodity_code = fields.KeywordField(
         attr="section_id",
-        analyzer=html_strip,
+        # analyzer=html_strip,
         # fields={
         #     'commodity_code.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    title = fields.StringField(
+    description = fields.TextField(
+        attr="title",
         analyzer=html_strip,
         # fields={
         #     'title.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    keywords = fields.StringField(
+    keywords = fields.TextField(
         analyzer=html_strip,
         # fields={
         #     'keywords.raw': fields.StringField(analyzer="Keyword")

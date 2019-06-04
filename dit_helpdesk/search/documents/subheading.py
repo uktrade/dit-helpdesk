@@ -37,21 +37,21 @@ class SubHeadingDocument(DocType):
 
     id = fields.IntegerField(attr='id')
 
-    commodity_code = fields.StringField(
-        analyzer=html_strip,
+    commodity_code = fields.KeywordField(
+        # analyzer=html_strip,
         # fields={
         #     'commodity_code.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    description = fields.StringField(
+    description = fields.TextField(
         analyzer=html_strip,
         # fields={
         #     'description.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    keywords = fields.StringField(
+    keywords = fields.TextField(
         analyzer=html_strip,
         # fields={
         #     'keywords.raw': fields.StringField(analyzer="Keyword")

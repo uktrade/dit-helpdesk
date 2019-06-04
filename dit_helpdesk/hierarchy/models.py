@@ -41,7 +41,7 @@ class Section(models.Model):
     title = models.TextField(blank=True, null=True)
     position = models.IntegerField(null=True)
     keywords = models.TextField()
-    ranking = models.SmallIntegerField()
+    ranking = models.SmallIntegerField(null=True)
 
     def __str__(self):
         return "Section {0}".format(self.roman_numeral)
@@ -134,7 +134,7 @@ class Chapter(models.Model):
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
     keywords = models.TextField()
-    ranking = models.SmallIntegerField()
+    ranking = models.SmallIntegerField(null=True)
 
     chapter_code = models.CharField(max_length=30)
     tts_json = models.TextField(blank=True, null=True)
@@ -241,7 +241,7 @@ class Heading(models.Model):
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
     keywords = models.TextField()
-    ranking = models.SmallIntegerField()
+    ranking = models.SmallIntegerField(null=True)
 
     heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(
@@ -336,7 +336,7 @@ class SubHeading(models.Model):
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
     keywords = models.TextField()
-    ranking = models.SmallIntegerField()
+    ranking = models.SmallIntegerField(null=True)
 
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)

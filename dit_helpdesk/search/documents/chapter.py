@@ -31,22 +31,22 @@ class ChapterDocument(DocType):
 
     id = fields.IntegerField(attr='id')
 
-    commodity_code = fields.StringField(
+    commodity_code = fields.KeywordField(
         attr="chapter_code",
-        analyzer=html_strip,
+        # analyzer=html_strip,
         # fields={
         #     'commodity_code.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    description = fields.StringField(
+    description = fields.TextField(
         analyzer=html_strip,
         # fields={
         #     'description.raw': fields.StringField(analyzer="Keyword")
         # }
     )
 
-    keywords = fields.StringField(
+    keywords = fields.TextField(
         analyzer=html_strip,
         # fields={
         #     'keywords.raw': fields.StringField(analyzer="Keyword")

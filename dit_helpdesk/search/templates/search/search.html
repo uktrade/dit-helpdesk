@@ -22,7 +22,8 @@
       <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
 
-        <p>total results: {{ results.hits.total }} </p>
+        <b>Search Term: </b> {{ query }}
+        <p>total results: {{ total }} </p>
 
         <table width="100%">
 
@@ -39,7 +40,7 @@
             {%  for result in results %}
                 <tr>
                     <td>{{ result.ranking }}</td>
-                    <td>{{ result.description }}
+                    <td>{{ result.description | safe }}
 
 
 
