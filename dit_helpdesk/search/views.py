@@ -1,3 +1,5 @@
+import re
+
 from pprint import pprint
 
 from django.conf import settings
@@ -381,6 +383,7 @@ class SearchView(FormView):
 
                 for hit in response:
                     if (hit["commodity_code"], hit["description"]) not in seen:
+                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
 
@@ -424,6 +427,33 @@ class SearchView(FormView):
         else:
             handler = self.http_method_not_allowed
         return handler(request, *args, **kwargs)
+
+# This might need to be moved in a better place
+def _generate_commodity_code_html(code):
+    """
+    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
+    of 6, 2 and  digits and colour code formatted
+    :param item: model instance
+    :return: html
+    """
+    commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+
+    code_regex = re.search('([0-9]{2})([0-9]{2})([0-9]{6})', code)
+    code_split = [
+        code_regex.group(1),
+        code_regex.group(2),
+        code_regex.group(3)
+    ]
+
+    for index, code_segment in enumerate(code_split):
+        counter = str(int(index) + 1)
+        commodity_code_html = commodity_code_html + \
+            '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+
+    commodity_code_html = commodity_code_html + '</span>'
+
+    return commodity_code_html
+
 
 
 class CommodityViewSet(DocumentViewSet):

@@ -1,65 +1,89 @@
 {% extends '../core/base.html' %}
 
 {% block content %}
-    <h2>Search</h2>
+  <a href="{% url 'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+  <h2 class="govuk-heading-l">
+    <span class="govuk-caption-l govuk-!-margin-bottom-1">
+      Exporting from
+      {{ selected_origin_country_name }}
+      to the UK
+    </span>
+  </h2>
 
-    <form method="GET" action="{% url 'search:search-advanced' country_code %}">
-    {{ form.errors }}
+  <h2 class="govuk-heading-l">Search</h2>
 
-    <form action="{% url 'search:search-advanced' country_code=country_code %}" name="commodity_search" method="get">
-        <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
-          <label class="govuk-hint" for="search">
-          </label>
-          {% if form.q.errors %}
-            <span id="commodity-code-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> {%  for error in form.q.errors %}{{ error }}{% endfor %}
-          </span>
-          {% endif %}
-{#            {{ form.q }}#}
-          <input class="govuk-input govuk-input--width-10{% if form.q.errors %} govuk-input--error{% endif %}" id="search" name="q" type="text" {% if form.q.errors %} aria-describedby="select-country-error"{% endif %}>
+  <form action="{% url 'search:search-advanced' country_code=country_code %}" name="commodity_search" method="get">
+    <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
+      <label class="govuk-hint" for="search"></label>
+      {% if form.q.errors %}
+        <span id="commodity-code-error" class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span>
+          {% for error in form.q.errors %}{{ error }}
+          {% endfor %}
+        </span>
+      {% endif %}
+      <input class="govuk-input govuk-input--width-10{% if form.q.errors %} govuk-input--error{% endif %}" id="search" name="q" type="text" {% if form.q.errors %} aria-describedby="select-country-error" {% endif %}>
+    </div>
+    <input type="hidden" name="country" value="{{ country_code }}"/>
+    <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+  </form>
+
+  {% if results %}
+    <h2 class="govuk-heading-l">Showing
+      {{ total }}
+      search results for "{{ query }}"</h2>
+
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <div class="govuk-radios govuk-radios--inline">
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="show-headings" name="show-headings" type="radio" checked="checked" value="true">
+            <label class="govuk-label govuk-radios__label" for="show-headings">
+              Show headings
+            </label>
+          </div>
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="hide-headings" name="show-headings" type="radio" value="false">
+            <label class="govuk-label govuk-radios__label" for="hide-headings">
+              Hide headings
+            </label>
+          </div>
         </div>
-      <input type="hidden" name="country" value="{{ country_code }}" />
-      <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
-    </form>
+      </fieldset>
+    </div>
 
-        <b>Search Term: </b> {{ query }}
-        <p>total results: {{ total }} </p>
+    {% for result in results %}
+      <section>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
+            <h1 class="govuk-heading-m govuk-!-font-size-27">
+              <a href="#a" class="govuk-link">{{ result.description | safe }}</a>
+            </h1>
+          </div>
 
-        <table width="100%">
+          <div class="govuk-grid-column-one-quarter text-right">
+            <a class="govuk-link" href="#a">
+              {% if result.commodity_code %}
+                {{ result.commodity_code | safe }}
+              {% elif result.heading_code %}
+                {{ result.heading_code }}
+              {% elif result.chapter_code %}
+                {{ result.chapter_code }}
+              {% endif %}
+            </a>
+          </div>
+        </div>
 
-            <thead>
-                <tr align="left">
-                    <th>Rank</th>
-                    <th>Description</th>
-                    <th>Commodity Code</th>
-                </tr>
-            </thead>
+        <p class="govuk-body">{{ result.description | safe }}</p>
 
-            <tbody>
+        {# Show information is conditional #}
+        <a href="#b" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold govuk-!-margin-right-2">Show information</a>
 
-            {%  for result in results %}
-                <tr>
-                    <td>{{ result.ranking }}</td>
-                    <td>{{ result.description | safe }}
+        <a href="#c" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold">Show in tree</a>
 
+      </section>
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {% endfor %}
 
-
-                    </td>
-                    <td>
-                        {%  if result.commodity_code  %}
-                            {{ result.commodity_code }}
-                        {% elif result.heading_code %}
-                            {{ result.heading_code }}
-                        {% elif result.chapter_code %}
-                            {{ result.chapter_code }}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
-
+  {% endif %}
 {% endblock %}
