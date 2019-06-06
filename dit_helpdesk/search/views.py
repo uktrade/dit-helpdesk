@@ -93,6 +93,7 @@ class CommoditySearchView(FormView):
                     response = request.execute()
 
                     hit = response[0]
+
                     if hit.meta["index"] == "commodity":
                         return redirect(reverse('commodity-detail', kwargs={
                             'commodity_code': hit.commodity_code,
@@ -103,7 +104,6 @@ class CommoditySearchView(FormView):
                             'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
                             'country_code': context["country_code"]
                         }))
-
                 else:
 
                     sort_object = {"ranking": {"order": "desc"}}
@@ -575,7 +575,6 @@ def _generate_commodity_code_html(code):
     :param item: model instance
     :return: html
     """
-
     commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
     if len(code) > 2 and code.isdigit():
