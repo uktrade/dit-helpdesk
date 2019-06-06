@@ -205,7 +205,7 @@ class CommodityDocumentViewSet(DocumentViewSet):
         'commodity_code',
         'description',
     )
-
+    
 
 class CommodityViewSet(DocumentViewSet):
 
