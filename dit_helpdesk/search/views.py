@@ -206,6 +206,7 @@ class CommodityDocumentViewSet(DocumentViewSet):
         'description',
     )
 
+
 class CommodityViewSet(DocumentViewSet):
 
     document = CommodityDocument
