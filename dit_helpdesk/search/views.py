@@ -114,7 +114,8 @@ class CommoditySearchView(FormView):
 
                 for hit in response:
                     if (hit["commodity_code"], hit["description"]) not in seen:
-                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
+                        if isinstance(hit["commodity_code"], str):
+                            hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
 
