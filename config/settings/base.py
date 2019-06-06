@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'privacy_terms_and_conditions',
     'trade_tariff_service',
     'django_extensions',
-    # 'authbroker_client',
+    'authbroker_client',
     'user',
     'regulations',
     'healthcheck',
@@ -115,11 +115,6 @@ CACHES = {
 INSTALLED_APPS.append('rest_framework')
 INSTALLED_APPS.append('django_elasticsearch_dsl')
 INSTALLED_APPS.append('django_elasticsearch_dsl_drf')
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'http://es:9200'
-    },
-}
 
 # Name of the Elasticsearch index
 ELASTICSEARCH_INDEX_NAMES = {
@@ -333,6 +328,6 @@ ELASTICSEARCH_INDEX_NAMES = {
     'search.documents.section': 'section',
     'search.documents.chapter': 'chapter',
     'search.documents.heading': 'heading',
-    'search.documents.subheading': 'subheading',
+    'search.documents.subheading': 'sub_heading',
     'search.documents.commodity': 'commodity',
 }

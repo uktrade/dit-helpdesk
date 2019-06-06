@@ -3,10 +3,12 @@
 {% block content %}
     <h2>Search</h2>
 
-    <form method="GET" action="{% url 'search:search-advanced' country_code %}">
-    {{ form.errors }}
+
+
 
     <form action="{% url 'search:search-advanced' country_code=country_code %}" name="commodity_search" method="get">
+{#    {% csrf_token %}#}
+        {{ form.errors }}
         <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
           </label>

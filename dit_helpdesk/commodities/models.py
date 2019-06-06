@@ -27,7 +27,7 @@ class Commodity(models.Model):
     description = models.TextField(null=True)
     number_indents = models.SmallIntegerField(null=True)
     keywords = models.TextField()
-    ranking = models.SmallIntegerField()
+    ranking = models.SmallIntegerField(null=True)
 
     tts_json = models.TextField(blank=True, null=True)
     tts_heading_json = models.TextField(blank=True, null=True)

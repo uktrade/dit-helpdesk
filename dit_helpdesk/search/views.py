@@ -1,3 +1,4 @@
+import re
 from pprint import pprint
 
 from django.conf import settings
@@ -69,217 +70,83 @@ class CommoditySearchView(FormView):
         self.form = self.get_form(self.form_class)
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
-        # print("get context", context)
         if 'q' in self.request.GET:
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
+                context["query"] = query
 
-                if not query.isdigit():
-                    context['is_error'] = True
-                    context["error_summary_message"] = "Enter a commodity code"
+                print("Digit: ", query.isdigit())
+                print("Not Digit: ", not query.isdigit())
 
-                if len(query) == 1:
-                    query = "0" + query
+                client = Elasticsearch(hosts=[settings.ES_URL])
 
-                if query in ['00', '99']:
-                    query = '9999'
+                if query.isdigit():
 
-                if len(query) == 4 and query[2:] == '00':
-                    query = query[:2]
+                    query_object = {"term": {"commodity_code": process_commodity_code(query)}}
 
-                if len(query) == 6 and query[2:] == '0000':
-                    query = query[:2]
-
-                if len(query) in [3, 5, 7, 9]:
-                    query = query[:-1]
-
-                if len(query) > 10:
-                    query = query[:10]
-
-                if len(query) < 10:
-
-                    if len(query) == 2:
-                        code = query + "00000000"
-
-                        if Chapter.objects.filter(chapter_code=code).exists():
-                            print("returning chapter")
-                            return redirect(reverse('search:search-hierarchy', kwargs={
-                                'node_id': 'chapter-%s' % Chapter.objects.filter(chapter_code=code).first().id,
-                                'country_code': context["country_code"]
-                            }))
-                        else:
-                            print("returning chapter error")
-                            context["is_error"] = True,
-                            context["error_summary_message"] = "Enter a commodity code"
-                            return self.render_to_response(self.get_context_data(kwargs={
-
-                            }))
-
-                    elif len(query) == 4:
-                        code = query + '000000'
-
-                        heading = Heading.objects.filter(heading_code=code).first()
-                        subheading = SubHeading.objects.filter(commodity_code=code).first()
-                        commodity = Commodity.objects.filter(commodity_code=code).first()
-
-                        if (Heading.objects.filter(heading_code=code).exists()
-                                and Commodity.objects.filter(commodity_code=code).exists()):
-
-                            if heading.description == commodity.description:
-                                print("return 4 com")
-                                return redirect(reverse('commodity-detail', kwargs={
-                                    'commodity_code': code,
-                                    'country_code': context['country_code']
-                                }))
-
-                            else:
-                                print("return 4 head")
-                                return redirect(reverse('search:search-hierarchy', kwargs={
-                                    'node_id': 'heading-%s' % Heading.objects.filter(heading_code=code).first().id,
-                                    'country_code': context["country_code"]
-                                }))
-                        elif (Heading.objects.filter(heading_code=code).exists()
-                              and SubHeading.objects.filter(commodity_code=code).exists()):
-
-                            if heading.description == subheading.description:
-                                print("return 4 sub")
-                                return redirect(reverse('search:search-hierarchy', kwargs={
-                                    'node_id': 'sub_heading-%s' % SubHeading.objects.filter(
-                                        commodity_code=code).first().id,
-                                    'country_code': context["country_code"]
-                                }))
-                            else:
-                                print("return 4 head")
-                                return redirect(reverse('search:search-hierarchy', kwargs={
-                                    'node_id': 'heading-%s' % Heading.objects.filter(heading_code=code).first().id,
-                                    'country_code': context["country_code"]
-                                }))
-                        print("return 4 error")
-                        context["is_error"] = True,
-                        context["error_summary_message"] = "Enter a commodity code"
-                        return self.render_to_response(context)
-
-                    elif len(query) == 6:
-                        code = query + '0000'
-
-                        subheading = SubHeading.objects.filter(commodity_code=code).first()
-                        commodity = Commodity.objects.filter(commodity_code=code).first()
-
-                        if (SubHeading.objects.filter(commodity_code=code).exists() and
-                                Commodity.objects.filter(commodity_code=code).exists()):
-
-                            if subheading.description == commodity.description:
-                                print("returning 6 com")
-                                return redirect(reverse('commodity-detail', kwargs={
-                                    'commodity_code': code,
-                                    'country_code': context['country_code']
-                                }))
-                            else:
-                                print("returning 6 sub")
-                                return redirect(reverse('search:search-hierarchy', kwargs={
-                                    'node_id': 'sub_heading-%s' % SubHeading.objects.filter(
-                                        commodity_code=code).first().id,
-                                    'country_code': context["country_code"]
-                                }))
-                        elif (Commodity.objects.filter(commodity_code=code).exists() and not
-                                SubHeading.objects.filter(commodity_code=code).exists()):
-                            print("returning 6 com 2")
-                            return redirect(reverse('commodity-detail', kwargs={
-                                'commodity_code': code,
-                                'country_code': context['country_code']
-                            }))
-
-                        elif (SubHeading.objects.filter(commodity_code=code).exists() and not
-                                Commodity.objects.filter(commodity_code=code).exists()):
-                            print("returning 6 sub 2")
-                            return redirect(reverse('search:search-hierarchy', kwargs={
-                                'node_id': 'sub_heading-%s' % SubHeading.objects.filter(
-                                    commodity_code=code).first().id,
-                                'country_code': context["country_code"]
-                            }))
-
-                        else:
-                            print("returning 6 err")
-                            context["is_error"] = True
-                            context["error_summary_message"] = "Code Not Found"
-                            return self.render_to_response(context)
-
-                    elif len(query) == 8:
-                        code = query + "00"
-
-                        subheading = SubHeading.objects.filter(commodity_code=code).first()
-                        commodity = Commodity.objects.filter(commodity_code=code).first()
-
-                        if (SubHeading.objects.filter(commodity_code=code).exists() and
-                                Commodity.objects.filter(commodity_code=code).exists()):
-
-                            if subheading.description == commodity.description:
-                                print("returning 8 com")
-                                return redirect(reverse('commodity-detail', kwargs={
-                                    'commodity_code': code,
-                                    'country_code': context['country_code']
-                                }))
-                            else:
-                                print("returning 8 sub")
-                                return redirect(reverse('search:search-hierarchy', kwargs={
-                                    'node_id': 'sub_heading-%s' % SubHeading.objects.filter(
-                                        commodity_code=code).first().id,
-                                    'country_code': context["country_code"]
-                                }))
-                        elif (Commodity.objects.filter(commodity_code=code).exists() and not
-                                SubHeading.objects.filter(commodity_code=code).exists()):
-                            print("returning 8 com 2")
-                            return redirect(reverse('commodity-detail', kwargs={
-                                'commodity_code': code,
-                                'country_code': context['country_code']
-                            }))
-
-                        elif (SubHeading.objects.filter(commodity_code=code).exists() and not
-                                Commodity.objects.filter(commodity_code=code).exists()):
-                            print("returning 8 sub 2")
-                            return redirect(reverse('search:search-hierarchy', kwargs={
-                                'node_id': 'sub_heading-%s' % SubHeading.objects.filter(
-                                    commodity_code=code).first().id,
-                                'country_code': context["country_code"]
-                            }))
-
-                        else:
-                            print("returning 8 err")
-                            context["is_error"] = True
-                            context["error_summary_message"] = "Code Not Found"
-                            return self.render_to_response(context)
-
-                    else:
-                        print("returning else")
-                        context["is_error"] = True,
-                        context["error_summary_message"] = "Code Not Found"
-                        return self.render_to_response(context)
+                    request = Search().using(client).query(query_object)
 
                 else:
-                    context['commodity_code'] = query
 
-                    if Commodity.objects.filter(commodity_code=query).exists():
-                        print("returning com 10")
+                    query_object = {
+                            "multi_match": {
+                                "query": query,
+                                "type": "most_fields",
+                                "fields": ["keywords", "description"],
+                                "operator": "and" if "," not in query else "or",
+                                # "tie_breaker": 0.3,
+                            }
+                    }
+                    sort_object = {"ranking": {"order": "desc"}}
+                    request = Search().using(client).query(query_object).sort(sort_object)
+
+                total = request.count()
+                context['total'] = total
+
+                request = request[0:total]
+                response = request.execute()
+
+                print("response: ", response, len(response), dir(response), response.to_dict())
+
+                seen = []
+                results = []
+
+                for hit in response:
+                    if (hit["commodity_code"], hit["description"]) not in seen:
+                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
+                        results.append(hit)
+                    seen.append((hit["commodity_code"], hit["description"]))
+
+                print("results: ", results[0].to_dict(), len(results), dir(results[0]), results[0].meta)
+
+                if len(results) == 1:
+                    hit = results[0]
+                    if hit.meta["index"] == "commodity":
                         return redirect(reverse('commodity-detail', kwargs={
-                            'commodity_code': context['commodity_code'],
-                            'country_code': context['country_code']}
-                        ))
+                            'commodity_code': hit.commodity_code,
+                            'country_code': context['country_code']
+                        }))
+                    else:
+                        return redirect(reverse('search:search-hierarchy', kwargs={
+                            'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
+                            'country_code': context["country_code"]
+                        }))
 
+                context["results"] = results
+                context["total"] = len(results)
+
+                print("returning result:")
+                return self.render_to_response(context)
             else:
-                print("returning invalid form response")
+                print("form not valid")
                 return self.form_invalid(self.form)
-
-            print("returning context")
-            return self.render_to_response(context)
-
         else:
-
-            print("returning context")
+            print("query not in request")
             return self.render_to_response(context)
 
     def get_form(self, form_class=None):
-        form = CommoditySearchForm(self.request.GET or None)
+        form = CommoditySearchForm(self.request.GET or form_class)
         return form
 
     def get_context_data(self, **kwargs):
@@ -349,48 +216,75 @@ class SearchView(FormView):
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
-                context["query"] = query
 
-                # if len(query.split(" ")) > 1:
-                #     query_object = {"bool": {
-                #         "must": [{"match": {"description": word}} for word in query.split(" ")],
-                #         "should": [{"match": {"keywords": word}} for word in query.split(" ")]
-                #     }}
-                # else:
-                query_object = {
-                            "multi_match": {
-                                "query": query,
-                                "type": "best_fields",
-                                "fields": ["description", "keywords"],
-                                "operator": "and" if "," not in query else "or",
-                                "tie_breaker": 0.5
-                            }}
+                print("Digit: ", query.isdigit())
+                print("Not Digit: ", not query.isdigit())
+                sort_object = None
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
-                # request = Search().using(client).query("match", keywords=query).sort({"ranking": {"order": "desc"}}).sort("_score")
+                if query.isdigit():
 
-                request = Search().using(client).query(query_object).sort({"ranking": {"order": "desc"}, "_score": {"order": "desc"}})
+                    query_object = {"term": {"commodity_code": process_commodity_code(query)}}
+
+                    request = Search().using(client).query(query_object)
+
+                else:
+
+                    query_object = {
+                            "multi_match": {
+                                "query": query,
+                                "type": "most_fields",
+                                "fields": ["keywords", "description"],
+                                "operator": "and" if "," not in query else "or",
+                                # "tie_breaker": 0.3,
+                            }
+                    }
+                    sort_object = {"ranking": {"order": "desc"}}
+                    request = Search().using(client).query(query_object).sort(sort_object)
+
                 total = request.count()
                 context['total'] = total
+
                 request = request[0:total]
                 response = request.execute()
+
+                print("response: ", response, len(response), dir(response), response.to_dict())
 
                 seen = []
                 results = []
 
                 for hit in response:
                     if (hit["commodity_code"], hit["description"]) not in seen:
+                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
+
+                print("results: ", results[0].to_dict(), len(results), dir(results[0]), results[0].meta)
+
+                if len(results) == 1:
+                    hit = results[0]
+                    if hit.meta["index"] == "commodity":
+                        return redirect(reverse('commodity-detail', kwargs={
+                            'commodity_code': hit.commodity_code,
+                            'country_code': context['country_code']
+                        }))
+                    else:
+                        return redirect(reverse('search:search-hierarchy', kwargs={
+                            'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
+                            'country_code': context["country_code"]
+                        }))
 
                 context["results"] = results
                 context["total"] = len(results)
 
+                print("returning result:")
                 return self.render_to_response(context)
             else:
+                print("form not valid")
                 return self.form_invalid(self.form)
         else:
+            print("query not in request")
             return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
@@ -423,6 +317,7 @@ class SearchView(FormView):
             handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
         else:
             handler = self.http_method_not_allowed
+        print("HANDLER:", handler, args, kwargs)
         return handler(request, *args, **kwargs)
 
 
@@ -739,3 +634,68 @@ class SubHeadingViewSet(DocumentViewSet):
 
     # Specify default ordering
     ordering = ('ranking',)
+
+
+def process_commodity_code(query):
+
+    if len(query) == 1:
+        query = "0" + query
+
+    if query in ['00', '99']:
+        query = '9999'
+
+    if len(query) == 4 and query[2:] == '00':
+        query = query[:2]
+
+    if len(query) == 6 and query[2:] == '0000':
+        query = query[:2]
+
+    if len(query) in [3, 5, 7, 9]:
+        query = query[:-1]
+
+    if len(query) > 10:
+        query = query[:10]
+
+    if len(query) < 10:
+
+        if len(query) == 2:
+            return query + "00000000"
+
+        if len(query) == 4:
+            return query + '000000'
+
+        if len(query) == 6:
+            return query + '0000'
+
+        if len(query) == 8:
+            return query + "00"
+
+    else:
+        return query
+
+
+# This might need to be moved in a better place
+def _generate_commodity_code_html(code):
+    """
+    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
+    of 6, 2 and  digits and colour code formatted
+    :param item: model instance
+    :return: html
+    """
+    commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+
+    code_regex = re.search('([0-9]{2})([0-9]{2})([0-9]{6})', code)
+    code_split = [
+        code_regex.group(1),
+        code_regex.group(2),
+        code_regex.group(3)
+    ]
+
+    for index, code_segment in enumerate(code_split):
+        counter = str(int(index) + 1)
+        commodity_code_html = commodity_code_html + \
+            '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+
+    commodity_code_html = commodity_code_html + '</span>'
+
+    return commodity_code_html
