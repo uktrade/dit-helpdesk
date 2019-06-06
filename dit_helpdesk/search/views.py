@@ -114,8 +114,6 @@ class CommoditySearchView(FormView):
 
                 for hit in response:
                     if (hit["commodity_code"], hit["description"]) not in seen:
-                        if isinstance(hit["commodity_code"], str):
-                            hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
 
@@ -133,6 +131,10 @@ class CommoditySearchView(FormView):
                             'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
                             'country_code': context["country_code"]
                         }))
+
+                for hit in results:
+                    if isinstance(hit["commodity_code"], str):
+                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
 
                 context["results"] = results
                 context["total"] = len(results)
@@ -257,7 +259,6 @@ class SearchView(FormView):
 
                 for hit in response:
                     if (hit["commodity_code"], hit["description"]) not in seen:
-                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
 
@@ -275,6 +276,9 @@ class SearchView(FormView):
                             'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
                             'country_code': context["country_code"]
                         }))
+
+                for hit in results:
+                    hit['commodity_code'] = _generate_commodity_code_html(hit['commodity_code'])
 
                 context["results"] = results
                 context["total"] = len(results)
