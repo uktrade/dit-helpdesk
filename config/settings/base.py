@@ -331,3 +331,5 @@ ELASTICSEARCH_INDEX_NAMES = {
     'search.documents.subheading': 'sub_heading',
     'search.documents.commodity': 'commodity',
 }
+
+POSTS_PER_PAGE = 20

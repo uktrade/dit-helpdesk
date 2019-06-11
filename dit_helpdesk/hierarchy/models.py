@@ -118,6 +118,58 @@ class Section(models.Model):
 
         return reverse('search:search-hierarchy', kwargs=kwargs)
 
+    @property
+    def ancestor_data(self):
+        ancestors = self.get_ancestor_data()
+        ancestors.reverse()
+        # print("ANCESTORS: " , ancestors)
+        return json.dumps(ancestors)
+
+    def get_ancestor_data(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the Commodity showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        # tree[level].append({"id": self.id,
+        #                     "description": self.title,
+        #                     "commodity_code": self.roman_numeral,
+        #                     "type": "section"})
+
+        return tree
+
+    @staticmethod
+    def _append_descendant_data(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        try:
+            children = parent.get_hierarchy_children()
+            for child in children:
+                # if type(child) is Commodity:
+                if child.commodity_code not in ["9900000000", "9950000000"]:
+                    tree[level].append({"id": child.id,
+                                    "description": child.description,
+                                    "commodity_code": child.commodity_code,
+                                    "type": child._meta.model_name})
+        except Exception as err:
+            print(err.args)
+
 
 class Chapter(models.Model):
     """
@@ -230,6 +282,65 @@ class Chapter(models.Model):
 
         return reverse('search:search-hierarchy', kwargs=kwargs)
 
+    @property
+    def ancestor_data(self):
+        ancestors = self.get_ancestor_data()
+        ancestors.reverse()
+        # print("ANCESTORS: " , ancestors)
+        return json.dumps(ancestors)
+
+    def get_ancestor_data(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the Commodity showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        if hasattr(parent, 'section') and parent.section is not None:
+            tree[level].append({"id": parent.section.id,
+                                "description": parent.section.title,
+                                "commodity_code": parent.section.roman_numeral,
+                                "type": "section"
+                                })
+
+        # tree[level].append({"id": self.id,
+        #                         "description": self.description,
+        #                         "commodity_code": self.commodity_code,
+        #                         "type": "chapter"})
+
+        return tree
+
+    @staticmethod
+    def _append_descendant_data(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        try:
+            children = parent.get_hierarchy_children()
+            for child in children:
+                # if type(child) is Commodity:
+                if child.commodity_code not in ["9900000000", "9950000000", "9905000000"]:
+                    tree[level].append({"id": child.id,
+                                    "description": child.description,
+                                    "commodity_code": child.commodity_code,
+                                    "type": child._meta.model_name})
+        except Exception as err:
+            print(err.args)
+
 
 class Heading(models.Model):
     goods_nomenclature_sid = models.CharField(max_length=10, null=True)
@@ -326,6 +437,71 @@ class Heading(models.Model):
             kwargs['country_code'] = country_code.lower()
 
         return reverse('search:search-hierarchy', kwargs=kwargs)
+
+    @property
+    def ancestor_data(self):
+        ancestors = self.get_ancestor_data()
+        ancestors.reverse()
+        # print("ANCESTORS: " , ancestors)
+        return json.dumps(ancestors)
+
+    def get_ancestor_data(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the heading showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        if hasattr(parent, 'chapter') and parent.chapter is not None:
+            self.get_ancestor_data(parent.chapter, tree, level + 1)
+            tree[level].append({"id": parent.chapter.id,
+                             "description": parent.chapter.description,
+                             "commodity_code": parent.chapter.commodity_code,
+                             "type": "chapter"})
+        elif hasattr(parent, 'section') and parent.section is not None:
+            tree[level].append({"id": parent.section.id,
+                                "description": parent.section.title,
+                                "commodity_code": parent.section.roman_numeral,
+                                "type": "section"
+                                })
+
+        # tree[level].append({"id": self.id,
+        #                         "description": self.description,
+        #                         "commodity_code": self.commodity_code,
+        #                         "type": "heading"})
+
+        return tree
+
+    @staticmethod
+    def _append_descendant_data(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        try:
+            children = parent.get_hierarchy_children()
+            for child in children:
+                # if type(child) is Commodity:
+                if child.commodity_code not in ["9900000000", "9950000000"]:
+                    tree[level].append({"id": child.id,
+                                    "description": child.description,
+                                    "commodity_code": child.commodity_code,
+                                    "type": child._meta.model_name})
+        except Exception as err:
+            print(err.args)
 
 
 class SubHeading(models.Model):
@@ -431,3 +607,71 @@ class SubHeading(models.Model):
         sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
         commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
         return commodities + sub_headings
+
+    @property
+    def ancestor_data(self):
+        ancestors = self.get_ancestor_data()
+        ancestors.reverse()
+        # print("ANCESTORS: " , ancestors)
+        return json.dumps(ancestors)
+
+    def get_ancestor_data(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the Commodity showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+            self.get_ancestor_data(parent.parent_subheading, tree, level + 1)
+            tree.insert(1, [{"id": parent.parent_subheading.id,
+                             "description": parent.parent_subheading.description,
+                             "commodity_code": parent.parent_subheading.commodity_code,
+                             "type": "sub_heading"}])
+        if hasattr(parent, 'heading') and parent.heading is not None:
+            self.get_ancestor_data(parent.heading, tree, level + 1)
+            tree[level].append({"id": parent.heading.id,
+                             "description": parent.heading.description,
+                             "commodity_code": parent.heading.commodity_code,
+                             "type": "heading"})
+        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+            self.get_ancestor_data(parent.chapter, tree, level + 1)
+            tree[level].append({"id": parent.chapter.id,
+                             "description": parent.chapter.description,
+                             "commodity_code": parent.chapter.commodity_code,
+                             "type": "chapter"})
+        elif hasattr(parent, 'section') and parent.section is not None:
+            tree[level].append({"id": parent.section.id,
+                                "description": parent.section.title,
+                                "commodity_code": parent.section.roman_numeral,
+                                "type": "section"
+                                })
+        # else:
+        #     print(parent)
+        #     self._append_descendant_data(self, tree, level)
+
+        return tree
+
+    @staticmethod
+    def _append_descendant_data(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        tree[level].append({"id": parent.id,
+                            "description": parent.description,
+                            "commodity_code": parent.commodity_code,
+                            "type": "sub_heading"})

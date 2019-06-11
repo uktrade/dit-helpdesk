@@ -53,6 +53,10 @@ class ChapterDocument(DocType):
         # }
     )
 
+    hierarchy_context = fields.TextField(attr='ancestor_data')
+
+    node_id = fields.TextField(attr='hierarchy_key')
+
     ranking = fields.IntegerField()
 
     class Meta:

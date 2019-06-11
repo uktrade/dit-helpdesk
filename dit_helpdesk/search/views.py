@@ -1,3 +1,4 @@
+import json
 import re
 from pprint import pprint
 
@@ -18,7 +19,7 @@ from commodities.models import Commodity
 from countries.models import Country
 
 from hierarchy.views import hierarchy_data
-from hierarchy.models import Chapter, Heading, SubHeading
+from hierarchy.models import Chapter, Heading, SubHeading, Section
 
 from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
@@ -35,6 +36,27 @@ from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm, KeywordSearchForm
 from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, ChapterDocumentSerializer, SectionDocumentSerializer
+
+
+from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
+
+
+
+class ESPaginator(Paginator):
+    """
+    Override Django's built-in Paginator class to take in a count/total number of items;
+    Elasticsearch provides the total as a part of the query results, so we can minimize hits.
+    """
+    def __init__(self, *args, **kwargs):
+        super(ESPaginator, self).__init__(*args, **kwargs)
+        self._count = self.object_list.hits.total
+
+    def page(self, number):
+        # this is overridden to prevent any slicing of the object_list - Elasticsearch has
+        # returned the sliced data already.
+        print(self.object_list)
+        number = self.validate_number(number)
+        return Page(self.object_list, number, self)
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -74,6 +96,10 @@ class CommoditySearchView(FormView):
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
+                page = int(self.request.GET.get('page', '1'))
+                start = (page - 1) * 10
+                end = start + 10
+
                 context["query"] = query
 
                 print("Digit: ", query.isdigit())
@@ -81,12 +107,14 @@ class CommoditySearchView(FormView):
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
+                # query to execute for commodity code search
                 if query.isdigit():
 
                     query_object = {"term": {"commodity_code": process_commodity_code(query)}}
 
-                    request = Search().using(client).query(query_object)
+                    request = Search().using(client).query(query_object)[start:end]
 
+                # query to execute for keyword search
                 else:
 
                     query_object = {
@@ -99,7 +127,7 @@ class CommoditySearchView(FormView):
                             }
                     }
                     sort_object = {"ranking": {"order": "desc"}}
-                    request = Search().using(client).query(query_object).sort(sort_object)
+                    request = Search().using(client).query(query_object).sort(sort_object)[start:end]
 
                 total = request.count()
                 context['total'] = total
@@ -107,8 +135,10 @@ class CommoditySearchView(FormView):
                 request = request[0:total]
                 response = request.execute()
 
-                print("response: ", response, len(response), dir(response), response.to_dict())
+                print("response: ", len(response), dir(response))#, response.to_dict())
 
+
+                # filter out duplicate headings and subheadings from the results
                 seen = []
                 results = []
 
@@ -117,9 +147,8 @@ class CommoditySearchView(FormView):
                         results.append(hit)
                     seen.append((hit["commodity_code"], hit["description"]))
 
-                print("results: ", results[0].to_dict(), len(results), dir(results[0]), results[0].meta)
-
-                if len(results) == 1:
+                # when searching by commodity code
+                if len(results) == 1 and query.isdigit():
                     hit = results[0]
                     if hit.meta["index"] == "commodity":
                         return redirect(reverse('commodity-detail', kwargs={
@@ -132,9 +161,21 @@ class CommoditySearchView(FormView):
                             'country_code': context["country_code"]
                         }))
 
+                # when searcing by keyword
                 for hit in results:
                     if isinstance(hit["commodity_code"], str):
-                        hit["commodity_code"] = _generate_commodity_code_html(hit["commodity_code"])
+                        hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
+                        hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
+
+                # paginator = ESPaginator(response, settings.POSTS_PER_PAGE)
+                # try:
+                #     results = paginator.page(page)
+                # except PageNotAnInteger:
+                #     results = paginator.page(1)
+                # except EmptyPage:
+                #     results = paginator.page(paginator.num_pages)
+
+                # print("page: ", results.paginator , dir(results.paginator) , results, dir(results), results.object_list)
 
                 context["results"] = results
                 context["total"] = len(results)
@@ -142,6 +183,7 @@ class CommoditySearchView(FormView):
                 print("returning result:")
                 return self.render_to_response(context)
             else:
+
                 print("form not valid")
                 return self.form_invalid(self.form)
         else:

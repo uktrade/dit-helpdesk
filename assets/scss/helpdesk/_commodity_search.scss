@@ -1,0 +1,17 @@
+.breadcrumb-item::after{
+  content: "\25B6";
+  font-size: 16px;
+  color: #000;
+  display: inline-block;
+  padding-left: 0.5em;
+  padding-right: .5em;
+}
+
+.breadcrumb-item-last::after{
+
+  font-size: 16px;
+  color: #000;
+  display: inline-block;
+  padding-left: 0.5em;
+  padding-right: .5em;
+}
