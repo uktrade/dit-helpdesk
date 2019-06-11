@@ -20,6 +20,7 @@ from elasticsearch import Elasticsearch
 
 from countries.models import Country
 from hierarchy.views import hierarchy_data
+
 from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
 from search.documents.heading import HeadingDocument
@@ -44,6 +45,27 @@ from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm, KeywordSearchForm
 from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, ChapterDocumentSerializer, SectionDocumentSerializer
+
+
+from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
+
+
+
+class ESPaginator(Paginator):
+    """
+    Override Django's built-in Paginator class to take in a count/total number of items;
+    Elasticsearch provides the total as a part of the query results, so we can minimize hits.
+    """
+    def __init__(self, *args, **kwargs):
+        super(ESPaginator, self).__init__(*args, **kwargs)
+        self._count = self.object_list.hits.total
+
+    def page(self, number):
+        # this is overridden to prevent any slicing of the object_list - Elasticsearch has
+        # returned the sliced data already.
+        print(self.object_list)
+        number = self.validate_number(number)
+        return Page(self.object_list, number, self)
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -81,10 +103,15 @@ class CommoditySearchView(FormView):
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
+                page = int(self.request.GET.get('page', '1'))
+                start = (page - 1) * 10
+                end = start + 10
+
                 context["query"] = query
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
+                # query to execute for commodity code search
                 if query.isdigit():
 
                     processed_query = process_commodity_code(query)
