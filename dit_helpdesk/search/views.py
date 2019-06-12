@@ -41,24 +41,6 @@ from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSe
 from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
 
 
-
-class ESPaginator(Paginator):
-    """
-    Override Django's built-in Paginator class to take in a count/total number of items;
-    Elasticsearch provides the total as a part of the query results, so we can minimize hits.
-    """
-    def __init__(self, *args, **kwargs):
-        super(ESPaginator, self).__init__(*args, **kwargs)
-        self._count = self.object_list.hits.total
-
-    def page(self, number):
-        # this is overridden to prevent any slicing of the object_list - Elasticsearch has
-        # returned the sliced data already.
-        print(self.object_list)
-        number = self.validate_number(number)
-        return Page(self.object_list, number, self)
-
-
 def search_hierarchy(request, node_id='root', country_code=None):
     if country_code is None:
         country_code = request.session.get('origin_country')
@@ -84,9 +66,6 @@ class CommoditySearchView(FormView):
     form_class = CommoditySearchForm
     template_name = 'search/commodity_search.html'
 
-    def get_success_url(self):
-        return '/search/country/{0}'.format(self.kwargs['origin_url'])
-
     def get(self, request, *args, **kwargs):
 
         self.form = self.get_form(self.form_class)
@@ -97,46 +76,42 @@ class CommoditySearchView(FormView):
             if self.form.is_valid():
                 query = self.request.GET.get('q')
                 page = int(self.request.GET.get('page', '1'))
-                start = (page - 1) * 10
-                end = start + 10
+                start = (page - 1) * settings.RESULTS_PER_PAGE
+                end = start + settings.RESULTS_PER_PAGE
 
                 context["query"] = query
-
-                print("Digit: ", query.isdigit())
-                print("Not Digit: ", not query.isdigit())
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
                 # query to execute for commodity code search
                 if query.isdigit():
-
                     query_object = {"term": {"commodity_code": process_commodity_code(query)}}
-
-                    request = Search().using(client).query(query_object)[start:end]
+                    request = Search().using(client).query(query_object)
 
                 # query to execute for keyword search
                 else:
-
+                    sort_object = {"ranking": {"order": "desc"}}
                     query_object = {
                             "multi_match": {
                                 "query": query,
                                 "type": "most_fields",
                                 "fields": ["keywords", "description"],
-                                "operator": "and" if "," not in query else "or",
-                                # "tie_breaker": 0.3,
+                                "operator": "and" if "," not in query else "or"
                             }
                     }
-                    sort_object = {"ranking": {"order": "desc"}}
-                    request = Search().using(client).query(query_object).sort(sort_object)[start:end]
+                    request = Search().using(client).query(query_object).sort(sort_object)
+
+                total_results = len(list(request.scan()))
+                total_full_pages = int(total_results / settings.RESULTS_PER_PAGE)
+                orphan_results = total_results % settings.RESULTS_PER_PAGE
+
+                context["total_pages"] = total_full_pages + 1 if orphan_results > 0 else total_full_pages
+                context['total_results'] = total_results
 
                 total = request.count()
-                context['total'] = total
 
                 request = request[0:total]
-                response = request.execute()
-
-                print("response: ", len(response), dir(response))#, response.to_dict())
-
+                response = request[start:end].execute()
 
                 # filter out duplicate headings and subheadings from the results
                 seen = []
@@ -167,27 +142,19 @@ class CommoditySearchView(FormView):
                         hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
                         hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
 
-                # paginator = ESPaginator(response, settings.POSTS_PER_PAGE)
-                # try:
-                #     results = paginator.page(page)
-                # except PageNotAnInteger:
-                #     results = paginator.page(1)
-                # except EmptyPage:
-                #     results = paginator.page(paginator.num_pages)
-
-                # print("page: ", results.paginator , dir(results.paginator) , results, dir(results), results.object_list)
-
+                context["current_page"] = page
+                context["results_per_page"] = settings.RESULTS_PER_PAGE
+                context["next_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}".format(self.request.GET.get('country'), self.request.GET.get('q'), self.request.GET.get('country'), page+1)
+                context["previous_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}".format(self.request.GET.get('country'), self.request.GET.get('q'), self.request.GET.get('country'), page-1)
                 context["results"] = results
-                context["total"] = len(results)
+                context["page_range_start"] = start if start != 0 else start + 1
+                context["page_range_end"] = end if len(results) == settings.RESULTS_PER_PAGE else start + len(results)
+                context["page_total"] = len(results)
 
-                print("returning result:")
                 return self.render_to_response(context)
             else:
-
-                print("form not valid")
                 return self.form_invalid(self.form)
         else:
-            print("query not in request")
             return self.render_to_response(context)
 
     def get_form(self, form_class=None):

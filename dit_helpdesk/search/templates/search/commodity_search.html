@@ -44,10 +44,7 @@
     </form>
 
 {% if results %}
-    <h2 class="govuk-heading-l">Showing
-      {{ total }}
-      search results for "{{ query }}"</h2>
-
+    <h2 class="govuk-heading-l">Search results for "{{ query }}"</h2>
     <div class="govuk-form-group">
       <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
         <div class="govuk-radios govuk-radios--inline">
@@ -67,6 +64,20 @@
       </fieldset>
     </div>
 
+    <div class="govuk-search-pagination govuk-hint">
+
+        <p class="govuk-search-results-calculated govuk-hint">Showing {{ page_range_start }} to {{ page_range_end }} of {{ total_results }} results.</p>
+
+        {% if current_page > 1 %}
+            <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
+        {% endif %}
+        | {{ current_page }} of {{ total_pages }} |
+        {% if current_page < total_pages %}
+            <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
+        {% endif %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    </div>
+
     {% for result in results %}
       <section>
         <div class="govuk-grid-row">
@@ -81,7 +92,7 @@
           </div>
 
           <div class="govuk-grid-column-one-quarter text-right">
-            <a class="govuk-link" href="#a">
+            <a class="govuk-link " href="#a">
               {% if result.commodity_code_html %}
                 {{ result.commodity_code_html | safe }}
               {% elif result.heading_code %}
@@ -94,9 +105,12 @@
         </div>
 
         <p class="govuk-body">
+{#        {{ result.hierarchy_context }}#}
         {% if  result.hierarchy_context %}
             {% for item in result.hierarchy_context %}
+                {% if item.0.description %}
                 <span class="{% if forloop.last %}breadcrumb-item-last{%  else %}breadcrumb-item {% endif %}">{{ item.0.description }}</span>
+                {%  endif %}
             {% endfor %}
         {% endif %}
         </p>
@@ -109,6 +123,17 @@
       </section>
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     {% endfor %}
+
+    <div class="govuk-search-pagination govuk-hint">
+
+        {% if current_page > 1 %}
+            <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
+        {% endif %}
+        | {{ current_page }} of {{ total_pages }} |
+        {% if current_page < total_pages %}
+            <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
+        {% endif %}
+    </div>
 
   {% endif %}
 
