@@ -332,4 +332,4 @@ ELASTICSEARCH_INDEX_NAMES = {
     'search.documents.commodity': 'commodity',
 }
 
-POSTS_PER_PAGE = 20
+RESULTS_PER_PAGE = 20
