@@ -71,7 +71,7 @@
         {% if current_page > 1 %}
             <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
         {% endif %}
-        | {{ current_page }} of {{ total_pages }} |
+        | Page {{ current_page }} of {{ total_pages }} |
         {% if current_page < total_pages %}
             <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
         {% endif %}
@@ -105,7 +105,6 @@
         </div>
 
         <p class="govuk-body">
-{#        {{ result.hierarchy_context }}#}
         {% if  result.hierarchy_context %}
             {% for item in result.hierarchy_context %}
                 {% if item.0.description %}
@@ -129,7 +128,7 @@
         {% if current_page > 1 %}
             <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
         {% endif %}
-        | {{ current_page }} of {{ total_pages }} |
+        | Page {{ current_page }} of {{ total_pages }} |
         {% if current_page < total_pages %}
             <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
         {% endif %}
