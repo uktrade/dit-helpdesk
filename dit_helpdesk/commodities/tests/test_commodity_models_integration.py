@@ -107,9 +107,12 @@ class TestSubHeadingModel(TestCase):
     def test_subheading_has_heading_parent(self):
         self.assertEqual(self.subheading.heading_id, self.heading.id)
 
-        with open(file_path) as f:
-            json_data = json.load(f)
-        return json_data
+        self.heading = mixer.blend(
+            Heading,
+            heading_code="0101000000",
+            chapter=self.chapter
+        )
+
 
 class TestCommodityModel(TestCase):
 
@@ -228,12 +231,9 @@ class TestCommodityModel(TestCase):
     def test_commodity_code_splt_is_correct(self):
         self.assertTrue(self.commodity.commodity_code_split, settings.TEST_COMMODITY_CODE_SPLIT)
 
-    def test_commodity_get_absolute_url(self):
-        self.assertEqual(self.commodity.get_absolute_url(settings.TEST_COUNTRY_CODE),
-                         "/country/au/commodity/{0}".format(settings.TEST_COMMODITY_CODE))
-
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))
+
 
 """
 #TODO: move to tts_serivce tests

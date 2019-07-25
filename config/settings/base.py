@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'user',
     'regulations',
     'healthcheck',
+    'directory_forms_api_client',
 ]
 
 MIDDLEWARE = [
@@ -166,9 +167,9 @@ FIXTURE_DIRS = (
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
@@ -235,6 +236,10 @@ RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/count
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
+
+TRADE_TARIFF_API = {
+    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}",
+}
 
 SECTION_URL = (
     "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
@@ -334,3 +339,8 @@ ELASTICSEARCH_INDEX_NAMES = {
 }
 
 RESULTS_PER_PAGE = 20
+
+DIRECTORY_FORMS_API_BASE_URL = 'http://localhost:8011'
+DIRECTORY_FORMS_API_API_KEY = ""
+DIRECTORY_FORMS_API_SENDER_ID = ""
+DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 0

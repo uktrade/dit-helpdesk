@@ -316,6 +316,7 @@ class Chapter(models.Model):
     #     except Exception as err:
     #         print(err.args)
 
+
 class Heading(models.Model):
     goods_nomenclature_sid = models.CharField(max_length=10, null=True)
     productline_suffix = models.CharField(max_length=2, null=True)
@@ -622,4 +623,3 @@ class SubHeading(models.Model):
     #                         "description": parent.description,
     #                         "commodity_code": parent.commodity_code,
     #                         "type": "sub_heading"})
-

@@ -1,4 +1,3 @@
-
 import sys
 from time import sleep
 
@@ -78,6 +77,13 @@ def get_and_update_heading(heading_url, chapter_db_obj):
 
     return heading_json_obj, heading_db_obj
 
+import sys
+from time import sleep
+
+from django.core.management.base import BaseCommand
+
+from hierarchy.models import Section
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 class Command(BaseCommand):
 

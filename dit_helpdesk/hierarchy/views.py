@@ -64,7 +64,6 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     :param origin_country: string representing the origin country code
     :return: html snippet that represents the expanded section of the hierarchy
     """
-
     if node == 'root':
         children = Section.objects.all().order_by('section_id')
         html = '<ul class="app-hierarchy-tree">'
@@ -124,7 +123,6 @@ def hierarchy_data(country_code, node_id='root'):
     :param node_id: string representing hierarchy node id
     :return: html snippet that represents the expanded section of the hierarchy
     """
-
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
     html = _get_hierarchy_level_html('root', expanded, country_code)

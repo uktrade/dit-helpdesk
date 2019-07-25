@@ -58,7 +58,6 @@ class CommodityTestCase(TestCase):
         self.commodity = mixer.blend(
             Commodity,
             commodity_code="0101210000",
-
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             tts_heading_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
             parent_subheading=self.subheading
@@ -91,7 +90,6 @@ class CommodityTestCase(TestCase):
 
     def test_tts_obj_is_a_CommodityJson_object(self):
         self.assertTrue(isinstance(self.commodity.tts_obj, CommodityJson))
-        self.assertFalse(self.commodity.tts_obj.di)
 
     def test_heading_tts_json_is_a_string_representing_a_json_object(self):
         # TODO: if not used remove field from Commodity Model
@@ -107,9 +105,8 @@ class CommodityTestCase(TestCase):
         # TODO: if not used remove method from Commodity model
         self.assertEquals(self.commodity.tts_title, self.commodity.description)
 
-    def test_heading_description(self):
-        # TODO: if not used remove method from Commodity model
-        self.assertEquals(self.commodity.tts_heading_description, self.commodity.description)
+    def test_heading_tts_json_is_the_correct_data(self):
+        self.assertEquals(self.commodity.tts_heading_json, json.dumps(get_data(settings.HEADING_STRUCTURE)))
 
     def test_get_heading_is_type_heading_with_code_0101000000(self):
         self.assertTrue(isinstance(self.commodity.get_heading(), Heading))
@@ -232,4 +229,3 @@ class CommodityTestCase(TestCase):
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
         self.assertAlmostEqual(self.commodity.last_updated > test_time and check < datetime.timedelta(minutes=2), False)
-

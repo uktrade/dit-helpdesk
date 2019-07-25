@@ -102,6 +102,8 @@ class Commodity(models.Model):
         Heading item is reached
         :return: model instance
         """
+        print(self.heading)
+        print(self.parent_subheading)
         obj = self.heading or self.parent_subheading
         while type(obj) is not Heading:
             obj = obj.get_parent()

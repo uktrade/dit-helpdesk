@@ -81,7 +81,6 @@ class CommodityJson(object):
 
         return measures[0] if len(measures) == 1 else None
 
-
     @property
     def title(self):
         return self.di['description']
