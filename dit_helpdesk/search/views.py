@@ -37,17 +37,18 @@ from django_elasticsearch_dsl_drf.filter_backends import (
     SearchFilterBackend,
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from elasticsearch import Elasticsearch
 
+from countries.models import Country
+from hierarchy.views import hierarchy_data
 from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
 from search.documents.heading import HeadingDocument
 from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
-from search.forms import CommoditySearchForm, KeywordSearchForm
-from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, ChapterDocumentSerializer, SectionDocumentSerializer
-
-
-from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
+from search.forms import CommoditySearchForm
+from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, \
+    ChapterDocumentSerializer, SectionDocumentSerializer
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -85,15 +86,10 @@ class CommoditySearchView(FormView):
 
             if self.form.is_valid():
                 query = self.request.GET.get('q')
-                page = int(self.request.GET.get('page', '1'))
-                start = (page - 1) * settings.RESULTS_PER_PAGE
-                end = start + settings.RESULTS_PER_PAGE
-
                 context["query"] = query
 
                 client = Elasticsearch(hosts=[settings.ES_URL])
 
-                # query to execute for commodity code search
                 if query.isdigit():
 
                     processed_query = process_commodity_code(query)
@@ -114,6 +110,7 @@ class CommoditySearchView(FormView):
                             'country_code': context["country_code"]
                         }))
                 else:
+
                     sort_object = {"ranking": {"order": "desc"}}
                     query_object = {
                             "multi_match": {
@@ -163,6 +160,7 @@ class CommoditySearchView(FormView):
                         self.request.GET.get('country'),
                         page+1
                     )
+
                     context["previous_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
                         self.request.GET.get('country'),
                         self.request.GET.get('q'),
@@ -173,6 +171,7 @@ class CommoditySearchView(FormView):
                     context["page_range_start"] = start if start != 0 else start + 1
                     context["page_range_end"] = end if len(results) == settings.RESULTS_PER_PAGE else start + len(results)
                     context["page_total"] = len(results)
+
                     return self.render_to_response(context)
             else:
                 return self.form_invalid(self.form)
@@ -213,7 +212,6 @@ class CommodityDocumentViewSet(DocumentViewSet):
         'commodity_code',
         'description',
     )
-    
 
 class CommodityViewSet(DocumentViewSet):
 
@@ -583,6 +581,7 @@ def _generate_commodity_code_html(code):
     :param item: model instance
     :return: html
     """
+
     commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
     if len(code) > 2 and code.isdigit():
