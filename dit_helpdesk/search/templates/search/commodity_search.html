@@ -82,6 +82,7 @@
       <section>
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
+
             <h1 class="govuk-heading-m govuk-!-font-size-27">
                 {% if result.meta.index == "commodity" %}
               <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>

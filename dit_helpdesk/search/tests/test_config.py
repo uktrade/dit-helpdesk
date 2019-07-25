@@ -5,7 +5,7 @@ from search.apps import SearchConfig
 
 class SearchConfigTestCase(TestCase):
     """
-    Test app config
+    Test Search app config
     """
 
     def test_apps(self):

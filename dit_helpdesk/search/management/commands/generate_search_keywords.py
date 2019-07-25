@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from search.search_keyword_generator import SearchKeywordGenerator
+from search.SearchKeywordGenerator import SearchKeywordGenerator
 
 HEADINGS_CSV = settings.SEARCH_DATA_PATH.format("commodities/hierarchy_subheading_all.csv")
 GA_SEARCH_TERMS = settings.SEARCH_DATA_PATH.format(

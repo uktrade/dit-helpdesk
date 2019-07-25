@@ -9,16 +9,12 @@ app_name = 'search'
 router = SimpleRouter()
 router.register(
     prefix=r'',
-    base_name='search',
+    basename='search',
     viewset=views.CommodityViewSet
 )
 
 urlpatterns = [
     re_path(r'^api/', include(router.urls)),
-
-    re_path(r'country/(?P<country_code>\w+)/advanced/',
-            views.SearchView.as_view(),
-            name="search-advanced"),
 
     re_path(
         r'country/(?P<country_code>\w+)/$',
