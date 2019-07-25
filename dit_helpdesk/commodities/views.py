@@ -137,17 +137,18 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                     expand = 'closed'
 
                 if type(item) is Commodity:
+
                     if item.commodity_code == commodity_code:
                         html += f"""
                             <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
-                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
+                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
                             </li>
                             """
                     else:
                         html += f"""
                             <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
-                                <span>{item.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
+                                <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
                             </li>
                             """
 
@@ -204,6 +205,6 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     :return: html
     """
     section_index = len(reversed_commodity_tree) - 1
-    item = reversed_commodity_tree[section_index][0]
-    html = f'Section {item.roman_numeral}: {item.title.capitalize()}'
+    section = reversed_commodity_tree[section_index][0]
+    html = f'Section {section.roman_numeral}: {section.title.capitalize()}'
     return html

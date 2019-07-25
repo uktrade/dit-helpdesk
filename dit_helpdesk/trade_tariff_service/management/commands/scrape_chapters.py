@@ -10,4 +10,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         builder = HierarchyBuilder()
-        builder.get_section_data_from_api()
+        # builder.get_chapter_data_from_api()
+        # builder.get_tt_api_json()
+        builder.build_import_data()

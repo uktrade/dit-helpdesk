@@ -3,7 +3,6 @@ import json
 from django.db import models
 from django.urls import reverse
 
-from trade_tariff_service.tts_api import ChapterJson, CommodityHeadingJson, HeadingJson, SectionJson
 
 ROMAN_NUMERALS = {
     1: 'I',
@@ -70,22 +69,6 @@ class Section(models.Model):
         min_code, max_code = min(chapter_codes), max(chapter_codes)
         return '%s to %s' % (min_code, max_code)
 
-    @property
-    def tts_obj(self):
-        """
-        Property method returning the SectionJson object representing the data stored in the tts_json field
-        :return: SectionJson object
-        """
-        return SectionJson(json.loads(self.tts_json))
-
-    @property
-    def tts_title(self):
-        """
-        Property method returning the Section title from the SectionJson object
-        :return: string
-        """
-        return self.tts_obj.title
-
     def get_hierarchy_children(self):
         """
         Query returning a list of child chapters ordered by code
@@ -150,25 +133,25 @@ class Section(models.Model):
 
         return tree
 
-    @staticmethod
-    def _append_descendant_data(parent, tree, level):
-        """
-        Appends a tree of descendants to the passed tree from passed parent
-        :param parent: parent model instance
-        :param tree: list of descendants
-        :param level: int
-        """
-        try:
-            children = parent.get_hierarchy_children()
-            for child in children:
-                # if type(child) is Commodity:
-                if child.commodity_code not in ["9900000000", "9950000000"]:
-                    tree[level].append({"id": child.id,
-                                    "description": child.description,
-                                    "commodity_code": child.commodity_code,
-                                    "type": child._meta.model_name})
-        except Exception as err:
-            print(err.args)
+    # @staticmethod
+    # def _append_descendant_data(parent, tree, level):
+    #     """
+    #     Appends a tree of descendants to the passed tree from passed parent
+    #     :param parent: parent model instance
+    #     :param tree: list of descendants
+    #     :param level: int
+    #     """
+    #     try:
+    #         children = parent.get_hierarchy_children()
+    #         for child in children:
+    #             # if type(child) is Commodity:
+    #             if child.commodity_code not in ["9900000000", "9950000000"]:
+    #                 tree[level].append({"id": child.id,
+    #                                 "description": child.description,
+    #                                 "commodity_code": child.commodity_code,
+    #                                 "type": child._meta.model_name})
+    #     except Exception as err:
+    #         print(err.args)
 
 
 class Chapter(models.Model):
@@ -189,7 +172,7 @@ class Chapter(models.Model):
     ranking = models.SmallIntegerField(null=True)
 
     chapter_code = models.CharField(max_length=30)
-    tts_json = models.TextField(blank=True, null=True)
+    # tts_json = models.TextField(blank=True, null=True)
 
     section = models.ForeignKey(
         'Section', blank=True, null=True, on_delete=models.CASCADE
@@ -219,22 +202,6 @@ class Chapter(models.Model):
         return 'chapter-%s' % self.pk
 
     @property
-    def tts_obj(self):
-        """
-        Property method returning the ChapterJson object representing the data stored in the tts_json field
-        :return: ChapterJson object
-        """
-        return ChapterJson(json.loads(self.tts_json))
-
-    @property
-    def tts_title(self):
-        """
-        Property method returning the Chapter title from the ChapterJson object
-        :return: string
-        """
-        return self.tts_obj.title
-
-    @property
     def harmonized_code(self):
         """
         property method used across all hierarchy model instances, apart from Section, to normalise the code
@@ -248,14 +215,15 @@ class Chapter(models.Model):
         Query returning a list of child Headings ordered by code
         :return:
         """
-        children = []
-        for heading in self.headings.all().order_by('heading_code'):
-            for child in heading.get_hierarchy_children():
-                if heading.heading_code != child.commodity_code:
-                    children.append(heading)
-                else:
-                    children.append(child)
-        return children
+        return self.headings.all().order_by('heading_code')
+        # children = []
+        # for heading in self.headings.all().order_by('heading_code'):
+        #     for child in heading.get_hierarchy_children():
+        #         if heading.heading_code != child.commodity_code:
+        #             children.append(heading)
+        #         else:
+        #             children.append(child)
+        # return children
 
     def get_headings_url(self):
         """
@@ -321,25 +289,27 @@ class Chapter(models.Model):
 
         return tree
 
-    @staticmethod
-    def _append_descendant_data(parent, tree, level):
-        """
-        Appends a tree of descendants to the passed tree from passed parent
-        :param parent: parent model instance
-        :param tree: list of descendants
-        :param level: int
-        """
-        try:
-            children = parent.get_hierarchy_children()
-            for child in children:
-                # if type(child) is Commodity:
-                if child.commodity_code not in ["9900000000", "9950000000", "9905000000"]:
-                    tree[level].append({"id": child.id,
-                                    "description": child.description,
-                                    "commodity_code": child.commodity_code,
-                                    "type": child._meta.model_name})
-        except Exception as err:
-            print(err.args)
+    # @staticmethod
+    # def _append_descendant_data(parent, tree, level):
+    #     """
+    #     Appends a tree of descendants to the passed tree from passed parent
+    #     :param parent: parent model instance
+    #     :param tree: list of descendants
+    #     :param level: int
+    #     """
+    #     print(parent, tree, level)
+    #     try:
+    #         children = parent.get_hierarchy_children()
+    #         print(children)
+    #         for child in children:
+    #             # if type(child) is Commodity:
+    #             if child.commodity_code not in ["9900000000", "9950000000", "9905000000"]:
+    #                 tree[level].append({"id": child.id,
+    #                                 "description": child.description,
+    #                                 "commodity_code": child.commodity_code,
+    #                                 "type": child._meta.model_name})
+    #     except Exception as err:
+    #         print(err.args)
 
 
 class Heading(models.Model):
@@ -377,22 +347,6 @@ class Heading(models.Model):
         :return: string
         """
         return 'heading-%s' % self.pk
-
-    @property
-    def tts_obj(self):
-        """
-        Property method returning the HeadingJson object representing the data stored in the tts_json field
-        :return: HeadingJson object
-        """
-        return HeadingJson(json.loads(self.tts_json))
-
-    @property
-    def tts_title(self):
-        """
-        Property method returning the Heading title from the object field
-        :return: string
-        """
-        return self.description
 
     @property
     def harmonized_code(self):
@@ -483,25 +437,25 @@ class Heading(models.Model):
 
         return tree
 
-    @staticmethod
-    def _append_descendant_data(parent, tree, level):
-        """
-        Appends a tree of descendants to the passed tree from passed parent
-        :param parent: parent model instance
-        :param tree: list of descendants
-        :param level: int
-        """
-        try:
-            children = parent.get_hierarchy_children()
-            for child in children:
-                # if type(child) is Commodity:
-                if child.commodity_code not in ["9900000000", "9950000000"]:
-                    tree[level].append({"id": child.id,
-                                    "description": child.description,
-                                    "commodity_code": child.commodity_code,
-                                    "type": child._meta.model_name})
-        except Exception as err:
-            print(err.args)
+    # @staticmethod
+    # def _append_descendant_data(parent, tree, level):
+    #     """
+    #     Appends a tree of descendants to the passed tree from passed parent
+    #     :param parent: parent model instance
+    #     :param tree: list of descendants
+    #     :param level: int
+    #     """
+    #     try:
+    #         children = parent.get_hierarchy_children()
+    #         for child in children:
+    #             # if type(child) is Commodity:
+    #             if child.commodity_code not in ["9900000000", "9950000000"]:
+    #                 tree[level].append({"id": child.id,
+    #                                 "description": child.description,
+    #                                 "commodity_code": child.commodity_code,
+    #                                 "type": child._meta.model_name})
+    #     except Exception as err:
+    #         print(err.args)
 
 
 class SubHeading(models.Model):
@@ -543,30 +497,6 @@ class SubHeading(models.Model):
         :return: string
         """
         return 'sub_heading-%s' % self.pk
-
-    @property
-    def tts_heading_obj(self):
-        """
-        Property method returning the CommodityHeadingJson object representing the data stored in the tts_json field
-        :return: CommodityHeadingJson object
-        """
-        return CommodityHeadingJson(json.loads(self.tts_heading_json))
-
-    @property
-    def tts_title(self):
-        """
-        Property method returning the SubHeading title from the object field
-        :return: string
-        """
-        return self.description
-
-    @property
-    def tts_heading_description(self):
-        """
-        Property method returning the SubHeading title from the object field
-        :return: string
-        """
-        return self.description
 
     @property
     def harmonized_code(self):
@@ -663,15 +593,15 @@ class SubHeading(models.Model):
 
         return tree
 
-    @staticmethod
-    def _append_descendant_data(parent, tree, level):
-        """
-        Appends a tree of descendants to the passed tree from passed parent
-        :param parent: parent model instance
-        :param tree: list of descendants
-        :param level: int
-        """
-        tree[level].append({"id": parent.id,
-                            "description": parent.description,
-                            "commodity_code": parent.commodity_code,
-                            "type": "sub_heading"})
+    # @staticmethod
+    # def _append_descendant_data(parent, tree, level):
+    #     """
+    #     Appends a tree of descendants to the passed tree from passed parent
+    #     :param parent: parent model instance
+    #     :param tree: list of descendants
+    #     :param level: int
+    #     """
+    #     tree[level].append({"id": parent.id,
+    #                         "description": parent.description,
+    #                         "commodity_code": parent.commodity_code,
+    #                         "type": "sub_heading"})

@@ -65,8 +65,8 @@
 
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-three-quarters">
-      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">{{ commodity.tts_title | safe }}</p>
-        <p><strong>Last updated:</strong> {{ commodity.last_updated }}</p>
+      <p class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">{{ commodity.description | safe }}</p>
+        <p class="govuk-body-s"><span class="govuk-!-font-weight-bold">Last updated:</span> {{ commodity.last_updated }}</p>
     </div>
   </div>
 
@@ -361,14 +361,14 @@
                 <h4 class="govuk-accordion__section-heading govuk-heading-s">
                   <span class="govuk-accordion__section-button"
                         id="accordion-default-heading-{{ forloop.counter }}">
-                    {{ regulation.title  }}
+                    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3">{{ regulation.title  }}</p>
                   </span>
                 </h4>
               </div>
               <div id="accordion-default-content-{{ forloop.counter }}"
                   class="govuk-accordion__section-content"
                   aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
-                <ul class="govuk-list govuk-list--bullet">
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-3">
                   {% for document in regulation.document_set.all %}
                     <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ document.url }}"
                         class="govuk-link ">

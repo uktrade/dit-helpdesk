@@ -11,7 +11,7 @@ from django.urls import reverse
 
 from countries.models import Country
 from hierarchy.models import SubHeading, Heading, Chapter, Section
-from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
+from trade_tariff_service.tts_api import CommodityJson
 
 
 class Commodity(models.Model):
@@ -92,32 +92,6 @@ class Commodity(models.Model):
         """
         return CommodityJson(json.loads(self.tts_json))
 
-    @property
-    def tts_heading_obj(self):
-        """
-        gets the json object from the tts_heading_json field and converts it to a python CommodityHeadingJson class
-        instance
-        used to extract data from the json data structure to display in the template
-        :return: CommodityHeadingJson object
-        """
-        return CommodityHeadingJson(json.loads(self.tts_heading_json))
-
-    @property
-    def tts_title(self):
-        """
-        Extracts the Commodity title from the json data to display in the template
-        :return: string
-        """
-        return self.description
-
-    @property
-    def tts_heading_description(self):
-        """
-        Extracts the Commodity Heading title from the json data to display in the template
-        :return: string
-        """
-        return self.description
-
     def get_heading(self):
         """
         returns the commodity's Heading instance
@@ -125,6 +99,8 @@ class Commodity(models.Model):
         Heading item is reached
         :return: model instance
         """
+        print(self.heading)
+        print(self.parent_subheading)
         obj = self.heading or self.parent_subheading
         while type(obj) is not Heading:
             obj = obj.get_parent()
@@ -173,6 +149,7 @@ class Commodity(models.Model):
         :param level: int
         :return: list
         """
+
         if tree is None:
             tree = []
         if not parent:
@@ -202,7 +179,6 @@ class Commodity(models.Model):
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()
-        # print("ANCESTORS: " , ancestors)
         return json.dumps(ancestors)
 
     def get_ancestor_data(self, parent=None, tree=None, level=0):
@@ -263,7 +239,6 @@ class Commodity(models.Model):
         try:
             children = parent.get_hierarchy_children()
             for child in children:
-                # if type(child) is Commodity:
                 if child.commodity_code not in ["9900000000", "9950000000"]:
                     tree[level].append({"id": child.id,
                                     "description": child.description,
@@ -283,7 +258,6 @@ class Commodity(models.Model):
         """
         children = parent.get_hierarchy_children()
         for child in children:
-            # if type(child) is Commodity:
             tree[level].append(child)
 
     @staticmethod

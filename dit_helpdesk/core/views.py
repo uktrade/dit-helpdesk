@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 
 
 def error404handler(request, exception):
@@ -23,3 +24,4 @@ def error500handler(request):
     response.status_code = 500
 
     return response
+
