@@ -79,7 +79,7 @@ class HierarchyModelsTestCase(TestCase):
         # TODO: asdd more chapters to test correct string is returned
         self.assertTrue(isinstance(self.section.chapter_range_str, str))
 
-    def test_section_tts_title_is_correct(self):
+    def test_section_title_is_correct(self):
         self.assertEqual(self.section.title, settings.TEST_SECTION_DESCRIPTION)
 
     def test_section_has_tts_obj(self):
@@ -97,10 +97,6 @@ class HierarchyModelsTestCase(TestCase):
 
     def test_chapter_has_the_correct_hierachy_key(self):
         self.assertEqual(self.chapter.hierarchy_key, "chapter-{0}".format(self.chapter.pk))
-
-    def test_chapter_has_tts_obj_value(self):
-        # self.assertTrue(isinstance(self.chapter.tts_obj, ChapterJson))
-        self.assertFalse(isinstance(self.chapter.tts_json, str))
 
     def test_chapter_has_the_correct_harmonized_code(self):
         self.assertTrue(self.chapter.harmonized_code, settings.TEST_CHAPTER_CODE)
@@ -123,7 +119,7 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(Heading.objects.get(heading_code=settings.TEST_HEADING_CODE))
 
     def test_heading_has_the_correct_title(self):
-        self.assertTrue(self.heading.tts_title, settings.TEST_HEADING_DESCRIPTION)
+        self.assertTrue(self.heading.description, settings.TEST_HEADING_DESCRIPTION)
 
     def test_heading_has_the_correct_hierachy_key(self):
         self.assertEqual(self.heading.hierarchy_key, "heading-{0}".format(self.heading.pk))
@@ -150,7 +146,7 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(isinstance(self.subheading, SubHeading))
 
     def test_subheading_has_the_correct_title(self):
-        self.assertTrue(self.subheading.tts_title, settings.TEST_SUBHEADING_DESCRIPTION)
+        self.assertTrue(self.subheading.description, settings.TEST_SUBHEADING_DESCRIPTION)
 
     def test_subheading_has_the_correct_hierachy_key(self):
         self.assertEqual(self.subheading.hierarchy_key, "sub_heading-{0}".format(self.subheading.pk))
@@ -168,7 +164,3 @@ class HierarchyModelsTestCase(TestCase):
     def test_subheading_has_the_correct_hierarchy_url(self):
         self.assertEqual(self.subheading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
                          "/search/country/au/hierarchy/sub_heading-{}".format(self.subheading.pk))
-
-    def test_subheading_has_parent(self):
-        self.assertTrue(isinstance(self.subheading.get_parent(), SubHeading) or
-                        isinstance(self.subheading.get_parent(), Heading))

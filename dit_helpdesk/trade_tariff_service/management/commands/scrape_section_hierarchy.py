@@ -14,10 +14,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # sections = Section.objects.all()
-        # if len(sections) <= 0:
-        #     self.stdout.write("It looks like the hierarchy already exists.")
-        #     sys.exit()
+        sections = Section.objects.all()
+        if len(sections) > 0:
+            self.stdout.write("It looks like the hierarchy already exists.")
+            return
 
         builder = HierarchyBuilder()
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]

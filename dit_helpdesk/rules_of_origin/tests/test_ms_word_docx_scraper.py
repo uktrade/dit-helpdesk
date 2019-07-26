@@ -2,7 +2,7 @@ import logging
 
 from django.test import TestCase
 
-from rules_of_origin.ms_word_docx_scraper import DocxScraper
+from rules_of_origin.DocxScraper import DocxScraper
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)

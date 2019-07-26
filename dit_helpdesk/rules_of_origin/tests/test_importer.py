@@ -5,9 +5,9 @@ from django.test import TestCase
 from mixer.backend.django import mixer
 
 from hierarchy.models import Chapter, Heading, Section
-from rules_of_origin.importer import RulesOfOriginImporter
+from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
 from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocumentFootnote
-from trade_tariff_service.importer import HierarchyBuilder
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
