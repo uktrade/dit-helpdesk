@@ -15,7 +15,6 @@ class CoreViewsTestCase(TestCase):
 
     def test_404_error(self):
         resp = self.client.get('/non_existant_path/')
-        print(resp)
         self.assertEqual(resp.status_code, 404)
 
     def test_500_error(self):

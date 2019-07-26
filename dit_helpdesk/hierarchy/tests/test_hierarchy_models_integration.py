@@ -98,10 +98,6 @@ class HierarchyModelsTestCase(TestCase):
     def test_chapter_has_the_correct_hierachy_key(self):
         self.assertEqual(self.chapter.hierarchy_key, "chapter-{0}".format(self.chapter.pk))
 
-    def test_chapter_has_tts_obj_value(self):
-        # self.assertTrue(isinstance(self.chapter.tts_obj, ChapterJson))
-        self.assertFalse(isinstance(self.chapter.tts_json, str))
-
     def test_chapter_has_the_correct_harmonized_code(self):
         self.assertTrue(self.chapter.harmonized_code, settings.TEST_CHAPTER_CODE)
 
@@ -168,7 +164,3 @@ class HierarchyModelsTestCase(TestCase):
     def test_subheading_has_the_correct_hierarchy_url(self):
         self.assertEqual(self.subheading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
                          "/search/country/au/hierarchy/sub_heading-{}".format(self.subheading.pk))
-
-    def test_subheading_has_parent(self):
-        self.assertTrue(isinstance(self.subheading.get_parent(), SubHeading) or
-                        isinstance(self.subheading.get_parent(), Heading))

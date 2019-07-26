@@ -45,6 +45,7 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
+
         self.section = self.create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
 
         self.chapter = self.create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
@@ -70,10 +71,6 @@ class CommodityViewTestCase(TestCase):
                                                        "country_code": settings.TEST_COUNTRY_CODE})
 
     fixtures = [settings.COUNTRIES_DATA]
-
-    # fixtures = ['hierarchy/fixtures/hierarchy.json']
-    # fixtures = ['commodities/fixtures/commodities.json']
-    # fixtures = ['regulations/fixtures/regulations.json']
 
     def test_fixtures_load_countries_data(self):
         self.assertTrue(Country.objects.count() > 0)
