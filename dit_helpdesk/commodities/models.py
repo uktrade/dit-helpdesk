@@ -2,6 +2,7 @@
 Django models for commodities app
 """
 import json
+import logging
 import re
 
 import requests
@@ -13,6 +14,7 @@ from countries.models import Country
 from hierarchy.models import SubHeading, Heading, Chapter, Section
 from trade_tariff_service.tts_api import CommodityJson
 
+logger = logging.getLogger(__name__)
 
 class Commodity(models.Model):
     """
@@ -99,8 +101,6 @@ class Commodity(models.Model):
         Heading item is reached
         :return: model instance
         """
-        print(self.heading)
-        print(self.parent_subheading)
         obj = self.heading or self.parent_subheading
         while type(obj) is not Heading:
             obj = obj.get_parent()
@@ -245,7 +245,7 @@ class Commodity(models.Model):
                                     "commodity_code": child.commodity_code,
                                     "type": child._meta.model_name})
         except Exception as err:
-            print(err.args)
+            logger.debug("_append descendant data".format(err.args))
 
 
     @staticmethod

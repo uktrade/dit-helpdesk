@@ -52,7 +52,7 @@ def _get_expanded_context(selected_node_id):
         expanded.append("section-{0}".format(heading_obj.chapter.section.pk))
         expanded.append("chapter-{0}".format(heading_obj.chapter.pk))
         expanded.append("heading-{0}".format(heading_obj.pk))
-    print("expanded: ", expanded)
+
     return expanded
 
 

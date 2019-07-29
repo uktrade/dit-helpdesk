@@ -276,7 +276,7 @@ class ImportMeasureJson(object):
         try:
             data = self.reformat_date(data)
         except Exception as e:
-            logger.debug(e.args)
+            logger.debug("trying to reformat date from data {0}, throws {1}".format(data, e.args))
 
         data_with_headings = []
 

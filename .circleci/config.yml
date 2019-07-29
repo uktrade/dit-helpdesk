@@ -1,0 +1,66 @@
+# ~/.circleci/config.yml
+
+version: 2
+
+jobs:
+  build:
+
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          DEBUG: True
+          DJANGO_SECRET_KEY: gxtlx3w9wElej5br9823rT4089nz65_3q0snh_p3q9dq_w55f
+          DJANGO_SETTINGS_MODULE: config.settings.test
+          DJANGO_BASE_DIR: /app
+          DIT_HELPDESK_ADMIN_PASSWORD: dit4life
+          #SENTRY_DSN: #https://ad61c1d8e7e7426d820e56381fb09f98@sentry.ci.uktrade.io/150
+          DJANGO_POSTGRES_HOST: postgres
+          DJANGO_POSTGRES_DATABASE: helpdesk
+          DJANGO_POSTGRES_USER: postgres
+          DJANGO_POSTGRES_PASSWORD: postgres
+          DJANGO_POSTGRES_PORT: 5432
+      - image: circleci/postgres:10
+        name: postgres
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: helpdesk
+      - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+        name: es
+        environment:
+          ES_URL: http://es:9200
+      - image: circleci/redis:3.2
+        environment:
+          - REDIS_URL: "redis://localhost:6379/"
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+            - v1-dependencies-{{ .Branch }}-
+            - v1-dependencies-
+
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements/test.txt
+
+      - save_cache:
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+          paths:
+            - "venv"
+
+
+      - run:
+          name: Running tests
+          command: |
+            . venv/bin/activate
+            coverage run manage.py test commodities.tests --settings=config.settings.test
+      - store_artifacts:
+          path: test-reports/
+          destination: python_app

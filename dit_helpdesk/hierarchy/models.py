@@ -105,7 +105,6 @@ class Section(models.Model):
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()
-        # print("ANCESTORS: " , ancestors)
         return json.dumps(ancestors)
 
     def get_ancestor_data(self, parent=None, tree=None, level=0):
@@ -254,7 +253,6 @@ class Chapter(models.Model):
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()
-        # print("ANCESTORS: " , ancestors)
         return json.dumps(ancestors)
 
     def get_ancestor_data(self, parent=None, tree=None, level=0):
@@ -396,7 +394,6 @@ class Heading(models.Model):
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()
-        # print("ANCESTORS: " , ancestors)
         return json.dumps(ancestors)
 
     def get_ancestor_data(self, parent=None, tree=None, level=0):
@@ -455,7 +452,7 @@ class Heading(models.Model):
     #                                 "commodity_code": child.commodity_code,
     #                                 "type": child._meta.model_name})
     #     except Exception as err:
-    #         print(err.args)
+    #         logger.debug(err.args)
 
 
 class SubHeading(models.Model):
@@ -542,7 +539,6 @@ class SubHeading(models.Model):
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()
-        # print("ANCESTORS: " , ancestors)
         return json.dumps(ancestors)
 
     def get_ancestor_data(self, parent=None, tree=None, level=0):
@@ -588,7 +584,6 @@ class SubHeading(models.Model):
                                 "type": "section"
                                 })
         # else:
-        #     print(parent)
         #     self._append_descendant_data(self, tree, level)
 
         return tree

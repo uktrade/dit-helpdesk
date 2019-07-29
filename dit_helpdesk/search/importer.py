@@ -12,6 +12,7 @@ from commodities.models import Commodity
 from hierarchy.models import Heading, SubHeading, Section, Chapter
 
 logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
@@ -106,7 +107,6 @@ class SearchKeywordsImporter:
             for item in self.data[model_name]:
                 field_data = {}
 
-
                 commodity_code = next(iter(item.keys()))
                 field_data["keywords"] = " ".join(item[commodity_code]["keywords"])
                 field_data["ranking"] = item[commodity_code]['ranking_score']
@@ -126,10 +126,10 @@ class SearchKeywordsImporter:
                         )
                     except ObjectDoesNotExist as err:
                         not_found.append((model_name, commodity_code))
-                        print(err.args, commodity_code)
+                        logger.debug("update or create {0} {1}".format(err.args, commodity_code))
                     except MultipleObjectsReturned as m_err:
                         multiples_found.append((model_name, commodity_code))
-                        print(m_err.args, commodity_code)
+                        logger.debug("multiple found {0} {1}".format(m_err.args, commodity_code))
                 else:
                     try:
                         obj, created = model.objects.update_or_create(
@@ -138,15 +138,15 @@ class SearchKeywordsImporter:
                         )
                     except ObjectDoesNotExist as err:
                         not_found.append((model_name, commodity_code))
-                        print(err.args, commodity_code)
+                        logger.debug("update or create {0} {1}".format(err.args, commodity_code))
                     except MultipleObjectsReturned as m_err:
                         multiples_found.append((model_name, commodity_code))
-                        print(m_err.args, commodity_code)
+                        logger.debug("multiple found {0} {1}".format(m_err.args, commodity_code))
 
                 if not created:
-                    print("{0} instance updated".format(obj))
+                    logger.info("{0} instance updated".format(obj))
                 else:
-                    print("{0} instance created".format(obj))
+                    logger.info("{0} instance created".format(obj))
 
-        print(multiples_found)
-        print(not_found)
+        logger.info("Multiples Found: ", multiples_found)
+        logger.info("Not founds: ", not_found)

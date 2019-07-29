@@ -17,28 +17,23 @@ logger.setLevel(logging.INFO)
 
 hierarchy_model_map = {
     "Commodity": {
-        # "file_name": "hierarchy_subheading_commodities.json",
-        "file_name": "commodities_import.json",
+        "file_name": "prepared/commodities.json",
         "app_name": "commodities"
     },
     "Chapter": {
-        # "file_name": "hierarchy_subheading_chapters.json",
-        "file_name": "chapters_import.json",
+        "file_name": "prepared/chapters.json",
         "app_name": "hierarchy"
     },
     "Heading": {
-        # "file_name": "hierarchy_subheading_headings.json",
-        "file_name": "headings_import.json",
+        "file_name": "prepared/headings.json",
         "app_name": "hierarchy"
     },
     "SubHeading": {
-        # "file_name": "hierarchy_subheading_subheadings.json",
-        "file_name": "sub_headings_import.json",
+        "file_name": "prepared/sub_headings.json",
         "app_name": "hierarchy"
     },
     "Section": {
-        # "file_name": "hierarchy_subheading_sections.json",
-        "file_name": "sections_import.json",
+        "file_name": "prepared/sections.json",
         "app_name": "hierarchy"
     }
 }
@@ -77,6 +72,11 @@ class HierarchyBuilder:
 
     @staticmethod
     def file_loader(model_name):
+        """
+        given a model name load json data from the file system to import
+        :param model_name:
+        :return:
+        """
 
         file_name = hierarchy_model_map[model_name]['file_name']
         file_path = settings.IMPORT_DATA_PATH.format(file_name)
@@ -87,6 +87,13 @@ class HierarchyBuilder:
 
     @staticmethod
     def rename_key(old_dict, old_name, new_name):
+        """
+        rename a key in a dictionary and return the new dictionary
+        :param old_dict:
+        :param old_name:
+        :param new_name:
+        :return:
+        """
         new_dict = {}
         for key, value in zip(old_dict.keys(), old_dict.values()):
             new_key = key if key != old_name else new_name
@@ -94,6 +101,12 @@ class HierarchyBuilder:
         return new_dict
 
     def instance_builder(self, model, data):
+        """
+        build an instance of a model provided the model type and data supplied and return the new instance
+        :param model:
+        :param data:
+        :return:
+        """
 
         logger.info("CODE instance builder {0} {1}".format(model, data))
 
@@ -430,7 +443,7 @@ class HierarchyBuilder:
 
         data = []
 
-        print("Getting {0} data".format(data_type))
+        logger.info("Getting {0} data".format(data_type))
         url = settings.TRADE_TARIFF_API["BASE_URL"].format(data_type)
         resp = requests.get(url)
 
@@ -445,7 +458,7 @@ class HierarchyBuilder:
             data = self.get_item_data_from_api(data_type, data_type_ids)
 
         else:
-            print("{0} returned a {1} error".format(url, resp.status_code))
+            logger.debug("{0} returned a {1} error".format(url, resp.status_code))
 
         return data
 
@@ -471,7 +484,7 @@ class HierarchyBuilder:
                         [item["attributes"]["goods_nomenclature_item_id"] for item in item_json["included"] if
                          item["type"] == "commodity"])
             else:
-                print("{0} returned a {1} error".format(url, resp.status_code))
+                logger.debug("{0} returned a {1} error".format(url, resp.status_code))
         return data, child_data
 
     def build_import_data(self):
@@ -483,9 +496,9 @@ class HierarchyBuilder:
         """
 
         # read serialized api data from the filesystem
-        sections = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("sections.json"))
-        chapters = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("chapters.json"))
-        headings = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("headings.json"))
+        sections = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/sections.json"))
+        chapters = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/chapters.json"))
+        headings = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/headings.json"))
 
         # lists in which to collect instance data objects
         sections_data = []
@@ -587,15 +600,15 @@ class HierarchyBuilder:
         commodities_data = [dict(t) for t in {tuple(d.items()) for d in commodities_data}]
 
         # serialize to filesystem
-        self.write_data_to_file(sections_data, settings.IMPORT_DATA_PATH.format("sections_import.json"))
-        self.write_data_to_file(chapters_data, settings.IMPORT_DATA_PATH.format("chapters_import.json"))
-        self.write_data_to_file(headings_data, settings.IMPORT_DATA_PATH.format("headings_import.json"))
-        self.write_data_to_file(sub_headings_data, settings.IMPORT_DATA_PATH.format("sub_headings_import.json"))
-        self.write_data_to_file(commodities_data, settings.IMPORT_DATA_PATH.format("commodities_import.json"))
+        self.write_data_to_file(sections_data, settings.IMPORT_DATA_PATH.format("prepared/sections.json"))
+        self.write_data_to_file(chapters_data, settings.IMPORT_DATA_PATH.format("prepared/chapters.json"))
+        self.write_data_to_file(headings_data, settings.IMPORT_DATA_PATH.format("prepared/headings.json"))
+        self.write_data_to_file(sub_headings_data, settings.IMPORT_DATA_PATH.format("prepared/sub_headings.json"))
+        self.write_data_to_file(commodities_data, settings.IMPORT_DATA_PATH.format("prepared/commodities.json"))
 
     def save_trade_tariff_service_api_data_json_to_file(self):
         """
-        Get Sections, Chapters and Headings apidata from the trade tariff service api and serialize it locally to disk
+        Get Sections, Chapters and Headings api data from the trade tariff service api and serialize it locally to disk
         This will be used by `build_import_data` to create the json files that will be used to create the
         main hierarchy structural elements
         :return:
@@ -604,17 +617,17 @@ class HierarchyBuilder:
         data_type = "sections"
         sections, _ = self.get_type_data_from_api(data_type=data_type)
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(sections, settings.IMPORT_DATA_PATH.format("{0}.json".format(data_type)))
+        self.write_data_to_file(sections, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
 
         data_type = "chapters"
         chapters, heading_ids = self.get_type_data_from_api(data_type=data_type)
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(chapters, settings.IMPORT_DATA_PATH.format("{0}.json".format(data_type)))
+        self.write_data_to_file(chapters, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
 
         data_type = "headings"
         headings, commodity_ids = self.get_item_data_from_api(data_type=data_type, item_ids=heading_ids)
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(headings, settings.IMPORT_DATA_PATH.format("{0}.json".format(data_type)))
+        self.write_data_to_file(headings, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
 
     # def get_header_data_from_api(self):
     #
@@ -672,7 +685,7 @@ class HierarchyBuilder:
                 try:
                     return parent_model.objects.get(goods_nomenclature_sid=child_parent_code)
                 except ObjectDoesNotExist as exception:
-                    logger.debug(exception.args)
+                    logger.debug("{0} lookup parent:{1} ".format(item, exception.args))
                     return None
 
     @staticmethod
@@ -694,7 +707,7 @@ class HierarchyBuilder:
                 subheading.parent_subheading_id = parent.pk
                 subheading.save()
             except ObjectDoesNotExist as exception:
-                logger.debug(exception.args)
+                logger.debug("{0} has no parent {1}".format(subheading, exception.args))
                 parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
                 subheading.heading_id = parent.pk
                 subheading.save()
@@ -726,7 +739,7 @@ class HierarchyBuilder:
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
-                logger.debug(exception.args)
+                logger.debug("Commodity {0} has no subheading parent parant {1}".format(commodity, exception.args))
 
                 if parent_sid is None:
                     heading = Heading.objects.get(
