@@ -60,7 +60,7 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            coverage run manage.py test commodities.tests --settings=config.settings.test
+            coverage run manage.py test dit_helpdesk --settings=config.settings.test
       - store_artifacts:
           path: test-reports/
           destination: python_app
