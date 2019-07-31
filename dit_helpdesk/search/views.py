@@ -171,7 +171,6 @@ class CommoditySearchView(FormView):
                     context["page_range_start"] = start if start != 0 else start + 1
                     context["page_range_end"] = end if len(results) == settings.RESULTS_PER_PAGE else start + len(results)
                     context["page_total"] = len(results)
-
                     return self.render_to_response(context)
             else:
                 return self.form_invalid(self.form)
