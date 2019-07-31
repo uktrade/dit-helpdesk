@@ -132,13 +132,13 @@ class CommoditySearchView(FormView):
 
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
-                    context["next_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}".format(
+                    context["next_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
                         self.request.GET.get('country'),
                         self.request.GET.get('q'),
                         self.request.GET.get('country'),
                         page+1
                     )
-                    context["previous_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}".format(
+                    context["previous_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
                         self.request.GET.get('country'),
                         self.request.GET.get('q'),
                         self.request.GET.get('country'),
@@ -148,7 +148,6 @@ class CommoditySearchView(FormView):
                     context["page_range_start"] = start if start != 0 else start + 1
                     context["page_range_end"] = end if len(results) == settings.RESULTS_PER_PAGE else start + len(results)
                     context["page_total"] = len(results)
-
                     return self.render_to_response(context)
             else:
                 return self.form_invalid(self.form)

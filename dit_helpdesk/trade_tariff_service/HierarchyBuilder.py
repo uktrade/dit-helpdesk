@@ -108,8 +108,6 @@ class HierarchyBuilder:
         :return:
         """
 
-        logger.info("CODE instance builder {0} {1}".format(model, data))
-
         parent = self.get_instance_parent(data, model)
 
         instance_data = self.get_instance_data(data, model, parent)
@@ -701,16 +699,18 @@ class HierarchyBuilder:
         count = 0
         for subheading in subheadings:
             parent_sid = subheading.parent_goods_nomenclature_sid
-
             try:
                 parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
                 subheading.parent_subheading_id = parent.pk
                 subheading.save()
             except ObjectDoesNotExist as exception:
-                logger.debug("{0} has no parent {1}".format(subheading, exception.args))
-                parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
-                subheading.heading_id = parent.pk
-                subheading.save()
+                logger.info("{0} has no parent SubHeading {1}".format(subheading, exception.args))
+                try:
+                    parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
+                    subheading.heading_id = parent.pk
+                    subheading.save()
+                except ObjectDoesNotExist as exception:
+                    logger.info("{0} has no parent Heading {1}".format(subheading, exception.args))
             count = count + 1
         return count
 

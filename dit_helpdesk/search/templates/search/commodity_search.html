@@ -27,7 +27,7 @@
       </span>
       Search the commodity codes for your goods
     </h2>
-    <form action="{% url 'search:search-commodity' country_code=country_code %}" name="commodity_search" method="get">
+    <form action="{% url 'search:search-commodity' country_code=country_code %}#search-results" name="commodity_search" method="get">
         <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
               Search by keyword or commodity code, or <a href="#browse">browse</a> the commodities below.
@@ -44,6 +44,7 @@
     </form>
 
 {% if results %}
+    <a name="search-results" id="search-results"></a>
     <h2 class="govuk-heading-l">Search results for "{{ query }}"</h2>
     <div class="govuk-form-group">
       <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
