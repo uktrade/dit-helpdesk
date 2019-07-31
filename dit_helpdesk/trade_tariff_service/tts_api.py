@@ -8,25 +8,15 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
-)
-CHAPTER_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/%s.json'
-HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.json'
-
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
 COMMODITY_DETAIL_TABLE_KEYS = [
-    # dict_key, column_title
     ('country', 'Country'),
     ('measure_description', 'Measure type'),
     ('measure_value', 'Value'),
     ('conditions_html', 'Conditions'),
     ('excluded_countries', 'Excluded countries'),
     ('start_end_date', 'Date'),
-    # ('legal_base_html', 'Legal Base'),
-    # ('footnotes_html', 'Footnotes'),
 ]
 
 
@@ -40,10 +30,6 @@ class CommodityJson(object):
     @property
     def title(self):
         return self.di['description']
-
-    @property
-    def heading_description(self):
-        return self.di['heading']['description']
 
     @property
     def code(self):
@@ -95,23 +81,6 @@ class CommodityJson(object):
 
         return measures[0] if len(measures) == 1 else None
 
-
-class CommodityHeadingJson(object):
-    """
-    Sub-dictionary from Commodity response about its Heading
-    example:
-    {'goods_nomenclature_item_id': '0706000000',
-    'description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                   'and similar edible roots, fresh or chilled',
-     'formatted_description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                              'and similar edible roots, fresh or chilled',
-     'description_plain': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                          'and similar edible roots, fresh or chilled'}
-    ('basic_duty_rate', "<span title='13.6 '>13.60</span> %")
-    """
-
-    def __init__(self, di):
-        self.di = di
 
     @property
     def title(self):
@@ -407,7 +376,7 @@ class ImportMeasureJson(object):
         try:
             data = self.reformat_date(data)
         except Exception as e:
-            logger.debug(e.args)
+            logger.debug("trying to reformat date from data {0}, throws {1}".format(data, e.args))
 
         data_with_headings = []
 

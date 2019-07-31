@@ -150,3 +150,19 @@ CHAPTERJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/ChapterJson.jso
 HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/HeadingJson.json"
 COMMODITYHEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/CommodityHeadingJson.json"
 IMPORTMEASUREJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/ImportMeasureJson.json"
+
+
+ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.section': 'test_sections',
+    'search.documents.chapter': 'test_chapters',
+    'search.documents.heading': 'test_headings',
+    'search.documents.subheading': 'test_subheadings',
+    'search.documents.commodity': 'test_commodities',
+}
+ES_URL = 'http://es:9200'
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': ES_URL
+    },
+}
+

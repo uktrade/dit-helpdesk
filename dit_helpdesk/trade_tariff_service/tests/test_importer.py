@@ -3,7 +3,8 @@ import logging
 from django.apps import apps
 from django.test import TestCase
 
-from trade_tariff_service.importer import HierarchyBuilder, hierarchy_model_map
+from hierarchy.models import SubHeading, Heading
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder, hierarchy_model_map
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -31,14 +32,31 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertEqual(instance.section_id, 1)
 
     def test_instance_builder_for_chapter(self):
-        model_name = "Chapter"
-        data = HierarchyBuilder.file_loader(model_name=model_name)
-        model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
+        chapter_model_name = "Chapter"
+        chapter_data = HierarchyBuilder.file_loader(model_name=chapter_model_name)
+        chapter_model = apps.get_model(app_label="hierarchy",
+                                       model_name=chapter_model_name)
+
+        # load section data
+        section_model_name = "Section"
+        section_data = HierarchyBuilder.file_loader(model_name=section_model_name)
+        section_model = apps.get_model(app_label="hierarchy", model_name=section_model_name)
 
         builder = HierarchyBuilder()
-        instance = builder.instance_builder(model, data[0])
-        self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.chapter_code, "0100000000")
+
+        section_instance = builder.instance_builder(
+            section_model,
+            section_data[0]
+        )
+
+        self.assertTrue(isinstance(section_instance, section_model))
+        self.assertEqual(section_instance.section_id, 1)
+
+        section_model.objects.bulk_create([section_instance])
+        chapter_instance = builder.instance_builder(chapter_model, chapter_data[0])
+
+        self.assertTrue(isinstance(chapter_instance, chapter_model))
+        self.assertEqual(chapter_instance.chapter_code, "0100000000")
 
     def test_instance_builder_for_heading(self):
         model_name = "Heading"
@@ -46,9 +64,10 @@ class HierarchyBuilderTestCase(TestCase):
         model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
 
         builder = HierarchyBuilder()
-        instance = builder.instance_builder(model, data[0])
+        instance_data = [item for item in data if item["goods_nomenclature_item_id"] == "2509000000"]
+        instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.heading_code, "0101000000")
+        self.assertEqual(instance.heading_code, "2509000000")
 
     def test_instance_builder_for_subheading(self):
         model_name = "SubHeading"
@@ -56,9 +75,11 @@ class HierarchyBuilderTestCase(TestCase):
         model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
 
         builder = HierarchyBuilder()
-        instance = builder.instance_builder(model, data[0])
+        instance_data = [item for item in data if item["goods_nomenclature_item_id"] == "0204430000"]
+
+        instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.commodity_code, "0101000000")
+        self.assertEqual(instance.commodity_code, "0204430000")
 
     def test_instance_builder_for_commodity(self):
         model_name = "Commodity"
@@ -66,9 +87,10 @@ class HierarchyBuilderTestCase(TestCase):
         model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
 
         builder = HierarchyBuilder()
-        instance = builder.instance_builder(model, data[0])
+        instance_data = [item for item in data if item["goods_nomenclature_item_id"] == "2934999049"]
+        instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.commodity_code, "0101210000")
+        self.assertEqual(instance.commodity_code, "2934999049")
 
     def test_load_data_for_section(self):
         model_name = "Section"
@@ -116,33 +138,63 @@ class HierarchyBuilderTestCase(TestCase):
     def test_processed_orphan_subheadings(self):
 
         builder = HierarchyBuilder()
-        subheadings = builder.file_loader("SubHeading")
+        all_subheadings = builder.file_loader("SubHeading")
+        all_headings = builder.file_loader("Heading")
+        all_chapters = builder.file_loader("Chapter")
 
-        headings = builder.file_loader("Heading")
+        subheadings = [subheading for subheading in all_subheadings if
+                       subheading["parent_goods_nomenclature_sid"] == all_subheadings[0]["goods_nomenclature_sid"]]
+        parent_subheading_ids = [subheading["parent_goods_nomenclature_sid"] for subheading in subheadings]
 
-        heading_data = headings[4]
+        parent_subheadings = [subheading for subheading in all_subheadings if
+                              subheading['goods_nomenclature_sid'] in parent_subheading_ids]
+        parent_parent_subheading_ids = [parent_subheading["parent_goods_nomenclature_sid"]
+                                        for parent_subheading in parent_subheadings]
+
+        parent_parent_subheadings = [subheading for subheading in all_subheadings
+                                     if subheading['goods_nomenclature_sid'] in parent_parent_subheading_ids]
+        parent_heading_ids = [parent_subheading["parent_goods_nomenclature_sid"]
+                              for parent_subheading in parent_parent_subheadings]
+
+        parent_headings = [heading for heading in all_headings
+                           if heading['goods_nomenclature_sid'] in [int(item) for item in parent_heading_ids]]
+        parent_chapter_ids = [parent_heading["parent_goods_nomenclature_sid"]
+                              for parent_heading in parent_headings]
+
+        parent_chapters = [chapter for chapter in all_chapters if chapter['goods_nomenclature_sid'] in parent_chapter_ids]
         heading_data = builder.rename_key(heading_data, 'goods_nomenclature_item_id', 'heading_code')
 
-        model = apps.get_model(app_label=hierarchy_model_map["Heading"]["app_name"], model_name="Heading")
-        heading = model.objects.create(**heading_data)
+        model = apps.get_model(app_label=hierarchy_model_map["SubHeading"]["app_name"], model_name="Chapter")
+        for chapter in parent_chapters:
+            chapter = builder.rename_key(chapter, 'goods_nomenclature_item_id', 'chapter_code')
+            model.objects.create(**chapter)
 
-        child_data = subheadings[1]
-        child_data = builder.rename_key(child_data, 'goods_nomenclature_item_id', 'commodity_code')
-        child_data = builder.rename_key(child_data, 'leaf', 'tts_is_leaf')
-
-        parent_data = subheadings[0]
-        parent_data = builder.rename_key(parent_data, 'goods_nomenclature_item_id', 'commodity_code')
-        parent_data = builder.rename_key(parent_data, 'leaf', 'tts_is_leaf')
+        model = apps.get_model(app_label=hierarchy_model_map["SubHeading"]["app_name"], model_name="Heading")
+        for heading in parent_headings:
+            heading = builder.rename_key(heading, 'goods_nomenclature_item_id', 'heading_code')
+            model.objects.create(**heading)
 
         model = apps.get_model(app_label=hierarchy_model_map["SubHeading"]["app_name"], model_name="SubHeading")
+        for parent_subheading in parent_parent_subheadings:
+            parent_subheading = builder.rename_key(parent_subheading, 'goods_nomenclature_item_id', 'commodity_code')
+            parent_subheading = builder.rename_key(parent_subheading, 'leaf', 'tts_is_leaf')
+            model.objects.create(**parent_subheading)
 
-        model.objects.create(**child_data)
-        parent_data['heading_id'] = heading.pk
-        model.objects.create(**parent_data)
+        model = apps.get_model(app_label=hierarchy_model_map["SubHeading"]["app_name"], model_name="SubHeading")
+        for parent_subheading in parent_subheadings:
+            parent_subheading = builder.rename_key(parent_subheading, 'goods_nomenclature_item_id', 'commodity_code')
+            parent_subheading = builder.rename_key(parent_subheading, 'leaf', 'tts_is_leaf')
+            model.objects.create(**parent_subheading)
 
-        self.assertEqual(builder.process_orphaned_subheadings(), 1)
+        model = apps.get_model(app_label=hierarchy_model_map["SubHeading"]["app_name"], model_name="SubHeading")
+        for subheading in subheadings:
+            subheading = builder.rename_key(subheading, 'goods_nomenclature_item_id', 'commodity_code')
+            subheading = builder.rename_key(subheading, 'leaf', 'tts_is_leaf')
+            model.objects.create(**subheading)
+
+        self.assertEqual(builder.process_orphaned_subheadings(), 4)
 
     # @staticmethod
     # def test_get_section_data_from_api():
     #     builder = HierarchyBuilder()
-    #     builder.get_section_data_from_api()
+    #     builder.

@@ -8,8 +8,8 @@ from django.test import TestCase
 from mixer.backend.django import mixer
 
 from commodities.models import Commodity
-from trade_tariff_service.tts_api import ImportMeasureJson, CommodityHeadingJson, SectionJson, \
-    ChapterJson, HeadingJson
+from hierarchy.models import Heading, SubHeading
+from trade_tariff_service.tts_api import ImportMeasureJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -28,10 +28,22 @@ class CommodityJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        self.heading = mixer.blend(
+            Heading,
+            heading_code=settings.TEST_HEADING_CODE,
+            description=settings.TEST_HEADING_DESCRIPTION
+        )
+        self.subheading = mixer.blend(
+            SubHeading,
+            commodity_code="0101210000",
+            description="Horses",
+            heading=self.heading
+        )
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(settings.COMMODITY_DATA))
+            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            parent_subheading=self.subheading
         )
 
     def test_commodity_json_repr(self):
@@ -40,8 +52,9 @@ class CommodityJsonTestCase(TestCase):
     def test_commodity_json_title(self):
         self.assertEqual(self.commodity.tts_obj.title, 'Pure-bred breeding animals')
 
-    def test_commodity_json_heading_description(self):
-        self.assertEqual(self.commodity.tts_obj.heading_description, 'Live horses, asses, mules and hinnies')
+    def test_commodity_heading_description(self):
+        heading = self.commodity.get_heading()
+        self.assertEqual(heading.description, 'Live horses, asses, mules and hinnies')
 
     def test_commodity_json_code(self):
         self.assertEqual(self.commodity.tts_obj.code, '0101210000')
@@ -82,41 +95,115 @@ class CommodityJsonTestCase(TestCase):
         self.assertEqual(self.commodity.tts_obj.get_import_measure_by_id(10, "AF"), None)
 
 
-class CommodityHeadingJsonTestCase(TestCase):
-    """
-    Test CommodityHeadingJson class
-    """
+# class CommodityHeadingJsonTestCase(TestCase):
+#     """
+#     Test CommodityHeadingJson class
+#     """
+#
+#     def setUp(self):
+#         self.commodity_heading = CommodityHeadingJson(get_data(settings.COMMODITYHEADINGJSON_DATA))
+#
+#     def test_commodity_heading_json_title(self):
+#         self.assertEqual(
+#             self.commodity_heading.title,
+#             "Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled")
+#
+#     def test_commodity_heading_json_harmonized_code(self):
+#         self.assertEqual(self.commodity_heading.harmonized_code, "0706000000")
 
     def setUp(self):
         self.commodity_heading = CommodityHeadingJson(get_data(settings.COMMODITYHEADINGJSON_DATA))
 
-    def test_commodity_heading_json_title(self):
-        self.assertEqual(
-            self.commodity_heading.title,
-            "Carrots, turnips, salad beetroot, salsify, celeriac, radishes and similar edible roots, fresh or chilled")
+# class SectionJsonTestCase(TestCase):
+#     """
+#     Test SectionJson class
+#     """
+#
+#     def setUp(self):
+#         self.section = SectionJson(get_data(settings.SECTIONJSON_DATA))
+#
+#     def test_section_json_title(self):
+#         self.assertEqual(
+#             self.section.title,
+#             'Prepared foodstuffs; beverages, spirits and vinegar; tobacco and manufactured tobacco substitutes')
+#
+#     def test_section_json_chapter_ids(self):
+#         self.assertEqual(self.section.chapter_ids, [16, 17, 18, 19, 20, 21, 22, 23, 24])
+#
+#     def test_section_json_chapter_urls(self):
+#         self.assertEqual(self.section.chapter_urls,
+#                          ['https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/16.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/17.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/18.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/19.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/20.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/21.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/22.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/23.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/24.json'])
+#
+#     def test_section_json_id(self):
+#         self.assertEqual(self.section.id, 4)
+#
+#     def test_section_json_position(self):
+#         self.assertEqual(self.section.position, 4)
+#
+#     def test_section_json_numeral(self):
+#         self.assertEqual(self.section.numeral, 'IV')
 
     def test_commodity_heading_json_harmonized_code(self):
         self.assertEqual(self.commodity_heading.harmonized_code, "0706000000")
 
+# class ChapterJsonTestCase(TestCase):
+#     """
+#     Test ChapterJson class
+#     """
+#
+#     def setUp(self):
+#         self.chapter = ChapterJson(get_data(settings.CHAPTERJSON_DATA))
+#
+#     def test_chapter_json_title(self):
+#         self.assertEqual(
+#             self.chapter.title,
+#             'Tobacco and manufactured tobacco substitutes')
+#
+#     def test_chapter_harmonized_code(self):
+#         self.assertEqual(
+#             self.chapter.harmonized_code,
+#             '2400000000')
+#
+#     def test_chapter_json_heading_ids(self):
+#         self.assertEqual(self.chapter.heading_ids, ['2401', '2402', '2403'])
+#
+#     def test_chapter_json_heading_urls(self):
+#         self.assertEqual(self.chapter.heading_urls,
+#                          ['https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2401.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2402.json',
+#                           'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2403.json'])
 
 class SectionJsonTestCase(TestCase):
     """
     Test SectionJson class
     """
 
-    def setUp(self):
-        self.section = SectionJson(get_data(settings.SECTIONJSON_DATA))
-
-    def test_section_json_title(self):
-        self.assertEqual(
-            self.section.title,
-            'Prepared foodstuffs; beverages, spirits and vinegar; tobacco and manufactured tobacco substitutes')
-
-    def test_section_json_chapter_ids(self):
-        self.assertEqual(self.section.chapter_ids, [16, 17, 18, 19, 20, 21, 22, 23, 24])
+# class HeadingJsonTestCase(TestCase):
+#     """
+#     Test HeadingJson class
+#     """
+#
+#     def setUp(self):
+#         self.heading = HeadingJson(get_data(settings.HEADINGJSON_DATA))
+#
+#     def test_heading_json_title(self):
+#         self.assertEqual(
+#             self.heading.title,
+#             'Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes')
+#
+#     def test_heading_code(self):
+#         self.assertEqual(
 
     def test_section_json_chapter_urls(self):
-        self.assertEqual(self.section.chapter_urls,
+#             self.heading.code,
                          ['https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/16.json',
                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/17.json',
                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/18.json',
@@ -125,73 +212,82 @@ class SectionJsonTestCase(TestCase):
                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/21.json',
                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/22.json',
                           'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/23.json',
-                          'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/24.json'])
+#             '2402000000')
+#
+#     def test_heading_json_commodity_dicts(self):
+#         self.assertEqual(len(self.heading.commodity_dicts), 5)
+#
+#     def test_heading_json_commodity_ids(self):
+#         self.assertEqual(self.heading.commodity_ids, [('2402100000', True),
 
-    def test_section_json_id(self):
-        self.assertEqual(self.section.id, 4)
-
-    def test_section_json_position(self):
-        self.assertEqual(self.section.position, 4)
-
-    def test_section_json_numeral(self):
-        self.assertEqual(self.section.numeral, 'IV')
+#                                                       ('2402200000', False),
+#                                                       ('2402201000', True),
+#                                                       ('2402209000', True),
 
 
-class ChapterJsonTestCase(TestCase):
-    """
+#                                                       ('2402900000', True)])
+#
     Test ChapterJson class
     """
 
-    def setUp(self):
-        self.chapter = ChapterJson(get_data(settings.CHAPTERJSON_DATA))
+#     def test_heading_json_commodity_ids_when_non_exists(self):
+#         heading_data = get_data(settings.HEADINGJSON_DATA)
 
-    def test_chapter_json_title(self):
+#         del heading_data['commodities']
         self.assertEqual(
             self.chapter.title,
             'Tobacco and manufactured tobacco substitutes')
 
-    def test_chapter_harmonized_code(self):
+#         updated_heading_data = HeadingJson(heading_data)
         self.assertEqual(
             self.chapter.harmonized_code,
             '2400000000')
 
     def test_chapter_json_heading_ids(self):
-        self.assertEqual(self.chapter.heading_ids, ['2401', '2402', '2403'])
+#         self.assertEqual(updated_heading_data.commodity_ids, [])
+#
+#     def test_heading_json_commodity_urls(self):
+#         self.assertEqual(
+#             self.heading.commodity_urls,
+#             [(
+#              'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402100000.json?currency=EUR&day=1&month=1&year=2019',
+#              True),
+#              (
+#              'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402200000.json?currency=EUR&day=1&month=1&year=2019',
+#              False),
+#              (
+#              'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402201000.json?currency=EUR&day=1&month=1&year=2019',
+#              True),
 
-    def test_chapter_json_heading_urls(self):
-        self.assertEqual(self.chapter.heading_urls,
-                         ['https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2401.json',
-                          'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2402.json',
-                          'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/2403.json'])
 
-
-class HeadingJsonTestCase(TestCase):
+#              (
     """
     Test HeadingJson class
     """
 
-    def setUp(self):
+#              'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402209000.json?currency=EUR&day=1&month=1&year=2019',
         self.heading = HeadingJson(get_data(settings.HEADINGJSON_DATA))
 
-    def test_heading_json_title(self):
-        self.assertEqual(
+#              True),
+#              (
             self.heading.title,
-            'Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes')
+#              'https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/2402900000.json?currency=EUR&day=1&month=1&year=2019',
+#              True)
 
     def test_heading_code(self):
         self.assertEqual(
             self.heading.code,
-            '2402000000')
-
-    def test_heading_json_commodity_dicts(self):
-        self.assertEqual(len(self.heading.commodity_dicts), 5)
+#              ])
+#
+#     def test_heading_json_commodity_urls_when_non_exists(self):
+#         heading_data = get_data(settings.HEADINGJSON_DATA)
 
     def test_heading_json_commodity_ids(self):
-        self.assertEqual(self.heading.commodity_ids, [('2402100000', True),
-                                                      ('2402200000', False),
+#         del heading_data['commodities']
+#         updated_heading_data = HeadingJson(heading_data)
                                                       ('2402201000', True),
                                                       ('2402209000', True),
-                                                      ('2402900000', True)])
+#         self.assertEqual(updated_heading_data.commodity_urls, [])
 
     def test_heading_json_commodity_ids_when_non_exists(self):
         heading_data = get_data(settings.HEADINGJSON_DATA)
@@ -232,6 +328,8 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        logger.info(settings.IMPORTMEASUREJSON_DATA)
+        logger.info(get_data(settings.IMPORTMEASUREJSON_DATA))
         self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE)
 
     def test_repr(self):

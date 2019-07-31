@@ -20,7 +20,7 @@ class CountriesViewsTestCase(TestCase):
     def test_get_choose_country_returns_http_200_and_renders_correct_template(self):
         resp = self.client.get(reverse('choose-country'))
         self.assertTrue(resp.status_code, 200)
-        self.assertTemplateUsed('countries/choose_country.html')
+        self.assertTemplateUsed(resp, 'countries/choose_country.html')
 
     def test_session_has_no_origin_country_attribute(self):
         session = self.client.session
@@ -58,7 +58,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.context['isError'], True)
         self.assertFalse(resp.context['country_options'])
         self.assertEqual(resp.context['errorInputMessage'], "Enter a country")
-        self.assertTemplateUsed('countries/choose_country.html')
+        self.assertTemplateUsed(resp, 'countries/choose_country.html')
 
     def test_post_without_values_and_with_session_attribute_gives_correct_error_and_renders_form(self):
         session = self.client.session
@@ -71,7 +71,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.context['isError'], True)
         self.assertFalse(resp.context['country_options'])
         self.assertEqual(resp.context['errorInputMessage'], "Enter a country")
-        self.assertTemplateUsed('countries/choose_country.html')
+        self.assertTemplateUsed(resp, 'countries/choose_country.html')
 
     def test_post_with_country_selected_and_country_exists_and_country_code_not_in_session(self):
         Country.objects.create(country_code="AU", name="Australia")
@@ -79,12 +79,13 @@ class CountriesViewsTestCase(TestCase):
         resp = self.client.post(reverse('choose-country'), data={"origin_country": "au"})
         self.assertEqual(self.client.session['origin_country'], "AU")
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url,
-                         reverse('search-view') + "country/{0}".format(self.client.session['origin_country'].lower()))
+        self.assertEqual(resp.url, reverse('search:search-commodity', kwargs={
+            "country_code": self.client.session['origin_country'].lower()
+        }))
 
     def test_post_with_country_selected_and_country_not_exist(self):
         resp = self.client.post(reverse('choose-country'), data={"origin_country": "au"})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context['errorInputMessage'], "Enter a country")
-        self.assertTemplateUsed('countries/choose_country.html')
+        self.assertTemplateUsed(resp, 'countries/choose_country.html')
         self.assertTrue('origin_country' not in self.client.session)

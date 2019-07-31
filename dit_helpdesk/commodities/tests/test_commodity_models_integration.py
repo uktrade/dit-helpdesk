@@ -1,33 +1,39 @@
 import json
+import logging
 import os
 import re
 
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
+from mixer.backend.django import mixer
+
 from commodities.models import Commodity
-from hierarchy.models import SubHeading, Heading
-from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
+from hierarchy.models import SubHeading, Heading, Section, Chapter
+from trade_tariff_service.tts_api import CommodityJson
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 
-class TestCommodityModel(TestCase):
+def get_data(file_path):
+    with open(file_path) as f:
+        json_data = json.load(f)
+    return json_data
+
+
+def create_instance(data, app_name, model_name):
+    model = apps.get_model(app_label=app_name, model_name=model_name)
+    instance = model(**data)
+    return instance
+
+
+class TestHeadingModel(TestCase):
 
     """
-    Test Commodity Integration
+    Test Heading Integration
     """
-
-    def get_data(self, file_path):
-
-        with open(file_path) as f:
-            json_data = json.load(f)
-        return json_data
-
-    def create_instance(self, data, app_name, model_name):
-
-        model = apps.get_model(app_label=app_name, model_name=model_name)
-        instance = model(**data)
-        instance.save()
-        return instance
 
     def setUp(self):
         """
@@ -35,23 +41,134 @@ class TestCommodityModel(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.heading = self.create_instance(self.get_data(settings.HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.section = mixer.blend(
+            Section,
+            section_id=1
+        )
+        self.chapter = mixer.blend(
+            Chapter,
+            chapter_code="0100000000",
+            section=self.section
+        )
 
-        self.subheading = self.create_instance(self.get_data(settings.SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
-        self.subheading.heading_id = self.heading.id
-        self.subheading.save()
+        self.heading = mixer.blend(
+            Heading,
+            heading_code="0101000000",
+            chapter=self.chapter
+        )
 
-        self.commodity = self.create_instance(self.get_data(settings.COMMODITY_STRUCTURE), 'commodities', 'Commodity')
-        self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(self.get_data(settings.COMMODITY_DATA))
+    def test_self_heading_is_and_instance_of_Heading(self):
+        self.assertTrue(isinstance(self.heading, Heading))
 
-        self.commodity.save()
+    def test_heading_exists(self):
+        self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
+
+
+class TestSubHeadingModel(TestCase):
+
+    """
+    Test SubHeading Integration
+    """
+
+    def setUp(self):
+        """
+        To test fully test a commodity we need to load a parent subheading and its parent heading and save the
+        relationships between the three model instances
+        :return:
+        """
+        self.section = mixer.blend(
+            Section,
+            section_id=1
+        )
+        self.chapter = mixer.blend(
+            Chapter,
+            chapter_code="0100000000",
+            section=self.section
+        )
+
+        self.heading = mixer.blend(
+            Heading,
+            heading_code="0101000000",
+            chapter=self.chapter
+        )
+
+        self.subheading = mixer.blend(
+            SubHeading,
+            commodity_code="0101210000",
+            heading=self.heading
+
+        )
+
+
+    def test_subheading_exists(self):
+        self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
+
+    def test_heading_exists(self):
+        self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
+
+    def test_subheading_has_heading_parent(self):
+        self.assertEqual(self.subheading.heading_id, self.heading.id)
+
+        with open(file_path) as f:
+            json_data = json.load(f)
+        return json_data
+
+class TestCommodityModel(TestCase):
+
+    """
+    Test Commodity Integration
+        instance.save()
+    """
+
+    def setUp(self):
+        """
+        To test fully test a commodity we need to load a parent subheading and its parent heading and save the
+        relationships between the three model instances
+        :return:
+        """
+        self.section = mixer.blend(
+            Section,
+            section_id=1
+        )
+        self.chapter = mixer.blend(
+            Chapter,
+            chapter_code="0100000000",
+            section=self.section
+        )
+
+        self.heading = mixer.blend(
+            Heading,
+            heading_code="0101000000",
+            chapter=self.chapter,
+            description=settings.TEST_HEADING_DESCRIPTION,
+            tts_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
+        )
+
+        self.subheading = mixer.blend(
+            SubHeading,
+            commodity_code="0101210000",
+            heading=self.heading,
+            tts_json=json.dumps(get_data(settings.SUBHEADING_STRUCTURE)),
+
+        )
+        self.commodity = mixer.blend(
+            Commodity,
+            commodity_code="0101210000",
+            tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
+            tts_heading_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
+            parent_subheading=self.subheading,
+            description=settings.TEST_COMMODITY_DESCRIPTION
+        )
 
     def test_self_commodity_is_and_instance_of_Commodity(self):
         self.assertTrue(isinstance(self.commodity, Commodity))
 
     def test_commodity_instance_exists(self):
         self.assertTrue(Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE))
+
+    def test_commodity_get_absolute_url(self):
+        self.assertEqual(self.commodity.get_absolute_url(settings.TEST_COUNTRY_CODE),
+                         "/country/au/commodity/{0}".format(settings.TEST_COMMODITY_CODE))
 
     def test_commodity_in_db_and_self_commodity_are_the_same(self):
         self.assertEquals(Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE), self.commodity)
@@ -66,8 +183,8 @@ class TestCommodityModel(TestCase):
         self.assertTrue(self.commodity.heading or self.commodity.parent_subheading)
 
     def test_commodity_has_related_parent_subheading_instance(self):
-        self.assertTrue(self.commodity.parent_subheading, None and
-                        isinstance(self.commodity.parent_subheading, SubHeading))
+        self.assertTrue(self.commodity.parent_subheading, None)
+        self.assertTrue(isinstance(self.commodity.parent_subheading, SubHeading))
 
     def test_commodity_does_not_have_a_related_heading_instance(self):
         self.assertEqual(self.commodity.heading, None)
@@ -78,7 +195,7 @@ class TestCommodityModel(TestCase):
     def test_heading_exists(self):
         self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
 
-    def test_subheading_exists(self):
+    # def test_commodity_parent_subheading_has_parent_heading(self):
         self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 
     def test_subheading_has_heading_parent(self):
@@ -86,21 +203,23 @@ class TestCommodityModel(TestCase):
         self.assertTrue(self.subheading.heading)
 
     def test_commodity_parent_subheading_has_parent_heading(self):
-        self.assertEqual(self.commodity.parent_subheading.heading, self.heading)
+    #     self.assertEqual(self.commodity.parent_subheading.heading, self.heading)
 
     def test_commodity_has_correct_heading(self):
 
+        # logger.info(" COM: {}".format(self.commodity))
+        # logger.info("par: {}".format(self.commodity.parent_subheading))
         heading = self.commodity.get_heading()
         self.assertEquals(
             settings.TEST_HEADING_DESCRIPTION,
             heading.description
         )
 
-    def test_commodity_tts_title_is_correct(self):
-        self.assertEqual(self.commodity.tts_title, settings.TEST_COMMODITY_DESCRIPTION)
+    def test_commodity_description_is_correct(self):
+        self.assertEqual(self.commodity.description, settings.TEST_COMMODITY_DESCRIPTION)
 
     def test_commodity_tts_heading_description(self):
-        self.assertEqual(self.commodity.tts_heading_description, settings.TEST_COMMODITY_DESCRIPTION)
+        self.assertEqual(self.commodity.get_heading().description, settings.TEST_HEADING_DESCRIPTION)
 
     def test_commodity_tts_obj_is_not_empty(self):
         self.assertNotEqual(self.commodity.tts_obj, None)
@@ -117,6 +236,7 @@ class TestCommodityModel(TestCase):
 
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))
+
 
 """
 #TODO: move to tts_serivce tests

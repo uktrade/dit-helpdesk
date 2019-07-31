@@ -43,6 +43,7 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
+
         self.section = self.create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
 
         self.chapter = self.create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
@@ -97,7 +98,10 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_view_is_using_the_correct_template(self):
         resp = self.client.get(self.url)
-        self.assertTemplateUsed('commodity_detail.html')
+        self.assertTemplateUsed(resp, 'commodities/commodity_detail.html')
+
+    def test_commodity_detail_template_has_the_correct_data(self):
+        resp = self.client.get(self.url)
         self.assertInHTML(
             resp.context['commodity'].description,
             resp.content.decode("utf-8")

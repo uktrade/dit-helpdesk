@@ -29,29 +29,29 @@ def _get_expanded_context(selected_node_id):
 
     elif node_type == 'chapter':
         chapter_obj = Chapter.objects.get(pk=node_pk)
-        expanded.append('section-%s' % chapter_obj.section.pk)
-        expanded.append('chapter-%s' % node_pk)
+        expanded.append("section-{0}".format(chapter_obj.section.pk))
+        expanded.append("chapter-{0}".format(node_pk))
 
     elif node_type == 'heading':
         heading_obj = Heading.objects.get(pk=node_pk)
 
-        expanded.append('section-%s' % heading_obj.chapter.section.pk)
-        expanded.append('chapter-%s' % heading_obj.chapter.pk)
-        expanded.append('heading-%s' % heading_obj.pk)
+        expanded.append("section-{0}".format(heading_obj.chapter.section.pk))
+        expanded.append("chapter-{0}".format(heading_obj.chapter.pk))
+        expanded.append("heading-{0}".format(heading_obj.pk))
 
     elif node_type == 'sub_heading':
 
         current = SubHeading.objects.get(pk=node_pk)
         while True:
-            expanded.append('sub_heading-%s' % current.pk)
+            expanded.append("sub_heading-{0}".format(current.pk))
             current = current.get_parent()
             if type(current) is Heading:
                 break
         heading_obj = current
 
-        expanded.append('section-%s' % heading_obj.chapter.section.pk)
-        expanded.append('chapter-%s' % heading_obj.chapter.pk)
-        expanded.append('heading-%s' % heading_obj.pk)
+        expanded.append("section-{0}".format(heading_obj.chapter.section.pk))
+        expanded.append("chapter-{0}".format(heading_obj.chapter.pk))
+        expanded.append("heading-{0}".format(heading_obj.pk))
 
     return expanded
 
@@ -66,7 +66,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     """
 
     if node == 'root':
-        children = Section.objects.all().order_by('roman_numeral')
+        children = Section.objects.all().order_by('section_id')
         html = '<ul class="app-hierarchy-tree">'
         end = '\n</ul>'
     else:
@@ -104,7 +104,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         if type(child) is Section:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif type(child) is Commodity:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{commodity_code_html}'
         html = html + li

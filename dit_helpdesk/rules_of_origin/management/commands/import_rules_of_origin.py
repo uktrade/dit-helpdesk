@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from rules_of_origin.importer import RulesOfOriginImporter
+from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
 
 
 class Command(BaseCommand):

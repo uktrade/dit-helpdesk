@@ -1,12 +1,10 @@
-import json
-import logging
+import sys
+from time import sleep
 
 from django.core.management.base import BaseCommand
-import requests
 
-from hierarchy.models import Section, Chapter, Heading
-
-from trade_tariff_service.tts_api import SectionJson, ChapterJson, HeadingJson
+from hierarchy.models import Section
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 from trade_tariff_service.util_scraper import scrape_heading_hierarchy
 
 logger = logging.getLogger(__name__)
@@ -87,32 +85,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        section_id = options['section_id']
-        if section_id is None:
-            exit('<section_id> argument expected')
+        sections = Section.objects.all()
+        if len(sections) > 0:
+            self.stdout.write("It looks like the hierarchy already exists.")
+            return
 
-        section_json_obj, section_db_obj = get_and_update_section(section_id)
-
-        if section_json_obj is None:
-            exit('Failed to query for section %s' % section_id)
-
-        for chapter_url in section_json_obj.chapter_urls:
-            logger.debug('----------------------------------------------')
-            logger.debug('CHAPTER ' + chapter_url)
-
-            chapter_json_obj, chapter_db_obj = get_and_update_chapter(
-                chapter_url, section_db_obj
-            )
-            if chapter_json_obj is None:
-                continue
-
-            for heading_url in chapter_json_obj.heading_urls:
-                logger.debug('    HEADING ' + heading_url)
-
-                heading_json_obj, heading_db_obj = get_and_update_heading(
-                    heading_url, chapter_db_obj
-                )
-                if heading_json_obj is None:
-                    continue
-
-                scrape_heading_hierarchy(heading_db_obj)
+        builder = HierarchyBuilder()
+        model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+        builder.data_scanner(model_names)
+        builder.process_orphaned_subheadings()
+        builder.process_orphaned_commodities()

@@ -5,7 +5,7 @@ from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter, ROMAN_NUMERALS
-from trade_tariff_service.tts_api import CommodityHeadingJson, ChapterJson, HeadingJson, SectionJson
+# from trade_tariff_service.tts_api import HeadingJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -34,10 +34,10 @@ class SectionTestCase(TestCase):
         self.assertTrue(isinstance(self.section.tts_json, str))
         self.assertEquals(self.section.tts_json, "{}")
 
-    def test_tts_obj_is_and_empty_SectionJson_object(self):
-        # TODO: remove method from Section model
-        self.assertTrue(isinstance(self.section.tts_obj, SectionJson))
-        self.assertFalse(self.section.tts_obj.di)
+    # def test_tts_obj_is_and_empty_SectionJson_object(self):
+    #     # TODO: remove method from Section model
+    #     self.assertTrue(isinstance(self.section.tts_obj, SectionJson))
+    #     self.assertFalse(self.section.tts_obj.di)
 
     def test_section_has_correct_roman_numeral(self):
         # TODO: remove field and create a property method
@@ -96,7 +96,8 @@ class SectionTestCase(TestCase):
 class ChapterTestCase(TestCase):
 
     """
-    Test Chapter Model
+    Tes
+    t Chapter Model
     """
     def setUp(self):
 
@@ -261,14 +262,14 @@ class HeadingTestCase(TestCase):
         self.assertTrue(isinstance(self.heading.tts_json, str))
         self.assertEquals(self.heading.tts_json, "{}")
 
-    def test_tts_obj_is_and_empty_HeadingJson_object(self):
-        # TODO: remove property method from Heading model
-        self.assertTrue(isinstance(self.heading.tts_obj, HeadingJson))
-        self.assertFalse(self.heading.tts_obj.di)
+    # def test_tts_obj_is_and_empty_HeadingJson_object(self):
+    #     # TODO: remove property method from Heading model
+    #     self.assertTrue(isinstance(self.heading.tts_obj, HeadingJson))
+    #     self.assertFalse(self.heading.tts_obj.di)
 
-    def test_accessing_tts_obj_raises_a_type_error(self):
-        # TODO: remove method from Heading model
-        self.assertRaises(TypeError, lambda: self.heading.tts_obj())
+    # def test_accessing_tts_obj_raises_a_type_error(self):
+    #     # TODO: remove method from Heading model
+    #     self.assertRaises(TypeError, lambda: self.heading.tts_obj())
 
     def test_harmonized_code_equals_heading_code(self):
         # TODO: Where is this property method used

@@ -10,7 +10,6 @@ def admin_login_view(request):
     """A replacement admin login view that will direct the user through the SSO
     authentication flow. """
 
-    # print(settings.ADMIN_ENABLED)
     # if settings.ADMIN_ENABLED is False:
     #     return HttpResponse("", status=404)
 

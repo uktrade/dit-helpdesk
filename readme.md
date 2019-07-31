@@ -1,18 +1,24 @@
-# Exporting things to the UK (working title)
+# DIT Helpdesk
 
 This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the 
 products that they want to export to the UK.
 
+
 ## Requirements
  - Python 3
  - Node [Active LTS][1] version (Current Active version is v10)
- - Docker
-
- You can install and run this outside of Docker, but currently there is no documentation for this.
+ - Docker (if developing locally with docker)
 
 ## Installation
 
-First clone the repo, then using a terminal move inside of the folder:
+First clone the repo
+
+```bash
+git@github.com:uktrade/dit-helpdesk.git . 
+
+``` 
+
+then using a terminal move inside of the folder:
 
 ```bash
 cd dit-helpdesk
@@ -70,13 +76,13 @@ The `start.sh` script will run the following django management commands
 python manage.py collectstatic --noinput
 python manage.py migrate
 python manage.py loaddata countries_data
-python manage.py scrape_section_hierarchy_v2
+python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
 python manage.py runserver_plus 0.0.0.0:8000
 
 ```
-`scrape_section_hierarchy_v2` will only run if there are no Sections items found. see below if you need to run this 
+`scrape_section_hierarchy` will only run if there are no Sections items found. see below if you need to run this 
 manually `import_rules_of_origin` and `import_regulations` will create any new items that do not already exist.
 you can comment these three lines out after the initial out `up` to speed up the buid and deploy process locally.
 The last line starts the django server
@@ -86,7 +92,7 @@ If you need to populate the database with products.
 
 first commenting out 
 ```bash
-python manage.py scrape_section_hierarchy_v2
+python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
 ```
@@ -102,7 +108,7 @@ To populate the commodities in the database, we need to run a management command
 To import the commodity data and its hierarchy, run:
 
 ```bash
-python dit_helpdesk/manage.py scrape_section_hierarchy_v2
+python dit_helpdesk/manage.py scrape_section_hierarchy
 ```
 This should take approximately 6 to 8 minutes
 ###### Rules of Origin
@@ -382,7 +388,7 @@ python dit_helpdesk/manage.py loaddata countries_data
 
 To import commodity hierarchy content run:
 ```bash
-python dit_helpdesk/manage.py scrape_section_hierarchy_v2
+python dit_helpdesk/manage.py scrape_section_hierarchy
 ```
 The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
 
