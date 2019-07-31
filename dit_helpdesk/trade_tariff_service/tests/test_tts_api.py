@@ -245,6 +245,8 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        logger.info(settings.IMPORTMEASUREJSON_DATA)
+        logger.info(get_data(settings.IMPORTMEASUREJSON_DATA))
         self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE)
 
     def test_repr(self):
