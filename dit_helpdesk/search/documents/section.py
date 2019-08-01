@@ -25,6 +25,7 @@ class SectionDocument(DocType):
     # })
 
     id = fields.IntegerField(attr='id')
+
     commodity_code = fields.KeywordField(
         attr="section_id",
         # analyzer=html_strip,

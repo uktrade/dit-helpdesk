@@ -69,14 +69,6 @@ class Section(models.Model):
         min_code, max_code = min(chapter_codes), max(chapter_codes)
         return '%s to %s' % (min_code, max_code)
 
-    @property
-    def tts_title(self):
-        """
-        Property method returning the Section title from the SectionJson object
-        :return: string
-        """
-        return self.tts_obj.title
-
     def get_hierarchy_children(self):
         """
         Query returning a list of child chapters ordered by code
@@ -159,6 +151,7 @@ class Section(models.Model):
     #                                 "type": child._meta.model_name})
     #     except Exception as err:
     #         print(err.args)
+
 
 class Chapter(models.Model):
     """
@@ -354,14 +347,6 @@ class Heading(models.Model):
         return 'heading-%s' % self.pk
 
     @property
-    def tts_obj(self):
-        """
-        Property method returning the HeadingJson object representing the data stored in the tts_json field
-        :return: HeadingJson object
-        """
-        return HeadingJson(json.loads(self.tts_json))
-
-    @property
     def harmonized_code(self):
         """
         property method used across all hierarchy model instances, apart from Section, to normalise the code
@@ -509,14 +494,6 @@ class SubHeading(models.Model):
         :return: string
         """
         return 'sub_heading-%s' % self.pk
-
-    @property
-    def tts_heading_obj(self):
-        """
-        Property method returning the CommodityHeadingJson object representing the data stored in the tts_json field
-        :return: CommodityHeadingJson object
-        """
-        return CommodityHeadingJson(json.loads(self.tts_heading_json))
 
     @property
     def harmonized_code(self):

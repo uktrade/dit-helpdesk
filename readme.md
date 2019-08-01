@@ -96,7 +96,6 @@ python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
 ```
-
 refer to "Running, then shelling in" section below
 
 ##### Manually Install content

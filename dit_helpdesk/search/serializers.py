@@ -10,6 +10,7 @@ from search.documents.heading import HeadingDocument
 from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
 
+
 class CommodityDocumentSerializer(DocumentSerializer):
 
     class Meta:
@@ -75,4 +76,3 @@ class SectionDocumentSerializer(DocumentSerializer):
             'keywords',
             'ranking',
         )
-

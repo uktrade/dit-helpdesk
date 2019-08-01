@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
+
 def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
@@ -98,6 +99,7 @@ class TestSubHeadingModel(TestCase):
 
         )
 
+
     def test_subheading_exists(self):
         self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 
@@ -107,18 +109,11 @@ class TestSubHeadingModel(TestCase):
     def test_subheading_has_heading_parent(self):
         self.assertEqual(self.subheading.heading_id, self.heading.id)
 
-        self.heading = mixer.blend(
-            Heading,
-            heading_code="0101000000",
-            chapter=self.chapter
-        )
-
 
 class TestCommodityModel(TestCase):
 
     """
     Test Commodity Integration
-        instance.save()
     """
 
     def setUp(self):
@@ -150,6 +145,7 @@ class TestCommodityModel(TestCase):
             commodity_code="0101210000",
             heading=self.heading,
             tts_json=json.dumps(get_data(settings.SUBHEADING_STRUCTURE)),
+
         )
         self.commodity = mixer.blend(
             Commodity,
@@ -192,18 +188,7 @@ class TestCommodityModel(TestCase):
     def test_commodity_parent_subheading_description_is_correct(self):
         self.assertTrue(self.commodity.parent_subheading.description, settings.TEST_SUBHEADING_DESCRIPTION)
 
-    def test_heading_exists(self):
-        self.assertEqual(str(self.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
-
     # def test_commodity_parent_subheading_has_parent_heading(self):
-
-        self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
-
-    def test_subheading_has_heading_parent(self):
-        self.assertEqual(str(self.subheading.heading), "Heading {0}".format(settings.TEST_HEADING_CODE))
-        self.assertTrue(self.subheading.heading)
-
-    def test_commodity_parent_subheading_has_parent_heading(self):
     #     self.assertEqual(self.commodity.parent_subheading.heading, self.heading)
 
     def test_commodity_has_correct_heading(self):
@@ -290,5 +275,4 @@ class TestCommodityModel(TestCase):
         struct_data = self.get_data(HEADING_STRUCTURE)
         instance = self.create_instance(struct_data, 'hierarchy', 'Heading')
         self.assertTrue(isinstance(instance, Heading))
-
 """

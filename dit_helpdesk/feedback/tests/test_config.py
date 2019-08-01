@@ -4,9 +4,6 @@ from feedback.apps import FeedbackConfig
 
 
 class FeedbackConfigTestCase(TestCase):
-    """
-    Test app config
-    """
 
     """
     Test app config

@@ -2,7 +2,6 @@ from .base import *
 
 DEBUG = True
 RESTRICT_ADMIN = False
-
 DATABASES = {
     'default': {
         'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
@@ -41,13 +40,6 @@ ELASTICSEARCH_DSL = {
     },
 }
 
-
-ES_URL = 'http://es:9200'
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': ES_URL
-    },
-}
 
 # ELASTICSEARCH_INDEX_NAMES = {
 #     'search.documents.section': 'dev_sections',

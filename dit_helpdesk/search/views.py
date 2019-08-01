@@ -15,28 +15,6 @@ from django_elasticsearch_dsl_drf.filter_backends import (
     SearchFilterBackend,
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
-
-from elasticsearch import Elasticsearch
-
-from countries.models import Country
-from hierarchy.views import hierarchy_data
-
-from search.documents.chapter import ChapterDocument
-from search.documents.commodity import CommodityDocument
-from search.documents.heading import HeadingDocument
-from search.documents.section import SectionDocument
-from search.documents.subheading import SubHeadingDocument
-from search.forms import CommoditySearchForm
-from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, \
-    ChapterDocumentSerializer, SectionDocumentSerializer
-
-from django_elasticsearch_dsl_drf.filter_backends import (
-    FilteringFilterBackend,
-    OrderingFilterBackend,
-    DefaultOrderingFilterBackend,
-    SearchFilterBackend,
-)
-from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
 
 from countries.models import Country
@@ -98,7 +76,6 @@ class CommoditySearchView(FormView):
                     response = request.execute()
 
                     hit = response[0]
-
                     if hit.meta["index"] == "commodity":
                         return redirect(reverse('commodity-detail', kwargs={
                             'commodity_code': hit.commodity_code,
@@ -109,6 +86,7 @@ class CommoditySearchView(FormView):
                             'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
                             'country_code': context["country_code"]
                         }))
+
                 else:
 
                     sort_object = {"ranking": {"order": "desc"}}
@@ -160,7 +138,6 @@ class CommoditySearchView(FormView):
                         self.request.GET.get('country'),
                         page+1
                     )
-
                     context["previous_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
                         self.request.GET.get('country'),
                         self.request.GET.get('q'),
@@ -211,6 +188,7 @@ class CommodityDocumentViewSet(DocumentViewSet):
         'commodity_code',
         'description',
     )
+
 
 class CommodityViewSet(DocumentViewSet):
 
@@ -524,7 +502,6 @@ class SubHeadingViewSet(DocumentViewSet):
     }
 
     # Specify default ordering
-
     ordering = ('ranking',)
 
 
@@ -602,4 +579,3 @@ def _generate_commodity_code_html(code):
     commodity_code_html = commodity_code_html + '</span>'
 
     return commodity_code_html
-

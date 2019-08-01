@@ -16,7 +16,6 @@ from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
 
-
 class Commodity(models.Model):
     """
     Commodity model
@@ -102,8 +101,6 @@ class Commodity(models.Model):
         Heading item is reached
         :return: model instance
         """
-        print(self.heading)
-        print(self.parent_subheading)
         obj = self.heading or self.parent_subheading
         while type(obj) is not Heading:
             obj = obj.get_parent()
@@ -155,7 +152,6 @@ class Commodity(models.Model):
 
         if tree is None:
             tree = []
-
         if not parent:
             tree = []
             parent = self
@@ -250,6 +246,7 @@ class Commodity(models.Model):
                                     "type": child._meta.model_name})
         except Exception as err:
             logger.debug("_append descendant data".format(err.args))
+
 
     @staticmethod
     def _append_path_children(parent, tree, level):

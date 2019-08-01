@@ -192,10 +192,6 @@ class ChapterTestCase(TestCase):
             commodity_code=(x for x in [4911910010, 4911910090, 4911990000])
         )
         self.assertTrue(chapters[2].get_hierarchy_children())
-        self.assertIn(parent_subheadings, [subheading.get_hierarchy_children() for subheading in headings])
-        self.assertIn(subheadings, [subheading.get_hierarchy_children() for subheading in parent_subheadings])
-        self.assertIn(sub_subheadings, [subheading.get_hierarchy_children() for subheading in subheadings])
-        self.assertIn(commodities, [subheading.get_hierarchy_children() for subheading in sub_subheadings])
 
         self.assertIn(parent_subheadings, [subheading.get_hierarchy_children() for subheading in headings])
         self.assertIn(subheadings, [subheading.get_hierarchy_children() for subheading in parent_subheadings])

@@ -12,9 +12,6 @@ logger.setLevel(logging.INFO)
 
 
 class CountriesViewsTestCase(TestCase):
-    """
-    Views tests
-    """
 
     """
     Views tests

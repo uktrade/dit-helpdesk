@@ -27,6 +27,7 @@ def commodity_detail(request, commodity_code, country_code):
     View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
     display and the two character country code to provide the exporter geographical context which is
     used to display the appropriate related supporting content
+
     :param request: django http request object
     :param commodity_code: string
     :param country_code: string
@@ -84,6 +85,7 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
     :param measure_id: int
     :return:
     """
+
     country = Country.objects.filter(
         country_code=country_code.upper()
     ).first()

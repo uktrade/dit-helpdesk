@@ -6,6 +6,7 @@ import pandas
 from django.apps import apps
 from django.conf import settings
 from numpy import nan
+
 from commodities.models import Commodity
 from hierarchy.models import SubHeading
 
@@ -30,6 +31,7 @@ def data_loader(file_path):
         with open(file_path) as f:
             data_frame = pandas.read_csv(f, encoding='utf8')
         return data_frame
+
 
 def data_writer(file_path, data):
     """

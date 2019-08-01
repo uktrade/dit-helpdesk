@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime, timezone, timedelta
+
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase, Client
@@ -25,9 +26,6 @@ def get_data(file_path):
 
 
 class CommodityViewTestCase(TestCase):
-    """
-    Test Commodity View
-    """
 
     """
     Test Commodity View
@@ -174,15 +172,6 @@ class CommodityViewTestCase(TestCase):
         self.assertTrue('rules_of_origin' in resp.context)
         self.assertTrue(resp.context['rules_of_origin'])
 
-    def test_commodity_hierarchy_context(self):
-        html = commodity_hierarchy_context(self.commodity.get_path(), settings.TEST_COUNTRY_CODE,
-                                           self.commodity.commodity_code)
-
-        self.assertInHTML("Live animals" and
-                          "Live horses, asses, mules and hinnies" and
-                          "Horses" and
-                          "Pure-bred breeding animals", html)
-
     def test_generate_commodity_code_html_for_commodity(self):
         html = _generate_commodity_code_html(self.commodity)
         self.assertInHTML('010121', html)
@@ -205,9 +194,6 @@ class CommodityViewTestCase(TestCase):
 
 
 class MeasureConditionDetailTestCase(TestCase):
-    """
-    Test Measure Condition Detail View
-    """
 
     """
     Test Measure Condition Detail View

@@ -27,5 +27,5 @@ urlpatterns = [
         views.search_hierarchy,
         name='search-hierarchy'
     ),
-]
 
+]

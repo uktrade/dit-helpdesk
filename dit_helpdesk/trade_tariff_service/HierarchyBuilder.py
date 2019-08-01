@@ -107,6 +107,7 @@ class HierarchyBuilder:
         :param data:
         :return:
         """
+
         parent = self.get_instance_parent(data, model)
 
         instance_data = self.get_instance_data(data, model, parent)
@@ -456,6 +457,7 @@ class HierarchyBuilder:
 
         else:
             logger.debug("{0} returned a {1} error".format(url, resp.status_code))
+
         return data
 
     def get_item_data_from_api(self, data_type=None, item_ids=None):
@@ -480,7 +482,6 @@ class HierarchyBuilder:
                         [item["attributes"]["goods_nomenclature_item_id"] for item in item_json["included"] if
                          item["type"] == "commodity"])
             else:
-
                 logger.debug("{0} returned a {1} error".format(url, resp.status_code))
         return data, child_data
 
@@ -619,7 +620,6 @@ class HierarchyBuilder:
         data_type = "chapters"
         chapters, heading_ids = self.get_type_data_from_api(data_type=data_type)
         logger.info("Writing {0} data".format(data_type))
-
         self.write_data_to_file(chapters, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
 
         data_type = "headings"

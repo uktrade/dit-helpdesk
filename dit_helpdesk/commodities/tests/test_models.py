@@ -23,10 +23,8 @@ def get_data(file_path):
         json_data = json.load(f)
     return json_data
 
+
 class CommodityTestCase(TestCase):
-    """
-    Test Commodities Models
-    """
 
     """
     Test Commodities Models
@@ -94,16 +92,6 @@ class CommodityTestCase(TestCase):
     def test_heading_tts_json_is_a_string_representing_a_json_object(self):
         # TODO: if not used remove field from Commodity Model
         self.assertTrue(isinstance(self.commodity.tts_heading_json, str))
-        self.assertEquals(self.commodity.tts_heading_json, "{}")
-
-    def test_heading_tts_json_is_the_correct_data(self):
-        self.assertEquals(self.commodity.tts_heading_json, json.dumps(get_data(settings.HEADING_STRUCTURE)))
-        self.assertTrue(isinstance(self.commodity.tts_heading_obj, CommodityHeadingJson))
-        self.assertFalse(self.commodity.tts_heading_obj.di)
-
-    def test_tts_title(self):
-        # TODO: if not used remove method from Commodity model
-        self.assertEquals(self.commodity.tts_title, self.commodity.description)
 
     def test_heading_tts_json_is_the_correct_data(self):
         self.assertEquals(self.commodity.tts_heading_json, json.dumps(get_data(settings.HEADING_STRUCTURE)))
