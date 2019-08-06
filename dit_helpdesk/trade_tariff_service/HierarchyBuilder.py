@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import sys
 from pprint import pprint
 
@@ -534,6 +535,7 @@ class HierarchyBuilder:
                 child_headings = [item for item in chapter["included"] if item["type"] == "heading"]
 
                 for heading in child_headings:
+
                     headings_data.append({
                         "goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
                         "goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
@@ -606,11 +608,26 @@ class HierarchyBuilder:
 
     def save_trade_tariff_service_api_data_json_to_file(self):
         """
+        check for previously downloaded content and archive
         Get Sections, Chapters and Headings api data from the trade tariff service api and serialize it locally to disk
         This will be used by `build_import_data` to create the json files that will be used to create the
         main hierarchy structural elements
         :return:
         """
+        logger.info("This will retrieve the json data for Sections, Chapters and Headings from the trade tariff api"
+                    " service and save the json files to the filesystem.")
+        download_dir = settings.IMPORT_DATA_PATH.format("downloaded")
+        previous_dir = "{0}/previous".format(download_dir)
+
+        # try:
+        #     os.mkdir(previous_dir, 777)
+        # except FileExistsError as exception:
+        #     logger.info("{0}".format(exception.args))
+
+        previous_files = [f for f in os.listdir(download_dir) if os.path.isfile(os.path.join(download_dir, f))]
+
+        for f in previous_files:
+            os.rename(os.path.join(download_dir, f), os.path.join(previous_dir, f))
 
         data_type = "sections"
         sections, _ = self.get_type_data_from_api(data_type=data_type)

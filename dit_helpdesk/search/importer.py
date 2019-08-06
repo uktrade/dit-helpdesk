@@ -148,5 +148,5 @@ class SearchKeywordsImporter:
                 else:
                     logger.info("{0} instance created".format(obj))
 
-        logger.info("Multiples Found: ", multiples_found)
-        logger.info("Not founds: ", not_found)
+        logger.info("Multiples Found: {0}".format(multiples_found))
+        logger.info("Not founds: {0}".format(not_found))

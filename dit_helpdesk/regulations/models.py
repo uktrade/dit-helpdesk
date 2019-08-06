@@ -8,6 +8,7 @@ class Regulation(models.Model):
     title = models.TextField(null=True)
     commodities = models.ManyToManyField("commodities.Commodity")
     subheadings = models.ManyToManyField("hierarchy.SubHeading")
+    headings = models.ManyToManyField("hierarchy.Heading")
 
     class Meta:
         verbose_name_plural = "regulations"

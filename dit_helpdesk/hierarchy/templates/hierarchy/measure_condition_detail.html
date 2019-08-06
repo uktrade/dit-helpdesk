@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+{% load static staticfiles i18n cell_cleaner %}
+
+{% block title %}Commodity information for {% for heading_code_segment in heading.heading_code_split %}{{ heading_code_segment }} {% endfor %}{% endblock title %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <a href="{% url 'heading-detail' heading_code=heading.heading_code country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+
+      <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+        <span class="govuk-caption-l">
+          Exporting from {{ selected_origin_country_name }} to the UK
+        </span>
+        Conditions for
+        {% spaceless %}
+          <span class="app-commodity-code">
+            {% for heading_code_segment in heading.heading_code_split %}
+              <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
+                {{ heading_code_segment }}
+              </span>
+            {% endfor %}
+          </span>
+        {% endspaceless %}
+      </h2>
+    </div>
+  </div>
+  <div class="govuk-grid-row govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">{{ heading.description }}</p>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <table class="govuk-table app-flexible-table">
+        <caption class="govuk-table__caption govuk-heading-m">Conditions</caption>
+        <thead class="govuk-table__head app-flexible-table__head">
+          <tr class="govuk-table__row">
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Condition code</th>
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Condition</th>
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Document code</th>
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Requirement</th>
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Action</th>
+              <th class="govuk-table__header app-flexible-table__header" scope="col">Duty</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body app-flexible-table__body">
+          {% spaceless %}
+          {%  for condition in conditions %}
+              <tr class="govuk-table__row app-flexible-table__row">
+                  <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="Condition code"><p>{{ condition.di.condition_code }}</p></th>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Condition"><p>{{ condition.di.condition }}</p></td>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Document code"><p>{{ condition.di.document_code | cell_cleaner }}</p></td>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Requirement"><p>{{ condition.di.requirement | safe }}</p></td>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Action"><p>{{ condition.di.action }}</p></td>
+                  <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Duty"><p>{{ condition.di.duty_expression | safe  }}</p></td>
+              </tr>
+          {%  endfor %}
+          {% endspaceless %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

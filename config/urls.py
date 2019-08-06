@@ -19,6 +19,7 @@ from django.urls import path, re_path, include
 
 from admin.views import admin_login_view
 from commodities import views as commodity_views
+from hierarchy import views as hierarchy_views
 from cookies import views as cookie_views
 from countries import views as country_views
 from feedback import views as feedback_views
@@ -63,10 +64,23 @@ urlpatterns = [
     ),
 
     re_path(
+        r'^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$',
+        hierarchy_views.heading_detail,
+        name='heading-detail'
+    ),
+
+    re_path(
         r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})'
         r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
         commodity_views.measure_condition_detail,
         name='commodity-measure-conditions'
+    ),
+
+    re_path(
+        r'country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})'
+        r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        hierarchy_views.measure_condition_detail,
+        name='heading-measure-conditions'
     ),
 
     path(
