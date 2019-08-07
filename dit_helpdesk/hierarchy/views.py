@@ -184,7 +184,7 @@ def heading_detail(request, heading_code, country_code):
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': heading.get_regulations(),
         'accordion_title': accordion_title,
-        'commodity_hierarchy_context': heading_hierarchy_context(heading_path, country.country_code, heading_code)
+        'heading_hierarchy_context': heading_hierarchy_context(heading_path, country.country_code, heading_code)
     }
 
     return render(request, 'hierarchy/heading_detail.html', context)
@@ -211,26 +211,22 @@ def heading_hierarchy_context(heading_path, country_code, heading_code):
     :param commodity_code: string
     :return: html
     """
-    listSize = len(heading_path) - 1
+    listSize = len(heading_path)
     html = ''
     reversedList = reversed(heading_path)
 
     for index, lista in enumerate(reversedList):
-
         if index is 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += ''
         else:
             html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
-
             for i, item in enumerate(lista):
                 expand = 'open'
                 if index is listSize:
                     expand = 'closed'
-
                 if type(item) is Heading:
-
-                    if item.heading_path == heading_code:
+                    if item.heading_code == heading_code:
                         html += f"""
                             <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__heading">
                                 <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
@@ -238,15 +234,14 @@ def heading_hierarchy_context(heading_path, country_code, heading_code):
                             """
                     else:
                         html += f"""
-                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
                                 <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
                             </li>
                             """
-
                 elif hasattr(item,'description'):
                     html += f"""
-                        <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
+                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_generate_commodity_code_html(item)}"""
                     if index is listSize:
                         html += '</li>'
@@ -255,7 +250,6 @@ def heading_hierarchy_context(heading_path, country_code, heading_code):
                 for i in range(0, listSize):
                     # close
                     html += '</ul>'
-
     return html
 
 def _generate_commodity_code_html(item):
@@ -285,6 +279,7 @@ def _generate_commodity_code_html(item):
                 '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
 
         commodity_code_html = commodity_code_html + '</span>'
+
     return commodity_code_html
 
 

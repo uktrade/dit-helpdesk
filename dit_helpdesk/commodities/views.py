@@ -119,25 +119,22 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
     :param commodity_code: string
     :return: html
     """
-    listSize = len(commodity_path) - 1
+    listSize = len(commodity_path)
     html = ''
     reversedList = reversed(commodity_path)
 
     for index, lista in enumerate(reversedList):
-
         if index is 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += ''
         else:
             html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
-
             for i, item in enumerate(lista):
                 expand = 'open'
                 if index is listSize:
                     expand = 'closed'
 
                 if type(item) is Commodity:
-
                     if item.commodity_code == commodity_code:
                         html += f"""
                             <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
@@ -146,15 +143,14 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                             """
                     else:
                         html += f"""
-                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
                                 <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
                             </li>
                             """
-
                 elif hasattr(item,'description'):
                     html += f"""
-                        <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
+                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_generate_commodity_code_html(item)}"""
                     if index is listSize:
                         html += '</li>'
