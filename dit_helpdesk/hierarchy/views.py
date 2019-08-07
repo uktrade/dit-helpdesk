@@ -178,8 +178,8 @@ def heading_detail(request, heading_code, country_code):
         'selected_origin_country': country.country_code,
         'heading': heading,
         'selected_origin_country_name': country.name,
-        'rules_of_origin': rules_of_origin['rules'],
-        'roo_footnotes': rules_of_origin['footnotes'],
+        'rules_of_origin': rules_of_origin,
+        'roo_footnotes': rules_of_origin,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': heading.get_regulations(),
@@ -234,7 +234,7 @@ def heading_hierarchy_context(heading_path, country_code, heading_code):
                             """
                     else:
                         html += f"""
-                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__heading">
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
                                 <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
                             </li>

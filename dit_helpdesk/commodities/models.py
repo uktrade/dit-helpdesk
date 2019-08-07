@@ -128,6 +128,7 @@ class Commodity(models.Model):
         """
 
         country = Country.objects.get(country_code=country_code)
+        groups = {}
         rules_of_origin = {
             "rules": [],
             "footnotes": []
@@ -138,7 +139,10 @@ class Commodity(models.Model):
                 for rule in document.rule_set.all().order_by('id'):
                     if rule.chapter == self.get_heading().chapter:
                         rules_of_origin['rules'].append(rule)
-        return rules_of_origin
+            group_name = group_member.rules_group.description
+            groups[group_name] = rules_of_origin
+
+        return groups
 
     def get_path(self, parent=None, tree=None, level=0):
         """

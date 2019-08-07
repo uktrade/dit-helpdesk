@@ -246,6 +246,8 @@
             agreements the UK has with the country you are exporting from</a>.</p>
 
         <div class="govuk-!-margin-bottom-4">
+        {% for group in rules_of_origin.items %}
+          <h3 class="govuk-heading-m govuk-!-margin-top-4">{{ group.0|cut:"_"|add:" " }}</h3>
           <table class="govuk-table app-flexible-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-flexible-table__head">
@@ -262,7 +264,7 @@
             </thead>
             <tbody class="govuk-table__body app-flexible-table__body">
               {% spaceless %}
-                {% for rule in rules_of_origin %}
+                {% for rule in group.1.rules %}
                   <tr class="govuk-table__row app-flexible-table__row">
                     <td class="govuk-table__cell app-flexible-table__cell"
                         data-column-heading="Harmonised System heading">
@@ -285,6 +287,7 @@
               {% endspaceless %}
             </tbody>
           </table>
+        {% endfor %}
         </div>
       </div>
       <div class="govuk-grid-column-three-quarters">
@@ -330,18 +333,20 @@
               processed (if columns 3 and 4 are present), you can apply either rule.</p>
             {% if roo_footnotes %}
             <details class="govuk-details">
+            {% for group in roo_footnotes.items %}
               <summary class="govuk-details__summary">
                 <span class="govuk-details__summary-text">
-                  Footnotes
+                  {{ group.0 }} Footnotes
                 </span>
               </summary>
               <div class="govuk-details__text">
                 <ul class="govuk-list govuk-body-s app-footnotes">
-                  {% for footnote in roo_footnotes %}
+                  {% for footnote in group.1.footnotes %}
                   <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
                   {% endfor %}
                 </ul>
               </div>
+            {% endfor %}
             </details>
             {% endif %}
           </div>

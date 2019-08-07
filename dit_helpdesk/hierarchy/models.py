@@ -408,6 +408,7 @@ class Heading(models.Model):
         """
 
         country = Country.objects.get(country_code=country_code)
+        groups = {}
         rules_of_origin = {
             "rules": [],
             "footnotes": []
@@ -418,7 +419,10 @@ class Heading(models.Model):
                 for rule in document.rule_set.all().order_by('id'):
                     if rule.chapter == self.chapter:
                         rules_of_origin['rules'].append(rule)
-        return rules_of_origin
+            group_name = group_member.rules_group.description
+            groups[group_name] = rules_of_origin
+
+        return groups
 
     @property
     def hierarchy_key(self):
@@ -457,7 +461,7 @@ class Heading(models.Model):
         """
         sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
         commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
-        return commodities + sub_headings
+        return sub_headings + commodities
 
     def get_hierarchy_url(self, country_code=None):
         """
