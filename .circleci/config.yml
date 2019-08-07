@@ -22,7 +22,6 @@ jobs:
       - image: circleci/postgres:10
         name: postgres
         environment:
-          POSTGRES_USER: DJANGO_POSTGRES_USER
           POSTGRES_DB: DJANGO_POSTGRES_DATABASE
       - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
         name: es
