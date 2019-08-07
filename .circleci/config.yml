@@ -9,16 +9,21 @@ jobs:
       - image: circleci/python:3.6
         environment:
           DEBUG: True
+          DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
           DJANGO_SETTINGS_MODULE: config.settings.test
           DJANGO_BASE_DIR: /app
-          DJANGO_POSTGRES_HOST: postgres
-          DJANGO_POSTGRES_DATABASE: helpdesk
-          DJANGO_POSTGRES_PORT: 5432
+          DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
+          DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
+          DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
+          DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
+          DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
+          DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
+          #SENTRY_DSN: https://ad61c1d8e7e7426d820e56381fb09f98@sentry.ci.uktrade.io/150
       - image: circleci/postgres:10
         name: postgres
         environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: helpdesk
+          POSTGRES_USER: DJANGO_POSTGRES_USER
+          POSTGRES_DB: DJANGO_POSTGRES_DATABASE
       - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
         name: es
         environment:
