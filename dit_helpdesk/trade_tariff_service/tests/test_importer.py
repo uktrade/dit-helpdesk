@@ -112,7 +112,6 @@ class HierarchyBuilderTestCase(TestCase):
         parent_model = apps.get_model(app_label=hierarchy_model_map[parent_model_name]["app_name"],
                                       model_name=parent_model_name)
         for parent in builder.data[parent_model_name]["data"]:
-            # logger.debug(parent['child_goods_nomenclature_sids'])
             if child_model_code in parent['child_goods_nomenclature_sids']:
                 parent_instance_data = builder.rename_key(parent, 'child_goods_nomenclature_sids', 'tts_json')
                 parent_model.objects.create(**parent_instance_data)
@@ -191,7 +190,7 @@ class HierarchyBuilderTestCase(TestCase):
             subheading = builder.rename_key(subheading, 'leaf', 'tts_is_leaf')
             model.objects.create(**subheading)
 
-        self.assertEqual(builder.process_orphaned_subheadings(), 4)
+        self.assertEqual(builder.process_orphaned_subheadings(), 3)
 
     # @staticmethod
     # def test_get_section_data_from_api():

@@ -134,7 +134,7 @@ class CommoditySearchViewTestCase(TestCase):
         resp = self.client.get(url, data=data, follow=True)
         self.assertEqual(resp.status_code, 200)
 
-    def test_search_view_with_code_as_coomodity_returns_correctly_expanded_html(self):
+    def test_search_view_with_code_as_comodity_returns_correctly_expanded_html(self):
         url = reverse("search:search-commodity", kwargs={"country_code": "au"})
         data = {"q": '4911910010', "country": "au"}
         resp = self.client.get(url, data=data,  follow=True)
@@ -144,7 +144,7 @@ class CommoditySearchViewTestCase(TestCase):
                          '<span class="app-commodity-code__highlight app-commodity-code__highlight--1">491191</span>'
                          '<span class="app-commodity-code__highlight app-commodity-code__highlight--2">00</span>'
                          '<span class="app-commodity-code__highlight app-commodity-code__highlight--3">10</span>'
-                         '</span>', resp.context["commodity_hierarchy_context"])
+                         '</span>', resp.context[0]["commodity_hierarchy_context"])
 
 
 class SearchFormTestCase(TestCase):
@@ -157,6 +157,7 @@ class SearchFormTestCase(TestCase):
     def test_form_is_not_valid_with_missing_query(self):
         form_data = {'q': '', 'country': 'AU'}
         form = CommoditySearchForm(data=form_data)
+        logger.info(form.is_valid())
         self.assertFalse(form.is_valid())
 
 
