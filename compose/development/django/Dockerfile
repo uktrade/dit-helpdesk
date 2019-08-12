@@ -23,15 +23,5 @@ ADD . /app/
 
 CMD /app/compose/development/django/start.sh
 
-#EXPOSE 8001
-
-#RUN mkdir -p /forms
-#WORKDIR /forms
-#RUN git clone https://github.com/uktrade/directory-forms-api.git .
-
-#RUN virtualenv venv -p python3.6
-#RUN . venv/bin/activate
-#RUN pip install -r requirements_test.txt
-
 
 
