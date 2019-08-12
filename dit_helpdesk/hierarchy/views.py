@@ -4,7 +4,6 @@ import re
 from datetime import datetime, timedelta, timezone
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
 from commodities.models import Commodity
 from commodities.views import TABLE_COLUMN_TITLES
@@ -67,7 +66,6 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     :param origin_country: string representing the origin country code
     :return: html snippet that represents the expanded section of the hierarchy
     """
-    print("node: ", node)
     if node == 'root': # if roo it list only sections
         children = Section.objects.all().order_by('section_id')
         html = '<ul class="app-hierarchy-tree">'
@@ -84,7 +82,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             openclass = 'closed'
 
         commodity_code_html = ''
-        if (type(child) is not Section):
+        if type(child) is not Section:
             commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
             if type(child) is Commodity:
@@ -109,7 +107,6 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         elif type(child) is Commodity or Heading and len(child.get_hierarchy_children()) is 0:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
-            print("child Heading: ", child, )
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{commodity_code_html}'
         html = html + li
 
@@ -128,24 +125,21 @@ def hierarchy_data(country_code, node_id='root'):
     :param node_id: string representing hierarchy node id
     :return: html snippet that represents the expanded section of the hierarchy
     """
-    print("node_id: ", node_id)
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
-    print("Expanded: ", expanded)
     html = _get_hierarchy_level_html('root', expanded, country_code)
-    # print("HTML: ", html)
 
     return html
 
 
 def heading_detail(request, heading_code, country_code):
     """
-    View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
+    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
     display and the two character country code to provide the exporter geographical context which is
     used to display the appropriate related supporting content
 
+    :param heading_code:
     :param request: django http request object
-    :param commodity_code: string
     :param country_code: string
     :return:
     """
@@ -189,11 +183,12 @@ def heading_detail(request, heading_code, country_code):
 
     return render(request, 'hierarchy/heading_detail.html', context)
 
+
 def heading_hierarchy_section_header(reversed_heading_tree):
     """
-    View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
+    View helper function to extract the Section Numeral and title for the hierarchy context of the heading
     and returned as formatted html string
-    :param reversed_commodity_tree: list
+    :param reversed_heading_tree:
     :return: html
     """
     section_index = len(reversed_heading_tree) - 1
@@ -201,14 +196,15 @@ def heading_hierarchy_section_header(reversed_heading_tree):
     html = f'Section {section.roman_numeral}: {section.title.capitalize()}'
     return html
 
+
 def heading_hierarchy_context(heading_path, country_code, heading_code):
     """
-    View helper function that returns an html representation of the context of the commodity within the
-    hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
-    commodity code
-    :param commodity_path: string
+    View helper function that returns an html representation of the context of the heading within the
+    hierarchy takes three arguments: the path to the heading, the country code of the exporting country and the
+    heading code
+    :param heading_code:
+    :param heading_path:
     :param country_code: string
-    :param commodity_code: string
     :return: html
     """
     listSize = len(heading_path)
@@ -252,6 +248,7 @@ def heading_hierarchy_context(heading_path, country_code, heading_code):
                     html += '</ul>'
     return html
 
+
 def _generate_commodity_code_html(item):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
@@ -260,7 +257,7 @@ def _generate_commodity_code_html(item):
     :return: html
     """
     commodity_code_html = ''
-    if (type(item) is not Section):
+    if type(item) is not Section:
         commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
 
         if type(item) is Commodity:
@@ -288,8 +285,8 @@ def measure_condition_detail(request, heading_code, country_code, measure_id):
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
     provide the exporter geographical context
+    :param heading_code:
     :param request: django http request object
-    :param commodity_code: string
     :param country_code: string
     :param measure_id: int
     :return:
