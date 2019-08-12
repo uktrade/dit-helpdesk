@@ -60,6 +60,10 @@ INSTALLED_APPS = [
     'regulations',
     'healthcheck',
     'directory_forms_api_client',
+    'rest_framework',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf'
+
 ]
 
 MIDDLEWARE = [
@@ -113,10 +117,8 @@ CACHES = {
 }
 
 # ELASTICSEARCH_DSL SETTINGS
-INSTALLED_APPS.append('rest_framework')
-INSTALLED_APPS.append('django_elasticsearch_dsl')
-INSTALLED_APPS.append('django_elasticsearch_dsl_drf')
-
+# https://github.com/sabricot/django-elasticsearch-dsl
+# https://django-elasticsearch-dsl-drf.readthedocs.io/en/latest/
 # Name of the Elasticsearch index
 ELASTICSEARCH_INDEX_NAMES = {
     'search.documents.commodity': 'commodity',
