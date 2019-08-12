@@ -1,9 +1,5 @@
-from django.conf.urls import handler500
-from django.http import HttpResponseServerError
-from django.test import TestCase
-from django.urls import reverse
-from django.views.defaults import server_error
 from django.test import RequestFactory
+from django.test import TestCase
 
 from core.views import error500handler
 
