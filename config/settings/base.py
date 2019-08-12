@@ -237,8 +237,6 @@ RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/gr
 RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
-SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
-
 TRADE_TARIFF_API = {
     "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}",
 }
