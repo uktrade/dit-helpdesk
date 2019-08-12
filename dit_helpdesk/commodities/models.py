@@ -11,10 +11,11 @@ from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
-from hierarchy.models import SubHeading, Heading, Chapter, Section
+from hierarchy.models import Heading
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
+
 
 class Commodity(models.Model):
     """
@@ -212,15 +213,15 @@ class Commodity(models.Model):
         if hasattr(parent, 'heading') and parent.heading is not None:
             self.get_ancestor_data(parent.heading, tree, level + 1)
             tree[level].append({"id": parent.heading.id,
-                             "description": parent.heading.description,
-                             "commodity_code": parent.heading.commodity_code,
-                             "type": "heading"})
+                                "description": parent.heading.description,
+                                "commodity_code": parent.heading.commodity_code,
+                                "type": "heading"})
         elif hasattr(parent, 'chapter') and parent.chapter is not None:
             self.get_ancestor_data(parent.chapter, tree, level + 1)
             tree[level].append({"id": parent.chapter.id,
-                             "description": parent.chapter.description,
-                             "commodity_code": parent.chapter.commodity_code,
-                             "type": "chapter"})
+                                "description": parent.chapter.description,
+                                "commodity_code": parent.chapter.commodity_code,
+                                "type": "chapter"})
         elif hasattr(parent, 'section') and parent.section is not None:
             tree[level].append({"id": parent.section.id,
                                 "description": parent.section.title,
@@ -245,12 +246,11 @@ class Commodity(models.Model):
             for child in children:
                 if child.commodity_code not in ["9900000000", "9950000000"]:
                     tree[level].append({"id": child.id,
-                                    "description": child.description,
-                                    "commodity_code": child.commodity_code,
-                                    "type": child._meta.model_name})
+                                        "description": child.description,
+                                        "commodity_code": child.commodity_code,
+                                        "type": child._meta.model_name})
         except Exception as err:
             logger.debug("_append descendant data".format(err.args))
-
 
     @staticmethod
     def _append_path_children(parent, tree, level):
