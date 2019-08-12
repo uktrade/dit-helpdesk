@@ -1,7 +1,5 @@
 import json
 import logging
-import os
-import re
 
 from django.apps import apps
 from django.conf import settings
@@ -99,7 +97,6 @@ class TestSubHeadingModel(TestCase):
 
         )
 
-
     def test_subheading_exists(self):
         self.assertEqual(str(self.subheading), "Sub Heading {0}".format(settings.TEST_SUBHEADING_CODE))
 
@@ -188,13 +185,7 @@ class TestCommodityModel(TestCase):
     def test_commodity_parent_subheading_description_is_correct(self):
         self.assertTrue(self.commodity.parent_subheading.description, settings.TEST_SUBHEADING_DESCRIPTION)
 
-    # def test_commodity_parent_subheading_has_parent_heading(self):
-    #     self.assertEqual(self.commodity.parent_subheading.heading, self.heading)
-
     def test_commodity_has_correct_heading(self):
-
-        # logger.info(" COM: {}".format(self.commodity))
-        # logger.info("par: {}".format(self.commodity.parent_subheading))
         heading = self.commodity.get_heading()
         self.assertEquals(
             settings.TEST_HEADING_DESCRIPTION,
@@ -218,61 +209,3 @@ class TestCommodityModel(TestCase):
 
     def test_commodity_0101210000_hierarchy_key(self):
         self.assertEqual(self.commodity.hierarchy_key, "commodity-{0}".format(self.commodity.pk))
-
-
-"""
-#TODO: move to tts_serivce tests
-    def test_commodity_structure_file_exists(self):
-        self.assertTrue(os.path.isfile(COMMODITY_STRUCTURE))
-
-    def test_subheading_structure_file_exists(self):
-        self.assertTrue(os.path.isfile(SUBHEADING_STRUCTURE))
-
-    def test_heading_structure_file_exists(self):
-        self.assertTrue(os.path.isfile(HEADING_STRUCTURE))
-
-    def test_commodity_data_file_exists(self):
-        self.assertTrue(os.path.isfile(COMMODITY_DATA))
-
-    def test_commodity_structure_is_a_dict(self):
-        self.assertTrue(isinstance(self.get_data(COMMODITY_STRUCTURE), dict))
-
-    def test_commodity_structure_data_has_correct_fields(self):
-        self.assertTrue(set([True for field in self.get_data(COMMODITY_STRUCTURE).keys()
-                             if Commodity._meta.get_field(field)]))
-
-    def test_subheading_structure_is_a_dict(self):
-        self.assertTrue(isinstance(self.get_data(SUBHEADING_STRUCTURE), dict))
-
-    def test_subheading_structure_data_has_correct_fields(self):
-        self.assertTrue(set([True for field in self.get_data(SUBHEADING_STRUCTURE).keys()
-                             if SubHeading._meta.get_field(field)]))
-
-    def test_heading_structure_is_a_dict(self):
-        self.assertTrue(isinstance(self.get_data(HEADING_STRUCTURE), dict))
-
-    def test_heading_structure_data_has_correct_fields(self):
-        self.assertTrue(set([True for field in self.get_data(HEADING_STRUCTURE).keys()
-                             if Heading._meta.get_field(field)]))
-
-    def test_commodity_data_is_a_dict(self):
-        self.assertTrue(isinstance(self.get_data(COMMODITY_DATA), dict))
-
-    def test_create_commodity_instance(self):
-        struct_data = self.get_data(COMMODITY_STRUCTURE)
-        instance = self.create_instance(struct_data, 'commodities', 'Commodity')
-        data = self.get_data(COMMODITY_DATA)
-        instance.tts_json = data
-        instance.save()
-        self.assertTrue(isinstance(instance, Commodity))
-
-    def test_create_subheading_instance(self):
-        struct_data = self.get_data(SUBHEADING_STRUCTURE)
-        instance = self.create_instance(struct_data, 'hierarchy', 'SubHeading')
-        self.assertTrue(isinstance(instance, SubHeading))
-
-    def test_create_heading_instance(self):
-        struct_data = self.get_data(HEADING_STRUCTURE)
-        instance = self.create_instance(struct_data, 'hierarchy', 'Heading')
-        self.assertTrue(isinstance(instance, Heading))
-"""
