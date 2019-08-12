@@ -121,6 +121,10 @@ CACHES = {
 # https://django-elasticsearch-dsl-drf.readthedocs.io/en/latest/
 # Name of the Elasticsearch index
 ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.section': 'section',
+    'search.documents.chapter': 'chapter',
+    'search.documents.heading': 'heading',
+    'search.documents.subheading': 'sub_heading',
     'search.documents.commodity': 'commodity',
 }
 
@@ -318,25 +322,6 @@ logging.config.dictConfig({
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
 })
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,
-    'ORDERING_PARAM': 'ordering',
-}
-
-ELASTICSEARCH_INDEX_NAMES = {
-    'search.documents.section': 'section',
-    'search.documents.chapter': 'chapter',
-    'search.documents.heading': 'heading',
-    'search.documents.subheading': 'sub_heading',
-    'search.documents.commodity': 'commodity',
-}
 
 RESULTS_PER_PAGE = 20
 
