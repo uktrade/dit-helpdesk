@@ -34,11 +34,6 @@ class SectionTestCase(TestCase):
         self.assertTrue(isinstance(self.section.tts_json, str))
         self.assertEquals(self.section.tts_json, "{}")
 
-    # def test_tts_obj_is_and_empty_SectionJson_object(self):
-    #     # TODO: remove method from Section model
-    #     self.assertTrue(isinstance(self.section.tts_obj, SectionJson))
-    #     self.assertFalse(self.section.tts_obj.di)
-
     def test_section_has_correct_roman_numeral(self):
         # TODO: remove field and create a property method
         logger.debug("{0}, {1}".format(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral))
@@ -88,6 +83,7 @@ class SectionTestCase(TestCase):
             chapter_code=seq(0)
         )
         self.assertEquals(self.section.chapter_range_str, "1 to 5")
+
 
 class ChapterTestCase(TestCase):
 
