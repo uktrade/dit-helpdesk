@@ -1,10 +1,6 @@
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 
 from search.documents.commodity import CommodityDocument
-    # , ChapterDocument, HeadingDocument, SubHeadingDocument, \
-    # SectionDocument
-
-
 from search.documents.chapter import ChapterDocument
 from search.documents.heading import HeadingDocument
 from search.documents.section import SectionDocument
