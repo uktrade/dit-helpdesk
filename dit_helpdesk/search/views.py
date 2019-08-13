@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 from django.conf import settings
@@ -27,6 +28,9 @@ from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm
 from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, \
     ChapterDocumentSerializer, SectionDocumentSerializer
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -127,8 +131,13 @@ class CommoditySearchView(FormView):
 
                     for hit in results:
                         if isinstance(hit["commodity_code"], str):
+                            logger.INFO(hit)
                             hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
-                            hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
+                            try:
+                                hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
+                            except KeyError as exception:
+                                logger.INFO(exception.args)
+
 
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
