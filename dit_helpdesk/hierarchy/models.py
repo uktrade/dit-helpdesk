@@ -175,7 +175,6 @@ class Chapter(models.Model):
     ranking = models.SmallIntegerField(null=True)
 
     chapter_code = models.CharField(max_length=30)
-    # tts_json = models.TextField(blank=True, null=True)
 
     section = models.ForeignKey(
         'Section', blank=True, null=True, on_delete=models.CASCADE
@@ -219,14 +218,6 @@ class Chapter(models.Model):
         :return:
         """
         return self.headings.all().order_by('heading_code')
-        # children = []
-        # for heading in self.headings.all().order_by('heading_code'):
-        #     for child in heading.get_hierarchy_children():
-        #         if heading.heading_code != child.commodity_code:
-        #             children.append(heading)
-        #         else:
-        #             children.append(child)
-        # return children
 
     def get_headings_url(self):
         """
