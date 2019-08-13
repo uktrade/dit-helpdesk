@@ -1,3 +1,4 @@
+import logging
 import sys
 from time import sleep
 
@@ -5,6 +6,10 @@ from django.core.management.base import BaseCommand
 
 from hierarchy.models import Section
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 
 class Command(BaseCommand):
@@ -16,7 +21,7 @@ class Command(BaseCommand):
 
         sections = Section.objects.all()
         if len(sections) > 0:
-            self.stdout.write("It looks like the hierarchy already exists.")
+            logger.info("It looks like the hierarchy already exists.")
             return
 
         builder = HierarchyBuilder()
