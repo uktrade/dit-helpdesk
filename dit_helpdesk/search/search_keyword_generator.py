@@ -55,7 +55,7 @@ class SearchKeywordGenerator:
         content = re.sub(r'[0-9]+', '', content)
         new_sent = [Word(word).singularize() for word in content.lower().split() if
                     Word(word).singularize() not in stop_words]
-        new_cont = ' '.join(new_sent)  #
+        new_cont = ' '.join(new_sent)
         return new_cont
 
     def get_searched_single_word(self, content, stop_words):
