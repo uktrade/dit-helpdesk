@@ -1,10 +1,7 @@
 import datetime
 import logging
 import json
-import os
-import re
 
-from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
 from django.urls import NoReverseMatch
@@ -57,7 +54,6 @@ class CommodityTestCase(TestCase):
             Commodity,
             commodity_code="0101210000",
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
-            tts_heading_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
             parent_subheading=self.subheading
         )
 
@@ -88,13 +84,6 @@ class CommodityTestCase(TestCase):
 
     def test_tts_obj_is_a_CommodityJson_object(self):
         self.assertTrue(isinstance(self.commodity.tts_obj, CommodityJson))
-
-    def test_heading_tts_json_is_a_string_representing_a_json_object(self):
-        # TODO: if not used remove field from Commodity Model
-        self.assertTrue(isinstance(self.commodity.tts_heading_json, str))
-
-    def test_heading_tts_json_is_the_correct_data(self):
-        self.assertEquals(self.commodity.tts_heading_json, json.dumps(get_data(settings.HEADING_STRUCTURE)))
 
     def test_get_heading_is_type_heading_with_code_0101000000(self):
         self.assertTrue(isinstance(self.commodity.get_heading(), Heading))
@@ -148,7 +137,6 @@ class CommodityTestCase(TestCase):
             Chapter,
             chapter_code="4700000000",
             section=section
-
         )
 
         heading = mixer.blend(

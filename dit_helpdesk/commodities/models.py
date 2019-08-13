@@ -33,7 +33,6 @@ class Commodity(models.Model):
     ranking = models.SmallIntegerField(null=True)
 
     tts_json = models.TextField(blank=True, null=True)
-    tts_heading_json = models.TextField(blank=True, null=True)
 
     tts_is_leaf = models.BooleanField(blank=True, null=True)
 

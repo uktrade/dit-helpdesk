@@ -148,7 +148,6 @@ class TestCommodityModel(TestCase):
             Commodity,
             commodity_code="0101210000",
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
-            tts_heading_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
             parent_subheading=self.subheading,
             description=settings.TEST_COMMODITY_DESCRIPTION
         )

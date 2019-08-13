@@ -151,10 +151,6 @@ class HierarchyModelsTestCase(TestCase):
     def test_subheading_has_the_correct_hierachy_key(self):
         self.assertEqual(self.subheading.hierarchy_key, "sub_heading-{0}".format(self.subheading.pk))
 
-    def test_subheading_has_tts_heading_obj_is_an_instance_of_SubHeadingJson(self):
-        # self.assertTrue(isinstance(self.subheading.tts_heading_obj, CommodityHeadingJson))
-        self.assertFalse(isinstance(self.subheading.tts_heading_json, str))
-
     def test_subheading_has_the_correct_harmonized_code(self):
         self.assertTrue(self.subheading.harmonized_code, settings.TEST_SUBHEADING_CODE)
 

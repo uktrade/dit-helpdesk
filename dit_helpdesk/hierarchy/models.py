@@ -329,6 +329,7 @@ class Heading(models.Model):
         related_name='headings'
     )
     last_updated = models.DateTimeField(auto_now=True)
+
     @property
     def commodity_code(self):
         return self.heading_code
@@ -588,7 +589,6 @@ class SubHeading(models.Model):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
 
-    tts_heading_json = models.TextField(blank=True, null=True)
     tts_is_leaf = models.BooleanField(blank=True, null=True)
 
     heading = models.ForeignKey(

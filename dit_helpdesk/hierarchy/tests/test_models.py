@@ -266,13 +266,11 @@ class SubHeadingTestCase(TestCase):
 
         self.subheading = mixer.blend(
             SubHeading,
-            tts_heading_json="{}",
             heading=self.heading
         )
 
         self.child_subheadings = mixer.cycle(5).blend(
             SubHeading,
-            tts_heading_json="{}",
             parent_subheading=self.subheading
         )
 
@@ -286,11 +284,6 @@ class SubHeadingTestCase(TestCase):
 
     def test_hierarchy_key(self):
         self.assertEquals(self.subheading.hierarchy_key, 'sub_heading-{0}'.format(self.subheading.pk))
-
-    def test_tts_heading_json_is_a_string_representing_an_empty_json_object(self):
-        # TODO: remove field from SubHeading Model
-        self.assertTrue(isinstance(self.subheading.tts_heading_json, str))
-        self.assertEquals(self.subheading.tts_heading_json, "{}")
 
     def test_harmonized_code_equals_commodity_code(self):
         # TODO: Where is this property method used
