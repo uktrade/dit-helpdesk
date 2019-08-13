@@ -5,14 +5,13 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
 from mixer.backend.django import mixer
-from model_mommy.recipe import seq
 
-import countries
+
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, ROMAN_NUMERALS, SubHeading
 from hierarchy.views import _get_hierarchy_level_html
 from search.forms import CommoditySearchForm
-from search.views import CommoditySearchView, search_hierarchy, process_commodity_code, _generate_commodity_code_html
+from search.views import search_hierarchy, process_commodity_code, _generate_commodity_code_html
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -82,9 +81,6 @@ class CommoditySearchViewTestCase(TestCase):
         )
         self.client = Client()
 
-        # for item in self.commodities:
-        #     logger.info("COM: {0}".format([(field.name, field.value_to_string(item)) for field in item._meta.fields]))
-
     fixtures = [settings.COUNTRIES_DATA]
 
     def test_section_1_exists(self):
@@ -107,17 +103,6 @@ class CommoditySearchViewTestCase(TestCase):
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'search/commodity_search.html')
 
-    # def test_search_hierarchy_when_country_code_is_None(self):
-    #     request = RequestFactory().get(reverse("search:search-hierarchy",
-    #                                            kwargs={"country_code": "au", "node_id": "section-1"}))
-    #     middleware = SessionMiddleware()
-    #     middleware.process_request(request)
-    #     request.session["origin_country"] = None
-    #     request.session.save()
-    #
-    #     resp = CommoditySearchView.as_view()
-    #     self.assertEqual(resp.status_code, 302)
-
     def test_search_view_returns_http_200(self):
         resp = self.client.get(reverse('search:search-commodity', kwargs={"country_code": "au"}))
         self.assertEqual(resp.status_code, 200)
@@ -134,18 +119,6 @@ class CommoditySearchViewTestCase(TestCase):
         resp = self.client.get(url, data=data, follow=True)
         self.assertEqual(resp.status_code, 200)
 
-    # def test_search_view_with_code_as_comodity_returns_correctly_expanded_html(self):
-    #     url = reverse("search:search-commodity", kwargs={"country_code": "au"})
-    #     data = {"q": '4911910010', "country": "au"}
-    #     resp = self.client.get(url, data=data,  follow=True)
-    #     self.assertIn('<span class="govuk-!-font-weight-bold app-hierarchy-tree__link">Paper</span>'
-    #                      '<span class="govuk-visually-hidden"> &ndash; </span>'
-    #                      '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-    #                      '<span class="app-commodity-code__highlight app-commodity-code__highlight--1">491191</span>'
-    #                      '<span class="app-commodity-code__highlight app-commodity-code__highlight--2">00</span>'
-    #                      '<span class="app-commodity-code__highlight app-commodity-code__highlight--3">10</span>'
-    #                      '</span>', resp.context[0]["commodity_hierarchy_context"])
-
 
 class SearchFormTestCase(TestCase):
 
@@ -157,7 +130,6 @@ class SearchFormTestCase(TestCase):
     def test_form_is_not_valid_with_missing_query(self):
         form_data = {'q': '', 'country': 'AU'}
         form = CommoditySearchForm(data=form_data)
-        logger.info(form.is_valid())
         self.assertFalse(form.is_valid())
 
 
@@ -174,7 +146,6 @@ class CommodityKeywordSearchViewTestCase(TestCase):
     def test_commodity_keyword_search_has_query(self):
         path = reverse("search:search-commodity", kwargs={"country_code": "au"})
         resp = self.client.get(path, data={"q": "Paper", "country": "au"})
-        # logger.info("{}".format(resp.context))
         self.assertIn("q", resp.request["QUERY_STRING"])
 
     def test_commodity_keyword_search_query_is_empty(self):
