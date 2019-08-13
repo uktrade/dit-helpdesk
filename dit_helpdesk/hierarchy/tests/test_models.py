@@ -92,8 +92,7 @@ class SectionTestCase(TestCase):
 class ChapterTestCase(TestCase):
 
     """
-    Tes
-    t Chapter Model
+    Test Chapter Model
     """
     def setUp(self):
 
@@ -236,15 +235,6 @@ class HeadingTestCase(TestCase):
         # TODO: remove field from Heading Model
         self.assertTrue(isinstance(self.heading.tts_json, str))
         self.assertEquals(self.heading.tts_json, "{}")
-
-    # def test_tts_obj_is_and_empty_HeadingJson_object(self):
-    #     # TODO: remove property method from Heading model
-    #     self.assertTrue(isinstance(self.heading.tts_obj, HeadingJson))
-    #     self.assertFalse(self.heading.tts_obj.di)
-
-    # def test_accessing_tts_obj_raises_a_type_error(self):
-    #     # TODO: remove method from Heading model
-    #     self.assertRaises(TypeError, lambda: self.heading.tts_obj())
 
     def test_harmonized_code_equals_heading_code(self):
         # TODO: Where is this property method used
