@@ -5,7 +5,6 @@ from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter, ROMAN_NUMERALS
-# from trade_tariff_service.tts_api import HeadingJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
