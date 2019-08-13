@@ -131,13 +131,11 @@ class CommoditySearchView(FormView):
 
                     for hit in results:
                         if isinstance(hit["commodity_code"], str):
-                            logger.INFO(hit)
                             hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
                             try:
                                 hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
                             except KeyError as exception:
-                                logger.INFO(exception.args)
-
+                                logger.info("{0} {1}".format(hit["commodity_code_html"] , exception.args))
 
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
@@ -265,7 +263,8 @@ def _generate_commodity_code_html(code):
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
             commodity_code_html = commodity_code_html + \
-                '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+                                  f'<span class="app-commodity-code__highlight ' \
+                                  f'app-commodity-code__highlight--{counter}">{code_segment}</span>'
     else:
         commodity_code_html + code
 
