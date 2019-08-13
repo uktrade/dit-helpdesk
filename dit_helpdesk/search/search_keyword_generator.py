@@ -31,7 +31,7 @@ class SearchKeywordGenerator:
     def get_searched_words(self):
         """
         convert GA searched items to singular words
-        :return:
+        :return: list
         """
         words = self.google_analytics_searched_words['Search Term']
         return [Word(word).singularize() for word in words if word is not np.nan]
@@ -39,7 +39,7 @@ class SearchKeywordGenerator:
     def get_searched_pair_words(self):
         """
         define searched pair words
-        :return:
+        :return: list
         """
         words = [word for word in self.searched_words if " " in word]
         return [Word(word).singularize() for word in words]
@@ -47,8 +47,8 @@ class SearchKeywordGenerator:
     def filter_stop_words(self, content, stop_words):
         """
         define filter_stop_words function to remove stop words
-        :param content:
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -61,7 +61,8 @@ class SearchKeywordGenerator:
     def get_searched_single_word(self, content, stop_words):
         """
         define searched_singleword_func to return single words, which have been searched, from content
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -76,8 +77,8 @@ class SearchKeywordGenerator:
     def get_searched_unique_single_word(self, content, stop_words):
         """
         define searched_unique_singleword to return unique singleword which have been searched from content
-        :param content:
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -96,8 +97,8 @@ class SearchKeywordGenerator:
     def get_un_searched_single_word(self, content, stop_words):
         """
         define unsearched_singlewords to return single words which have not been searched from content
-        :param content:
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -112,8 +113,8 @@ class SearchKeywordGenerator:
     def get_searched_paired_word(self, content, stop_words):
         """
         define searched_pairwords to return searched pair words from content
-        :param content:
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -133,7 +134,8 @@ class SearchKeywordGenerator:
     def get_searched_single_word_synonym(self, content, stop_words):
         """
         define searched_singleword_synonym to return single words's synonym, which have been searched, from content
-        :param stop_words:
+        :param content: the content searched
+        :param stop_words: the stop words
         :return: unique synonyms as list converted to string
         """
         content = re.sub(r'[^\w\s]', '', content)
@@ -155,7 +157,6 @@ class SearchKeywordGenerator:
     def create_clean_content(self):
         """
         create clean_content, searched_unique_singleword, unsearched_unique_singleword and searched_pairword columns
-        :return:
         """
         clean_content = []
         searched_unique_single_word = []
@@ -179,16 +180,18 @@ class SearchKeywordGenerator:
         self.subhead['searched_pair_word'] = searched_pair_word
         self.subhead['searched_unique_single_word_synonym'] = searched_unique_single_word_synonym
 
-    def change_code(self, Code):
+    @staticmethod
+    def change_code(code):
         """
-        def change_code function to add '0' at the beginning of the code, if it's less than 10 digits
-        :return:
+        function to add '0' at the beginning of the code, if it's less than 10 digits
+        :param code: commodity_code
+        :return: padded commodity code
         """
-        if len(str(Code)) == 9:
-            Code = str(0) + str(Code)
+        if len(str(code)) == 9:
+            code = str(0) + str(code)
         else:
-            Code = str(Code)
-        return Code
+            code = str(code)
+        return code
 
     def process(self):
         self.create_clean_content()
