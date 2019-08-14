@@ -328,3 +328,5 @@ DIRECTORY_FORMS_API_BASE_URL = 'http://localhost:8011'
 DIRECTORY_FORMS_API_API_KEY = ""
 DIRECTORY_FORMS_API_SENDER_ID = ""
 DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 0
+
+APP_START_DOMAIN = "www.get-rules-tariffs-trade-with-uk.service.gov.uk"
