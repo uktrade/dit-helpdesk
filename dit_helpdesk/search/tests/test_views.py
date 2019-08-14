@@ -6,7 +6,6 @@ from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
 from mixer.backend.django import mixer
 
-
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, ROMAN_NUMERALS, SubHeading
 from hierarchy.views import _get_hierarchy_level_html
@@ -19,7 +18,6 @@ logger.setLevel(logging.INFO)
 
 
 class CommoditySearchViewTestCase(TestCase):
-
     """
     Test Commodity code Search view
     """
@@ -48,14 +46,15 @@ class CommoditySearchViewTestCase(TestCase):
             heading_code=(x for x in [4901000000, 4902000000, 4903000000, 4904000000, 4905000000, 4906000000,
                                       4907000000, 4908000000, 4909000000, 4910000000, 4911000000]),
             goods_nomenclature_sid=(x for x in [4901000000, 4902000000, 4903000000, 4904000000, 4905000000, 4906000000,
-                                      4907000000, 4908000000, 4909000000, 4910000000, 4911000000]),
+                                                4907000000, 4908000000, 4909000000, 4910000000, 4911000000]),
         )
         """create 6 subheadings starting at 4901 attached to heading 4901"""
         self.parent_subheadings = mixer.cycle(6).blend(
             SubHeading,
             heading=self.headings[0],
             commodity_code=(x for x in [4901000000, 4902000000, 4905000000, 4907000000, 4908000000, 4911000000]),
-            goods_nomenclature_sid=(x for x in [4901000000, 4902000000, 4905000000, 4907000000, 4908000000, 4911000000]),
+            goods_nomenclature_sid=(x for x in
+                                    [4901000000, 4902000000, 4905000000, 4907000000, 4908000000, 4911000000]),
         )
         """create 2 subheadings attached to subheading 4911"""
         self.subheadings = mixer.cycle(2).blend(
@@ -170,7 +169,6 @@ class CommodityKeywordSearchViewTestCase(TestCase):
 
 
 class ProcessCommodityCodeTestCase(TestCase):
-
     """
     Test Process Commodity Code
     """
@@ -240,6 +238,7 @@ class GenerateCommodityCodeHTMLTestCase(TestCase):
     """
     Test Generate commodity code HTML
     """
+
     def test_generate_commodity_code_html(self):
         code = _generate_commodity_code_html("4104115900")
         self.assertEqual(code, '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span '
@@ -253,8 +252,8 @@ class TestSearchHierarchyTestCase(TestCase):
     """
     Test search hierarchy view
     """
-    def setUp(self):
 
+    def setUp(self):
         self.client = Client()
 
     fixtures = [settings.COUNTRIES_DATA]
