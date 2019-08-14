@@ -1,8 +1,6 @@
 from .base import *
 import json
 
-ADMIN_ENABLED = False
-
 VCAP_SERVICES = json.loads(os.environ.get('VCAP_SERVICES', {}))
 
 ES_URL = VCAP_SERVICES['elasticsearch'][0]['credentials']['uri']
@@ -21,6 +19,7 @@ CACHES = {
         'LOCATION': REDIS_URL,
     }
 }
+
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
