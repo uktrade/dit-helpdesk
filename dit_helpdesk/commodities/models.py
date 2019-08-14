@@ -23,18 +23,18 @@ class Commodity(models.Model):
     """
     commodity_code = models.CharField(max_length=10, unique=True)
     goods_nomenclature_sid = models.CharField(max_length=10)
-    productline_suffix = models.CharField(max_length=2, null=True)
-    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    parent_productline_suffix = models.CharField(max_length=2, null=True)
-    description = models.TextField(null=True)
-    number_indents = models.SmallIntegerField(null=True)
+    productline_suffix = models.CharField(max_length=2)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10)
+    parent_productline_suffix = models.CharField(max_length=2)
+    description = models.TextField()
+    number_indents = models.SmallIntegerField()
     keywords = models.TextField()
     ranking = models.SmallIntegerField(null=True)
 
     tts_json = models.TextField(blank=True, null=True)
 
-    tts_is_leaf = models.BooleanField(blank=True, null=True)
+    tts_is_leaf = models.BooleanField()
 
     heading = models.ForeignKey(
         'hierarchy.Heading', blank=True, null=True,
