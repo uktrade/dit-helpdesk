@@ -4,7 +4,7 @@ from django.urls import NoReverseMatch
 from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
-from hierarchy.models import SubHeading, Heading, Section, Chapter, ROMAN_NUMERALS
+from hierarchy.models import SubHeading, Heading, Section, Chapter
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -21,22 +21,19 @@ class SectionTestCase(TestCase):
         self.section = mixer.blend(
             Section,
             section_id=1,
-            roman_numeral=ROMAN_NUMERALS[1],
-            tts_json="{}"
+            roman_numeral="I",
+            tts_json="[]"
         )
 
     def test_str(self):
         self.assertEquals(str(self.section), "Section {0}".format(self.section.roman_numeral))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        # TODO: remove field from Section Model
         self.assertTrue(isinstance(self.section.tts_json, str))
-        self.assertEquals(self.section.tts_json, "{}")
+        self.assertEquals(self.section.tts_json, "[]")
 
     def test_section_has_correct_roman_numeral(self):
-        # TODO: remove field and create a property method
-        logger.debug("{0}, {1}".format(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral))
-        self.assertEquals(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral)
+        self.assertEquals(self.section.roman_numeral, "I")
 
     def test_hierarchy_key(self):
         self.assertEquals(self.section.hierarchy_key, 'section-{0}'.format(self.section.pk))
@@ -144,7 +141,7 @@ class ChapterTestCase(TestCase):
         section = mixer.blend(
             Section,
             section_id=10,
-            roman_numeral=ROMAN_NUMERALS[1],
+            roman_numeral="X",
             tts_json="{}"
         )
         """create three chapters starting at 47 and attach to section 10"""

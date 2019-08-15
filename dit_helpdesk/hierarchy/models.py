@@ -8,30 +8,6 @@ from django.urls import reverse
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson
 
-ROMAN_NUMERALS = {
-    1: 'I',
-    2: 'II',
-    3: 'III',
-    4: 'IV',
-    5: 'V',
-    6: 'VI',
-    7: 'VII',
-    8: 'VIII',
-    9: 'IX',
-    10: 'X',
-    11: 'XI',
-    12: 'XII',
-    13: 'XIII',
-    14: 'XIV',
-    15: 'XV',
-    16: 'XVI',
-    17: 'XVII',
-    18: 'XVIII',
-    19: 'XIX',
-    20: 'XX',
-    21: 'XXI'
-}
-
 
 class Section(models.Model):
     """
@@ -39,11 +15,11 @@ class Section(models.Model):
     """
 
     section_id = models.IntegerField(unique=True)
-    tts_json = models.TextField(blank=True, null=True)
-    roman_numeral = models.CharField(max_length=5, null=True)
-    title = models.TextField(blank=True, null=True)
-    position = models.IntegerField(null=True)
-    keywords = models.TextField()
+    tts_json = models.TextField(blank=True)
+    roman_numeral = models.CharField(max_length=5)
+    title = models.TextField()
+    position = models.IntegerField()
+    keywords = models.TextField(null=True)
     ranking = models.SmallIntegerField(null=True)
 
     def __str__(self):

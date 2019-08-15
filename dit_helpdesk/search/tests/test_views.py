@@ -7,7 +7,7 @@ from django.urls import reverse
 from mixer.backend.django import mixer
 
 from commodities.models import Commodity
-from hierarchy.models import Section, Chapter, Heading, ROMAN_NUMERALS, SubHeading
+from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _get_hierarchy_level_html
 from search.forms import CommoditySearchForm
 from search.views import search_hierarchy, process_commodity_code, _generate_commodity_code_html
@@ -27,7 +27,7 @@ class CommoditySearchViewTestCase(TestCase):
             Section,
             section_id=10,
             title=settings.TEST_SECTION_DESCRIPTION,
-            roman_numeral=ROMAN_NUMERALS[1],
+            roman_numeral="X",
             tts_json="{}",
             commodity_code=10
         )
