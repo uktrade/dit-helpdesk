@@ -117,9 +117,9 @@
         </p>
 
         {% if result.meta.index == "commodity" %}
-        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold govuk-!-margin-right-2">Show information</a>
+        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold govuk-!-margin-right-2">Show trading information</a>
         {%  else %}
-        <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold">Show in tree</a>
+        <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold">Show in goods browser</a>
         {%  endif %}
       </section>
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
