@@ -138,18 +138,16 @@ class Chapter(models.Model):
     Model representing the second level chapters of the hierarchy
     """
 
-    # goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    productline_suffix = models.CharField(max_length=2, null=True)
-    leaf = models.BooleanField(blank=True, null=True)
-    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    parent_productline_suffix = models.CharField(max_length=2, null=True)
-    description = models.TextField(null=True)
-    number_indents = models.SmallIntegerField(null=True)
-    keywords = models.TextField()
-    ranking = models.SmallIntegerField(null=True)
-
+    goods_nomenclature_sid = models.CharField(max_length=10)
+    productline_suffix = models.CharField(max_length=2)
+    leaf = models.BooleanField()
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10)
+    parent_productline_suffix = models.CharField(max_length=2)
+    description = models.TextField()
+    number_indents = models.SmallIntegerField()
+    keywords = models.TextField(null=True, blank=True)
+    ranking = models.SmallIntegerField(null=True, blank=True)
     chapter_code = models.CharField(max_length=30)
 
     section = models.ForeignKey(
@@ -282,24 +280,21 @@ class Chapter(models.Model):
 
 
 class Heading(models.Model):
-    goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    productline_suffix = models.CharField(max_length=2, null=True)
-    leaf = models.BooleanField(blank=True, null=True)
-    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    parent_productline_suffix = models.CharField(max_length=2, null=True)
-    description = models.TextField(null=True)
-    number_indents = models.SmallIntegerField(null=True)
-    keywords = models.TextField()
-    ranking = models.SmallIntegerField(null=True)
-
+    goods_nomenclature_sid = models.CharField(max_length=10)
+    productline_suffix = models.CharField(max_length=2)
+    leaf = models.BooleanField()
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10)
+    parent_productline_suffix = models.CharField(max_length=2)
+    description = models.TextField()
+    number_indents = models.SmallIntegerField()
+    keywords = models.TextField(null=True, blank=True)
+    ranking = models.SmallIntegerField(null=True, blank=True)
     heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(
         max_length=4, null=True, blank=True
     )
-
     tts_json = models.TextField(blank=True, null=True)
-
     chapter = models.ForeignKey(
         'hierarchy.Chapter', blank=True, null=True, on_delete=models.CASCADE,
         related_name='headings'
@@ -553,19 +548,17 @@ class Heading(models.Model):
 
 
 class SubHeading(models.Model):
-    productline_suffix = models.CharField(max_length=2, null=True)
-    parent_goods_nomenclature_item_id = models.CharField(max_length=10, null=True)
-    parent_goods_nomenclature_sid = models.CharField(max_length=10, null=True)
-    parent_productline_suffix = models.CharField(max_length=2, null=True)
-    description = models.TextField(null=True)
-    number_indents = models.SmallIntegerField(null=True)
-    keywords = models.TextField()
-    ranking = models.SmallIntegerField(null=True)
-
+    productline_suffix = models.CharField(max_length=2)
+    parent_goods_nomenclature_item_id = models.CharField(max_length=10)
+    parent_goods_nomenclature_sid = models.CharField(max_length=10)
+    parent_productline_suffix = models.CharField(max_length=2)
+    description = models.TextField()
+    number_indents = models.SmallIntegerField()
+    keywords = models.TextField(null=True, blank=True)
+    ranking = models.SmallIntegerField(null=True, blank=True)
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
-
-    tts_is_leaf = models.BooleanField(blank=True, null=True)
+    tts_is_leaf = models.BooleanField()
 
     heading = models.ForeignKey(
         'hierarchy.Heading', blank=True, null=True,
@@ -573,7 +566,7 @@ class SubHeading(models.Model):
     )
 
     parent_subheading = models.ForeignKey(
-        'hierarchy.Subheading', blank=True, null=True,
+        'self', blank=True, null=True,
         related_name='child_subheadings', on_delete=models.CASCADE
     )
 
