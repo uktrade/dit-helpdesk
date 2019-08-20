@@ -31,7 +31,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
-ADMIN_ENABLED = os.environ.get("RESTRICT_ADMIN", True)
+ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", True)
 # Application definition
 
 INSTALLED_APPS = [
