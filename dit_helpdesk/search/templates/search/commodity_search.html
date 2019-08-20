@@ -25,12 +25,12 @@
       <span class="govuk-caption-l govuk-!-margin-bottom-1">
           Exporting from {{ selected_origin_country_name }} to the UK
       </span>
-      Search the commodity codes for your goods
+      Search for the goods you are exporting
     </h2>
     <form action="{% url 'search:search-commodity' country_code=country_code %}#search-results" name="commodity_search" method="get">
         <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
-              Search by keyword or commodity code, or <a href="#browse">browse</a> the commodities below.
+              Search by keyword or commodity code, or <a href="#browse">browse</a> the categories of goods below.
           </label>
           {% if form.q.errors %}
             <span id="commodity-code-error" class="govuk-error-message">
@@ -140,9 +140,9 @@
 
 
     <h2 class="govuk-heading-l govuk-!-padding-top-8">
-        <a name="browse"></a>Look up commodity codes
+        <a name="browse"></a>Browse goods by category
     </h2>
-    <p class="govuk-body govuk-hint">You might need to click through many descriptions before you can select a code.</p>
+    <p class="govuk-body govuk-hint">Click through these categories to find trading information and commodity codes for your goods.</p>
 
     {{ hierarchy_html | safe }}
   </div>

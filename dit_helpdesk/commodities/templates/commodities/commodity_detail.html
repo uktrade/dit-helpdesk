@@ -10,7 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n cell_cleaner %}
+{% load static staticfiles i18n cell_cleaner replace %}
 
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
@@ -235,6 +235,7 @@
     </div>
 
     {% if rules_of_origin %}
+
       <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin -
@@ -244,53 +245,6 @@
         <p class="govuk-body">Also <a class="govuk-link"
             href="https://www.gov.uk/guidance/signed-uk-trade-agreements-transitioned-from-the-eu">check the trade
             agreements the UK has with the country you are exporting from</a>.</p>
-
-        <div class="govuk-!-margin-bottom-4">
-        {% for group in rules_of_origin.items %}
-          <h3 class="govuk-heading-m govuk-!-margin-top-4">{{ group.0|cut:"_"|add:" " }}</h3>
-          <table class="govuk-table app-flexible-table">
-            <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
-            <thead class="govuk-table__head app-flexible-table__head">
-              <tr class="govuk-table__row">
-                <th class="govuk-table__header app-flexible-table__header"
-                    scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
-                <th class="govuk-table__header app-flexible-table__header"
-                    scope="col">Description of product</th>
-                <th class="govuk-table__header govuk-!-width-one-half app-flexible-table__header"
-                    scope="col"
-                    colspan="2">How non-originating materials must be worked or processed to get country of origin status
-                </th>
-              </tr>
-            </thead>
-            <tbody class="govuk-table__body app-flexible-table__body">
-              {% spaceless %}
-                {% for rule in group.1.rules %}
-                  <tr class="govuk-table__row app-flexible-table__row">
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="Harmonised System heading">
-                      <p>{{ rule.rule_id }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="Description of product">
-                      <p>{{ rule.description | safe }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                      <p>{{ rule.working_or_processing_one | safe }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                      {% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two | safe }}</p>{% endif %}
-                    </td>
-                  </tr>
-                {% endfor %}
-              {% endspaceless %}
-            </tbody>
-          </table>
-        {% endfor %}
-        </div>
-      </div>
-      <div class="govuk-grid-column-three-quarters">
         <details class="govuk-details govuk-!-margin-bottom-9">
           <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">
@@ -351,7 +305,52 @@
             {% endif %}
           </div>
         </details>
+        <div class="govuk-!-margin-bottom-4">
+        {% for group in rules_of_origin.items %}
+          <h3 class="govuk-heading-m govuk-!-margin-top-4">{{ group.0|replace}}</h3>
+          <table class="govuk-table app-flexible-table">
+            <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
+            <thead class="govuk-table__head app-flexible-table__head">
+              <tr class="govuk-table__row">
+                <th class="govuk-table__header app-flexible-table__header"
+                    scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
+                <th class="govuk-table__header app-flexible-table__header"
+                    scope="col">Description of product</th>
+                <th class="govuk-table__header govuk-!-width-one-half app-flexible-table__header"
+                    scope="col"
+                    colspan="2">How non-originating materials must be worked or processed to get country of origin status
+                </th>
+              </tr>
+            </thead>
+            <tbody class="govuk-table__body app-flexible-table__body">
+              {% spaceless %}
+                {% for rule in group.1.rules %}
+                  <tr class="govuk-table__row app-flexible-table__row">
+                    <td class="govuk-table__cell app-flexible-table__cell"
+                        data-column-heading="Harmonised System heading">
+                      <p>{{ rule.rule_id }}</p>
+                    </td>
+                    <td class="govuk-table__cell app-flexible-table__cell"
+                        data-column-heading="Description of product">
+                      <p>{{ rule.description | safe }}</p>
+                    </td>
+                    <td class="govuk-table__cell app-flexible-table__cell"
+                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
+                      <p>{{ rule.working_or_processing_one | safe }}</p>
+                    </td>
+                    <td class="govuk-table__cell app-flexible-table__cell"
+                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
+                      {% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two | safe }}</p>{% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% endspaceless %}
+            </tbody>
+          </table>
+        {% endfor %}
+        </div>
       </div>
+
     {% endif %}
     {% if regulations %}
       <div class="govuk-grid-column-full">
@@ -376,7 +375,7 @@
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-3">
                   {% for document in regulation.document_set.all %}
                     <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ document.url }}"
-                        class="govuk-link ">
+                        class="govuk-link " target="_blank">
                         {% if 'none' not in document.title|lower %}
                           {{ document.title }}
                         {% else %}
