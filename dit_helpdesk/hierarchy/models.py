@@ -105,32 +105,7 @@ class Section(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        # tree[level].append({"id": self.id,
-        #                     "description": self.title,
-        #                     "commodity_code": self.roman_numeral,
-        #                     "type": "section"})
-
         return tree
-
-    # @staticmethod
-    # def _append_descendant_data(parent, tree, level):
-    #     """
-    #     Appends a tree of descendants to the passed tree from passed parent
-    #     :param parent: parent model instance
-    #     :param tree: list of descendants
-    #     :param level: int
-    #     """
-    #     try:
-    #         children = parent.get_hierarchy_children()
-    #         for child in children:
-    #             # if type(child) is Commodity:
-    #             if child.commodity_code not in ["9900000000", "9950000000"]:
-    #                 tree[level].append({"id": child.id,
-    #                                 "description": child.description,
-    #                                 "commodity_code": child.commodity_code,
-    #                                 "type": child._meta.model_name})
-    #     except Exception as err:
-    #         print(err.args)
 
 
 class Chapter(models.Model):
@@ -249,34 +224,7 @@ class Chapter(models.Model):
                                 "type": "section"
                                 })
 
-        # tree[level].append({"id": self.id,
-        #                         "description": self.description,
-        #                         "commodity_code": self.commodity_code,
-        #                         "type": "chapter"})
-
         return tree
-
-    # @staticmethod
-    # def _append_descendant_data(parent, tree, level):
-    #     """
-    #     Appends a tree of descendants to the passed tree from passed parent
-    #     :param parent: parent model instance
-    #     :param tree: list of descendants
-    #     :param level: int
-    #     """
-    #     print(parent, tree, level)
-    #     try:
-    #         children = parent.get_hierarchy_children()
-    #         print(children)
-    #         for child in children:
-    #             # if type(child) is Commodity:
-    #             if child.commodity_code not in ["9900000000", "9950000000", "9905000000"]:
-    #                 tree[level].append({"id": child.id,
-    #                                 "description": child.description,
-    #                                 "commodity_code": child.commodity_code,
-    #                                 "type": child._meta.model_name})
-    #     except Exception as err:
-    #         print(err.args)
 
 
 class Heading(models.Model):
@@ -519,32 +467,7 @@ class Heading(models.Model):
                                 "type": "section"
                                 })
 
-        # tree[level].append({"id": self.id,
-        #                         "description": self.description,
-        #                         "commodity_code": self.commodity_code,
-        #                         "type": "heading"})
-
         return tree
-
-    # @staticmethod
-    # def _append_descendant_data(parent, tree, level):
-    #     """
-    #     Appends a tree of descendants to the passed tree from passed parent
-    #     :param parent: parent model instance
-    #     :param tree: list of descendants
-    #     :param level: int
-    #     """
-    #     try:
-    #         children = parent.get_hierarchy_children()
-    #         for child in children:
-    #             # if type(child) is Commodity:
-    #             if child.commodity_code not in ["9900000000", "9950000000"]:
-    #                 tree[level].append({"id": child.id,
-    #                                 "description": child.description,
-    #                                 "commodity_code": child.commodity_code,
-    #                                 "type": child._meta.model_name})
-    #     except Exception as err:
-    #         logger.debug(err.args)
 
 
 class SubHeading(models.Model):
@@ -672,20 +595,6 @@ class SubHeading(models.Model):
                                 "commodity_code": parent.section.roman_numeral,
                                 "type": "section"
                                 })
-        # else:
-        #     self._append_descendant_data(self, tree, level)
 
         return tree
 
-    # @staticmethod
-    # def _append_descendant_data(parent, tree, level):
-    #     """
-    #     Appends a tree of descendants to the passed tree from passed parent
-    #     :param parent: parent model instance
-    #     :param tree: list of descendants
-    #     :param level: int
-    #     """
-    #     tree[level].append({"id": parent.id,
-    #                         "description": parent.description,
-    #                         "commodity_code": parent.commodity_code,
-    #                         "type": "sub_heading"})
