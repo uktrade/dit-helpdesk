@@ -1,0 +1,96 @@
+{% extends "feedback/feedback_form_base.html" %}
+{% load i18n %}
+
+
+{% block title_form_page %}Contact us{% endblock %}
+
+{% block form_page_title %}
+    Your Details
+{% endblock %}
+
+{% block form_body %}
+
+    <div class="govuk-form-group{% if wizard.form.name.errors %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="id_step_five-name">{{ wizard.form.name.label_tag }}</label>
+        {% if wizard.form.name.errors %}
+            {% for error in wizard.form.name.errors %}
+                <span id="name-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> {{ error | escape }}
+                              </span>
+            {% endfor %}
+        {% endif %}
+
+        <input class="govuk-input govuk-!-width-one-half{% if wizard.form.name.errors %} govuk-input--error{% endif %}"
+                {% if wizard.form.name.errors %} aria-describedby="name-error" {% endif %}
+               autocomplete="name"
+               id="id_step_five-name"
+               name="step_five-name"
+               type="text"
+               spellcheck="false"
+               {% if wizard.form.name.data %}value="{{ wizard.form.name.data }}"{% endif %}/>
+    </div>
+
+    <div class="govuk-form-group{% if wizard.form.email_address.errors %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label"
+               for="id_step_five-email_address">{{ wizard.form.email_address.label_tag }}</label>
+        {% if wizard.form.email_address.errors %}
+            {% for error in wizard.form.email_address.errors %}
+                <span id="email-error"
+                      class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span> {{ error | escape }}
+                                  </span>
+            {% endfor %}
+        {% endif %}
+        <input class="govuk-input govuk-!-width-one-half{% if wizard.form.email_address.errors %} govuk-input--error{% endif %}"
+               {% if wizard.form.email_address.errors %}aria-describedby="email-error" {% endif %}
+               autocomplete="email"
+               id="id_step_five-email_address"
+               name="step_five-email_address"
+               type="email"
+               spellcheck="false"
+                {% if wizard.form.email_address.data %}
+               value="{{ wizard.form.email_address.data }}" {% endif %} />
+    </div>
+
+    <div class="govuk-form-group {% if wizard.form.message.errors %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label"
+               for="id_step_five-message">{{ wizard.form.message.label_tag }}</label>
+        {% if wizard.form.message.errors %}
+            {% for error in wizard.form.message.errors %}
+                <span id="message-error" class="govuk-error-message">
+                                {{ error | escape }}
+                              </span>
+            {% endfor %}
+        {% endif %}
+
+        <textarea class="govuk-textarea govuk-!-margin-bottom-0 govuk-!-width-two-thirds"
+                  id="id_step_five-message" name="step_five-message" rows="7"
+        >{% if wizard.form.message.data %}{{ wizard.form.message.data }}{% endif %}</textarea>
+        <p class="govuk-hint govuk-character-count__message govuk-!-margin-top-2 govuk-!-margin-bottom-8">
+            You can enter up to 1,000 characters.</p>
+    </div>
+
+    <div class="govuk-form-group {% if wizard.form.terms_and_conditions.errors %} govuk-form-group--error{% endif %}">
+        {% if wizard.form.terms_and_conditions.errors %}
+            {% for error in wizard.form.terms_and_conditions.errors %}
+                <span id="message-error" class="govuk-error-message">
+                                {{ error | escape }}
+                              </span>
+            {% endfor %}
+        {% endif %}
+
+        <div class="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input"
+                       id="id_step_five-terms_and_conditions"
+                       name="step_five-terms_and_conditions"
+                       aria-describedby="terms_and_conditions-hint"
+                       {% if wizard.form.terms_and_conditions.data %}checked{% endif %}
+                       type="checkbox"/>
+                <label class="govuk-label govuk-checkboxes__label"
+                       for="id_step_five-terms_and_conditions">Tick this box to accept the Terms and
+                    Conditions of the great.gov.uk service</label>
+            </div>
+        </div>
+    </div>
+{% endblock %}

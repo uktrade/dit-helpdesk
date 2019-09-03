@@ -1,0 +1,54 @@
+{% extends "feedback/feedback_form_base.html" %}
+{% load i18n %}
+
+{% block title_form_page %}Contact us{% endblock %}
+
+{% block form_page_title %}
+    What would you like to know more about?
+{% endblock %}
+{% block form_body %}
+
+    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">
+        <h2>{{ wizard.form.label_tag }}</h2>
+    </div>
+
+    <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
+        {% if wizard.form.errors %}
+            {% for error in wizard.form.errors %}
+                <span id="enquiry_type-error"
+                      class="govuk-error-enquiry_type">{{ error | escape }}</span>
+            {% endfor %}
+        {% endif %}
+        <div class="govuk-radios govuk-radios" id="id_step_two-enquiry_type">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_type_0" required
+                       name="step_two-enquiry_type" type="radio" checked="checked" value="1">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_type_0">Investing
+                    in the UK</label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_type_1" required
+                       name="step_two-enquiry_type" type="radio" value="2">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_type_1">Exporting
+                    to the UK</label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_type_2" required
+                       name="step_two-enquiry_type" type="radio" value="3">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_type_2">Find
+                    a UK business partner</label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_type_3" required
+                       name="step_two-enquiry_type" type="radio" value="4">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_type_3">EU
+                    exit enquiries</label>
+            </div>
+            <div class="govuk-radios__input">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_type_4" required
+                       name="step_two-enquiry_type" type="radio" value="5">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_type_4">Other</label>
+            </div>
+        </div>
+    </div>
+{% endblock %}

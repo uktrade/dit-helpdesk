@@ -83,9 +83,15 @@ urlpatterns = [
         name='heading-measure-conditions'
     ),
 
+    # path(
+    #     'feedback/',
+    #     feedback_views.FeedbackView.as_view(),
+    #     name='feedback-view'
+    # ),
+
     path(
         'feedback/',
-        feedback_views.FeedbackView.as_view(),
+        feedback_views.FeedbackFormWizardView.as_view(),
         name='feedback-view'
     ),
 
@@ -94,6 +100,8 @@ urlpatterns = [
         feedback_views.FeedbackSuccessView.as_view(),
         name='feedback-success-view',
     ),
+
+    # re_path('feedback/', include('feedback.urls', namespace="feedback")),
 
     path(
         'privacy-terms-and-conditions/',
