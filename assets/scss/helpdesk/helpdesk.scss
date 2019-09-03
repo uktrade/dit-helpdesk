@@ -87,3 +87,19 @@ abbr {
     color: $govuk-link-colour;
   }
 }
+
+.text-button{
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+  box-shadow: none;
+}
+.text-button:hover{
+  color: red;
+}

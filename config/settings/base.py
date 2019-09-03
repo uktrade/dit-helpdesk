@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'formtools',
     'core',
     'commodities',
     'cookies',
@@ -324,9 +325,9 @@ logging.config.dictConfig({
 
 RESULTS_PER_PAGE = 20
 
-DIRECTORY_FORMS_API_BASE_URL = 'http://localhost:8011'
-DIRECTORY_FORMS_API_API_KEY = ""
-DIRECTORY_FORMS_API_SENDER_ID = ""
-DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 0
+# DIRECTORY_FORMS_API_BASE_URL = "localhost:8011"
+# DIRECTORY_FORMS_API_API_KEY = "ARAle6IveynMoQv9Hg9eGwXaZDe8YiiOKbT1iKfUn27RjEVzRTfE13ebN8MHtIUf"
+# DIRECTORY_FORMS_API_SENDER_ID = "glenl"
+# DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 0
 
 APP_START_DOMAIN = "www.get-rules-tariffs-trade-with-uk.service.gov.uk"
