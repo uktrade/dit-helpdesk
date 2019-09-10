@@ -23,6 +23,7 @@ from hierarchy import views as hierarchy_views
 from cookies import views as cookie_views
 from countries import views as country_views
 from feedback import views as feedback_views
+from contact import views as contact_views
 from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
@@ -83,16 +84,16 @@ urlpatterns = [
         name='heading-measure-conditions'
     ),
 
-    # path(
-    #     'feedback/',
-    #     feedback_views.FeedbackView.as_view(),
-    #     name='feedback-view'
-    # ),
-
     path(
         'feedback/',
-        feedback_views.FeedbackFormWizardView.as_view(),
+        feedback_views.FeedbackView.as_view(),
         name='feedback-view'
+    ),
+
+    path(
+        'contact/',
+        contact_views.ContactFormWizardView.as_view(),
+        name='contact-view'
     ),
 
     path(

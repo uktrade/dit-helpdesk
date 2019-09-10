@@ -1,4 +1,4 @@
-{% extends "feedback/feedback_form_base.html" %}
+{% extends "contact/contact_form_base.html" %}
 {% load i18n %}
 
 
@@ -27,48 +27,69 @@
                                            name="step_four-enquiry_topic" type="radio" checked="checked" value="1">
                                     <label class="govuk-label govuk-radios__label"
                                            for="id_step_four-enquiry_topic_0">Commodity codes, tariffs and measures,
-                                        import procedures</label>
+                                        import procedures
+                                        <p class="govuk-hint">
+                                            You will be redirected to Her Majesty's Revenue and Customs (HMRC)
+                                            contact form
+                                        </p>
+                                    </label>
+
                                 </div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="id_step_four-enquiry_topic_1" required
                                            name="step_four-enquiry_topic" type="radio" value="2">
                                     <label class="govuk-label govuk-radios__label"
                                            for="id_step_four-enquiry_topic_1">Importing animals, plants or food,
-                                        environmental regulations, sanitary and phytosanitary regulations</label>
+                                        environmental regulations, sanitary and phytosanitary regulations
+                                        <p class="govuk-hint">
+                                            Your enquiry will be sent to the Department for Environment,
+                                            Food and Rural Affairs (Defra)
+                                        </p>
+                                    </label>
                                 </div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="id_step_four-enquiry_topic_2" required
                                            name="step_four-enquiry_topic" type="radio" value="3">
                                     <label class="govuk-label govuk-radios__label"
                                            for="id_step_four-enquiry_topic_2">Product safety and standards,
-                                        packaging and labelling</label>
+                                        packaging and labelling
+                                        <p class="govuk-hint">
+                                            Your enquiry will be sent to the department for Business,
+                                            Energy and Industrial Strategy (BEIS))
+                                        </p>
+                                    </label>
                                 </div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="id_step_four-enquiry_topic_3" required
                                            name="step_four-enquiry_topic" type="radio" value="4">
                                     <label class="govuk-label govuk-radios__label"
                                            for="id_step_four-enquiry_topic_3">Import controls, trade agreements,
-                                        rules of origin</label>
-                                </div>
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="id_step_four-enquiry_topic_4" required
-                                           name="step_four-enquiry_topic" type="radio" value="5">
-                                    <label class="govuk-label govuk-radios__label"
-                                           for="id_step_four-enquiry_topic_4">Exporting from a developing
-                                        nation</label>
+                                        rules of origin
+                                        <p class="govuk-hint">
+                                            Your enquiry will be sent to the Department for International Trade (DIT)
+                                        </p>
+                                    </label>
                                 </div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="id_step_four-enquiry_topic_5" required
                                            name="step_four-enquiry_topic" type="radio" value="6">
                                     <label class="govuk-label govuk-radios__label"
                                            for="id_step_four-enquiry_topic_5">Help using the "Trade with the UK:
-                                        look up tariffs, taxes and rules" service</label>
+                                        look up tariffs, taxes and rules" service
+                                        <p class="govuk-hint">
+                                            Your enquiry will be sent to the Department for International Trade (DIT)
+                                        </p>
+                                    </label>
                                 </div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="id_step_four-enquiry_topic_6" required
                                            name="step_four-enquiry_topic" type="radio" value="7">
                                     <label class="govuk-label govuk-radios__label"
-                                           for="id_step_four-enquiry_topic_6">Other</label>
+                                           for="id_step_four-enquiry_topic_6">Other
+                                        <p class="govuk-hint">
+                                            Your enquiry will be sent to the Department for International Trade (DIT)
+                                        </p>
+                                    </label>
                                 </div>
                             </div>
                         </div>

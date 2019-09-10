@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'cookies',
     'countries',
     'feedback',
+    'contact',
     'hierarchy',
     'index',
     'rules_of_origin',
@@ -218,13 +219,14 @@ AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 
-LOGIN_URL = '/auth/login/'
+LOGIN_URL = os.environ.get('LOGIN_URL')
 
-LOGIN_REDIRECT_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = os.environ.get('LOGIN_REDIRECT_URL')
 
 AUTH_USER_MODEL = 'user.User'
 
 FEEDBACK_MAX_LENGTH = 1000
+CONTACT_MAX_LENGTH = 1000
 
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
@@ -330,6 +332,6 @@ DIRECTORY_FORMS_API_API_KEY=os.environ.get('DIRECTORY_FORMS_API_API_KEY')
 DIRECTORY_FORMS_API_SENDER_ID=os.environ.get('DIRECTORY_FORMS_API_SENDER_ID')
 DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS=os.environ.get('DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS', 0)
 DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS=os.environ.get('DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS', 0)
-DIRECTORY_FORMS_API_DEFAULT_TIMEOUT=0
+DIRECTORY_FORMS_API_DEFAULT_TIMEOUT=10
 
 APP_START_DOMAIN = "www.get-rules-tariffs-trade-with-uk.service.gov.uk"
