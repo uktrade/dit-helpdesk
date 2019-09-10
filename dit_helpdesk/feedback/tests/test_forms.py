@@ -51,10 +51,10 @@ class FeedbackFormTestCase(TestCase):
 
         form = resp.context['form']
         self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors.keys())
         self.assertEquals(
-            form.errors,
-            {'email': ['Enter an email address in the correct format, like name@example.com',
-                       'Enter an email address']},
+            form.errors['email'],
+            ['Enter an email address in the correct format, like name@example.com']
         )
 
     def test_form_with_missing_name(self):
