@@ -1,6 +1,5 @@
-from django import forms
-from contact.models import Contact
 from directory_forms_api_client.forms import ZendeskAPIForm
+from django import forms
 
 LOCATION_CHOICES = (
     (1, 'The UK'),
@@ -27,16 +26,16 @@ TOPIC_CHOICES = (
 
 
 class ContactFormStepOne(forms.Form):
-    location = forms.ChoiceField(choices=LOCATION_CHOICES, widget=forms.RadioSelect)
+    location = forms.ChoiceField(choices=LOCATION_CHOICES, widget=forms.RadioSelect, required=True)
     location.label = "Where are you based?"
 
 
 class ContactFormStepTwo(forms.Form):
-    enquiry_type = forms.ChoiceField(choices=CATEGORY_CHOICES, widget=forms.RadioSelect)
+    enquiry_type = forms.ChoiceField(choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True)
 
 
 class ContactFormStepFour(forms.Form):
-    enquiry_topic = forms.ChoiceField(choices=TOPIC_CHOICES, widget=forms.RadioSelect)
+    enquiry_topic = forms.ChoiceField(choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True)
 
 
 class ContactFormStepFive(forms.Form):
