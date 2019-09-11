@@ -1,34 +1,56 @@
-from django.test import TestCase
+import logging
+
+from django.test import TestCase, Client
 from django.urls import reverse
 
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
-class FeedbackViewTestCase(TestCase):
+
+class ContactFormViewTestCase(TestCase):
     """
     Test Feedback View
     """
 
-    def test_get_feedback_view(self):
-        pass
-        # resp = self.client.get(reverse('feedback-view'))
-        # self.assertEquals(resp.status_code, 200)
-        # self.assertTemplateUsed(resp, 'feedback_form.html')
+    def setUp(self):
 
-    def test_submitting_form_redirects_to_success_page(self):
-        pass
-        # resp = self.client.post(
-        #     reverse('feedback-view'),
-        #     {'name': 'test', 'email': 'test@test.com', 'message': 'feedback'},
-        # )
-        # self.assertRedirects(resp, reverse('feedback-success-view'))
+        self.client = Client()
+        self.wizard_url = '/contact/'
 
+    def test_initial_form_call(self):
 
-class FeedbackSuccessViewTestCase(TestCase):
-    """
-    Test Feedback Success View
-    """
+        contact_form_step_one = {
+            'step_one-location': '1',
+            'session_contact_wizard-current_step': 'step_one'
+        }
+        contact_form_step_two = {
+            'step_two-enquiry_type': '1',
+            'session_contact_wizard-current_step': 'step_two'
+        }
+        contact_form_step_four = {
+            'step_four-enquiry_topic': '2',
+            'session_contact_wizard-current_step': 'step_four'
+        }
+        contact_form_step_five = {
+            'step_five-name': 'John Doe',
+            'step_five-email_address': 'john.doe@domain.com',
+            'step_five-message': 'The test message for the form',
+            'step_five-terms_and_conditions': 'True',
+            'session_contact_wizard-current_step': 'step_five',
+        }
+        wizard_steps_data = (contact_form_step_one,
+                             contact_form_step_two,
+                             contact_form_step_four,
+                             contact_form_step_five)
 
-    def test_get_success_view(self):
-        pass
-        # resp = self.client.get(reverse('feedback-success-view'))
-        # self.assertEquals(resp.status_code, 200)
-        # self.assertTemplateUsed(resp, 'feedback_success.html')
+        response = self.client.get(self.wizard_url)
+        wizard = response.context['wizard']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(wizard['steps'].current, 'step_one')
+        self.assertEqual(wizard['steps'].step0, 0)
+        self.assertEqual(wizard['steps'].step1, 1)
+        self.assertEqual(wizard['steps'].last, 'step_five')
+        self.assertEqual(wizard['steps'].prev, None)
+        self.assertEqual(wizard['steps'].next, 'step_two')
+        self.assertEqual(wizard['steps'].count, 4)
