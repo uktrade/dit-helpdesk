@@ -8,9 +8,37 @@ products that they want to export to the UK.
  - Python 3
  - Node [Active LTS][1] version (Current Active version is v10)
  - Docker (if developing locally with docker)
+ 
+ #### Optional. Only required for testing contact form submissions to zenddesk
+ - Directory Forms API (https://github.com/uktrade/directory-forms-api)
+    - redis (installed locally)
+    - postgres (installed locally)
+
+### Install using Docker
+
+If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about 
+virtual environments - it's all within the Docker instance.
+
+- Docker for mac - https://hub.docker.com/editions/community/docker-ce-desktop-mac
+- Docker for Win - https://download.docker.com/win/static/stable/x86_64/
 
 ## Installation
 
+### Directory Forms API (Optional only required when testing contact form submissions to zenddesk)
+
+clone the directory
+```
+git clone https://github.com/uktrade/directory-forms-api.git .
+```
+
+** ToDo: add env notes
+
+** ToDo: incorporate into docker as service 
+
+Follow installation and setup instructions in https://github.com/uktrade/directory-forms-api/blob/develop/README.md
+
+
+### Trade Helpdesk
 First clone the repo
 
 ```bash
@@ -23,11 +51,6 @@ then using a terminal move inside of the folder:
 ```bash
 cd dit-helpdesk
 ```
-
-### Install using Docker
-
-If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about 
-virtual environments - it's all within the Docker instance.
 
 #### Frontend static asset installation
 
@@ -51,73 +74,234 @@ npm run build
 
 `npm run` will show a list of all of the commands available, including linting.
 
+#### set environment variables
+
+copy the two development environment variables files 
+
+```
+.envs/.development/.django.template
+.envs/.development/.postgres.template
+
+```
+
+and rename them to 
+
+```
+.envs/.development/.django
+.envs/.development/.postgres
+```  
+
+add entries where necessary (see comments for guidance)
+
+You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. 
+To do so you will need to generate a github personal access token. This is needed to log into vault. 
+Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. 
+Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github 
+as your login option.
+
 #### Install for development with Docker
 
-Make sure that Docker is installed and running. Open `start.sh` and comment back to the terminal
+Make sure that Docker is installed and running. 
 
-Then run:
+##### Initial setup run
+
+This intial set up will take about an hour (depending upon machine and internet speed) to set up and fully import 
+all content, on subsequent runs it will on take a minute or so to be up and running for development.
+
+The initial run (this section) only needs to be done when building a new or fresh docker container. Once this section 
+has been done and as long as the docker images are not destroyed, the only line that needs to be uncommented
+when running`docker-compose -f development.yml up` will be.
+ 
+This section details manually running each command in turn to fuly import all content.
+
+NB: Alternatively, you can comment out `sleep infinity` and uncomment those that are commented, below, and the entire 
+process should run automatically on `docker-compose -f development.yml up`, ending with a running application accessible 
+at http://localhost:8000/choose-country/
+
+```
+python manage.py runserver_plus 0.0.0.0:8000
+```
+
+Open `compose/development/django/start.sh` and make sure the commands  
+of the Initialize section are commented as below 
+
+```
+    # ----------------- commands ----------------
+    sleep infinity
+    # python manage.py collectstatic --noinput
+    # python manage.py migrate
+    # python manage.py loaddata countries_data
+    # python manage.py pull_api_update
+    # python manage.py prepare_import_data
+    # python manage.py scrape_section_hierarchy
+    # python manage.py import_rules_of_origin --data_path "import"
+    # python manage.py import_regulations
+    # python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
+    # python manage.py search_index --populate
+```
+
+make sure the commands of the Ongoing Development section are commented as below
+
+```
+    # ----------------- commands ----------------
+    #python manage.py runserver_plus 0.0.0.0:8000
+```
+
+To build the docker containers, run:
 
 ```bash
 docker-compose -f development.yml build
 ```
 
-Once the build has completed, comment out the pip installation in `start.sh` - this isn't essential, but it will 
-save you time when booting up the docker instance.
-
-Now run:
+To run the Docker containers, run:
 
 ```bash
 docker-compose -f development.yml up
 ```
 
-The `start.sh` script will run the following django management commands 
+Open a second terminal and run the following command to activate a shell into the docker instance 
+for the trade helpdesk app with the command
 
-```bash
+```
+docker exec -it dit_helpdesk_helpdesk_1 /bin/bash
+``` 
+refer to "Running, then shelling in" section below
+
+In the docker shell Run the following collect static files and migrate the database schema and
+create the countries content
+
+```
 python manage.py collectstatic --noinput
 python manage.py migrate
 python manage.py loaddata countries_data
-python manage.py scrape_section_hierarchy
-python manage.py import_rules_of_origin --data_path "import"
-python manage.py import_regulations
-python manage.py runserver_plus 0.0.0.0:8000
-
 ```
-`scrape_section_hierarchy` will only run if there are no Sections items found. see below if you need to run this 
-manually `import_rules_of_origin` and `import_regulations` will create any new items that do not already exist.
-you can comment these three lines out after the initial out `up` to speed up the buid and deploy process locally.
-The last line starts the django server
 
-##### Preparing to Manually Install content
-If you need to populate the database with products. 
+Whilst still in the docker shell, run the following commands to collect the hierarchy content from the trade tariff API 
+and prepare it for import into the django database, then import 
 
-first commenting out 
-```bash
-python manage.py scrape_section_hierarchy
-python manage.py import_rules_of_origin --data_path "import"
-python manage.py import_regulations
-```
-refer to "Running, then shelling in" section below
-
-##### Manually Install content
-Once into the command prompt in the terminal you should now be in the root of the app. 
-
-Note: See below for more details including generating data import files and clearing the database
+** todo: rename scrape_section_hierarchy 
 
 ###### Commodities and Hierarchy
-To populate the commodities in the database, we need to run a management command to import the data. 
-To import the commodity data and its hierarchy, run:
+To populate the commodities in the database, we need to:
+- pull data from the api, 
+- prepare the api data for import
+- import the data.
 
-```bash
-python dit_helpdesk/manage.py scrape_section_hierarchy
+to do this we run a set of management commands:
 ```
-This should take approximately 6 to 8 minutes
+python manage.py pull_api_update
+python manage.py prepare_import_data
+python manage.py scrape_section_hierarchy
+```
+This should take approximately 10 to 15 minutes
+
 ###### Rules of Origin
-To import Rules of Origin run:
-```bash
-python dit_helpdesk/manage.py import_rules_of_origin
-```
-This should take approximately 1 minutes 
+run the following command to import the Rules of origin documents
 
+```
+python manage.py import_rules_of_origin --data_path "import"
+```
+
+This should take approximately a couple of minutes
+
+NB: see `Extracting Rules of Origin data from word documents ready for import` below to recreate reuls of origin data
+or add new rules
+
+###### Documents and regulations
+The source data for this content should be in a json format.
+run the following command to import the regulations content
+```
+python manage.py import_regulations
+```
+This should take approximately 10 minutes.
+
+
+run the following command to import search keywords into the the hierarchy items
+
+```
+python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
+```
+
+run the following command to create the elasticsearch indexes
+
+```
+python manage.py search_index --create
+python manage.py search_index --populate
+```
+
+Note: See below for more details including generating data to import files and clearing the database
+
+When finished this process in a new host shell (not the docker shell, nor the host shell currently running the docker 
+containers) run the following to shut down (not destroy) the running docker instance.
+
+```
+docker-compose -f development.yml stop
+```
+### Ongoing Developement with Docker
+
+make sure that in the file `compose/development/django/start.sh` the only command uncommented is
+
+```
+python manage.py runserver_plus 0.0.0.0:8000
+```
+
+the rest of the commands should be commented out
+
+** todo: make the process of running intial set up and running developement set up less cumbersome
+
+Starting the server again is the same command as installing:
+
+```bash
+docker-compose -f development.yml up
+```
+
+The site will be available at http://localhost:8000/choose-country/
+
+To trigger a build when any Sass is changed, run the following command in the root of the project folder in a 
+`host machine` shell, not a `docker instance` shell:
+```bash
+npm run watch:styles
+```
+
+### Running, then shelling in
+
+If you want to be able to run commands in bash within the docker instance, we need to change the start 
+script `compose/development/django/start.sh` slightly.
+
+stop the docker instance
+
+```
+docker-compose -f development.yml stop
+```
+
+NB: do not use `docker-compose -f development.yml down` as that will stop the containers and delete the images and 
+you will need ot go through the whole intial process of building and setting up with content again.
+
+Uncomment the sleep command:
+```
+sleep infinity
+```
+and comment out the line that starts the app, 
+```
+# python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
+```
+
+This will cause the docker instance to pause once it's up and running.
+
+```
+docker-compose up
+```
+then enter a shell for the docker instance of the django service
+
+```
+docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
+```
+and for database access the postgres service
+```
+docker exec -it dit-helpdesk_postgres_1 /bin/bash
+```
+ 
+### Extracting Rules of Origin data from word documents ready for import
 There is a management command for extracting data from word documents that may be supplied for new content, 
 from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the 
 `scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the 
@@ -129,80 +313,39 @@ python dit_helpdesk/manage.py scrape_rules_of_origin_docx
 ```
 This should take a couple of minutes per word document.
 
-###### Documents and Regulations
-The source data for this content should be in a json format. #TODO: add detail here
-To import Documents and regulations run:
-```bash
-python dit_helpdesk/manage.py import_regulations
-```
-This should take approximately 60 minutes. (#TODO: redo the code to reduce this time.
+** TODO: create a section for preparing the regulations content
+** TODO: create a section for preparing the search indexes
 
-##### Update Environment variables in case you get Sentry exceptions (Optional)
-If `docker-compose.env` file does not exists, create it by copying `docker-compose.conf.env`
-
-You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. 
-To do so you will need to generate a github personal access token. This is needed to log into vault. 
-Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. 
-Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github 
-as your login option.
-
-### Running developement with Docker
-Starting the server again is the same command as installing:
-
-```bash
-docker-compose -f development.yml up
-```
-
-The site will be available at http://localhost:8000/choose-country/.
-
-To trigger a build when any Sass is changed, run:
-```bash
-npm run watch:styles
-```
-
-### Running, then shelling in
-
-If you want to be able to run commands in bash within the docker instance, we need to change the start 
-script `start.sh` slightly.
-
-Comment out the line that starts the app, and comment back in the sleep command. So it should read:
-```bash
-sleep infinity
-# python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
-```
-
-This will cause the docker instance to pause once it's up and running. Now
-
-```bash
-docker-compose up
-```
-then
-
-```bash
-docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
-```
 
 ### Running tests with Docker development deployment
 
-In th first terminal run: 
-```bash
-docker-compose -f development.yml build
-docker-compose -f development.yml up
-```
+refer to the section `Running, then shelling in` above to get a shell in the runnig docker instance
 
-open a new terminal and run:
-```bash
-docker-compose -f development.yml run -e DJANGO_SETTINGS_MODULE=config.settings.test \
-    --no-deps --rm helpdesk \
-    coverage run manage.py test dit_helpdesk --noinput
+From within the docker shell terminal run the following command for full tests:
 ```
-This will run all tests and display the output in the terminal.
+coverage run manage.py test dit_helpdesk --settings=config.settings.test
+```
+for testing a single app run i.e. the hierarchy app:
+```
+coverage run manage.py test hierarchy.tests --settings=config.settings.test
+```
+for testing a single app's test module run i.e. the test_views in the the hierarchy app:
+```
+coverage run manage.py test hierarchy.tests.test_views --settings=config.settings.test
+```
+and so on.
 
-NB: Although we are not displaying the coverage report, we use coverage to run the test here because there is an issue with
-reporting coverage of django models using noestest runner without starting the test process with coverage  
+for coverage reports run
+
+```
+coverage -d reports html
+```
+you will then be able to access the coverage report html from within your project folder's root 
+from your host machine at /reports 
+
 
 ### Running tests and generating coverage with Docker
-
+** test this still works
 ```bash
 docker-compose -f text.yml build
 docker-compose -f test.yml up
@@ -227,6 +370,8 @@ files in `dit_helpdesk/static_collected/js/`.
 
 
 ### Install locally
+** TDOD needs updating
+
 To run, we need to create a Python virtual environment and install any requirements.
 
 ## Requirements
@@ -288,7 +433,9 @@ Once the scraping has finished and the front end assets are in place, start the 
 python manage.py runserver
 ```
 
-## Appendix - Frontend Notes
+## Appendices
+
+### Appendix I - Frontend Notes
 
 The source for the static assets is in `assets` in the root of the project folder. This contains the Sass files that the CSS is generated from, and the source of the client-side JavaScript.
 
@@ -363,9 +510,9 @@ Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-ter
 npm run build
 ```
 
-## Management Import Commands
+### Apendix II - Management Import Commands
 
-
+** TODO: needs updating
 ### Countries
 
 
