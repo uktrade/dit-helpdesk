@@ -311,6 +311,8 @@ class HierarchyBuilder:
         chapters = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/chapters.json"))
         headings = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/headings.json"))
 
+        headings = self.remove_duplicate_headings_from_api(headings)
+
         # lists in which to collect instance data objects
         sections_data = []
         chapters_data = []
@@ -417,6 +419,21 @@ class HierarchyBuilder:
         self.write_data_to_file(headings_data, settings.IMPORT_DATA_PATH.format("prepared/headings.json"))
         self.write_data_to_file(sub_headings_data, settings.IMPORT_DATA_PATH.format("prepared/sub_headings.json"))
         self.write_data_to_file(commodities_data, settings.IMPORT_DATA_PATH.format("prepared/commodities.json"))
+
+    @staticmethod
+    def remove_duplicate_headings_from_api(json_obj):
+        """
+        remove duplicate headings from the downloaded api data
+        :param json_obj: downloaded list of headings
+        :return: deduped list of headings
+        """
+        seen = []
+        new_json_obj = []
+        for heading in json_obj:
+            if heading ['data']['attributes']['goods_nomenclature_item_id'] not in seen:
+                new_json_obj.append(heading)
+                seen.append(heading['data']['attributes']['goods_nomenclature_item_id'])
+        return new_json_obj
 
     def save_trade_tariff_service_api_data_json_to_file(self):
         """

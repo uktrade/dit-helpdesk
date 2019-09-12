@@ -152,9 +152,7 @@ def heading_detail(request, heading_code, country_code):
         messages.error(request, 'Invalid originCountry')
         return redirect(reverse('choose-country'))
 
-    heading = get_object_or_404(
-        Heading, heading_code=heading_code,
-    )
+    heading = Heading.objects.filter(heading_code=heading_code).first()
 
     if heading.last_updated < datetime.now(timezone.utc) - timedelta(days=1) or heading.tts_json is None:
         heading.update_content()
