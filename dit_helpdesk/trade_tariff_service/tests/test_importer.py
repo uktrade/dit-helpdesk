@@ -189,5 +189,6 @@ class HierarchyBuilderTestCase(TestCase):
             subheading = builder.rename_key(subheading, 'goods_nomenclature_item_id', 'commodity_code')
             subheading = builder.rename_key(subheading, 'leaf', 'tts_is_leaf')
             model.objects.create(**subheading)
-        self.assertFalse(builder.process_orphaned_subheadings())
 
+        self.assertTrue(builder.process_orphaned_subheadings() >= 3)
+        
