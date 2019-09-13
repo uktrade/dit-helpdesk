@@ -6,7 +6,4 @@ register = template.Library()
 @register.filter(name='replace')
 def cell_cleaner(value):
 
-    if value == '':
-        return ''
-    else:
-        return value.replace('_', ' ')
+    return value.replace('_', ' ')
