@@ -9,12 +9,9 @@ from django.views.generic.edit import FormView
 from django_elasticsearch_dsl.search import Search
 from django_elasticsearch_dsl_drf.constants import LOOKUP_FILTER_RANGE, LOOKUP_QUERY_IN, LOOKUP_FILTER_TERMS, \
     LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE
-from django_elasticsearch_dsl_drf.filter_backends import (
-    FilteringFilterBackend,
-    OrderingFilterBackend,
-    DefaultOrderingFilterBackend,
-    SearchFilterBackend,
-)
+from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, \
+    DefaultOrderingFilterBackend, SearchFilterBackend
+
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
 
