@@ -43,6 +43,6 @@ ELASTICSEARCH_DSL = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/tmp/app-messages'
+EMAIL_FILE_PATH = BASE_DIR+'/app-messages'
 
 FEEDBACK_DESTINATION_EMAIL = os.environ.get('FEEDBACK_DESTINATION_EMAIL')
