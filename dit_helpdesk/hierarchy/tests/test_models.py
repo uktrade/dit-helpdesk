@@ -4,8 +4,7 @@ from django.urls import NoReverseMatch
 from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
-from hierarchy.models import SubHeading, Heading, Section, Chapter, ROMAN_NUMERALS
-from trade_tariff_service.tts_api import CommodityHeadingJson, ChapterJson, HeadingJson, SectionJson
+from hierarchy.models import SubHeading, Heading, Section, Chapter
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -22,27 +21,19 @@ class SectionTestCase(TestCase):
         self.section = mixer.blend(
             Section,
             section_id=1,
-            roman_numeral=ROMAN_NUMERALS[1],
-            tts_json="{}"
+            roman_numeral="I",
+            tts_json="[]"
         )
 
     def test_str(self):
         self.assertEquals(str(self.section), "Section {0}".format(self.section.roman_numeral))
 
     def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        # TODO: remove field from Section Model
         self.assertTrue(isinstance(self.section.tts_json, str))
-        self.assertEquals(self.section.tts_json, "{}")
-
-    def test_tts_obj_is_and_empty_SectionJson_object(self):
-        # TODO: remove method from Section model
-        self.assertTrue(isinstance(self.section.tts_obj, SectionJson))
-        self.assertFalse(self.section.tts_obj.di)
+        self.assertEquals(self.section.tts_json, "[]")
 
     def test_section_has_correct_roman_numeral(self):
-        # TODO: remove field and create a property method
-        logger.debug("{0}, {1}".format(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral))
-        self.assertEquals(ROMAN_NUMERALS[self.section.section_id], self.section.roman_numeral)
+        self.assertEquals(self.section.roman_numeral, "I")
 
     def test_hierarchy_key(self):
         self.assertEquals(self.section.hierarchy_key, 'section-{0}'.format(self.section.pk))
@@ -89,9 +80,6 @@ class SectionTestCase(TestCase):
         )
         self.assertEquals(self.section.chapter_range_str, "1 to 5")
 
-    def test_empty_tts_obj_tts_title_raises_key_error(self):
-        self.assertRaises(KeyError, lambda: self.section.tts_title)
-
 
 class ChapterTestCase(TestCase):
 
@@ -113,24 +101,6 @@ class ChapterTestCase(TestCase):
 
     def test_hierarchy_key(self):
         self.assertEquals(self.chapter.hierarchy_key, 'chapter-{0}'.format(self.chapter.pk))
-
-    def test_tts_json_is_a_string_representing_an_empty_json_object(self):
-        # TODO: remove field from Chapter Model
-        self.assertTrue(isinstance(self.chapter.tts_json, str))
-        self.assertEquals(self.chapter.tts_json, "{}")
-
-    def test_tts_obj_is_and_empty_ChapterJson_object(self):
-        # TODO: remove property method from Chapter model
-        self.assertTrue(isinstance(self.chapter.tts_obj, ChapterJson))
-        self.assertFalse(self.chapter.tts_obj.di)
-
-    def test_accessing_tts_obj_raises_a_type_error(self):
-        # TODO: remove method from Chapter model
-        self.assertRaises(TypeError, lambda: self.chapter.tts_obj())
-
-    def test_empty_tts_obj_tts_title_raises_key_error(self):
-        # TODO: remove property method from Chapter model
-        self.assertRaises(KeyError, lambda: self.chapter.tts_title)
 
     def test_harmonized_code_equals_chapter_code(self):
         # TODO: Where is this property method used
@@ -171,7 +141,7 @@ class ChapterTestCase(TestCase):
         section = mixer.blend(
             Section,
             section_id=10,
-            roman_numeral=ROMAN_NUMERALS[1],
+            roman_numeral="X",
             tts_json="{}"
         )
         """create three chapters starting at 47 and attach to section 10"""
@@ -243,9 +213,6 @@ class HeadingTestCase(TestCase):
     def test_str(self):
         self.assertEquals(str(self.heading), "Heading {0}".format(self.heading.heading_code))
 
-    def test_title_is_equal_to_description(self):
-        self.assertEquals(self.heading.tts_title, self.heading.description)
-
     def test_hierarchy_key(self):
         self.assertEquals(self.heading.hierarchy_key, 'heading-{0}'.format(self.heading.pk))
 
@@ -260,15 +227,6 @@ class HeadingTestCase(TestCase):
         # TODO: remove field from Heading Model
         self.assertTrue(isinstance(self.heading.tts_json, str))
         self.assertEquals(self.heading.tts_json, "{}")
-
-    def test_tts_obj_is_and_empty_HeadingJson_object(self):
-        # TODO: remove property method from Heading model
-        self.assertTrue(isinstance(self.heading.tts_obj, HeadingJson))
-        self.assertFalse(self.heading.tts_obj.di)
-
-    def test_accessing_tts_obj_raises_a_type_error(self):
-        # TODO: remove method from Heading model
-        self.assertRaises(TypeError, lambda: self.heading.tts_obj())
 
     def test_harmonized_code_equals_heading_code(self):
         # TODO: Where is this property method used
@@ -305,13 +263,11 @@ class SubHeadingTestCase(TestCase):
 
         self.subheading = mixer.blend(
             SubHeading,
-            tts_heading_json="{}",
             heading=self.heading
         )
 
         self.child_subheadings = mixer.cycle(5).blend(
             SubHeading,
-            tts_heading_json="{}",
             parent_subheading=self.subheading
         )
 
@@ -325,28 +281,6 @@ class SubHeadingTestCase(TestCase):
 
     def test_hierarchy_key(self):
         self.assertEquals(self.subheading.hierarchy_key, 'sub_heading-{0}'.format(self.subheading.pk))
-
-    def test_tts_heading_json_is_a_string_representing_an_empty_json_object(self):
-        # TODO: remove field from SubHeading Model
-        self.assertTrue(isinstance(self.subheading.tts_heading_json, str))
-        self.assertEquals(self.subheading.tts_heading_json, "{}")
-
-    def test_tts_obj_is_and_empty_CommodityHeadingJson_object(self):
-        # TODO: remove property method from SubHeading model
-        self.assertTrue(isinstance(self.subheading.tts_heading_obj, CommodityHeadingJson))
-        self.assertFalse(self.subheading.tts_heading_obj.di)
-
-    def test_accessing_tts_heading_obj_raises_a_type_error(self):
-        # TODO: remove method from SubHeading model
-        self.assertRaises(TypeError, lambda: self.subheading.tts_heading_obj())
-
-    def test_tts_title_equals_description(self):
-        # TODO: remove property method from SubHeading model
-        self.assertEquals(self.subheading.tts_title, self.subheading.description)
-
-    def test_tts_heading_description_equals_description(self):
-        # TODO: remove property method from SubHeading model
-        self.assertEquals(self.subheading.tts_heading_description, self.subheading.description)
 
     def test_harmonized_code_equals_commodity_code(self):
         # TODO: Where is this property method used

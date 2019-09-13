@@ -31,8 +31,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
-ADMIN_ENABLED = True
-
+ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", True)
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,6 +58,11 @@ INSTALLED_APPS = [
     'user',
     'regulations',
     'healthcheck',
+    'directory_forms_api_client',
+    'rest_framework',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf'
+
 ]
 
 MIDDLEWARE = [
@@ -102,8 +106,6 @@ DATABASES = {
     'default': dj_database_url.config()
 }
 
-HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
 CACHES = {
@@ -113,12 +115,27 @@ CACHES = {
     },
 }
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch5_backend.Elasticsearch5SearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
-    },
+# ELASTICSEARCH_DSL SETTINGS
+# https://github.com/sabricot/django-elasticsearch-dsl
+# https://django-elasticsearch-dsl-drf.readthedocs.io/en/latest/
+# Name of the Elasticsearch index
+ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.section': 'section',
+    'search.documents.chapter': 'chapter',
+    'search.documents.heading': 'heading',
+    'search.documents.subheading': 'sub_heading',
+    'search.documents.commodity': 'commodity',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+    'ORDERING_PARAM': 'ordering',
 }
 
 # Password validation
@@ -155,9 +172,9 @@ FIXTURE_DIRS = (
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
@@ -181,6 +198,7 @@ MEDIA_URL = '/files/'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'  # compression without caching
@@ -220,6 +238,11 @@ REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/group_documents.csv')
 RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format('/reference/country_groups_v3.csv')
+SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
+
+TRADE_TARIFF_API = {
+    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}",
+}
 
 SECTION_URL = (
     "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
@@ -298,3 +321,12 @@ logging.config.dictConfig({
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
 })
+
+RESULTS_PER_PAGE = 20
+
+DIRECTORY_FORMS_API_BASE_URL = 'http://localhost:8011'
+DIRECTORY_FORMS_API_API_KEY = ""
+DIRECTORY_FORMS_API_SENDER_ID = ""
+DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 0
+
+APP_START_DOMAIN = "www.get-rules-tariffs-trade-with-uk.service.gov.uk"

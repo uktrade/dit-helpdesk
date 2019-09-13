@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from rules_of_origin.ms_word_docx_scraper import DocxScraper
+from rules_of_origin.DocxScraper import DocxScraper
 
 
 class Command(BaseCommand):

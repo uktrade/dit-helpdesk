@@ -6,7 +6,7 @@ from pandas import DataFrame
 
 from commodities.models import Commodity
 from regulations.importer import RegulationsImporter, data_loader
-from trade_tariff_service.importer import HierarchyBuilder
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)

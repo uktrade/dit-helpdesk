@@ -43,6 +43,7 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
+
         self.section = self.create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
 
         self.chapter = self.create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
@@ -69,10 +70,6 @@ class CommodityViewTestCase(TestCase):
 
     fixtures = [settings.COUNTRIES_DATA]
 
-    # fixtures = ['hierarchy/fixtures/hierarchy.json']
-    # fixtures = ['commodities/fixtures/commodities.json']
-    # fixtures = ['regulations/fixtures/regulations.json']
-
     def test_fixtures_load_countries_data(self):
         self.assertTrue(Country.objects.count() > 0)
 
@@ -97,7 +94,10 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_view_is_using_the_correct_template(self):
         resp = self.client.get(self.url)
-        self.assertTemplateUsed('commodity_detail.html')
+        self.assertTemplateUsed(resp, 'commodities/commodity_detail.html')
+
+    def test_commodity_detail_template_has_the_correct_data(self):
+        resp = self.client.get(self.url)
         self.assertInHTML(
             resp.context['commodity'].description,
             resp.content.decode("utf-8")
@@ -171,14 +171,6 @@ class CommodityViewTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('rules_of_origin' in resp.context)
         self.assertTrue(resp.context['rules_of_origin'])
-
-    def test_commodity_hierarchy_context(self):
-        html = commodity_hierarchy_context(self.commodity.get_path(), settings.TEST_COUNTRY_CODE,
-                                           self.commodity.commodity_code)
-        self.assertInHTML("Live animals" and
-                          "Live horses, asses, mules and hinnies" and
-                          "Horses" and
-                          "Pure-bred breeding animals", html)
 
     def test_generate_commodity_code_html_for_commodity(self):
         html = _generate_commodity_code_html(self.commodity)

@@ -1,6 +1,6 @@
 FROM python:3.6
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget virtualenv
 
 
 ENV DOCKERIZE_VERSION v0.6.1
@@ -22,3 +22,6 @@ RUN pip install --no-cache-dir -r requirements/development.txt
 ADD . /app/
 
 CMD /app/compose/development/django/start.sh
+
+
+

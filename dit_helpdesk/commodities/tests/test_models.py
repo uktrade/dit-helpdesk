@@ -1,20 +1,24 @@
+import datetime
 import logging
 import json
-import os
-import re
 
-from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
 from django.urls import NoReverseMatch
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Chapter, Section
-from trade_tariff_service.tts_api import CommodityJson, CommodityHeadingJson
+from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
+
+
+def get_data(file_path):
+    with open(file_path) as f:
+        json_data = json.load(f)
+    return json_data
 
 
 class CommodityTestCase(TestCase):
@@ -44,13 +48,12 @@ class CommodityTestCase(TestCase):
             SubHeading,
             commodity_code="0101210000",
             heading=self.heading
-
         )
+
         self.commodity = mixer.blend(
             Commodity,
             commodity_code="0101210000",
-            tts_json="{}",
-            tts_heading_json="{}",
+            tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading
         )
 
@@ -75,29 +78,12 @@ class CommodityTestCase(TestCase):
 
     def test_tts_json_is_a_string_representing_a_json_object(self):
         self.assertTrue(isinstance(self.commodity.tts_json, str))
-        self.assertEquals(self.commodity.tts_json, "{}")
 
-    def test_tts_obj_is_and_empty_CommodityJson_object(self):
+    def test_tts_json_is_the_correct_data(self):
+        self.assertEquals(self.commodity.tts_json, json.dumps(get_data(settings.COMMODITY_STRUCTURE)))
+
+    def test_tts_obj_is_a_CommodityJson_object(self):
         self.assertTrue(isinstance(self.commodity.tts_obj, CommodityJson))
-        self.assertFalse(self.commodity.tts_obj.di)
-
-    def test_heading_tts_json_is_a_string_representing_a_json_object(self):
-        # TODO: if not used remove field from Commodity Model
-        self.assertTrue(isinstance(self.commodity.tts_heading_json, str))
-        self.assertEquals(self.commodity.tts_heading_json, "{}")
-
-    def test_tts_obj_is_and_empty_CommodityHeadingJson_object(self):
-        # TODO: if not used remove method from Commodity model
-        self.assertTrue(isinstance(self.commodity.tts_heading_obj, CommodityHeadingJson))
-        self.assertFalse(self.commodity.tts_heading_obj.di)
-
-    def test_tts_title(self):
-        # TODO: if not used remove method from Commodity model
-        self.assertEquals(self.commodity.tts_title, self.commodity.description)
-
-    def test_heading_description(self):
-        # TODO: if not used remove method from Commodity model
-        self.assertEquals(self.commodity.tts_heading_description, self.commodity.description)
 
     def test_get_heading_is_type_heading_with_code_0101000000(self):
         self.assertTrue(isinstance(self.commodity.get_heading(), Heading))
@@ -151,7 +137,6 @@ class CommodityTestCase(TestCase):
             Chapter,
             chapter_code="4700000000",
             section=section
-
         )
 
         heading = mixer.blend(
@@ -200,3 +185,23 @@ class CommodityTestCase(TestCase):
 
     def test_append_path_children(self):
         self.assertTrue(self.commodity._append_path_children)
+
+    def test_commodity_update_content(self):
+        self.commodity.update_content()
+        test_time = datetime.datetime.now(datetime.timezone.utc)
+        check = self.commodity.last_updated - test_time
+        self.assertAlmostEqual(self.commodity.last_updated > test_time and check < datetime.timedelta(minutes=2), False)
+
+    def test_heading_leaf_update_content(self):
+        commodity = mixer.blend(
+            Commodity,
+            commodity_code="0510000000",
+        )
+
+        commodity.update_content()
+        content = json.loads(commodity.tts_json)
+        self.assertEqual(content["goods_nomenclature_item_id"], '0510000000')
+
+        test_time = datetime.datetime.now(datetime.timezone.utc)
+        check = self.commodity.last_updated - test_time
+        self.assertAlmostEqual(self.commodity.last_updated > test_time and check < datetime.timedelta(minutes=2), False)

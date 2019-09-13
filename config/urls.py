@@ -19,18 +19,20 @@ from django.urls import path, re_path, include
 
 from admin.views import admin_login_view
 from commodities import views as commodity_views
+from hierarchy import views as hierarchy_views
 from cookies import views as cookie_views
 from countries import views as country_views
 from feedback import views as feedback_views
 from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
-from search import views as search_views
+
 
 handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
+
     path(
         '',
         index.IndexRedirect.as_view(),
@@ -62,10 +64,23 @@ urlpatterns = [
     ),
 
     re_path(
+        r'^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$',
+        hierarchy_views.heading_detail,
+        name='heading-detail'
+    ),
+
+    re_path(
         r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})'
         r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
         commodity_views.measure_condition_detail,
         name='commodity-measure-conditions'
+    ),
+
+    re_path(
+        r'country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})'
+        r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        hierarchy_views.measure_condition_detail,
+        name='heading-measure-conditions'
     ),
 
     path(
@@ -86,32 +101,25 @@ urlpatterns = [
          name="privacy_terms_and_conditions_views"
     ),
 
-    path(
-        'search/',
-        search_views.search_view,
-        name='search-view'
-    ),
-
-    re_path(
-        r'search/country/(?P<country_code>\w+)/$',
-        search_views.search_view,
-        name='search'
-    ),
-
-    re_path(
-        r'search/country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)',
-        search_views.search_hierarchy, name='search-hierarchy'
-    ),
-
     re_path(
         r'^check/$',
         HealthCheckView.as_view(),
         name='healthcheck'
     ),
+
+    re_path('search/', include('search.urls', namespace="search")),
 ]
+
 
 if settings.ADMIN_ENABLED:
     urlpatterns += [
         path('admin/login/', admin_login_view),
         path('admin/', admin.site.urls)
     ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('', include(debug_toolbar.urls)),
+    ] + urlpatterns
+

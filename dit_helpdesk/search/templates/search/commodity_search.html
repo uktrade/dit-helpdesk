@@ -6,7 +6,7 @@
 <div class="govuk-grid-row govuk-!-padding-bottom-9">
   <div class="govuk-grid-column-full">
     <a href="{% url 'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
-    {% if isError %}
+    {% if is_error %}
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
         There is a problem
@@ -14,7 +14,7 @@
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           <li>
-            <a href="#commodity-code-error">{{ errorSummaryMessage | safe }}</a>
+            <a href="#commodity-code-error">{{ error_summary_message | safe }}</a>
           </li>
         </ul>
       </div>
@@ -25,29 +25,124 @@
       <span class="govuk-caption-l govuk-!-margin-bottom-1">
           Exporting from {{ selected_origin_country_name }} to the UK
       </span>
-      Enter the commodity code for your goods
+      Search for the goods you are exporting
     </h2>
-
-    <form action="{% url 'search-view' %}" method="get">
-        <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
+    <form action="{% url 'search:search-commodity' country_code=country_code %}#search-results" name="commodity_search" method="get">
+        <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
           <label class="govuk-hint" for="search">
-            If you do not know the commodity code, you can look for it below.
+              Search by keyword or commodity code, or <a href="#browse">browse</a> the categories of goods below.
           </label>
-          {% if isError %}
+          {% if form.q.errors %}
             <span id="commodity-code-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage | safe}}
+              <span class="govuk-visually-hidden">Error:</span> {%  for error in form.q.errors %}{{ error }}{% endfor %}
           </span>
           {% endif %}
-          <input class="govuk-input govuk-input--width-10{% if isError %} govuk-input--error{% endif %}" id="search" name="q" type="text" {% if isError %} aria-describedby="select-country-error"{% endif %}>
+          <input class="govuk-input govuk-input--width-10{% if form.q.errors %} govuk-input--error{% endif %}" id="search" name="q" type="text" {% if form.q.errors %} aria-describedby="select-country-error"{% endif %}>
         </div>
-      <input type="hidden" name="country" value="{{ country_code | escape }}" />
+      <input type="hidden" name="country" value="{{ country_code }}" />
       <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
 
+{% if results %}
+    <a name="search-results" id="search-results"></a>
+    <h2 class="govuk-heading-l">Search results for "{{ query }}"</h2>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <div class="govuk-radios govuk-radios--inline">
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="show-headings" name="show-headings" type="radio" checked="checked" value="true">
+            <label class="govuk-label govuk-radios__label" for="show-headings">
+              Show headings
+            </label>
+          </div>
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="hide-headings" name="show-headings" type="radio" value="false">
+            <label class="govuk-label govuk-radios__label" for="hide-headings">
+              Hide headings
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="govuk-search-pagination govuk-hint">
+
+        <p class="govuk-search-results-calculated govuk-hint">Showing {{ page_range_start }} to {{ page_range_end }} of {{ total_results }} results.</p>
+
+        {% if current_page > 1 %}
+            <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
+        {% endif %}
+        | Page {{ current_page }} of {{ total_pages }} |
+        {% if current_page < total_pages %}
+            <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
+        {% endif %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    </div>
+
+    {% for result in results %}
+      <section>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
+
+            <h1 class="govuk-heading-m govuk-!-font-size-27">
+                {% if result.meta.index == "commodity" %}
+              <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
+                {% else %}
+                    {{ result.description | safe }}
+                {% endif %}
+            </h1>
+          </div>
+
+          <div class="govuk-grid-column-one-quarter text-right">
+            <a class="govuk-link " href="#a">
+              {% if result.commodity_code_html %}
+                {{ result.commodity_code_html | safe }}
+              {% elif result.heading_code %}
+                {{ result.heading_code }}
+              {% elif result.chapter_code %}
+                {{ result.chapter_code }}
+              {% endif %}
+            </a>
+          </div>
+        </div>
+
+        <p class="govuk-body">
+        {% if  result.hierarchy_context %}
+            {% for item in result.hierarchy_context %}
+                {% if item.0.description %}
+                <span class="{% if forloop.last %}breadcrumb-item-last{%  else %}breadcrumb-item {% endif %}">{{ item.0.description }}</span>
+                {%  endif %}
+            {% endfor %}
+        {% endif %}
+        </p>
+
+        {% if result.meta.index == "commodity" %}
+        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold govuk-!-margin-right-2">Show trading information</a>
+        {%  else %}
+        <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link govuk-!-font-size-24 govuk-!-font-weight-bold">Show in goods browser</a>
+        {%  endif %}
+      </section>
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {% endfor %}
+
+    <div class="govuk-search-pagination govuk-hint">
+
+        {% if current_page > 1 %}
+            <a href="{{ previous_url }}" class="govuk-link govuk-search-previous govuk-!-font-weight-bold">Previous page</a>
+        {% endif %}
+        | Page {{ current_page }} of {{ total_pages }} |
+        {% if current_page < total_pages %}
+            <a href="{{ next_url }}" class="govuk-link govuk-search-next govuk-!-font-weight-bold">Next page</a>
+        {% endif %}
+    </div>
+
+  {% endif %}
+
+
     <h2 class="govuk-heading-l govuk-!-padding-top-8">
-      Look up commodity codes
+        <a name="browse"></a>Browse goods by category
     </h2>
-    <p class="govuk-body govuk-hint">You might need to click through many descriptions before you can select a code.</p>
+    <p class="govuk-body govuk-hint">Click through these categories to find trading information and commodity codes for your goods.</p>
 
     {{ hierarchy_html | safe }}
   </div>

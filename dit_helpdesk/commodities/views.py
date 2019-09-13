@@ -6,7 +6,6 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
-import json
 import re
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import render, get_object_or_404, redirect
@@ -63,8 +62,8 @@ def commodity_detail(request, commodity_code, country_code):
         'selected_origin_country': country.country_code,
         'commodity': commodity,
         'selected_origin_country_name': country.name,
-        'rules_of_origin': rules_of_origin['rules'],
-        'roo_footnotes': rules_of_origin['footnotes'],
+        'rules_of_origin': rules_of_origin,
+        'roo_footnotes': rules_of_origin,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': commodity.get_regulations(),
@@ -120,18 +119,16 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
     :param commodity_code: string
     :return: html
     """
-    listSize = len(commodity_path) - 1
+    listSize = len(commodity_path)
     html = ''
     reversedList = reversed(commodity_path)
 
     for index, lista in enumerate(reversedList):
-
         if index is 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += ''
         else:
             html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
-
             for i, item in enumerate(lista):
                 expand = 'open'
                 if index is listSize:
@@ -141,20 +138,19 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                     if item.commodity_code == commodity_code:
                         html += f"""
                             <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
-                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
+                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
                             </li>
                             """
                     else:
                         html += f"""
-                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
-                                <span>{item.tts_title}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
+                                <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
                             </li>
                             """
-
                 elif hasattr(item,'description'):
                     html += f"""
-                        <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
+                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_generate_commodity_code_html(item)}"""
                     if index is listSize:
                         html += '</li>'
@@ -205,6 +201,6 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     :return: html
     """
     section_index = len(reversed_commodity_tree) - 1
-    item = reversed_commodity_tree[section_index][0]
-    html = f'Section {item.roman_numeral}: {item.title.capitalize()}'
+    section = reversed_commodity_tree[section_index][0]
+    html = f'Section {section.roman_numeral}: {section.title.capitalize()}'
     return html

@@ -17,8 +17,9 @@ logger.setLevel(logging.INFO)
 def data_loader(file_path):
 
     """
-    :param file_path:
-    :return:
+    opens source file at filepath and reads data into either dictionary object or pandas dataframe object
+    :param file_path: path to file
+    :return: data_frame or dictionary
     """
 
     extension = Path(file_path).suffix
@@ -35,9 +36,9 @@ def data_loader(file_path):
 
 def data_writer(file_path, data):
     """
-    :param file_path:
-    :param data:
-    :return:
+    takes a filepath and data object and writes the data to a file at the filepath
+    :param file_path: path to file
+    :param data: data to write to the file
     """
 
     outfile = open(file_path, 'w+')

@@ -3,30 +3,21 @@ import re
 from datetime import datetime
 
 from dateutil.parser import parse as parse_dt
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
-)
-CHAPTER_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/chapters/%s.json'
-HEADING_URL = 'https://www.trade-tariff.service.gov.uk/trade-tariff/headings/%s.json'
-
 DUTY_HTML_REGEX = r'<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>'
 
 COMMODITY_DETAIL_TABLE_KEYS = [
-    # dict_key, column_title
     ('country', 'Country'),
     ('measure_description', 'Measure type'),
     ('measure_value', 'Value'),
     ('conditions_html', 'Conditions'),
     ('excluded_countries', 'Excluded countries'),
     ('start_end_date', 'Date'),
-    # ('legal_base_html', 'Legal Base'),
-    # ('footnotes_html', 'Footnotes'),
 ]
 
 
@@ -40,10 +31,6 @@ class CommodityJson(object):
     @property
     def title(self):
         return self.di['description']
-
-    @property
-    def heading_description(self):
-        return self.di['heading']['description']
 
     @property
     def code(self):
@@ -94,123 +81,6 @@ class CommodityJson(object):
         ]
 
         return measures[0] if len(measures) == 1 else None
-
-
-class CommodityHeadingJson(object):
-    """
-    Sub-dictionary from Commodity response about its Heading
-    example:
-    {'goods_nomenclature_item_id': '0706000000',
-    'description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                   'and similar edible roots, fresh or chilled',
-     'formatted_description': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                              'and similar edible roots, fresh or chilled',
-     'description_plain': 'Carrots, turnips, salad beetroot, salsify, celeriac, radishes '
-                          'and similar edible roots, fresh or chilled'}
-    ('basic_duty_rate', "<span title='13.6 '>13.60</span> %")
-    """
-
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di['description']
-
-    @property
-    def harmonized_code(self):
-        return self.di['goods_nomenclature_item_id']
-
-
-class SectionJson(object):
-
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di['title']
-
-    @property
-    def chapter_ids(self):
-        frm, to = int(self.di['chapter_from']), int(self.di['chapter_to'])
-        return [v for v in range(frm, to + 1)]
-
-    @property
-    def chapter_urls(self):
-        return [
-            CHAPTER_URL % "{:02d}".format(id) for id in self.chapter_ids
-        ]
-
-    @property
-    def id(self):
-        return self.di['id']
-
-    @property
-    def position(self):
-        return self.di['position']
-
-    @property
-    def numeral(self):
-        return self.di['numeral']
-
-
-class ChapterJson(object):
-
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di['formatted_description']
-
-    @property
-    def harmonized_code(self):
-        return self.di['goods_nomenclature_item_id']
-
-    @property
-    def heading_ids(self):
-        return [
-            di['goods_nomenclature_item_id'][:4] for di in self.di['headings']
-        ]
-
-    @property
-    def heading_urls(self):
-        return [HEADING_URL % id for id in self.heading_ids]
-
-
-class HeadingJson(object):
-
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di['formatted_description'].replace('&nbsp;', ' ').strip()
-
-    @property
-    def code(self):
-        return self.di['goods_nomenclature_item_id']
-
-    @property
-    def commodity_dicts(self):
-        return [di for di in self.di.get('commodities', [])]
-
-    @property
-    def commodity_ids(self):
-        if 'commodities' not in self.di:
-            tup = (self.code, self.title)
-            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
-            return []
-
-        return [
-            (di['goods_nomenclature_item_id'], di['leaf'])
-            for di in self.di['commodities']
-        ]
-
-    @property
-    def commodity_urls(self):
-        return [((COMMODITY_URL % _id), is_leaf) for (_id, is_leaf) in self.commodity_ids]
 
 
 class ImportMeasureJson(object):
@@ -407,7 +277,7 @@ class ImportMeasureJson(object):
         try:
             data = self.reformat_date(data)
         except Exception as e:
-            logger.debug(e.args)
+            logger.debug("trying to reformat date from data, throws {0}".format(e.args))
 
         data_with_headings = []
 
@@ -459,3 +329,64 @@ class MeasureCondition(object):
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
+
+
+class HeadingJson(object):
+
+    def __init__(self, di):
+        self.di = di
+
+    @property
+    def title(self):
+        return self.di['formatted_description'].replace('&nbsp;', ' ').strip()
+
+    @property
+    def code(self):
+        return self.di['goods_nomenclature_item_id']
+
+    @property
+    def commodity_dicts(self):
+        return [di for di in self.di.get('commodities', [])]
+
+    @property
+    def commodity_ids(self):
+        if 'commodities' not in self.di:
+            tup = (self.code, self.title)
+            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
+            return []
+
+        return [
+            (di['goods_nomenclature_item_id'], di['leaf'])
+            for di in self.di['commodities']
+        ]
+
+    @property
+    def commodity_urls(self):
+        return [((settings.COMMODITY_URL % _id), is_leaf) for (_id, is_leaf) in self.commodity_ids]
+
+    def get_import_measures(self, origin_country, vat=None, excise=None):
+
+        measures = [
+            ImportMeasureJson(d, self.code) for d in self.di['import_measures']
+        ]
+
+        measures = [
+            json_obj for json_obj in measures
+            if json_obj.is_relevant_for_origin_country(origin_country)
+        ]
+
+        if vat is not None:
+            measures = [obj for obj in measures if obj.vat == vat]
+        if excise is not None:
+            measures = [obj for obj in measures if obj.excise == excise]
+
+        return measures
+
+    def get_import_measure_by_id(self, measure_id, country_code=None):
+
+        measures = [
+            measure for measure in self.get_import_measures(country_code) if measure.measure_id == measure_id
+        ]
+
+        return measures[0] if len(measures) == 1 else None
+

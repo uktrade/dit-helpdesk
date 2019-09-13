@@ -145,8 +145,24 @@ HEADING_STRUCTURE = APPS_DIR + "/hierarchy/tests/heading_{0}_structure.json".for
 CHAPTER_STRUCTURE = APPS_DIR + "/hierarchy/tests/chapter_{0}_structure.json".format(TEST_CHAPTER_CODE)
 SECTION_STRUCTURE = APPS_DIR + "/hierarchy/tests/section_{}_structure.json".format(TEST_SECTION_ID)
 COUNTRIES_DATA = APPS_DIR + "/countries/fixtures/countries_data.json"
-SECTIONJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/SectionJson.json"
-CHAPTERJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/ChapterJson.json"
-HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/HeadingJson.json"
-COMMODITYHEADINGJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/CommodityHeadingJson.json"
-IMPORTMEASUREJSON_DATA = APPS_DIR + "/trade_tariff_Service/import_data/ImportMeasureJson.json"
+SECTIONJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/SectionJson.json"
+CHAPTERJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/ChapterJson.json"
+HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/HeadingJson.json"
+COMMODITYHEADINGJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/CommodityHeadingJson.json"
+IMPORTMEASUREJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/ImportMeasureJson.json"
+
+
+ELASTICSEARCH_INDEX_NAMES = {
+    'search.documents.section': 'test_sections',
+    'search.documents.chapter': 'test_chapters',
+    'search.documents.heading': 'test_headings',
+    'search.documents.subheading': 'test_subheadings',
+    'search.documents.commodity': 'test_commodities',
+}
+ES_URL = 'http://es:9200'
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': ES_URL
+    },
+}
+

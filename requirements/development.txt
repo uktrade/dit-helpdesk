@@ -3,10 +3,10 @@
 # Interactive shell enhancements
 ipdb==0.11 # https://github.com/gotcha/ipdb
 werkzeug==0.14.1 # https://github.com/pallets/werkzeug
+ipython-genutils==0.2.0
 
 # Django plugins
 # ------------------------------------------------------------------------------
-django-extensions==2.1.5  # https://github.com/django-extensions/django-extensions
 django-debug-toolbar==1.11  # https://github.com/jazzband/django-debug-toolbar
 
 
