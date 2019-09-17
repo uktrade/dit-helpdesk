@@ -44,5 +44,5 @@ django-extensions==2.1.9  # https://github.com/django-extensions/django-extensio
 nltk==3.4.3
 textblob==0.15.3
 xlrd==1.2.0
--e git+https://github.com/uktrade/directory-forms-api-client.git#egg=directory_forms_api_client
+directory-forms-api-client==5.0
 django-formtools==2.1

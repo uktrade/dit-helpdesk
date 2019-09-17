@@ -31,14 +31,44 @@ clone the directory
 git clone https://github.com/uktrade/directory-forms-api.git .
 ```
 
-** ToDo: add env notes
+create a hosts file entry for 
 
-** ToDo: incorporate into docker as service 
+`127.0.0.0.1    forms.trade.great`
 
 Follow installation and setup instructions in https://github.com/uktrade/directory-forms-api/blob/develop/README.md
 
+NB: add the following entries to the env file
 
-### Trade Helpdesk
+```
+HEALTH_CHECK_TOKEN=""
+DEFAULT_FROM_EMAIL=""
+REDIS_CELERY_URL="redis://localhost:6379"
+GOV_NOTIFY_LETTER_API_KEY=debug
+DJANGO_SECRET_KEY=debug
+FEATURE_ENFORCE_STAFF_SSO_ENABLED=False
+STAFF_SSO_AUTHBROKER_URL=
+AUTHBROKER_CLIENT_ID=
+AUTHBROKER_CLIENT_SECRET=
+```
+after running `make debug` in a terminal
+
+create a superuser by running the following in a terminal
+
+```
+export DATABASE_URL=postgres://debug:debug@localhost:5432/directory_forms_api_debug
+./manage.py createsuperuser
+```
+
+then run `make debug_webserver` to start the server
+
+access the application admin screens locally in you browser with the url http://forms.trade.great:8011/admin
+
+Click the add button in the Client section and add `helpdesk` as the name of the client then click submit. This will 
+generate the user identifier and accss key that you need to add to the .env file for the `dit_helpdesk` application 
+ 
+** ToDo: incorporate into docker as service
+
+### UK Trade Helpdesk
 First clone the repo
 
 ```bash
@@ -160,11 +190,14 @@ docker-compose -f development.yml up
 ```
 
 Open a second terminal and run the following command to activate a shell into the docker instance 
-for the trade helpdesk app with the command
+for the trade helpdesk app with the command.
 
 ```
 docker exec -it dit_helpdesk_helpdesk_1 /bin/bash
 ``` 
+NB: if `dit_helpdesk_helpdesk_1` is not found run `docker ps` in your host terminal to get a list of the docker images 
+and their correct names
+
 refer to "Running, then shelling in" section below
 
 In the docker shell Run the following collect static files and migrate the database schema and
