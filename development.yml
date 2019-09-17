@@ -59,3 +59,4 @@ services:
       depends_on: [ dockerhost ]
       image: alpine
       command: [ "sh", "-c", "while :; do date; sleep 1; done | nc 'dockerhost' 5353 -u -v"]
+

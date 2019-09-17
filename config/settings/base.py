@@ -32,6 +32,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a-secret-key')
 
 ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", False)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -325,3 +326,4 @@ DIRECTORY_FORMS_API_DEFAULT_TIMEOUT=10
 
 APP_START_DOMAIN = "www.get-rules-tariffs-trade-with-uk.service.gov.uk"
 FEEDBACK_DESTINATION_EMAIL = os.environ.get('FEEDBACK_DESTINATION_EMAIL')
+
