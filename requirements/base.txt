@@ -41,7 +41,7 @@ django-elasticsearch-dsl==0.5.1
 django-elasticsearch-dsl-drf==0.17.6
 djangorestframework==3.9.3
 django-extensions==2.1.9  # https://github.com/django-extensions/django-extensions
-nltk==3.4.3
+nltk>=3.4.5
 textblob==0.15.3
 xlrd==1.2.0
 -e git+https://github.com/uktrade/directory-forms-api-client.git#egg=directory_forms_api_client
