@@ -114,18 +114,23 @@ class RegulationsImporter:
         return commodity_code
 
     def load(self, data_path=None):
+        """
+        Load data from files
+        :param data_path:
+        :return:
+        """
 
         if data_path:
 
-            regulations = data_loader(data_path.format('product_specific_regulations.csv'))
+            product_regulations = data_loader(data_path.format('product_specific_regulations.csv'))
 
-            commodity_code_titles = json.loads(data_loader(data_path.format('product_reqs_v2.csv')
+            commodity_regulations_map = json.loads(data_loader(data_path.format('product_reqs_v2.csv')
                                                            ).to_json(orient='records'))
-            documents = data_loader(data_path.format('urls_with_text_description.json'))
+            document_urls_title_map = data_loader(data_path.format('urls_with_text_description.json'))
 
-            regulations_data = self.clean_and_extend_regulations_data(documents, regulations)
+            regulations_data = self.clean_and_extend_regulations_data(document_urls_title_map, product_regulations)
 
-            titles_to_codes_map = self.build_titles_to_codes_map(commodity_code_titles)
+            titles_to_codes_map = self.build_titles_to_codes_map(commodity_regulations_map)
 
             self.data = self.build_list_of_regulation_maps(regulations_data, titles_to_codes_map)
 
@@ -135,18 +140,32 @@ class RegulationsImporter:
                 self.instance_builder(regulation_map)
 
     @staticmethod
-    def clean_and_extend_regulations_data(documents, regulations_data):
-        data_table = regulations_data[['Title', 'UK Reg']].values.tolist()
+    def clean_and_extend_regulations_data(documents, regulations):
+        """
+        add a column for the corresponding title for each url and None if the url field is empty
+        returns list of regulations each with a corresponding document url and title
+        e.g. "regulations_title", "document_url", "document_title"
+        :param documents: document url and title map
+        :param regulations: table of regulation titles with urls
+        :return: return list of regulations each with a corresponding document url and title
+        """
+        regulations_table = regulations[['Title', 'UK Reg']].values.tolist()
 
-        for item in data_table:
+        for item in regulations_table:
             if item[1] is not nan and item[1] in documents.keys():
                 item.append(documents[item[1]])
             else:
                 item[1] = None
                 item.append(None)
-        return data_table
+        return regulations_table
 
     def build_list_of_regulation_maps(self, data_table, titles_to_codes_map):
+        """
+
+        :param data_table:
+        :param titles_to_codes_map:
+        :return:
+        """
         map_list = []
         for item in data_table:
             try:
@@ -170,6 +189,14 @@ class RegulationsImporter:
 
     @staticmethod
     def build_titles_to_codes_map(commodity_titles):
+        """
+        builds a map of a list of commodity codes associated with each regulation title
+        returns a dictionary keyed on regulation title
+        e.g.
+        {"commodity_title": ["list", "of", "code"], ...}
+        :param commodity_titles: table of a list of regulation titles for each commodity code
+        :return: dictionary
+        """
         data_map = {}
         for commodity in commodity_titles:
             for document in commodity['Documents'].split('|'):
