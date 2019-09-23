@@ -45,3 +45,18 @@ services:
       ELASTICSEARCH_URL: http://es:9200
     ports:
       - "5601:5601"
+
+  dockerhost:
+      image: qoomon/docker-host
+      cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
+      mem_limit: 8M
+      restart: on-failure
+  tcp_message_emitter:
+      depends_on: [ dockerhost ]
+      image: alpine
+      command: [ "sh", "-c", "while :; do date; sleep 1; done | nc 'dockerhost' 2323 -v"]
+  udp_message_emitter:
+      depends_on: [ dockerhost ]
+      image: alpine
+      command: [ "sh", "-c", "while :; do date; sleep 1; done | nc 'dockerhost' 5353 -u -v"]
+

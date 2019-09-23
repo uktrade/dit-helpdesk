@@ -29,7 +29,6 @@ MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 def show_toolbar(request):
     return True
 
-
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
@@ -41,3 +40,9 @@ ELASTICSEARCH_DSL = {
         'hosts': ES_URL
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR+'/app-messages'
+
+FEEDBACK_DESTINATION_EMAIL = os.environ.get('FEEDBACK_DESTINATION_EMAIL')
+

@@ -23,6 +23,7 @@ from hierarchy import views as hierarchy_views
 from cookies import views as cookie_views
 from countries import views as country_views
 from feedback import views as feedback_views
+from contact import views as contact_views
 from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
@@ -90,10 +91,18 @@ urlpatterns = [
     ),
 
     path(
+        'contact/',
+        contact_views.ContactFormWizardView.as_view(),
+        name='contact-view'
+    ),
+
+    path(
         'feedback/success/',
         feedback_views.FeedbackSuccessView.as_view(),
         name='feedback-success-view',
     ),
+
+    # re_path('feedback/', include('feedback.urls', namespace="feedback")),
 
     path(
         'privacy-terms-and-conditions/',

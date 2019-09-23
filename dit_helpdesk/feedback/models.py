@@ -6,8 +6,8 @@ class Feedback(models.Model):
     """
     Feedback form for model
     """
-    name = models.CharField(max_length=255, blank=True)
-    email = models.EmailField(blank=True)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
     message = models.TextField(max_length=settings.FEEDBACK_MAX_LENGTH)
     created_on = models.DateTimeField(auto_now_add=True)
 
