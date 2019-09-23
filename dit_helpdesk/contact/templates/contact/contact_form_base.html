@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-
+<form action="" method="post">
     <div class="govuk-grid-row govuk-!-padding-bottom-9">
         <div class="govuk-grid-column-full">
 
@@ -39,7 +39,7 @@
             </h2>
 
 
-            <form action="" method="post">
+
                 {% csrf_token %}
 
                 {{ form.non_field_errors }}
@@ -90,8 +90,9 @@
                         <button class="govuk-button text-button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Go back</button>
                     </div>
                 {% endif %}
-            </form>
+
 
         </div>
     </div>
+</form>
 {% endblock %}
