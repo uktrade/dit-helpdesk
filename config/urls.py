@@ -33,7 +33,7 @@ handler404 = 'core.views.error404handler'
 handler500 = 'core.views.error500handler'
 
 urlpatterns = [
-
+    # redirects to start page
     path(
         '',
         index.IndexRedirect.as_view(),
