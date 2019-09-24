@@ -16,6 +16,7 @@ from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
 
 from countries.models import Country
+from hierarchy.models import Heading
 from hierarchy.views import hierarchy_data
 from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
@@ -82,6 +83,13 @@ class CommoditySearchView(FormView):
                             'commodity_code': hit.commodity_code,
                             'country_code': context['country_code']
                         }))
+                    elif hit.meta["index"] == "heading":
+                        heading = Heading.objects.filter(heading_code=hit.commodity_code).first()
+                        if heading.leaf:
+                            return redirect(reverse('heading-detail', kwargs={
+                                'heading_code': hit.commodity_code,
+                                'country_code': context['country_code']
+                            }))
                     else:
                         return redirect(reverse('search:search-hierarchy', kwargs={
                             'node_id': "{0}-{1}".format(hit.meta["index"], hit.id),
@@ -234,6 +242,7 @@ def process_commodity_code(code):
         return result
 
     else:
+        print("code: ", code)
         result = code
         return result
 
