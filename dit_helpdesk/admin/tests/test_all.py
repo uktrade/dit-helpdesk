@@ -3,6 +3,9 @@ from django.core.exceptions import PermissionDenied
 from django.test import TestCase, Client, override_settings
 
 from django.contrib.auth import get_user_model
+from mixer.backend.django import mixer
+
+from user.models import User
 
 
 class AdminSSOLoginTestCase(TestCase):
@@ -12,7 +15,8 @@ class AdminSSOLoginTestCase(TestCase):
     """
     def setUp(self):
         self.client = Client()
-        self.user = get_user_model().objects.create(
+        self.user = mixer.blend(
+            User,
             email='test@test.com',
             is_staff=False,
             is_superuser=False
