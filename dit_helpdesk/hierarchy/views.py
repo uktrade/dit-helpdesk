@@ -30,30 +30,30 @@ def _get_expanded_context(selected_node_id):
         expanded.append(selected_node_id)
 
     elif node_type == 'chapter':
-        chapter_obj = Chapter.objects.get(pk=node_pk)
-        expanded.append("section-{0}".format(chapter_obj.section.pk))
+        chapter_obj = Chapter.objects.get(goods_nomenclature_sid=node_pk)
+        expanded.append("section-{0}".format(chapter_obj.section.section_id))
         expanded.append("chapter-{0}".format(node_pk))
 
     elif node_type == 'heading':
-        heading_obj = Heading.objects.get(pk=node_pk)
+        heading_obj = Heading.objects.get(goods_nomenclature_sid=node_pk)
 
-        expanded.append("section-{0}".format(heading_obj.chapter.section.pk))
-        expanded.append("chapter-{0}".format(heading_obj.chapter.pk))
-        expanded.append("heading-{0}".format(heading_obj.pk))
+        expanded.append("section-{0}".format(heading_obj.chapter.section.section_id))
+        expanded.append("chapter-{0}".format(heading_obj.chapter.goods_nomenclature_sid))
+        expanded.append("heading-{0}".format(heading_obj.goods_nomenclature_sid))
 
     elif node_type == 'sub_heading':
 
-        current = SubHeading.objects.get(pk=node_pk)
+        current = SubHeading.objects.get(goods_nomenclature_sid=node_pk)
         while True:
-            expanded.append("sub_heading-{0}".format(current.pk))
+            expanded.append("sub_heading-{0}".format(current.goods_nomenclature_sid))
             current = current.get_parent()
             if type(current) is Heading:
                 break
         heading_obj = current
 
-        expanded.append("section-{0}".format(heading_obj.chapter.section.pk))
-        expanded.append("chapter-{0}".format(heading_obj.chapter.pk))
-        expanded.append("heading-{0}".format(heading_obj.pk))
+        expanded.append("section-{0}".format(heading_obj.chapter.section.section_id))
+        expanded.append("chapter-{0}".format(heading_obj.chapter.goods_nomenclature_sid))
+        expanded.append("heading-{0}".format(heading_obj.goods_nomenclature_sid))
 
     return expanded
 

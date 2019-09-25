@@ -19,7 +19,7 @@ class ChapterDocument(DocType):
     Chapter elasticsearch document
     """
 
-    id = fields.IntegerField(attr='id')
+    id = fields.IntegerField(attr='goods_nomenclature_sid')
 
     commodity_code = fields.KeywordField(
         attr="chapter_code",

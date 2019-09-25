@@ -346,21 +346,39 @@ class HierarchyBuilder:
                             "number_indents": "0"})
 
                 # extract all the heading objects from the chapter's list of included child objects
-                child_headings = [item for item in chapter["included"] if item["type"] == "heading"]
+                child_headings = [item for item in chapter["included"] if item["type"] == "heading"
+                                  and "relationships" in item.keys()]
+                if child_headings:
+                    for heading in child_headings:
 
-                for heading in child_headings:
+                        headings_data.append({
+                            "goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
+                            "goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
+                            "productline_suffix": heading["attributes"]["producline_suffix"],
+                            "leaf": heading["attributes"]["leaf"],
+                            "parent_goods_nomenclature_item_id": chapter["data"]["attributes"]["goods_nomenclature_item_id"],
+                            "parent_goods_nomenclature_sid": chapter["data"]["attributes"]["goods_nomenclature_sid"],
+                            "parent_productline_suffix": "",
+                            "description": heading["attributes"]["description"],
+                            "number_indents": "0"
+                        })
 
-                    headings_data.append({
-                        "goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
-                        "goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
-                        "productline_suffix": heading["attributes"]["producline_suffix"],
-                        "leaf": heading["attributes"]["leaf"],
-                        "parent_goods_nomenclature_item_id": chapter["data"]["attributes"]["goods_nomenclature_item_id"],
-                        "parent_goods_nomenclature_sid": chapter["data"]["attributes"]["goods_nomenclature_sid"],
-                        "parent_productline_suffix": "",
-                        "description": heading["attributes"]["description"],
-                        "number_indents": "0"
-                    })
+                        if "relationships" in heading.keys():
+                            children = heading["relationships"]["children"]["data"]
+                            for child in children:
+                                for sub_heading in [item for item in headings if item["data"]["id"] == child["id"]]:
+                                    leaves = [item for item in sub_heading["data"]["relationships"]]
+                                    sub_headings_data.append({
+                                        "goods_nomenclature_item_id": sub_heading["data"]["attributes"]["goods_nomenclature_item_id"],
+                                        "goods_nomenclature_sid": sub_heading["data"]["id"],
+                                        "productline_suffix": "",
+                                        "leaf": True if 'commodities' in leaves else False,
+                                        "parent_goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
+                                        "parent_goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
+                                        "parent_productline_suffix": "",
+                                        "description": sub_heading["data"]["attributes"]["description"],
+                                        "number_indents": "1"
+                                    })
 
         if headings:
             for heading in headings:

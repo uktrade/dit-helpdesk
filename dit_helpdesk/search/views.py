@@ -32,7 +32,13 @@ logger.setLevel(logging.INFO)
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
-
+    """
+    build and return the hierarchy html
+    :param request:
+    :param node_id:
+    :param country_code:
+    :return:
+    """
     if country_code is None:
         country_code = request.session.get('origin_country')
 

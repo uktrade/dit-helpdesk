@@ -18,7 +18,7 @@ class HeadingDocument(DocType):
     """
     Heading elasticsearch document
     """
-    id = fields.IntegerField(attr='id')
+    id = fields.IntegerField(attr='goods_nomenclature_sid')
 
     commodity_code = fields.KeywordField(
         attr="heading_code",

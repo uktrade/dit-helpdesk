@@ -31,7 +31,7 @@ class Section(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'section-%s' % self.pk
+        return 'section-%s' % self.section_id
 
     @property
     def chapter_range_str(self):
@@ -73,7 +73,7 @@ class Section(models.Model):
         :return: url
         """
         kwargs = {
-            'node_id': 'section-%s' % self.pk
+            'node_id': 'section-%s' % self.section_id
         }
 
         if country_code is not None:
@@ -150,7 +150,7 @@ class Chapter(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'chapter-%s' % self.pk
+        return 'chapter-%s' % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -185,7 +185,7 @@ class Chapter(models.Model):
         :return: url
         """
         kwargs = {
-            'node_id': 'chapter-%s' % self.pk
+            'node_id': 'chapter-%s' % self.goods_nomenclature_sid
         }
 
         if country_code is not None:
@@ -341,7 +341,7 @@ class Heading(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'heading-%s' % self.pk
+        return 'heading-%s' % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -381,7 +381,7 @@ class Heading(models.Model):
         :return: url
         """
         kwargs = {
-            'node_id': 'heading-%s' % self.pk
+            'node_id': 'heading-%s' % self.goods_nomenclature_sid
         }
 
         if country_code is not None:
@@ -505,7 +505,7 @@ class SubHeading(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'sub_heading-%s' % self.pk
+        return 'sub_heading-%s' % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -530,7 +530,7 @@ class SubHeading(models.Model):
         :return: url
         """
         kwargs = {
-            'node_id': 'sub_heading-%s' % self.pk
+            'node_id': 'sub_heading-%s' % self.goods_nomenclature_sid
         }
 
         if country_code is not None:

@@ -36,7 +36,7 @@ class SectionTestCase(TestCase):
         self.assertEquals(self.section.roman_numeral, "I")
 
     def test_hierarchy_key(self):
-        self.assertEquals(self.section.hierarchy_key, 'section-{0}'.format(self.section.pk))
+        self.assertEquals(self.section.hierarchy_key, 'section-{0}'.format(self.section.section_id))
 
     def test_has_hierarchy_children(self):
         self.chapters = mixer.cycle(5).blend(
@@ -100,7 +100,7 @@ class ChapterTestCase(TestCase):
         self.assertEquals(self.chapter.title, self.chapter.description)
 
     def test_hierarchy_key(self):
-        self.assertEquals(self.chapter.hierarchy_key, 'chapter-{0}'.format(self.chapter.pk))
+        self.assertEquals(self.chapter.hierarchy_key, 'chapter-{0}'.format(self.chapter.goods_nomenclature_sid))
 
     def test_harmonized_code_equals_chapter_code(self):
         # TODO: Where is this property method used
@@ -214,7 +214,7 @@ class HeadingTestCase(TestCase):
         self.assertEquals(str(self.heading), "Heading {0}".format(self.heading.heading_code))
 
     def test_hierarchy_key(self):
-        self.assertEquals(self.heading.hierarchy_key, 'heading-{0}'.format(self.heading.pk))
+        self.assertEquals(self.heading.hierarchy_key, 'heading-{0}'.format(self.heading.goods_nomenclature_sid))
 
     def test_hierarchy_url_without_country_code(self):
         self.assertRaises(NoReverseMatch, lambda: self.heading.get_hierarchy_url())
@@ -280,7 +280,7 @@ class SubHeadingTestCase(TestCase):
         self.assertEquals(str(self.subheading), "Sub Heading {0}".format(self.subheading.commodity_code))
 
     def test_hierarchy_key(self):
-        self.assertEquals(self.subheading.hierarchy_key, 'sub_heading-{0}'.format(self.subheading.pk))
+        self.assertEquals(self.subheading.hierarchy_key, 'sub_heading-{0}'.format(self.subheading.goods_nomenclature_sid))
 
     def test_harmonized_code_equals_commodity_code(self):
         # TODO: Where is this property method used

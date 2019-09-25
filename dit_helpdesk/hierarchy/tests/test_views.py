@@ -94,7 +94,7 @@ class HierarchyViewTestCase(TestCase):
         self.assertEqual(response.context['country_code'], settings.TEST_COUNTRY_CODE.lower())
 
     def test_hierarchy_data_at_chapter(self):
-        chapter_id = Chapter.objects.get(chapter_code=settings.TEST_CHAPTER_CODE).pk
+        chapter_id = Chapter.objects.get(chapter_code=settings.TEST_CHAPTER_CODE).goods_nomenclature_sid
         response = self.client.get('/search/country/au/hierarchy/chapter-{0}#chapter-{0}'.format(chapter_id))
         logger.debug(response.context['hierarchy_html'])
         self.assertInHTML(settings.TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
@@ -102,7 +102,7 @@ class HierarchyViewTestCase(TestCase):
         self.assertEqual(response.context['country_code'], settings.TEST_COUNTRY_CODE.lower())
 
     def test_hierarchy_data_at_heading(self):
-        heading_id = Heading.objects.get(heading_code=settings.TEST_HEADING_CODE).pk
+        heading_id = Heading.objects.get(heading_code=settings.TEST_HEADING_CODE).goods_nomenclature_sid
         response = self.client.get('/search/country/au/hierarchy/heading-{0}#heading-{0}'.format(heading_id))
         self.assertInHTML(settings.TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
         self.assertInHTML(settings.TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
@@ -110,7 +110,7 @@ class HierarchyViewTestCase(TestCase):
         self.assertEqual(response.context['country_code'], settings.TEST_COUNTRY_CODE.lower())
 
     def test_hierarchy_data_at_subheading(self):
-        subheading_id = SubHeading.objects.get(commodity_code=TEST_SUBHEADING_CODE).pk
+        subheading_id = SubHeading.objects.get(commodity_code=TEST_SUBHEADING_CODE).goods_nomenclature_sid
         response = self.client.get('/search/country/au/hierarchy/sub_heading-{0}#sub_heading-{0}'.format(subheading_id))
         self.assertInHTML(settings.TEST_SECTION_DESCRIPTION, response.context['hierarchy_html'])
         self.assertInHTML(settings.TEST_CHAPTER_DESCRIPTION, response.context['hierarchy_html'])
