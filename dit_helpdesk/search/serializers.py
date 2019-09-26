@@ -1,10 +1,12 @@
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
+from rest_framework import serializers
 
 from search.documents.commodity import CommodityDocument
 from search.documents.chapter import ChapterDocument
 from search.documents.heading import HeadingDocument
 from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
+from search.forms import CommoditySearchForm
 
 
 class CommodityDocumentSerializer(DocumentSerializer):
@@ -72,3 +74,7 @@ class SectionDocumentSerializer(DocumentSerializer):
             'keywords',
             'ranking',
         )
+
+class CommoditySearchSerializer(serializers.Serializer):
+    q = serializers.CharField()
+    page = serializers.IntegerField(default=1)

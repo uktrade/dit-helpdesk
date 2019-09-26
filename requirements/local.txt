@@ -8,7 +8,6 @@ ipython
 # Django plugins
 # ------------------------------------------------------------------------------
 django-debug-toolbar==1.11  # https://github.com/jazzband/django-debug-toolbar
-django-extensions==2.1.5  # https://github.com/django-extensions/django-extensions
 django-environ==0.4.5  # https://github.com/joke2k/django-environ
 django-redis==4.10.0  # https://github.com/niwinz/django-redis
 django-coverage-plugin==1.6.0  # https://github.com/nedbat/django_coverage_plugin

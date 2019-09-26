@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import re_path, path
 
 from search import views
 
@@ -17,5 +17,9 @@ urlpatterns = [
         views.search_hierarchy,
         name='search-hierarchy'
     ),
-
+    path(
+        'api/commodity/',
+        views.CommoditySearchAPIView.as_view(),
+        name='commodity-api-search',
+    )
 ]

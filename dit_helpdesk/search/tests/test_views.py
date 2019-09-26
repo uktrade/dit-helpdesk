@@ -17,10 +17,7 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
-class CommoditySearchViewTestCase(TestCase):
-    """
-    Test Commodity code Search view
-    """
+class CommoditySetupMixin:
 
     def setUp(self):
         self.section = mixer.blend(
@@ -82,6 +79,12 @@ class CommoditySearchViewTestCase(TestCase):
 
     fixtures = [settings.COUNTRIES_DATA]
 
+
+class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
+    """
+    Test Commodity code Search view
+    """
+
     def test_section_1_exists(self):
         self.assertTrue(Section.objects.filter(section_id=10).exists())
 
@@ -117,6 +120,23 @@ class CommoditySearchViewTestCase(TestCase):
         data = {"q": "4911910010", "country": "au"}
         resp = self.client.get(url, data=data, follow=True)
         self.assertEqual(resp.status_code, 200)
+
+
+class CommoditySearchAPIViewTestCase(CommoditySetupMixin, TestCase):
+    """
+    Test Commodity name search Search view
+    """
+
+    def test_search_view_missing_term_returns_http_400(self):
+        resp = self.client.get(reverse('search:commodity-api-search'))
+        self.assertEqual(resp.status_code, 400)
+
+    def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
+        url = reverse("search:commodity-api-search")
+        data = {"q": "Scissors"}
+        resp = self.client.get(url, data=data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["results"][0]["description"], "Scissors")
 
 
 class SearchFormTestCase(TestCase):
