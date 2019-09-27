@@ -503,12 +503,15 @@ If the country autocomplete is blank:
 Turn off JavaScript in your browser, visit the choose country page (`/choose-country`) and see if a <select> dropdown is there
 If a select is not present, then the problem is in the template file - look at `dit_helpdesk/countries/templates/countries/choose_country.html` to see why it’s been left out
 If the select is empty, or has an incomplete list of countries, then the problem is on the server-side list of countries. On the server, run
+
 ```bash
 python dit_helpdesk/manage.py loaddata countries_data
 ```
+
 to repopulate the list of countries.
 
 If the select is present, but the autocomplete isn’t working:
+
 ```bash
 Run `npm run build`
 Run `npm run update-countries`
@@ -518,19 +521,25 @@ Run `python dit_helpdesk/manage.py loaddata countries_data`
 If the autocomplete is not using the correct synonyms:
 Open `assets/countries/add-synonyms.js` and check that the `countriesToAddSynonymsTo` array of objects is correct.
 If any corrections are needed, make them - then run
+
 ```bash
 npm run build
 ```
+
 followed by
+
 ```bash
 npm run update-countries
 ```
+
 and then
+
 ```bash
 python dit_helpdesk/manage.py loaddata countries_data
 ```
 
 If the autocomplete is not displaying properly run
+
 ```bash
 npm run build
 ```
@@ -546,17 +555,19 @@ npm run build
 
 ### Apendix II - Management Import Commands
 
-** TODO: needs updating
 ### Countries
 
 
 The project has a django fixtures file for populating the countries database table with country code and name values
 
 These would normally be imported on deployment, however, in the case where countries need to be added to the
+
 ```bash
 countries/fixtures/countries.json
 ```
+
 file they can be reloaed with the command:
+
 ```bash
 python dit_helpdesk/manage.py loaddata countries_data
 ```
@@ -568,9 +579,11 @@ python dit_helpdesk/manage.py loaddata countries_data
 
 
 To import commodity hierarchy content run:
+
 ```bash
 python dit_helpdesk/manage.py scrape_section_hierarchy
 ```
+
 The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
 
 The source data for this command can be found in the directory `trade_tarrif_service/import_data`
@@ -585,6 +598,7 @@ This include the data files for Chapters, Headings, SubHeadings and Commodities
 There is a method in the class that collects the section data from the trade tariff api and generates a json file.
 
 Use this in the case where the sections data needs to be refreshed before import of the hierarchy:
+
 ```bash
 python dit_helpdesk/manage.py scrape_section_json
 ```
@@ -594,6 +608,7 @@ This command uses a method `get_section_data_from_api()` of the main python clas
 #### Clearing the Data from the Database
 
 To clear the data from the database before re-importing use the following sql statement in a psql shell:
+
 ```sql
 truncate table hierarchy_section CASCADE;
 ```
@@ -617,11 +632,13 @@ and import into the database.
 New rules of origin documents get placed in the directory `rules_of_origin/data/source`
 
 To process all rules of origin documents use:
+
 ```bash
 python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path source
 ```
 
 To import an individual rules of origin data file use:
+
 ```bash
 python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path "source/Chile ROO v2.docx"
 ```
@@ -635,11 +652,13 @@ The main python class used by this command can be found in the python module `ru
 Rules of origin data generated for import get placed in the directory `rules_of_origin/data/import`
 
 To import all rules of origin data files use:
+
 ```bash
 python dit_helpdesk/manage.py import_rules_or_origin --data_path import
 ```
 
 To import an individual rules of origin data file use:
+
 ```bash
 python dit_helpdesk/manage.py import_rules_or_origin --data_path "import/CHILE ROO V2.json"
 ```
@@ -649,6 +668,7 @@ The main python class used by this command can be found in the python module `ru
 #### Clearing the Data from the Database
 
 To clear the data from the database before re-importing use the following sql statement in a psql shell:
+
 ```sql
 truncate table rules_of_origin_rulesgroup CASCADE;
 ```
@@ -670,6 +690,7 @@ Regulations and documents data gets placed in the directory `regulations/data`
 #### Generating Regulations and Documents data
 
 To get the regaulation documents titles for the supplied document urls run:
+
 ```bash
 python dit_helpdesk/manage.py scrape_documents
 ```
@@ -681,6 +702,7 @@ The output file is `urls_with_text_description.json`
 #### Importing Regulations and Documents
 
 To import the regulations and documents data into the database run:
+
 ```bash
 python dit_helpdesk/manage.py import_regulations
 ```
@@ -688,6 +710,7 @@ python dit_helpdesk/manage.py import_regulations
 #### Clearing the Data from the Database
 
 To clear the data from the database before re-importing use the following sql statement in a psql shell:
+
 ```sql
 truncate table regulations_document CASCADE;
 truncate table regulations_regulation CASCADE;
