@@ -1,6 +1,8 @@
-import json
 import logging
 import re
+
+from rest_framework import generics
+from rest_framework.response import Response
 
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -18,6 +20,7 @@ from elasticsearch import Elasticsearch
 from countries.models import Country
 from hierarchy.models import Heading
 from hierarchy.views import hierarchy_data
+from search import helpers
 from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
 from search.documents.heading import HeadingDocument
@@ -25,10 +28,7 @@ from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm
 from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, \
-    ChapterDocumentSerializer, SectionDocumentSerializer
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+    ChapterDocumentSerializer, SectionDocumentSerializer, CommoditySearchSerializer
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -69,7 +69,6 @@ class CommoditySearchView(FormView):
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
         if 'q' in self.request.GET:
-
             if self.form.is_valid():
                 query = self.request.GET.get('q')
                 context["query"] = query
@@ -103,53 +102,8 @@ class CommoditySearchView(FormView):
                         }))
 
                 else:
-
-                    sort_object = {"ranking": {"order": "desc"}}
-                    query_object = {
-                            "multi_match": {
-                                "query": query,
-                                "type": "most_fields",
-                                "fields": ["keywords", "description"],
-                                "operator": "and" if "," not in query else "or"
-                            }
-                    }
-                    request = Search().using(client).query(query_object).sort(sort_object)
-
                     page = int(self.request.GET.get('page', '1'))
-                    start = (page - 1) * settings.RESULTS_PER_PAGE
-                    end = start + settings.RESULTS_PER_PAGE
-
-                    total_results = len(list(request.scan()))
-                    total_full_pages = int(total_results / settings.RESULTS_PER_PAGE)
-                    orphan_results = total_results % settings.RESULTS_PER_PAGE
-
-                    context["total_pages"] = total_full_pages + 1 if orphan_results > 0 else total_full_pages
-                    context['total_results'] = total_results
-
-                    total = request.count()
-
-                    request = request[0:total]
-                    response = request[start:end].execute()
-
-                    # filter out duplicate headings and subheadings from the results
-                    seen = []
-                    results = []
-
-                    for hit in response:
-                        if (hit["commodity_code"], hit["description"]) not in seen:
-                            results.append(hit)
-                        seen.append((hit["commodity_code"], hit["description"]))
-
-                    for hit in results:
-                        if isinstance(hit["commodity_code"], str):
-                            hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
-                            try:
-                                hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
-                            except KeyError as exception:
-                                logger.info("{0} {1}".format(hit["commodity_code_html"] , exception.args))
-
-                    context["current_page"] = page
-                    context["results_per_page"] = settings.RESULTS_PER_PAGE
+                    context.update(helpers.search(query=query, page=page))
                     context["next_url"] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
                         self.request.GET.get('country'),
                         self.request.GET.get('q'),
@@ -162,10 +116,12 @@ class CommoditySearchView(FormView):
                         self.request.GET.get('country'),
                         page-1
                     )
-                    context["results"] = results
-                    context["page_range_start"] = start if start != 0 else start + 1
-                    context["page_range_end"] = end if len(results) == settings.RESULTS_PER_PAGE else start + len(results)
-                    context["page_total"] = len(results)
+                    context["current_page"] = page
+                    context["results_per_page"] = settings.RESULTS_PER_PAGE
+                    context["page_total"] = len(context["results"])
+                    for hit in context['results']:
+                        if isinstance(hit["commodity_code"], str):
+                            hit["commodity_code_html"] = _generate_commodity_code_html(hit["commodity_code"])
                     return self.render_to_response(context)
             else:
                 return self.form_invalid(self.form)
@@ -193,6 +149,22 @@ class CommoditySearchView(FormView):
         context['selected_origin_country_name'] = country.name
 
         return context
+
+
+class CommoditySearchAPIView(generics.ListAPIView):
+    serializer_class = CommoditySearchSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        context = helpers.search(
+            query=serializer.validated_data['q'],
+            page=serializer.validated_data['page'],
+        )
+        context['results'] = [hit.to_dict() for hit in context['results']]
+        return Response(context)
 
 
 class CommodityDocumentViewSet(DocumentViewSet):

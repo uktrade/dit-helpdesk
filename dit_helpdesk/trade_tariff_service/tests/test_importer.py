@@ -191,4 +191,3 @@ class HierarchyBuilderTestCase(TestCase):
             model.objects.create(**subheading)
 
         self.assertTrue(builder.process_orphaned_subheadings() >= 3)
-        
