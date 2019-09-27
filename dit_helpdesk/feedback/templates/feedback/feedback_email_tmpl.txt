@@ -1,0 +1,7 @@
+Dear Trade Helpdesk Team,
+
+{{ message }}
+
+Thank you
+{{ name }}
+{{ email }}

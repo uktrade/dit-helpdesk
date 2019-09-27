@@ -1,0 +1,109 @@
+@import "flexible-tables";
+@import "hierarchy-tree";
+@import "cookie-banner";
+@import "commodity_details";
+@import "helpers";
+@import "commodity_search";
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+a {
+  @extend %govuk-link;
+}
+
+abbr {
+  cursor: help;
+}
+
+.autocomplete__option,
+.autocomplete__input,
+.autocomplete__hint {
+  @include govuk-typography-common;
+}
+
+.autocomplete__hint,
+.autocomplete__input {
+  height: 40px;
+}
+
+// fix the offeset the autocomple creates
+.autocomplete__hint {
+  left: 1px;
+}
+
+// add error state and
+.govuk-form-group--error .autocomplete__input {
+  border: $govuk-border-width-form-element-error solid $govuk-error-colour;
+}
+
+.app-commodity-code {
+  display: inline-block;
+}
+
+.app-commodity-code__highlight {
+  background: govuk-colour("grey-3");
+  display: inline-block;
+  font-family: "ntatabularnumbers", "nta", Arial, sans-serif;
+  letter-spacing: 0.05em;
+  margin: 0 0 0 0.25em;
+  padding: 0.25em 0.25em 0.125em  0.25em;
+
+  &--1 {
+    background-color: lighten(govuk-colour("light-purple"), 30%);
+  }
+
+  &--2 {
+    background-color: lighten(govuk-colour("light-blue"), 35%);
+  }
+
+  &--3 {
+    background-color: lighten(govuk-colour("turquoise"), 40%);
+  }
+
+  &--4 {
+    background-color: lighten(govuk-colour("orange"), 30%);
+  }
+}
+
+.app-footnotes {
+
+  a[name] {
+    @include govuk-link-common;
+    @include govuk-link-style-default;
+    @include govuk-link-print-friendly;
+    text-decoration: underline;
+    color: $govuk-link-colour;
+  }
+}
+
+.text-button{
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+  box-shadow: none;
+}
+.text-button:hover{
+  color: red;
+}
+
+#rules-of-origin table td {
+  vertical-align: top;
+}

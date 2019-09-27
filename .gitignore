@@ -19,7 +19,7 @@ lib64/
 parts/
 sdist/
 var/
-static/
+dit_helpdesk/static/
 wheels/
 *.egg-info/
 .installed.cfg
@@ -120,3 +120,16 @@ node_modules/
 **/*.js.gz
 src/
 .vscode
+docker-compose.env
+
+.DS_Store
+
+# exclude everything
+reports/*
+.envs/.development/*
+.envs/.test/*
+!reports/.gitkeep
+!.envs/.development/.postgres.template
+!.envs/.development/.django.template
+!.envs/.test/.postgres.template
+!.envs/.test/.django.template

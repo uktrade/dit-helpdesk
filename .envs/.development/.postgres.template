@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+DJANGO_POSTGRES_HOST=postgres
+DJANGO_POSTGRES_DATABASE=helpdesk
+DJANGO_POSTGRES_USER=#add value here
+DJANGO_POSTGRES_PASSWORD=#add value here
+DJANGO_POSTGRES_PORT=5432

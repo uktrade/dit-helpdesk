@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{%  load static %}
 
 {% block title %}Select country{% endblock title %}
 
@@ -22,7 +23,7 @@
       {% endif %}
       <h2 class="govuk-heading-l">
         <span class="govuk-caption-l">Step 1 of 2</span>
-        Where do the goods you're exporting come from?
+        Where are you exporting from?
       </h2>
     </div>
   </div>
@@ -31,7 +32,7 @@
       <form action="{% url 'choose-country' %}" method="post">
         <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
           {% csrf_token %}
-          <label class="govuk-hint" for="country-picker">Start typing the export country.</label>
+          <label class="govuk-hint" for="country-picker"></label>
           {% if isError %}
             <span id="select-country-error" class="govuk-error-message">
               <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage}}

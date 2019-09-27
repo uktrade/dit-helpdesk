@@ -1,6 +1,5 @@
 {% extends 'core/base.html' %}
-{% load static staticfiles i18n %}
-{% load cell_cleaner %}
+{% load static staticfiles i18n cell_cleaner %}
 
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
@@ -28,7 +27,7 @@
   </div>
   <div class="govuk-grid-row govuk-!-margin-bottom-7">
     <div class="govuk-grid-column-two-thirds">
-      <p class="govuk-body">{{ commodity.tts_title }}</p>
+      <p class="govuk-body">{{ commodity.description }}</p>
     </div>
   </div>
   <div class="govuk-grid-row">

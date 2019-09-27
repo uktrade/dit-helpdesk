@@ -6,50 +6,39 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
-import json
+import re
 from datetime import datetime, timedelta, timezone
-
-import requests
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
-from rules_of_origin.models import RulesGroupMember
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
-from rules_of_origin.util import get_rules_of_origin_html_fragments
+from hierarchy.models import Section
 
 TABLE_COLUMN_TITLES = [
     tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS
 ]
 
-COMMODITY_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'commodities/%s.json?currency=EUR&day=1&month=1&year=2019'
-)
-
-HEADING_URL = (
-    'https://www.trade-tariff.service.gov.uk/trade-tariff/'
-    'headings/%s.json?currency=EUR&day=1&month=1&year=2019'
-)
 
 def commodity_detail(request, commodity_code, country_code):
+    """
+    View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
+    display and the two character country code to provide the exporter geographical context which is
+    used to display the appropriate related supporting content
 
-    selected_country = country_code.upper()
+    :param request: django http request object
+    :param commodity_code: string
+    :param country_code: string
+    :return:
+    """
 
     country = Country.objects.filter(
-        country_code=selected_country
-    )
+        country_code=country_code.upper()
+    ).first()
 
-    country_exists = False
-
-    country_name = country.values()[0]['name']
-
-    if selected_country:
-        country_exists = country.exists()
-
-    if (not selected_country) or (not country_exists):
+    if not country:
         messages.error(request, 'Invalid originCountry')
         return redirect(reverse('choose-country'))
 
@@ -57,100 +46,161 @@ def commodity_detail(request, commodity_code, country_code):
         Commodity, commodity_code=commodity_code,
     )
 
-    if commodity.last_updated > datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
+    if commodity.last_updated < datetime.now(timezone.utc) - timedelta(days=1) or commodity.tts_json is None:
+        commodity.update_content()
 
-        get_commodity_content(commodity)
-
-    table_data = []
-
-    import_measures = commodity.tts_obj.get_import_measures(selected_country)
+    import_measures = commodity.tts_obj.get_import_measures(country.country_code)
     table_data = [
         measure_json.get_table_row() for measure_json in import_measures
     ]
 
-    # rules = list(commodity.get_heading().chapter.rules_of_origin.all())
-    rules = []
-    try:
-        for country_code in country:
-            for rd in country_code.rulesgroupmember_set.first().rules_group.rulesdocument_set.all():
-                for r in rd.rule_set.all():
-                    if r.chapter == commodity.get_heading().chapter:
-                        rules.append(r)
-    except Exception as ex:
-        print(ex.args)
+    commodity_path = commodity.get_path()
+    accordion_title = commodity_hierarchy_section_header(commodity_path)
+    rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 
     context = {
-        'selected_origin_country': selected_country,
+        'selected_origin_country': country.country_code,
         'commodity': commodity,
-        'selected_origin_country_name': country_name,
-        'rules_of_origin': rules,
+        'selected_origin_country_name': country.name,
+        'rules_of_origin': rules_of_origin,
+        'roo_footnotes': rules_of_origin,
         'table_data': table_data,
         'column_titles': TABLE_COLUMN_TITLES,
-        'regulations': commodity.regulation_set.all()
+        'regulations': commodity.get_regulations(),
+        'accordion_title': accordion_title,
+        'commodity_hierarchy_context': commodity_hierarchy_context(commodity_path, country.country_code, commodity_code)
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
 
 
-def get_commodity_content(commodity):
-
-    url = COMMODITY_URL % commodity.commodity_code
-    resp = requests.get(url, timeout=10)
-    resp_content = None
-    if resp.status_code == 200:
-        resp_content = resp.content.decode()
-    elif resp.status_code == 404:
-        url = HEADING_URL % commodity.commodity_code[:4]
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-    resp_content = update_tts_json_measure_conditions(resp_content)
-    commodity.tts_json = resp_content
-    commodity.save()
-
-
-def update_tts_json_measure_conditions(resp_content):
-
-    obj = json.loads(resp_content)
-    for idx, measure in enumerate(obj['import_measures']):
-        measure['measure_id'] = idx
-        for i, condition in enumerate(measure['measure_conditions']):
-            if isinstance(condition, dict):
-                condition['measure_id'] = idx
-                condition['condition_id'] = i
-    return json.dumps(obj)
-
-
 def measure_condition_detail(request, commodity_code, country_code, measure_id):
-
-    selected_country = country_code.upper()
+    """
+    View for an individual measure condition detail page template which takes three arguments, the commodity code that
+    the measure belongs to, the measure id of the individual measure being presented and the country code to
+    provide the exporter geographical context
+    :param request: django http request object
+    :param commodity_code: string
+    :param country_code: string
+    :param measure_id: int
+    :return:
+    """
 
     country = Country.objects.filter(
-        country_code=selected_country
-    )
+        country_code=country_code.upper()
+    ).first()
 
-    country_exists = False
-
-    country_name = country.values()[0]['name']
-
-    if selected_country:
-        country_exists = country.exists()
-
-    if (not selected_country) or (not country_exists):
+    if not country:
         messages.error(request, 'Invalid originCountry')
         return redirect(reverse('choose-country'))
 
     commodity = Commodity.objects.get(commodity_code=commodity_code)
-    import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=selected_country)
+    import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=country_code)
     conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
 
     context = {
-        'selected_origin_country': selected_country,
+        'selected_origin_country': country.country_code,
         'commodity': commodity,
-        'selected_origin_country_name': country_name,
+        'selected_origin_country_name': country.name,
         'import_measure': import_measure,
         'conditions': conditions
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
+
+
+def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
+    """
+    View helper function that returns an html representation of the context of the commodity within the
+    hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
+    commodity code
+    :param commodity_path: string
+    :param country_code: string
+    :param commodity_code: string
+    :return: html
+    """
+    listSize = len(commodity_path)
+    html = ''
+    reversedList = reversed(commodity_path)
+
+    for index, lista in enumerate(reversedList):
+        if index is 0:
+            # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
+            html += ''
+        else:
+            html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
+            for i, item in enumerate(lista):
+                expand = 'open'
+                if index is listSize:
+                    expand = 'closed'
+
+                if type(item) is Commodity:
+                    if item.commodity_code == commodity_code:
+                        html += f"""
+                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
+                            </li>
+                            """
+                    else:
+                        html += f"""
+                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                                <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
+                                <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
+                            </li>
+                            """
+                elif hasattr(item,'description'):
+                    html += f"""
+                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
+                            <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_generate_commodity_code_html(item)}"""
+                    if index is listSize:
+                        html += '</li>'
+
+            if index is listSize:
+                for i in range(0, listSize):
+                    # close
+                    html += '</ul>'
+
+    return html
+
+
+def _generate_commodity_code_html(item):
+    """
+    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
+    of 6, 2 and  digits and colour code formatted
+    :param item: model instance
+    :return: html
+    """
+    commodity_code_html = ''
+    if (type(item) is not Section):
+        commodity_code_html = '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+
+        if type(item) is Commodity:
+            item.harmonized_code = item.commodity_code
+
+        code_regex = re.search('([0-9]{6})([0-9]{2})([0-9]{2})', item.harmonized_code)
+        code_split = [
+            code_regex.group(1),
+            code_regex.group(2),
+            code_regex.group(3)
+        ]
+
+        for index, code_segment in enumerate(code_split):
+            counter = str(int(index) + 1)
+            commodity_code_html = commodity_code_html + \
+                '<span class="app-commodity-code__highlight app-commodity-code__highlight--' + counter + '">' + code_segment + '</span>'
+
+        commodity_code_html = commodity_code_html + '</span>'
+    return commodity_code_html
+
+
+def commodity_hierarchy_section_header(reversed_commodity_tree):
+    """
+    View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
+    and returned as formatted html string
+    :param reversed_commodity_tree: list
+    :return: html
+    """
+    section_index = len(reversed_commodity_tree) - 1
+    section = reversed_commodity_tree[section_index][0]
+    html = f'Section {section.roman_numeral}: {section.title.capitalize()}'
+    return html

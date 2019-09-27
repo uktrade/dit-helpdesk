@@ -1,30 +1,55 @@
 import json
-import sys
+import logging
 from pathlib import Path
-from pprint import pprint
 
 import pandas
 from django.apps import apps
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import _get_queryset
-from commodities.models import Commodity
-from hierarchy.models import Section, SubHeading, Heading, Chapter
-from regulations.models import Regulation, Document
-import logging
 from django.conf import settings
+from numpy import nan
+
+from commodities.models import Commodity
+from hierarchy.models import SubHeading, Heading
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+import sys
 
 
-def get_object_or_none(klass, *args, **kwargs):
-  queryset = _get_queryset(klass)
-  try:
-    return queryset.get(*args, **kwargs)
-  except queryset.model.DoesNotExist:
-    return None
+def data_loader(file_path):
+    """
+    opens source file at filepath and reads data into either dictionary object or pandas dataframe object
+    :param file_path: path to file
+    :return: data_frame or dictionary
+    """
+
+    extension = Path(file_path).suffix
+
+    if extension == '.json':
+        with open(file_path) as f:
+            json_data = json.load(f, )
+        return json_data
+    else:
+        with open(file_path) as f:
+            data_frame = pandas.read_csv(f, encoding='utf8')
+        return data_frame
+
+
+def data_writer(file_path, data):
+    """
+    takes a filepath and data object and writes the data to a file at the filepath
+    :param file_path: path to file
+    :param data: data to write to the file
+    """
+
+    outfile = open(file_path, 'w+')
+    json.dump(data, outfile)
 
 
 class RegulationsImporter:
+    """
+    Import regulations and their related document title and urls attached to appropriate hierarchy
+    heading and commodity leaf items
+    """
 
     def __init__(self):
         self.data = []
@@ -33,90 +58,80 @@ class RegulationsImporter:
         self.data_path = settings.REGULATIONS_DATA_PATH
         self.missing_commodities = []
 
-    def data_loader(self, file_path):
-
+    def instance_builder(self, data_map):
         """
-        :param file_path:
+        receive a dictionary item
+        find appropriate heading, subheading or commodity parent items for the regulation item
+        create the regulation item
+        set the M2M parent relationships for regulation
+        create document item for the regulation
+        set the relationship for
+
+        :param data_map: eg. {"parent_codes": [], "title": "title", "document" {"url": "url", "title": "title"}}
         :return:
         """
 
-        extension = Path(file_path).suffix
+        parent_headings = self.get_heading_parents(data_map)
 
-        if extension == '.json':
-            with open(file_path) as f:
-                json_data = json.load(f, )
-            return json_data
-        else:
-            with open(file_path) as f:
-                data_frame = pandas.read_csv(f, encoding='utf8')
-            return data_frame
+        parent_commodities = self.get_commodity_parents(data_map)
 
-    def data_writer(self, file_path, data):
+        parent_subheadings = self.get_subheading_parents(parent_commodities, data_map)
+
+        regulation_field_data = {"title": data_map['title']}
+
+        regulation = self._create_instance("Regulation", regulation_field_data)
+        regulation.headings.add(*list(parent_headings))
+        regulation.commodities.add(*list(parent_commodities))
+        regulation.subheadings.add(*list(parent_subheadings))
+
+        if data_map['document']['url'] is None:
+            data_map['document']['url'] = ''
+        document = self._create_instance("Document", data_map['document'])
+        document.regulations.add(regulation)
+        document.save()
+
+    @staticmethod
+    def get_subheading_parents(commodities, data_map):
         """
-        :param file_path:
-        :param data:
+        filter out the subheading codes from the list of parent codes. i.e. those codes that do not found in the list
+        of commodity item codes
+        return a queryset of subheading items based on the filtered list
+        :param commodities: list of parent commodity items found
+        :param data_map: regulation item data
+        :return: subheading items
+        """
+        seen_codes = [commodity.commodity_code for commodity in commodities]
+        missed_codes = [code for code in data_map['parent_codes'] if code not in seen_codes]
+        subheadings = SubHeading.objects.filter(commodity_code__in=missed_codes)
+        return subheadings
+
+    @staticmethod
+    def get_heading_parents(data_map):
+        """
+        return a queryset of heading items if any data_map[parent_codes] match
+        :param data_map: regulation item data
+        :return: heading items
+        """
+        headings = Heading.objects.filter(heading_code__in=data_map['parent_codes'])
+        return headings
+
+    @staticmethod
+    def get_commodity_parents(data_map):
+        """
+        return a queryset of commodity items if any data_map[parent_codes] match
+        :param data_map:
         :return:
         """
-
-        outfile = open(file_path, 'w+')
-        json.dump(data, outfile)
-
-    def instance_builder(self, regulations, item_data):
-
-        item_data = self._rename_key(item_data, "Commodity code", "commodity_id")
-
-        commodity_code = self._normalise_commodity_code(item_data['commodity_id'])
-        # commodity = get_object_or_none(Commodity, commodity_code=commodity_code)
-        parent_item = self.get_parent_item_or_none(commodity_code)
-        section = self.get_section_or_none(parent_item)
-
-        titles = list(regulations.Title)
-        types = list(regulations.Type)
-        celexes = list(regulations.CELEX)
-        urls = list(regulations['UK Reg'])
-
-        document_titles = [doc.strip() for doc in item_data["Documents"].split('|')]
-
-        try:
-            for item in document_titles:
-                for idx, title in enumerate(titles):
-                    if not isinstance(urls[idx], float) and title == item:
-                        regulation_field_data = {"title": title}
-
-                        regulation = self._create_instance("Regulation", regulation_field_data)
-
-                        document_field_data = {
-                            "title": self.documents[urls[idx]],
-                            "type": types[idx],
-                            "celex": celexes[idx],
-                            "url": urls[idx]
-                        }
-
-                        document = self._create_instance("Document", document_field_data)
-
-                        document.regulations.add(regulation)
-                        document.save()
-
-                        if parent_item._meta.model_name == "commodity":
-                            regulation.commodities.add(parent_item)
-                        elif parent_item._meta.model_name == "subheading":
-                            regulation.subheadings.add(parent_item)
-                        elif parent_item._meta.model_name == "heading":
-                            regulation.headings.add(parent_item)
-                        elif parent_item._meta.model_name == "chapter":
-                            regulation.chapters.add(parent_item)
-                        else:
-                            print("niether chapter, heading, subheading nor commodity")
-
-                        regulation.sections.add(section)
-                        regulation.save()
-
-        except Exception as ex:
-            print(ex.args)
-            self.missing_commodities.append(commodity_code)
-        self.data_writer(self.data_path.format('missing_commodities.json'), self.missing_commodities)
+        commodities = Commodity.objects.filter(commodity_code__in=data_map['parent_codes'])
+        return commodities
 
     def _create_instance(self, model_name, field_data):
+        """
+        get or create an instance of <model_name> with <field_data> and return the create instance
+        :param model_name: model name of the instance to create
+        :param field_data: data create the instance with
+        :return: existing or created instance
+        """
 
         model = apps.get_model(app_label=self.app_label, model_name=model_name)
 
@@ -124,15 +139,16 @@ class RegulationsImporter:
             **field_data
         )
         if created:
-            print("{0} instance created".format(model_name))
+            logger.info("{0} instance created".format(model_name))
         else:
-            print("{0} instance already exists".format(model_name))
+            logger.info("Returning existing {0}".format(model_name))
         return instance
 
-    def _normalise_commodity_code(self, commodity_id):
+    @staticmethod
+    def _normalise_commodity_code(commodity_id):
         """
-        Where a commodity code is only 9 digits prepend a zero
-        :param item_data: the dictioanry to work with
+        Where a commodity code is only 9 digits convert to a a string prepend a zero
+        :param commodity_id: int of commodity id to normalise
         :return:
         """
         if len(str(commodity_id)) == 9:
@@ -141,63 +157,102 @@ class RegulationsImporter:
             commodity_code = str(commodity_id)
         return commodity_code
 
-    def _rename_key(self, old_dict, old_name, new_name):
-        """
-        rename a dictionary key
-        :param old_dict: the dictioanry to work on
-        :param old_name: the old key name
-        :param new_name: the new key name
-        :return: dictionary
-        """
-        new_dict = {}
-        for key, value in zip(old_dict.keys(), old_dict.values()):
-            new_key = key if key != old_name else new_name
-            new_dict[new_key] = old_dict[key]
-        return new_dict
-
     def load(self, data_path=None):
+        """
+        Load data from files
+        :param data_path:
+        :return:
+        """
 
         if data_path:
 
-            regulations_data = self.data_loader(data_path.format('product_specific_regulations.csv'))
+            product_regulations = data_loader(data_path.format('product_specific_regulations.csv'))
 
-            commodity_titles = json.loads(self.data_loader(data_path.format('product_reqs_v2.csv')
+            commodity_regulations_map = json.loads(data_loader(data_path.format('product_reqs_v2.csv')
                                                            ).to_json(orient='records'))
-            self.documents = self.data_loader(data_path.format('urls_with_text_description.json'))
+            document_urls_title_map = data_loader(data_path.format('urls_with_text_description.json'))
 
-            for item in commodity_titles:
-                self.data.append(self.instance_builder(regulations_data, item))
+            regulations_data = self.clean_and_extend_regulations_data(document_urls_title_map, product_regulations)
 
-    def get_parent_item_or_none(self, commodity_code):
+            titles_to_codes_map = self.build_titles_to_codes_map(commodity_regulations_map)
 
-        try:
-            item = Commodity.objects.filter(commodity_code=commodity_code).first()
-            if item is None:
-                item = SubHeading.objects.filter(commodity_code=commodity_code).first()
-                if item is None:
-                    item = Heading.objects.filter(heading_code=commodity_code).first()
-                    if item is None:
-                        item = Chapter.objects.filter(chapter_code=commodity_code).first()
-        except ObjectDoesNotExist as odne:
-            print(odne.args)
-            sys.exit()
-        return item
+            self.data = self.build_list_of_regulation_maps(regulations_data, titles_to_codes_map)
 
-    def get_section_or_none(self, parent_item):
+    def process(self):
+        """
+        loop through a list of dictionaries filtering out those whose title attribute is None and pass to the
+        instance builder method
+        """
+        for regulation_map in self.data:
+            if not regulation_map['document']['title'] is None:
+                self.instance_builder(regulation_map)
 
-        model_name = parent_item._meta.model_name
+    @staticmethod
+    def clean_and_extend_regulations_data(documents, regulations):
+        """
+        add a column for the corresponding title for each url and None if the url field is empty
+        returns list of regulations each with a corresponding document url and title
+        e.g. "regulations_title", "document_url", "document_title"
+        :param documents: document url and title map
+        :param regulations: table of regulation titles with urls
+        :return: return list of regulations each with a corresponding document url and title
+        """
+        regulations_table = regulations[['Title', 'UK Reg']].values.tolist()
 
-        try:
-            if model_name == "commodity":
-                heading_obj = parent_item.get_heading()
-            elif model_name == "subheading":
-                heading_obj = parent_item.get_parent()
-                while type(heading_obj) is not Heading:
-                    heading_obj = heading_obj.get_parent()
+        for item in regulations_table:
+            if item[1] is not nan and item[1] in documents.keys():
+                item.append(documents[item[1]])
             else:
-                heading_obj = parent_item
-        except Exception as ex:
-            print(ex.args)
-            sys.exit()
+                item[1] = None
+                item.append(None)
+        return regulations_table
 
-        return heading_obj.chapter.section
+    def build_list_of_regulation_maps(self, data_table, titles_to_codes_map):
+        """
+        build a list of dictionaries
+        eg. [{"parent_codes": [], "title": "title", "document" {"url": "url", "title": "title"}},]
+
+        :param data_table: e.g. "regulations_title", "document_url", "document_title"
+        :param titles_to_codes_map: e.g. {"commodity_title": ["list", "of", "code"], ...}
+        :return: list of dictionaries
+        """
+        map_list = []
+        for item in data_table:
+            try:
+                parent_codes = [self._normalise_commodity_code(code) for code in titles_to_codes_map[item[0]]]
+
+                if item[0] in titles_to_codes_map.keys():
+                    map_list.append(
+                        {
+                            "parent_codes": parent_codes,
+                            "title": item[0],
+                            "document": {
+                                "url": item[1],
+                                "title": item[2]
+                            }
+                        }
+                    )
+            except KeyError as key_err:
+                logger.debug("Missing regulations documents for {0}: with error {1} ".format(item[0], key_err.args))
+
+        return map_list
+
+    @staticmethod
+    def build_titles_to_codes_map(commodity_titles):
+        """
+        builds a map of a list of commodity codes associated with each regulation title
+        returns a dictionary keyed on regulation title
+        e.g.
+        {"commodity_title": ["list", "of", "code"], ...}
+        :param commodity_titles: table of a list of regulation titles for each commodity code
+        :return: dictionary
+        """
+        data_map = {}
+        for commodity in commodity_titles:
+            for document in commodity['Documents'].split('|'):
+                doc_title = document.strip()
+                if doc_title in data_map.keys() and isinstance(data_map[doc_title], list):
+                    data_map[doc_title].append(commodity['Commodity code'])
+                else:
+                    data_map[doc_title] = [commodity['Commodity code']]
+        return data_map

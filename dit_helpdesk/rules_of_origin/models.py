@@ -18,9 +18,9 @@ class RulesGroupMember(models.Model):
     """
     Rules of Origin Group
     """
-    rules_group = models.ForeignKey("RulesGroup", on_delete=models.CASCADE, null=True, blank=True)
-    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
+    rules_group = models.ForeignKey("RulesGroup", on_delete=models.CASCADE)
+    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE)
+    start_date = models.DateField()
     finish_date = models.DateField(null=True, blank=True)
 
     class Meta:
@@ -51,7 +51,7 @@ class Rule(models.Model):
     """
     Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
     """
-    rule_id = models.CharField(max_length=50, null=True, blank=True)
+    rule_id = models.CharField(max_length=255)
     description = models.TextField()
     working_or_processing_one = models.TextField(null=True, blank=True)
     working_or_processing_two = models.TextField(null=True, blank=True)
@@ -71,4 +71,20 @@ class Rule(models.Model):
         get child Rules if Chapter level rule
         :return: list of rules
         """
-        return [rule for rule in self.children.all() if self.chapter is not None]
+        return [rule for rule in self.chapter.rules_of_origin.all() if self.chapter is not None]
+
+
+class RulesDocumentFootnote(models.Model):
+    """
+    Rules of origin document footnotes
+    """
+    number = models.PositiveSmallIntegerField()
+    link_html = models.TextField()
+    note = models.TextField()
+    rules_document = models.ForeignKey("RulesDocument", on_delete=models.CASCADE, related_name="footnotes")
+
+    class Meta:
+        verbose_name_plural = "rules document footnotes"
+
+    def __str__(self):
+        return "Footnote {0}".format(self.number)

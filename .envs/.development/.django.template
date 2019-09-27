@@ -1,0 +1,30 @@
+DEBUG=True
+DJANGO_SECRET_KEY=#add value here
+DJANGO_SETTINGS_MODULE=config.settings.development
+DJANGO_BASE_DIR=/app
+DIT_HELPDESK_ADMIN_PASSWORD=<<CHECK_VAULT>>
+SENTRY_DSN=<<CHECK_VAULT>>
+
+ADMIN_ENABLED=True
+RESTRICT_ADMIN=False
+
+LOGIN_URL=/auth/login/
+LOGIN_REDIRECT_URL=/admin/login/
+
+# optional. only for testing against contact form submissions to zenddesk
+DIRECTORY_FORMS_API_BASE_URL=http://dockerhost:8011
+# directory_forms_api app running locally on http://forms.trade.great:8011/
+# create a client in the forms api app
+# add the Key here
+DIRECTORY_FORMS_API_API_KEY=<<CHECK_LOCAL_DIRECTORY_FORMS_API_APP>>
+# add the identifier here
+DIRECTORY_FORMS_API_SENDER_ID=<<CHECK_LOCAL_DIRECTORY_FORMS_API_APP>>
+DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS=0
+DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS=0
+
+FEEDBACK_DESTINATION_EMAIL=going@to.com
+APP_START_DOMAIN=http://localhost:8000/choose-country/
+
+AUTHBROKER_CLIENT_ID=<<CHECK_VAULT>>
+AUTHBROKER_CLIENT_SECRET=<<CHECK_VAULT>>
+AUTHBROKER_URL=<<CHECK_VAULT>>
