@@ -347,9 +347,34 @@ python dit_helpdesk/manage.py scrape_rules_of_origin_docx
 ```
 This should take a couple of minutes per word document.
 
-** TODO: create a section for preparing the regulations content
-** TODO: create a section for preparing the search indexes
+### Preparing the regulations content
 
+### Preparing the search indexes
+
+### Workaround for creating superuser for admin in development
+
+Make sure that you have the correct settings values for the authbroker sso integration
+
+If these have been set up on PaaS check either the vault or `cf env {yourapp}` for appropriate values. If they have not 
+been set up check with system administrator.
+
+Use to django management command to get into an environment shell on you local development environment
+
+```
+./manage.py shell_plus
+
+```   
+
+Then create the super user like so:
+
+```
+from django.contrib.auth import get_user_model
+
+user = get_user_model().objects.get(email='<<your gov.uk email address>>')
+user.is_superuser=True
+user.is_staff=True
+user.save()
+``` 
 
 ### Running tests with Docker development deployment
 
@@ -379,7 +404,7 @@ from your host machine at /reports
 
 
 ### Running tests and generating coverage with Docker
-** test this still works
+
 ```bash
 docker-compose -f text.yml build
 docker-compose -f test.yml up
@@ -404,7 +429,6 @@ files in `dit_helpdesk/static_collected/js/`.
 
 
 ### Install locally
-** TDOD needs updating
 
 To run, we need to create a Python virtual environment and install any requirements.
 
