@@ -303,3 +303,38 @@ class TestSearchHierarchyTestCase(TestCase):
 
         resp = search_hierarchy(request=request, node_id="section-1", country_code=None)
         self.assertEqual(resp.status_code, 302)
+
+
+class TestSearchHierarchyAPITestCase(CommoditySetupMixin, TestCase):
+    """
+    Test search hierarchy view
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.client = Client()
+
+    fixtures = [settings.COUNTRIES_DATA]
+
+    def test_search_hierarchy(self):
+        url = reverse('search:hierarchy-api-search')
+
+        response = self.client.get(url, {"country_code": "au", "node_id": "section-1"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            'results': [
+                {
+                    'key': 'section-10',
+                    'type': 'branch',
+                    'roman_numeral': 'X',
+                    'chapter_range_str': '47 to 49',
+                    'label': 'Live animals; animal products'
+                }
+            ]
+        })
+
+    def test_search_hierarchy_when_country_code_is_None(self):
+        response = self.client.get(reverse('search:hierarchy-api-search'), {"node_id": "section-1"})
+
+        self.assertEqual(response.status_code, 400)

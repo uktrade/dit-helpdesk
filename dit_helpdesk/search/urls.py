@@ -21,5 +21,10 @@ urlpatterns = [
         'api/commodity/',
         views.CommoditySearchAPIView.as_view(),
         name='commodity-api-search',
-    )
+    ),
+    path(
+        'api/hierarchy/',
+        views.HierarchySearchAPIView.as_view(),
+        name='hierarchy-api-search',
+    ),
 ]
