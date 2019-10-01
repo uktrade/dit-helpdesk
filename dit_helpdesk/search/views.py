@@ -9,10 +9,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic.edit import FormView
 from django_elasticsearch_dsl.search import Search
-from django_elasticsearch_dsl_drf.constants import LOOKUP_FILTER_RANGE, LOOKUP_QUERY_IN, LOOKUP_FILTER_TERMS, \
-    LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE
-from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, \
-    DefaultOrderingFilterBackend, SearchFilterBackend
 
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
@@ -28,7 +24,7 @@ from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm
 from search.serializers import CommodityDocumentSerializer, SubHeadingDocumentSerializer, HeadingDocumentSerializer, \
-    ChapterDocumentSerializer, SectionDocumentSerializer, CommoditySearchSerializer
+    ChapterDocumentSerializer, SectionDocumentSerializer, CommoditySearchSerializer, HierarchySearchSerializer
 
 
 def search_hierarchy(request, node_id='root', country_code=None):
@@ -165,6 +161,23 @@ class CommoditySearchAPIView(generics.ListAPIView):
         )
         context['results'] = [hit.to_dict() for hit in context['results']]
         return Response(context)
+
+
+
+class HierarchySearchAPIView(generics.ListAPIView):
+    serializer_class = HierarchySearchSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        hierarchy = hierarchy_data(
+            country_code=serializer.validated_data['country_code'],
+            node_id=serializer.validated_data['node_id'],
+            content_type='json',
+        )
+        return Response({'results': hierarchy})
 
 
 class CommodityDocumentViewSet(DocumentViewSet):

@@ -78,3 +78,8 @@ class SectionDocumentSerializer(DocumentSerializer):
 class CommoditySearchSerializer(serializers.Serializer):
     q = serializers.CharField()
     page = serializers.IntegerField(default=1)
+
+
+class HierarchySearchSerializer(serializers.Serializer):
+    country_code = serializers.CharField()
+    node_id = serializers.CharField(default='root')

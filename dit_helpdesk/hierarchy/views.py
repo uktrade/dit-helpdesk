@@ -10,6 +10,7 @@ from commodities.views import TABLE_COLUMN_TITLES
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
+code_regex = re.compile('([0-9]{6})([0-9]{2})([0-9]{2})')
 HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), 'hierarchy_cached.json')
 with open(HIERARCHY_JSON_PATH) as f:
     HIERARCHY_CACHED = json.loads(f.read())
@@ -66,7 +67,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     :param origin_country: string representing the origin country code
     :return: html snippet that represents the expanded section of the hierarchy
     """
-    if node == 'root': # if roo it list only sections
+    if node == 'root': # if root it list only sections
         children = Section.objects.all().order_by('section_id')
         html = '<ul class="app-hierarchy-tree">'
         end = '\n</ul>'
@@ -88,13 +89,12 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             if type(child) is Commodity:
                 child.harmonized_code = child.commodity_code
 
-            code_regex = re.search('([0-9]{6})([0-9]{2})([0-9]{2})', child.harmonized_code)
+            matches = code_regex.search(child.harmonized_code)
             code_split = [
-                code_regex.group(1),
-                code_regex.group(2),
-                code_regex.group(3)
+                matches.group(1),
+                matches.group(2),
+                matches.group(3)
             ]
-
             for index, code_segment in enumerate(code_split):
                 counter = str(int(index) + 1)
                 commodity_code_html = commodity_code_html + \
@@ -118,7 +118,48 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     return html
 
 
-def hierarchy_data(country_code, node_id='root'):
+def _get_hierarchy_level_json(node, expanded, origin_country):
+    """
+    View helper function to return the JSON for the selected hierarchy node
+    :param node: string or model instance the current node
+    :param expanded: list of hierarchy ids that make up the currently expanded path
+    :param origin_country: string representing the origin country code
+    :return: dict that represents the expanded section of the hierarchy
+    """
+
+    serialized = []
+
+    if node == 'root': # if root it list only sections
+        children = Section.objects.all().order_by('section_id')
+    else:
+        children = node.get_hierarchy_children()
+
+    for child in children:
+        element = {'key': child.hierarchy_key}
+        if type(child) is Section:
+            element.update({
+                'type': 'branch',
+                'roman_numeral': child.roman_numeral,
+                'chapter_range_str': child.chapter_range_str,
+                'label': child.title,
+            })
+        else:
+            if type(child) is Commodity or len(child.get_hierarchy_children()) is 0:
+                element['type'] = 'leaf'
+            else:
+                element['type'] = 'parent'
+            code = child.commodity_code if isinstance(child, Commodity) else child.harmonized_code
+            element['commodity_code'] = code_regex.search(code).groups()
+            element['label'] = child.description
+
+        if child.hierarchy_key in expanded:
+            element['children'] = _get_hierarchy_level_json(node=child, expanded=expanded, origin_country=origin_country)
+
+        serialized.append(element)
+    return serialized
+
+
+def hierarchy_data(country_code, node_id='root', content_type='html'):
     """
     View helper function
     :param country_code: string representing country code
@@ -127,9 +168,12 @@ def hierarchy_data(country_code, node_id='root'):
     """
     node_id = node_id.rstrip('/')
     expanded = _get_expanded_context(node_id)
-    html = _get_hierarchy_level_html('root', expanded, country_code)
-
-    return html
+    serializers = {
+        'html': _get_hierarchy_level_html,
+        'json': _get_hierarchy_level_json,
+    }
+    serializer = serializers[content_type]
+    return serializer(node='root', expanded=expanded, origin_country=country_code)
 
 
 def heading_detail(request, heading_code, country_code):
@@ -261,7 +305,7 @@ def _generate_commodity_code_html(item):
         if type(item) is Commodity:
             item.harmonized_code = item.commodity_code
 
-        code_regex = re.search('([0-9]{6})([0-9]{2})([0-9]{2})', item.harmonized_code)
+        code_regex = code_regex.search(item.harmonized_code)
         code_split = [
             code_regex.group(1),
             code_regex.group(2),
