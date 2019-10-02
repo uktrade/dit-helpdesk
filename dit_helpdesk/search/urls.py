@@ -2,29 +2,27 @@ from django.urls import re_path, path
 
 from search import views
 
-app_name = 'search'
+app_name = "search"
 
 urlpatterns = [
-
     re_path(
-        r'country/(?P<country_code>\w+)/$',
+        r"country/(?P<country_code>\w+)/$",
         views.CommoditySearchView.as_view(),
-        name='search-commodity'
+        name="search-commodity",
     ),
-
     re_path(
-        r'country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)',
+        r"country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)",
         views.search_hierarchy,
-        name='search-hierarchy'
+        name="search-hierarchy",
     ),
     path(
-        'api/commodity/',
+        "api/commodity/",
         views.CommoditySearchAPIView.as_view(),
-        name='commodity-api-search',
+        name="commodity-api-search",
     ),
     path(
-        'api/hierarchy/',
+        "api/hierarchy/",
         views.HierarchySearchAPIView.as_view(),
-        name='hierarchy-api-search',
+        name="hierarchy-api-search",
     ),
 ]

@@ -5,7 +5,9 @@ from regulations.importer import RegulationsImporter
 
 
 class Command(BaseCommand):
-    help = """Command to import links to documents and regulations related to commodties"""
+    help = (
+        """Command to import links to documents and regulations related to commodties"""
+    )
 
     def handle(self, *args, **options):
 

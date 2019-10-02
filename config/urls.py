@@ -29,120 +29,76 @@ from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 
 
-handler404 = 'core.views.error404handler'
-handler500 = 'core.views.error500handler'
+handler404 = "core.views.error404handler"
+handler500 = "core.views.error500handler"
 
 urlpatterns = [
     # redirects to start page
-    path(
-        '',
-        index.IndexRedirect.as_view(),
-        name="index"
-    ),
-
-    path(
-        'auth/',
-        include('authbroker_client.urls',
-                namespace='authbroker')
-    ),
-
-    path(
-        'choose-country/',
-        country_views.choose_country_view,
-        name='choose-country'
-    ),
-
-    path(
-        'cookies/',
-        cookie_views.CookiesView.as_view(),
-        name="cookies"
-    ),
-
+    path("", index.IndexRedirect.as_view(), name="index"),
+    path("auth/", include("authbroker_client.urls", namespace="authbroker")),
+    path("choose-country/", country_views.choose_country_view, name="choose-country"),
+    path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
-        r'^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$',
+        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$",
         commodity_views.commodity_detail,
-        name='commodity-detail'
+        name="commodity-detail",
     ),
-
     re_path(
-        r'^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$',
+        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$",
         hierarchy_views.heading_detail,
-        name='heading-detail'
+        name="heading-detail",
     ),
-
     re_path(
-        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})'
-        r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
+        r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         commodity_views.measure_condition_detail,
-        name='commodity-measure-conditions'
+        name="commodity-measure-conditions",
     ),
-
     re_path(
-        r'country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})'
-        r'/import-measure/(?P<measure_id>\d{1,2})/conditions',
+        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})"
+        r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         hierarchy_views.measure_condition_detail,
-        name='heading-measure-conditions'
+        name="heading-measure-conditions",
     ),
-
     re_path(
-        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})'
-        r'/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)',
+        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
+        r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
         commodity_views.measure_quota_detail,
-        name='commodity-measure-quota'
+        name="commodity-measure-quota",
     ),
-
     re_path(
-        r'country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})'
-        r'/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)',
+        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})"
+        r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
         hierarchy_views.measure_quota_detail,
-        name='heading-measure-quota'
+        name="heading-measure-quota",
     ),
-
+    path("feedback/", feedback_views.FeedbackView.as_view(), name="feedback-view"),
     path(
-        'feedback/',
-        feedback_views.FeedbackView.as_view(),
-        name='feedback-view'
+        "contact/", contact_views.ContactFormWizardView.as_view(), name="contact-view"
     ),
-
     path(
-        'contact/',
-        contact_views.ContactFormWizardView.as_view(),
-        name='contact-view'
-    ),
-
-    path(
-        'feedback/success/',
+        "feedback/success/",
         feedback_views.FeedbackSuccessView.as_view(),
-        name='feedback-success-view',
+        name="feedback-success-view",
     ),
-
     # re_path('feedback/', include('feedback.urls', namespace="feedback")),
-
     path(
-        'privacy-terms-and-conditions/',
+        "privacy-terms-and-conditions/",
         privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(),
-         name="privacy_terms_and_conditions_views"
+        name="privacy_terms_and_conditions_views",
     ),
-
-    re_path(
-        r'^check/$',
-        HealthCheckView.as_view(),
-        name='healthcheck'
-    ),
-
-    re_path('search/', include('search.urls', namespace="search")),
+    re_path(r"^check/$", HealthCheckView.as_view(), name="healthcheck"),
+    re_path("search/", include("search.urls", namespace="search")),
 ]
 
 
 if settings.ADMIN_ENABLED:
     urlpatterns += [
-        path('admin/login/', admin_login_view),
-        path('admin/', admin.site.urls)
+        path("admin/login/", admin_login_view),
+        path("admin/", admin.site.urls),
     ]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns = [
-        path('', include(debug_toolbar.urls)),
-    ] + urlpatterns
 
+    urlpatterns = [path("", include(debug_toolbar.urls))] + urlpatterns

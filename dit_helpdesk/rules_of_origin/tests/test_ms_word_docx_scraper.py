@@ -14,11 +14,16 @@ class MsWrodDocxScraperTestCase(TestCase):
     Test MS Word Docx Scraper
     """
 
-    def test_processing_text_with_footnote_returns_text_with_formatted_html_footnote_link(self):
+    def test_processing_text_with_footnote_returns_text_with_formatted_html_footnote_link(
+        self
+    ):
         scraper = DocxScraper()
         source_text = "This is some text with a footnote(1)"
         result_text = scraper.process_footnote(source_text)
-        self.assertEqual(result_text, 'This is some text with a footnote(<a href="#footnote_1">1</a>)')
+        self.assertEqual(
+            result_text,
+            'This is some text with a footnote(<a href="#footnote_1">1</a>)',
+        )
 
     def test_footnotes_exist(self):
         self.scraper = DocxScraper()

@@ -15,11 +15,11 @@ def AdminIpRestrictionMiddleware(get_response):
     """
 
     def middleware(request):
-        if resolve(request.path).app_name == 'admin':
+        if resolve(request.path).app_name == "admin":
             if settings.RESTRICT_ADMIN:
                 client_ip = get_client_ip(request)
                 if not is_valid_admin_ip(client_ip):
-                    return HttpResponse('Unauthorized', status=401)
+                    return HttpResponse("Unauthorized", status=401)
 
         return get_response(request)
 

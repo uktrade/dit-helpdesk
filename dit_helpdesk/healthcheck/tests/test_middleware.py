@@ -14,7 +14,7 @@ class TestMiddleware(TestCase):
     def setUp(self):
         get_response = Mock()
         self.middleware = HealthCheckMiddleware(get_response)
-        self.request = Mock(spec=[''])
+        self.request = Mock(spec=[""])
 
     def test_middleware_start_time_added(self):
         """ Checks start_time is added to a request object in middleware"""

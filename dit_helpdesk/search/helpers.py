@@ -21,7 +21,7 @@ def search(query, page):
             "query": query,
             "type": "most_fields",
             "fields": ["keywords", "description"],
-            "operator": "and" if "," not in query else "or"
+            "operator": "and" if "," not in query else "or",
         }
     }
     request = Search().using(client).query(query_object).sort(sort_object)
@@ -47,13 +47,17 @@ def search(query, page):
             try:
                 hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
             except KeyError as exception:
-                logger.info("{0} {1}".format(hit["commodity_code_html"] , exception.args))
+                logger.info(
+                    "{0} {1}".format(hit["commodity_code_html"], exception.args)
+                )
             results.append(hit)
         seen.append((hit["commodity_code"], hit["description"]))
     return {
         "results": results,
         "page_range_start": start if start != 0 else start + 1,
-        "page_range_end": end if len(results) == settings.RESULTS_PER_PAGE else start + len(results),
+        "page_range_end": end
+        if len(results) == settings.RESULTS_PER_PAGE
+        else start + len(results),
         "total_pages": total_full_pages + 1 if orphan_results > 0 else total_full_pages,
-        'total_results': total_results,
+        "total_results": total_results,
     }

@@ -11,10 +11,10 @@ class FeedbackModelTestCase(TestCase):
     """
 
     def setUp(self):
-        self.feedback = mixer.blend(
-            Feedback
-        )
+        self.feedback = mixer.blend(Feedback)
 
     def test_feedback_model_str(self):
-        self.assertEquals(str(self.feedback), "Form {0}".format(
-            self.feedback.created_on.strftime("%B %d, %Y, %H:%M:%S")))
+        self.assertEquals(
+            str(self.feedback),
+            "Form {0}".format(self.feedback.created_on.strftime("%B %d, %Y, %H:%M:%S")),
+        )

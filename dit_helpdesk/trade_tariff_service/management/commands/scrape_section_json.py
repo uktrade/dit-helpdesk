@@ -6,7 +6,6 @@ from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
 
         builder = HierarchyBuilder()

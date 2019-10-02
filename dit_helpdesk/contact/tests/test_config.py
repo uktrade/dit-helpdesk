@@ -10,5 +10,5 @@ class ContactConfigTestCase(TestCase):
     """
 
     def test_apps(self):
-        self.assertEqual(ContactConfig.name, 'contact')
-        self.assertEqual(apps.get_app_config('contact').name, 'contact')
+        self.assertEqual(ContactConfig.name, "contact")
+        self.assertEqual(apps.get_app_config("contact").name, "contact")

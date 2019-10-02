@@ -9,20 +9,23 @@ from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from textblob import Word
 
-nltk.download('stopwords')
-nltk.download('wordnet')
+nltk.download("stopwords")
+nltk.download("wordnet")
 
 warnings.filterwarnings("ignore")
 
 
 class SearchKeywordGenerator:
-
-    def __init__(self, headings_file, ga_search_terms_file, green_pages_file, output_file):
+    def __init__(
+        self, headings_file, ga_search_terms_file, green_pages_file, output_file
+    ):
 
         self.stop_words = set(stopwords.words("english"))
         self.subhead = pd.read_csv(headings_file)
-        self.google_analytics_searched_words = pd.read_excel(ga_search_terms_file, sheetname='Dataset1')
-        self.green_page = pd.read_excel(green_pages_file, sheetname='Green_Page')
+        self.google_analytics_searched_words = pd.read_excel(
+            ga_search_terms_file, sheetname="Dataset1"
+        )
+        self.green_page = pd.read_excel(green_pages_file, sheetname="Green_Page")
         self.output_file = output_file
 
         self.searched_words = self.get_searched_words()
@@ -33,7 +36,7 @@ class SearchKeywordGenerator:
         convert GA searched items to singular words
         :return: list
         """
-        words = self.google_analytics_searched_words['Search Term']
+        words = self.google_analytics_searched_words["Search Term"]
         return [Word(word).singularize() for word in words if word is not np.nan]
 
     def get_searched_pair_words(self):
@@ -51,11 +54,14 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        new_sent = [Word(word).singularize() for word in content.lower().split() if
-                    Word(word).singularize() not in stop_words]
-        new_cont = ' '.join(new_sent)
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        new_sent = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        new_cont = " ".join(new_sent)
         return new_cont
 
     def get_searched_single_word(self, content, stop_words):
@@ -65,13 +71,19 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        new_sent = [Word(word).singularize() for word in content.lower().split() if
-                    Word(word).singularize() not in stop_words]
-        new_sent = [Word(word).singularize() for word in new_sent if Word(word).singularize()
-                    in set(self.searched_words)]
-        new_cont = ' '.join(new_sent)
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        new_sent = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        new_sent = [
+            Word(word).singularize()
+            for word in new_sent
+            if Word(word).singularize() in set(self.searched_words)
+        ]
+        new_cont = " ".join(new_sent)
         return new_cont
 
     def get_searched_unique_single_word(self, content, stop_words):
@@ -81,17 +93,23 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        new_sent = [Word(word).singularize() for word in content.lower().split() if
-                    Word(word).singularize() not in stop_words]
-        new_sent = [Word(word).singularize() for word in new_sent if Word(word).singularize()
-                    in set(self.searched_words)]
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        new_sent = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        new_sent = [
+            Word(word).singularize()
+            for word in new_sent
+            if Word(word).singularize() in set(self.searched_words)
+        ]
         uni_cont = []
         for w in new_sent:
             if w not in uni_cont:
                 uni_cont.append(w)
-        uni_cont = ' '.join(uni_cont)
+        uni_cont = " ".join(uni_cont)
         return uni_cont
 
     def get_un_searched_single_word(self, content, stop_words):
@@ -101,13 +119,19 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        new_sent = [Word(word).singularize() for word in content.lower().split() if
-                    Word(word).singularize() not in stop_words]
-        new_sent = [Word(word).singularize() for word in new_sent if
-                    Word(word).singularize() not in set(self.searched_words)]
-        new_cont = ' '.join(new_sent)
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        new_sent = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        new_sent = [
+            Word(word).singularize()
+            for word in new_sent
+            if Word(word).singularize() not in set(self.searched_words)
+        ]
+        new_cont = " ".join(new_sent)
         return new_cont
 
     def get_searched_paired_word(self, content, stop_words):
@@ -117,18 +141,25 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        content = [Word(word).singularize() for word in content.lower().split() if
-                   Word(word).singularize() not in stop_words]
-        content = ' '.join(content)
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        content = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        content = " ".join(content)
 
         # extract pair words
         pair_gram = ngrams(content.split(), 2)
-        pairword = [' '.join(element) for element in pair_gram]
-        searched_pair_word = [p_word for p_word in pairword if p_word in self.searched_pair_words]
-        searched_pair_word = list(dict.fromkeys(searched_pair_word))  # return unique pairword in the list
-        searched_pair_word = ' '.join(searched_pair_word)
+        pairword = [" ".join(element) for element in pair_gram]
+        searched_pair_word = [
+            p_word for p_word in pairword if p_word in self.searched_pair_words
+        ]
+        searched_pair_word = list(
+            dict.fromkeys(searched_pair_word)
+        )  # return unique pairword in the list
+        searched_pair_word = " ".join(searched_pair_word)
         return searched_pair_word
 
     def get_searched_single_word_synonym(self, content, stop_words):
@@ -138,12 +169,18 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: unique synonyms as list converted to string
         """
-        content = re.sub(r'[^\w\s]', '', content)
-        content = re.sub(r'[0-9]+', '', content)
-        new_sent = [Word(word).singularize() for word in content.lower().split() if
-                    Word(word).singularize() not in stop_words]
-        new_sent = [Word(word).singularize() for word in new_sent if Word(word).singularize() in
-                    set(self.searched_words)]
+        content = re.sub(r"[^\w\s]", "", content)
+        content = re.sub(r"[0-9]+", "", content)
+        new_sent = [
+            Word(word).singularize()
+            for word in content.lower().split()
+            if Word(word).singularize() not in stop_words
+        ]
+        new_sent = [
+            Word(word).singularize()
+            for word in new_sent
+            if Word(word).singularize() in set(self.searched_words)
+        ]
 
         syn = []
         for w in new_sent:
@@ -151,7 +188,7 @@ class SearchKeywordGenerator:
                 for lemma in s.lemmas():
                     syn.append(lemma.name())
         syn = list(dict.fromkeys(syn))  #
-        syn = ' '.join(syn)
+        syn = " ".join(syn)
         return syn
 
     def create_clean_content(self):
@@ -165,20 +202,33 @@ class SearchKeywordGenerator:
         searched_unique_single_word_synonym = []
 
         for i in range(self.subhead.shape[0]):
-            clean_content.append(self.filter_stop_words(self.subhead.Col7[i], self.stop_words))
+            clean_content.append(
+                self.filter_stop_words(self.subhead.Col7[i], self.stop_words)
+            )
             searched_unique_single_word.append(
-                self.get_searched_unique_single_word(self.subhead.Col7[i], self.stop_words))
+                self.get_searched_unique_single_word(
+                    self.subhead.Col7[i], self.stop_words
+                )
+            )
             un_searched_unique_single_word.append(
-                self.get_un_searched_single_word(self.subhead.Col7[i], self.stop_words))
-            searched_pair_word.append(self.get_searched_paired_word(self.subhead.Col7[i], self.stop_words))
+                self.get_un_searched_single_word(self.subhead.Col7[i], self.stop_words)
+            )
+            searched_pair_word.append(
+                self.get_searched_paired_word(self.subhead.Col7[i], self.stop_words)
+            )
             searched_unique_single_word_synonym.append(
-                self.get_searched_single_word_synonym(self.subhead.Col7[i], self.stop_words))
+                self.get_searched_single_word_synonym(
+                    self.subhead.Col7[i], self.stop_words
+                )
+            )
 
-        self.subhead['clean_content'] = clean_content
-        self.subhead['searched_unique_single_word'] = searched_unique_single_word
-        self.subhead['un_searched_unique_single_word'] = un_searched_unique_single_word
-        self.subhead['searched_pair_word'] = searched_pair_word
-        self.subhead['searched_unique_single_word_synonym'] = searched_unique_single_word_synonym
+        self.subhead["clean_content"] = clean_content
+        self.subhead["searched_unique_single_word"] = searched_unique_single_word
+        self.subhead["un_searched_unique_single_word"] = un_searched_unique_single_word
+        self.subhead["searched_pair_word"] = searched_pair_word
+        self.subhead[
+            "searched_unique_single_word_synonym"
+        ] = searched_unique_single_word_synonym
 
     @staticmethod
     def change_code(code):
@@ -202,20 +252,25 @@ class SearchKeywordGenerator:
 
         self.set_subhead_ranking()
 
-        self.subhead['New_Code'] = self.subhead.Code.apply(self.change_code)
+        self.subhead["New_Code"] = self.subhead.Code.apply(self.change_code)
 
         # get first 4 digits of the Code
-        self.subhead['Code_First4Digits'] = self.get_four_digit_code()
+        self.subhead["Code_First4Digits"] = self.get_four_digit_code()
 
         green_page = self.process_green_page_columns()
 
         # merge subhead dataframe and green page
-        self.subhead = self.subhead.merge(green_page, on='Code_First4Digits', how='left')
-        self.subhead.Contents = self.subhead.Contents.replace(np.nan, '', regex=True)
-        self.subhead['final_category'] = self.subhead[['final_category', 'Contents']].apply(lambda x: ' '.join(x),
-                                                                                            axis=1)
-        self.subhead = self.subhead.drop(['New_Code', 'Code_First4Digits', 'Contents'], axis=1)
-        self.subhead['final_category'] = self.subhead['final_category'].str.lower()
+        self.subhead = self.subhead.merge(
+            green_page, on="Code_First4Digits", how="left"
+        )
+        self.subhead.Contents = self.subhead.Contents.replace(np.nan, "", regex=True)
+        self.subhead["final_category"] = self.subhead[
+            ["final_category", "Contents"]
+        ].apply(lambda x: " ".join(x), axis=1)
+        self.subhead = self.subhead.drop(
+            ["New_Code", "Code_First4Digits", "Contents"], axis=1
+        )
+        self.subhead["final_category"] = self.subhead["final_category"].str.lower()
 
         self.subhead.to_csv(self.output_file, index=False)
 
@@ -225,8 +280,10 @@ class SearchKeywordGenerator:
         :return: list of green page terms
         """
 
-        green_page = self.green_page.groupby('Code_First4Digits', as_index=False).agg(lambda x: ', '.join(x.tolist()))
-        green_page.columns = [''.join(col).strip() for col in green_page.columns.values]
+        green_page = self.green_page.groupby("Code_First4Digits", as_index=False).agg(
+            lambda x: ", ".join(x.tolist())
+        )
+        green_page.columns = ["".join(col).strip() for col in green_page.columns.values]
         return green_page
 
     def get_four_digit_code(self):
@@ -234,7 +291,9 @@ class SearchKeywordGenerator:
         get the first four digits of the commodity code
         :return: four digit commodity code
         """
-        return self.subhead['New_Code'].str[0:2] + '.' + self.subhead['New_Code'].str[2:4]
+        return (
+            self.subhead["New_Code"].str[0:2] + "." + self.subhead["New_Code"].str[2:4]
+        )
 
     def set_subhead_final_category(self):
         """
@@ -244,26 +303,30 @@ class SearchKeywordGenerator:
 
         final_category_temp = []
         for i in range(self.subhead.shape[0]):
-            if self.subhead['searched_words'][i] == '':
-                final_category_temp.append(self.subhead['un_searched_unique_single_word'][i])
+            if self.subhead["searched_words"][i] == "":
+                final_category_temp.append(
+                    self.subhead["un_searched_unique_single_word"][i]
+                )
             else:
-                final_category_temp.append(self.subhead['searched_words'][i])
+                final_category_temp.append(self.subhead["searched_words"][i])
 
         # if final_category_temp is still empty, 'other' will be assigned to it
         final_category = []
         for i in range(self.subhead.shape[0]):
-            if final_category_temp[i] == '':
-                final_category.append('other')
+            if final_category_temp[i] == "":
+                final_category.append("other")
             else:
                 final_category.append(final_category_temp[i])
-        self.subhead['final_category'] = final_category
+        self.subhead["final_category"] = final_category
 
     def set_subhead_ranking(self):
         """
         assign a ranking score to final_category based on the hierarchy, higher score for higher hierarchy and
         lower score for lower hierarchy, maximum score is subhead['Col8'].max()
         """
-        self.subhead['ranking_score'] = self.subhead['Col8'].max() - self.subhead['Col8']
+        self.subhead["ranking_score"] = (
+            self.subhead["Col8"].max() - self.subhead["Col8"]
+        )
 
     def set_subhead_searched_words(self):
         """
@@ -273,9 +336,16 @@ class SearchKeywordGenerator:
 
         searched_words = []
         for i in range(self.subhead.shape[0]):
-            if self.subhead['searched_pair_word'][i] in self.subhead['searched_unique_single_word_synonym'][i]:
-                searched_words.append(self.subhead['searched_unique_single_word_synonym'][i])
+            if (
+                self.subhead["searched_pair_word"][i]
+                in self.subhead["searched_unique_single_word_synonym"][i]
+            ):
+                searched_words.append(
+                    self.subhead["searched_unique_single_word_synonym"][i]
+                )
             else:
                 searched_words.append(
-                    self.subhead['searched_unique_single_word_synonym'][i] + self.subhead['searched_pair_word'][i])
-        self.subhead['searched_words'] = searched_words
+                    self.subhead["searched_unique_single_word_synonym"][i]
+                    + self.subhead["searched_pair_word"][i]
+                )
+        self.subhead["searched_words"] = searched_words

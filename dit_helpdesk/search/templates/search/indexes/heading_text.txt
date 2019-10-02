@@ -1,2 +1,1 @@
 {{ object.commodity_code }}
-

@@ -10,7 +10,7 @@ class CountriesConfigTestCase(TestCase):
     """
 
     def test_config_name_is_countries(self):
-        self.assertEqual(CountriesConfig.name, 'countries')
+        self.assertEqual(CountriesConfig.name, "countries")
 
     def test_app_name_is_countries(self):
-        self.assertEqual(apps.get_app_config('countries').name, 'countries')
+        self.assertEqual(apps.get_app_config("countries").name, "countries")

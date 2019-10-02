@@ -22,6 +22,3 @@ RUN pip install --no-cache-dir -r requirements/development.txt
 ADD . /app/
 
 CMD /app/compose/development/django/start.sh
-
-
-

@@ -6,7 +6,12 @@ from mixer.backend.django import mixer
 
 from hierarchy.models import Chapter, Heading, Section
 from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
-from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocumentFootnote
+from rules_of_origin.models import (
+    Rule,
+    RulesGroup,
+    RulesGroupMember,
+    RulesDocumentFootnote,
+)
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
@@ -21,20 +26,20 @@ class ImporterTestCase(TestCase):
 
     def test_load(self):
         importer = RulesOfOriginImporter()
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/OCTS.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/OCTS.json")
         importer.load(input_file=path, priority=1)
         self.assertEqual(len(importer.data.keys()), 94)
         self.assertTrue("OCTS" in importer.rules_groups.keys())
         self.assertEqual(len(importer.rules_documents.keys()), 9)
-        self.assertEqual(importer.working_group_name, 'OCTS')
+        self.assertEqual(importer.working_group_name, "OCTS")
         self.assertEqual(importer.current_chapter_code, None)
         self.assertEqual(importer.priority, 1)
         self.assertEqual(importer.footnotes, {})
 
-    fixtures = ['../../countries/fixtures/countries_data.json']
+    fixtures = ["../../countries/fixtures/countries_data.json"]
 
     def test_instance_builder(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/OCTS.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/OCTS.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -44,7 +49,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_for_existing_items(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/GSP.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/GSP.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -52,7 +57,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesGroup.objects.all()), 1)
         self.assertEqual(len(RulesGroupMember.objects.all()), 82)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/GSP.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/GSP.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -63,29 +68,27 @@ class ImporterTestCase(TestCase):
 
     def test_instance_builder_for_existing_items_with_hierarchy(self):
 
-        section = mixer.blend(
-            Section,
-            section_id=1
-        )
+        section = mixer.blend(Section, section_id=1)
 
         chapters = mixer.cycle(3).blend(
             Chapter,
             chapter_code=(x for x in ["0100000000", "0200000000", "0300000000"]),
-            section=section
+            section=section,
         )
 
         headings = mixer.cycle(4).blend(
             Heading,
-            heading_code=(x for x in ["0304000000", "0305000000", "0306000000", "0307000000"]),
-            chapter=chapters[2]
+            heading_code=(
+                x for x in ["0304000000", "0305000000", "0306000000", "0307000000"]
+            ),
+            chapter=chapters[2],
         )
-
 
         # model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
         # builder = HierarchyBuilder()
         #
         # builder.data_scanner(model_names)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('test_import/GSP.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("test_import/GSP.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -95,7 +98,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_chile(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/CHILE_FTA.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/CHILE_FTA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -105,7 +108,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_ESA(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/EPA_ESA.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_ESA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -115,7 +118,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 10)
 
     def test_instance_builder_EPA_pacific(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/EPA_pacific.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_pacific.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -125,7 +128,9 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_EPA_faroe_islands(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/PEM_faroe_islands.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
+            "import/PEM_faroe_islands.json"
+        )
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -135,7 +140,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_Israel(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/PEM_Israel.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/PEM_Israel.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -145,7 +150,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_palestine(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/PEM_palestine.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/PEM_palestine.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -155,7 +160,9 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_PEM_switzerland_liechtenstein(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/PEM_switzerland_&_liechtenstein.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
+            "import/PEM_switzerland_&_liechtenstein.json"
+        )
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -165,7 +172,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EEA(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format('import/EEA.json')
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EEA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -192,5 +199,5 @@ class ImporterTestCase(TestCase):
         old_dict = {}
         old_key = "old_key"
         old_dict[old_key] = 1
-        new_dict = importer.rename_key(old_dict,  old_key, "new_key")
+        new_dict = importer.rename_key(old_dict, old_key, "new_key")
         self.assertTrue("new_key" in new_dict.keys())
