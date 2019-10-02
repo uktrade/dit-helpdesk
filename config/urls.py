@@ -84,6 +84,20 @@ urlpatterns = [
         name='heading-measure-conditions'
     ),
 
+    re_path(
+        r'country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})'
+        r'/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)',
+        commodity_views.measure_quota_detail,
+        name='commodity-measure-quota'
+    ),
+
+    re_path(
+        r'country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})'
+        r'/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)',
+        hierarchy_views.measure_quota_detail,
+        name='heading-measure-quota'
+    ),
+
     path(
         'feedback/',
         feedback_views.FeedbackView.as_view(),

@@ -1,9 +1,11 @@
 import logging
 import re
 from datetime import datetime
-
+from django.template import loader, Context
 from dateutil.parser import parse as parse_dt
 from django.conf import settings
+
+from countries.models import Country
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -59,7 +61,7 @@ class CommodityJson(object):
     def get_import_measures(self, origin_country, vat=None, excise=None):
 
         measures = [
-            ImportMeasureJson(d, self.code) for d in self.di['import_measures']
+            ImportMeasureJson(d, self.code, self.title, origin_country) for d in self.di['import_measures']
         ]
 
         measures = [
@@ -85,9 +87,12 @@ class CommodityJson(object):
 
 class ImportMeasureJson(object):
 
-    def __init__(self, di, commodity_code):
+    def __init__(self, di, commodity_code, commodity_title, country_code):
         self.di = di
         self.commodity_code = commodity_code
+        self.commodity_title = commodity_title
+        self.measures_modals = {}
+        self.country_code = country_code
 
     @classmethod
     def get_date(cls, di, key):
@@ -187,12 +192,13 @@ class ImportMeasureJson(object):
 
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di['geographical_area']
-        if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code.upper():
-            return True
-        for child_area in geo_area['children_geographical_areas']:
-            if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code.upper():
+        if geo_area is not None:
+            if geo_area['id'][0].isalpha() and geo_area['id'] == origin_country_code.upper():
                 return True
-        return False
+            for child_area in geo_area['children_geographical_areas']:
+                if child_area['id'][0].isalpha() and child_area['id'] == origin_country_code.upper():
+                    return True
+            return False
 
     @property
     def vue__legal_base_html(self):
@@ -211,8 +217,59 @@ class ImportMeasureJson(object):
     def vue__conditions_html(self):
         if not self.num_conditions:
             return '-'
-        conditions_url = "{0}/import-measure/{1}/conditions".format(self.commodity_code, self.measure_id)
-        return '<a href="%s">Conditions</a>' % conditions_url
+        url = "{0}/import-measure/{1}/conditions".format(self.commodity_code, self.measure_id)
+        modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
+        html = """<a  data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(modal_id, url)
+        self.measures_modals[modal_id] = self.get_modal(modal_id, self.get_conditions_table)
+        return html
+
+    def get_modal(self, modal_id, modal_body):
+        template = loader.get_template('core/modal_base.html')
+        country = Country.objects.get(country_code=self.country_code)
+        context = {
+            'modal_id': modal_id,
+            'modal_body': modal_body,
+            'commodity_code_split': self.commodity_code_split,
+            'measure_type': self.type_description,
+            'commodity_description': self.commodity_title,
+            'selected_origin_country_name': country.name
+        }
+        rendered = template.render(context)
+        return rendered
+
+    @property
+    def commodity_code_split(self):
+        """
+        Used to display the code in the template
+        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        :return: list
+        """
+        code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
+        return [code_match_obj.group(i) for i in range(1, 4)]
+
+    @property
+    def get_conditions_table(self):
+        template = loader.get_template('commodities/measure_condition_table.html')
+        measure_conditions = self.get_measure_conditions_by_measure_id(self.measure_id)
+        context = {
+            'column_headers': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
+            'conditions': measure_conditions,
+        }
+        rendered = template.render(context)
+        return rendered
+
+    @property
+    def get_quota_table(self):
+        template = loader.get_template('commodities/measure_quota_table.html')
+        measure_quota = self.get_measure_quota_definition_by_order_number(self.di["order_number"]["number"])
+
+        context = {
+            'quota_def': measure_quota,
+            'geographical_area': self.get_geographical_area(),
+        }
+
+        rendered = template.render(context)
+        return rendered
 
     @property
     def vue__footnotes_html(self):
@@ -247,7 +304,7 @@ class ImportMeasureJson(object):
             measure_description = self.di['measure_type']['description']
 
         if self.di['order_number']:
-            order_str = ' - Order No: %s' % self.di['order_number']['number']  # todo: add href
+            order_str = self.vue__quota_html()
             measure_description = measure_description + '\n' + order_str
 
         measure_value = self.di['duty_expression']['base']
@@ -269,7 +326,25 @@ class ImportMeasureJson(object):
             'footnotes_html': self.vue__footnotes_html
         }
 
+    def vue__quota_html(self):
+        """
+        generate an html link for quota order number that supports javascript enable modal and no javascript backup
+        also generates the matching modal html and appends it to a class dictionary variable
+        :return: the html of the link
+        """
+        order_number = self.di['order_number']['number']
+        url = "{0}/import-measure/{1}/quota/{2}".format(self.commodity_code, self.measure_id, order_number)
+        modal_id = "{0}-{1}".format(self.measure_id, order_number)
+        html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
+            modal_id, url, order_number)
+        self.measures_modals[modal_id] = self.get_modal(modal_id, self.get_quota_table)
+        return html
+
     def get_table_row(self):
+        """
+        generates the data for a table row for a commodities' measures table
+        :return: returns a list
+        """
         di = self.get_table_dict()
         data = [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
         data = self.rename_countries_default(data)
@@ -313,15 +388,51 @@ class ImportMeasureJson(object):
         return data
 
     def get_measure_conditions(self):
+        """
+        get a list of conditions for the measure
+        :return: list of dictionaries
+        """
         return [
             MeasureCondition(di) for di in self.di['measure_conditions']
         ]
 
     def get_measure_conditions_by_measure_id(self, measure_id):
+        """
+        get a measure's condition by it's measure id
+        :param measure_id: number
+        :return: list of a single dictionary
+        """
 
         return [
             condition for condition in self.get_measure_conditions() if condition.di['measure_id'] == measure_id
         ]
+
+    def get_measure_quota_definition_by_order_number(self, order_number):
+        """
+        get a measure's quot definition by it's order_number
+        :param order_number: string of a number
+        :return: dictionary or None
+        """
+        if self.di['order_number']["number"] == order_number:
+
+            if isinstance(self.di['order_number']['definition']['validity_start_date'], str):
+                self.di['order_number']['definition']['validity_start_date'] = parse_dt(self.di['order_number']['definition']['validity_start_date'])
+            if isinstance(self.di['order_number']['definition']['validity_end_date'], str):
+                self.di['order_number']['definition']['validity_end_date'] = parse_dt(self.di['order_number']['definition']['validity_end_date'])
+
+            return self.di['order_number']
+
+    def get_geographical_area(self):
+        """
+        todo: check if used and remove if not
+        :param country_code:
+        :return:
+        """
+        if self.di["geographical_area"]:
+            if self.di["geographical_area"]["description"] == "ERGA OMNES":
+                return "All countries"
+            else:
+                return self.di["geographical_area"]["description"]
 
 
 class MeasureCondition(object):
@@ -367,7 +478,7 @@ class HeadingJson(object):
     def get_import_measures(self, origin_country, vat=None, excise=None):
 
         measures = [
-            ImportMeasureJson(d, self.code) for d in self.di['import_measures']
+            ImportMeasureJson(d, self.code, self.title, origin_country) for d in self.di['import_measures']
         ]
 
         measures = [

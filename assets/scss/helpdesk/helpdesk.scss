@@ -104,6 +104,7 @@ abbr {
   color: red;
 }
 
-#rules-of-origin table td {
+.govuk-table__rules-of-origin table td, .govuk-table__conditions table td, .govuk-table__conditions table th,
+.govuk-table__tariffs_and_measures table td, .govuk-table__tariffs_and_measures table th {
   vertical-align: top;
 }

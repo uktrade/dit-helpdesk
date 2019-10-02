@@ -76,14 +76,13 @@
       <p class="govuk-body">The table below shows all the tariffs and other measures that apply for this product and the
         selected country.</p>
 
-      <table class="govuk-table app-flexible-table govuk-!-margin-bottom-6">
+      <table class="govuk-table govuk-table__tariffs_and_measures app-flexible-table govuk-!-margin-bottom-6" >
         <caption class="govuk-table__caption govuk-visually-hidden">The table below shows all the tariffs and other
           measures that apply for this product and the selected country.</caption>
         <thead class="govuk-table__head app-flexible-table__head">
           <tr class="govuk-table__row">
             {% for key in column_titles %}
-            <th class="govuk-table__header app-flexible-table__header"
-                scope="col">{{ key }}</th>
+            <th class="govuk-table__header app-flexible-table__header" scope="col">{{ key }}</th>
             {% endfor %}
           </tr>
         </thead>
@@ -93,22 +92,19 @@
             <tr class="govuk-table__row app-flexible-table__row">
               {% for  col in row %}
                 {% if forloop.counter == 1 %}
-                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular"
-                    scope="row"
-                    data-column-heading="{{ col.0 }}">
+                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ col.0 }}">
                   <p>{{ col.1 }}</p>
                 </td>
                 {% else %}
-                <td class="govuk-table__cell app-flexible-table__cell"
-                    data-column-heading="{{ col.0 }}">
-                  {% if col.1.1.code %}
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ col.0 }}">
+                  {% if col.1.1.code %}1
                     <p>{{ col.1.0 | cell_cleaner | safe }}</p>
                     <p>Additional code: <strong>{{col.1.1.code}}</strong></p>
-                    {% endif %}
-                    {% if col.1.1.description %}
+                  {% endif %}
+                  {% if col.1.1.description %}
                     <p>{{col.1.1.description}}</p>
-                    {% endif %}
-                    {% if not col.1.1.code or not col.1.1.description %}
+                  {% endif %}
+                  {% if not col.1.1.code or not col.1.1.description %}
                     <p>{{ col.1 | cell_cleaner | safe }}</p>
                   {% endif %}
                 </td>
@@ -308,7 +304,7 @@
         <div class="govuk-!-margin-bottom-4">
         {% for group in rules_of_origin.items %}
           <h3 class="govuk-heading-m govuk-!-margin-top-4">{{ group.0|replace}}</h3>
-          <table class="govuk-table app-flexible-table">
+          <table class="govuk-table govuk-table__rules_of_origin app-flexible-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-flexible-table__head">
               <tr class="govuk-table__row">
@@ -392,5 +388,16 @@
       </div>
     {% endif %}
   </div>
+
+{% if modals %}
+    {% for modal in modals.values %}
+
+        {{ modal|safe }}
+
+    {% endfor %}
+
+{% endif %}
+
 </div>
+
 {% endblock %}

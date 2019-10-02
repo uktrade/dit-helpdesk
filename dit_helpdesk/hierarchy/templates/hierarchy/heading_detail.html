@@ -76,7 +76,7 @@
       <p class="govuk-body">The table below shows all the tariffs and other measures that apply for this product and the
         selected country.</p>
 
-      <table class="govuk-table app-flexible-table govuk-!-margin-bottom-6">
+      <table class="govuk-table app-flexible-table govuk-!-margin-bottom-6" id="tariffs_and_measures">
         <caption class="govuk-table__caption govuk-visually-hidden">The table below shows all the tariffs and other
           measures that apply for this product and the selected country.</caption>
         <thead class="govuk-table__head app-flexible-table__head">
@@ -393,5 +393,13 @@
       </div>
     {% endif %}
   </div>
+{% if modals %}
+    {% for modal in modals.values %}
+
+        {{ modal|safe }}
+
+    {% endfor %}
+
+{% endif %}
 </div>
 {% endblock %}
