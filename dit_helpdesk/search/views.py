@@ -83,44 +83,47 @@ class CommoditySearchView(FormView):
                     request = Search().using(client).query(query_object)
                     response = request.execute()
 
-                    hit = response[0]
-                    if hit.meta["index"] == "commodity":
-                        return redirect(
-                            reverse(
-                                "commodity-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": context["country_code"],
-                                },
-                            )
-                        )
-                    elif hit.meta["index"] == "heading":
-                        heading = Heading.objects.filter(
-                            heading_code=hit.commodity_code
-                        ).first()
-                        if heading.leaf:
+                    if response:
+                        hit = response[0]
+                        if hit.meta["index"] == "commodity":
                             return redirect(
                                 reverse(
-                                    "heading-detail",
+                                    "commodity-detail",
                                     kwargs={
-                                        "heading_code": hit.commodity_code,
+                                        "commodity_code": hit.commodity_code,
+                                        "country_code": context["country_code"],
+                                    },
+                                )
+                            )
+                        elif hit.meta["index"] == "heading":
+                            heading = Heading.objects.filter(
+                                heading_code=hit.commodity_code
+                            ).first()
+                            if heading.leaf:
+                                return redirect(
+                                    reverse(
+                                        "heading-detail",
+                                        kwargs={
+                                            "heading_code": hit.commodity_code,
+                                            "country_code": context["country_code"],
+                                        },
+                                    )
+                                )
+                        else:
+                            return redirect(
+                                reverse(
+                                    "search:search-hierarchy",
+                                    kwargs={
+                                        "node_id": "{0}-{1}".format(
+                                            hit.meta["index"], hit.id
+                                        ),
                                         "country_code": context["country_code"],
                                     },
                                 )
                             )
                     else:
-                        return redirect(
-                            reverse(
-                                "search:search-hierarchy",
-                                kwargs={
-                                    "node_id": "{0}-{1}".format(
-                                        hit.meta["index"], hit.id
-                                    ),
-                                    "country_code": context["country_code"],
-                                },
-                            )
-                        )
-
+                        context["message"] = "nothing found for that number"
+                        return self.render_to_response(context)
                 else:
                     page = int(self.request.GET.get("page", "1"))
                     context.update(helpers.search(query=query, page=page))
@@ -148,6 +151,7 @@ class CommoditySearchView(FormView):
                             hit["commodity_code_html"] = _generate_commodity_code_html(
                                 hit["commodity_code"]
                             )
+
                     return self.render_to_response(context)
             else:
                 return self.form_invalid(self.form)
