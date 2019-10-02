@@ -252,7 +252,7 @@ class ImportMeasureJson(object):
         template = loader.get_template('commodities/measure_condition_table.html')
         measure_conditions = self.get_measure_conditions_by_measure_id(self.measure_id)
         context = {
-            'column_titles': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
+            'column_headers': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
             'conditions': measure_conditions,
         }
         rendered = template.render(context)

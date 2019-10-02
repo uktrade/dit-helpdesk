@@ -101,7 +101,8 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
-        self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE)
+        self.import_measure = ImportMeasureJson(get_data(settings.IMPORTMEASUREJSON_DATA), settings.TEST_COMMODITY_CODE,
+                                                settings.TEST_COMMODITY_DESCRIPTION, settings.TEST_COUNTRY_CODE)
 
     def test_repr(self):
         self.assertEqual(repr(self.import_measure), "ImportMeasureJson {0} {1}".format("0101210000", "VTS"))
@@ -135,7 +136,8 @@ class ImportMeasureJsonTestCase(TestCase):
     def test_geographical_area_without_erga_omnes(self):
         json_data = get_data(settings.IMPORTMEASUREJSON_DATA)
         json_data['geographical_area']['description'] = ''
-        import_measure = ImportMeasureJson(json_data, settings.TEST_COMMODITY_CODE)
+        import_measure = ImportMeasureJson(json_data, settings.TEST_COMMODITY_CODE, settings.TEST_COMMODITY_DESCRIPTION,
+                                           settings.TEST_COUNTRY_CODE)
         self.assertEqual(import_measure.geographical_area, None)
 
     def test_type_id(self):
@@ -164,11 +166,12 @@ class ImportMeasureJsonTestCase(TestCase):
         self.assertFalse(self.import_measure.excise)
         self.assertTrue(isinstance(self.import_measure.excise, bool))
 
-    def test_order_number_definition_summary_with_definistion(self):
+    def test_order_number_definition_summary_with_definition(self):
         json_data = get_data(settings.IMPORTMEASUREJSON_DATA)
         json_data['order_number'] = {'definition': {'status': 'xyz'}}
         json_data['order_number']['definition']['description'] = "lipsuLorem ipsum dolor sit amet"
-        import_measure = ImportMeasureJson(json_data, settings.TEST_COMMODITY_CODE)
+        import_measure = ImportMeasureJson(json_data, settings.TEST_COMMODITY_CODE, settings.TEST_COMMODITY_DESCRIPTION,
+                                           settings.TEST_COUNTRY_CODE)
         self.assertTrue(isinstance(import_measure.order_number_definition_summary, tuple))
         self.assertEqual(import_measure.order_number_definition_summary, ('xyz', "lipsuLorem ipsum dolor sit amet"))
 

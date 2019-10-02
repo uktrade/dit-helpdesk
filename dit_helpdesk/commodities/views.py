@@ -111,7 +111,7 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
         'conditions': conditions,
         'commodity_code_split': commodity.commodity_code_split,
         'measure_type': import_measure.type_description,
-        'column_titles': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
+        'column_headers': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
