@@ -36,21 +36,31 @@ class HierarchyModelsTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.section = create_instance(get_data(settings.SECTION_STRUCTURE), 'hierarchy', 'Section')
+        self.section = create_instance(
+            get_data(settings.SECTION_STRUCTURE), "hierarchy", "Section"
+        )
 
-        self.chapter = create_instance(get_data(settings.CHAPTER_STRUCTURE), 'hierarchy', 'Chapter')
+        self.chapter = create_instance(
+            get_data(settings.CHAPTER_STRUCTURE), "hierarchy", "Chapter"
+        )
         self.chapter.section_id = self.chapter.pk
         self.chapter.save()
 
-        self.heading = create_instance(get_data(settings.HEADING_STRUCTURE), 'hierarchy', 'Heading')
+        self.heading = create_instance(
+            get_data(settings.HEADING_STRUCTURE), "hierarchy", "Heading"
+        )
         self.heading.chapter_id = self.chapter.id
         self.heading.save()
 
-        self.subheading = create_instance(get_data(settings.SUBHEADING_STRUCTURE), 'hierarchy', 'SubHeading')
+        self.subheading = create_instance(
+            get_data(settings.SUBHEADING_STRUCTURE), "hierarchy", "SubHeading"
+        )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
-        self.commodity = create_instance(get_data(settings.COMMODITY_STRUCTURE), 'commodities', 'Commodity')
+        self.commodity = create_instance(
+            get_data(settings.COMMODITY_STRUCTURE), "commodities", "Commodity"
+        )
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
 
@@ -63,11 +73,15 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(isinstance(self.section, Section))
 
     def test_section_hierarchy_key_is_correct(self):
-        self.assertEqual(self.section.hierarchy_key, "section-{0}".format(self.section.section_id))
+        self.assertEqual(
+            self.section.hierarchy_key, "section-{0}".format(self.section.section_id)
+        )
 
     def test_section_has_the_correct_hierarchy_url(self):
-        self.assertEqual(self.section.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
-                         "/search/country/au/hierarchy/section-{0}".format(self.section.section_id))
+        self.assertEqual(
+            self.section.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
+            "/search/country/au/hierarchy/section-{0}".format(self.section.section_id),
+        )
 
     def test_section_has_hierarchy_children(self):
         self.assertTrue(len(self.section.get_hierarchy_children()) > 0)
@@ -85,7 +99,7 @@ class HierarchyModelsTestCase(TestCase):
     def test_section_has_tts_obj(self):
         self.assertTrue(isinstance(self.section.tts_json, list))
 
-# Chapters
+    # Chapters
     def test_chapter_instance_exists(self):
         self.assertTrue(Chapter.objects.get(chapter_code=settings.TEST_CHAPTER_CODE))
 
@@ -96,7 +110,10 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(self.chapter.title, settings.TEST_CHAPTER_DESCRIPTION)
 
     def test_chapter_has_the_correct_hierachy_key(self):
-        self.assertEqual(self.chapter.hierarchy_key, "chapter-{0}".format(self.chapter.goods_nomenclature_sid))
+        self.assertEqual(
+            self.chapter.hierarchy_key,
+            "chapter-{0}".format(self.chapter.goods_nomenclature_sid),
+        )
 
     def test_chapter_has_the_correct_harmonized_code(self):
         self.assertTrue(self.chapter.harmonized_code, settings.TEST_CHAPTER_CODE)
@@ -105,10 +122,14 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(len(self.chapter.get_hierarchy_children()) > 0)
 
     def test_chapter_has_the_correct_hierarchy_url(self):
-        self.assertEqual(self.chapter.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
-                         "/search/country/au/hierarchy/chapter-{0}".format(self.chapter.goods_nomenclature_sid))
+        self.assertEqual(
+            self.chapter.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
+            "/search/country/au/hierarchy/chapter-{0}".format(
+                self.chapter.goods_nomenclature_sid
+            ),
+        )
 
-# HEADINGS
+    # HEADINGS
     def test_heading_instance_exists(self):
         self.assertTrue(Heading.objects.get(heading_code=settings.TEST_HEADING_CODE))
 
@@ -122,7 +143,10 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(self.heading.description, settings.TEST_HEADING_DESCRIPTION)
 
     def test_heading_has_the_correct_hierachy_key(self):
-        self.assertEqual(self.heading.hierarchy_key, "heading-{0}".format(self.heading.goods_nomenclature_sid))
+        self.assertEqual(
+            self.heading.hierarchy_key,
+            "heading-{0}".format(self.heading.goods_nomenclature_sid),
+        )
 
     def test_heading_has_tts_obj_is_an_instance_of_HeadingJson(self):
         # self.assertTrue(isinstance(self.heading.tts_obj, HeadingJson))
@@ -135,21 +159,32 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(len(self.heading.get_hierarchy_children()) > 0)
 
     def test_heading_has_the_correct_hierarchy_url(self):
-        self.assertEqual(self.heading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
-                         "/search/country/au/hierarchy/heading-{0}".format(self.heading.goods_nomenclature_sid))
+        self.assertEqual(
+            self.heading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
+            "/search/country/au/hierarchy/heading-{0}".format(
+                self.heading.goods_nomenclature_sid
+            ),
+        )
 
-# SUBHEADINGS
+    # SUBHEADINGS
     def test_subheading_instance_exists(self):
-        self.assertTrue(SubHeading.objects.get(commodity_code=settings.TEST_SUBHEADING_CODE))
+        self.assertTrue(
+            SubHeading.objects.get(commodity_code=settings.TEST_SUBHEADING_CODE)
+        )
 
     def test_self_subheading_is_and_instance_of_SubHeading(self):
         self.assertTrue(isinstance(self.subheading, SubHeading))
 
     def test_subheading_has_the_correct_title(self):
-        self.assertTrue(self.subheading.description, settings.TEST_SUBHEADING_DESCRIPTION)
+        self.assertTrue(
+            self.subheading.description, settings.TEST_SUBHEADING_DESCRIPTION
+        )
 
     def test_subheading_has_the_correct_hierachy_key(self):
-        self.assertEqual(self.subheading.hierarchy_key, "sub_heading-{0}".format(self.subheading.goods_nomenclature_sid))
+        self.assertEqual(
+            self.subheading.hierarchy_key,
+            "sub_heading-{0}".format(self.subheading.goods_nomenclature_sid),
+        )
 
     def test_subheading_has_the_correct_harmonized_code(self):
         self.assertTrue(self.subheading.harmonized_code, settings.TEST_SUBHEADING_CODE)
@@ -158,5 +193,9 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(len(self.subheading.get_hierarchy_children()) > 0)
 
     def test_subheading_has_the_correct_hierarchy_url(self):
-        self.assertEqual(self.subheading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
-                         "/search/country/au/hierarchy/sub_heading-{}".format(self.subheading.goods_nomenclature_sid))
+        self.assertEqual(
+            self.subheading.get_hierarchy_url(settings.TEST_COUNTRY_CODE),
+            "/search/country/au/hierarchy/sub_heading-{}".format(
+                self.subheading.goods_nomenclature_sid
+            ),
+        )

@@ -43,7 +43,8 @@
       <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
     </form>
 
-{% if results %}
+{% if query %}
+
     <a name="search-results" id="search-results"></a>
     <h2 class="govuk-heading-l">Search results for "{{ query }}"</h2>
     <div class="govuk-form-group">
@@ -125,6 +126,11 @@
         {%  endif %}
       </section>
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    {% empty %}
+
+        <h1>There are no results</h1>
+
     {% endfor %}
 
     <div class="govuk-search-pagination govuk-hint">

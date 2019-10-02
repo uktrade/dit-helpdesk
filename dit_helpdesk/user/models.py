@@ -4,13 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class User(AbstractUser):
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_("email address"), unique=True)
 
     @property
     def username(self):
         return self.email
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()

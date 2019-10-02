@@ -17,53 +17,22 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 hierarchy_model_map = {
-    "Commodity": {
-        "file_name": "prepared/commodities.json",
-        "app_name": "commodities"
-    },
-    "Chapter": {
-        "file_name": "prepared/chapters.json",
-        "app_name": "hierarchy"
-    },
-    "Heading": {
-        "file_name": "prepared/headings.json",
-        "app_name": "hierarchy"
-    },
-    "SubHeading": {
-        "file_name": "prepared/sub_headings.json",
-        "app_name": "hierarchy"
-    },
-    "Section": {
-        "file_name": "prepared/sections.json",
-        "app_name": "hierarchy"
-    }
+    "Commodity": {"file_name": "prepared/commodities.json", "app_name": "commodities"},
+    "Chapter": {"file_name": "prepared/chapters.json", "app_name": "hierarchy"},
+    "Heading": {"file_name": "prepared/headings.json", "app_name": "hierarchy"},
+    "SubHeading": {"file_name": "prepared/sub_headings.json", "app_name": "hierarchy"},
+    "Section": {"file_name": "prepared/sections.json", "app_name": "hierarchy"},
 }
 
 
 class HierarchyBuilder:
-
     def __init__(self):
         self.data = {
-            "Commodity": {
-                "data": {},
-                "objects": []
-            },
-            "Section": {
-                "data": {},
-                "objects": []
-            },
-            "Heading": {
-                "data": {},
-                "objects": []
-            },
-            "SubHeading": {
-                "data": {},
-                "objects": []
-            },
-            "Chapter": {
-                "data": {},
-                "objects": []
-            }
+            "Commodity": {"data": {}, "objects": []},
+            "Section": {"data": {}, "objects": []},
+            "Heading": {"data": {}, "objects": []},
+            "SubHeading": {"data": {}, "objects": []},
+            "Chapter": {"data": {}, "objects": []},
         }
         self.sections = []
         self.chapters = []
@@ -79,7 +48,7 @@ class HierarchyBuilder:
         :return:
         """
 
-        file_name = hierarchy_model_map[model_name]['file_name']
+        file_name = hierarchy_model_map[model_name]["file_name"]
         file_path = settings.IMPORT_DATA_PATH.format(file_name)
 
         with open(file_path) as f:
@@ -127,40 +96,46 @@ class HierarchyBuilder:
 
         if model is Section:
 
-            instance_data = self.rename_key(data, 'child_goods_nomenclature_sids', 'tts_json')
+            instance_data = self.rename_key(
+                data, "child_goods_nomenclature_sids", "tts_json"
+            )
 
         elif model is Chapter:
 
             if parent is not None:
                 data["section_id"] = parent.pk
 
-            instance_data = self.rename_key(data, 'goods_nomenclature_item_id', 'chapter_code')
+            instance_data = self.rename_key(
+                data, "goods_nomenclature_item_id", "chapter_code"
+            )
 
         elif model is Heading:
 
             if parent is not None:
-                data['chapter_id'] = parent.pk
+                data["chapter_id"] = parent.pk
 
-            instance_data = self.rename_key(data, 'goods_nomenclature_item_id', 'heading_code')
+            instance_data = self.rename_key(
+                data, "goods_nomenclature_item_id", "heading_code"
+            )
 
         elif model is SubHeading:
 
             if parent is not None:
-                data['heading_id'] = parent.pk
+                data["heading_id"] = parent.pk
 
-            data = self.rename_key(data, 'goods_nomenclature_item_id', 'commodity_code')
-            instance_data = self.rename_key(data, 'leaf', 'tts_is_leaf')
+            data = self.rename_key(data, "goods_nomenclature_item_id", "commodity_code")
+            instance_data = self.rename_key(data, "leaf", "tts_is_leaf")
 
         elif model is Commodity:
 
             if parent is not None:
                 if parent.__class__.__name__ is "Heading":
-                    data['heading_id'] = parent.pk
+                    data["heading_id"] = parent.pk
                 else:
-                    data['parent_subheading_id'] = parent.pk
+                    data["parent_subheading_id"] = parent.pk
 
-            data = self.rename_key(data, 'goods_nomenclature_item_id', 'commodity_code')
-            instance_data = self.rename_key(data, 'leaf', 'tts_is_leaf')
+            data = self.rename_key(data, "goods_nomenclature_item_id", "commodity_code")
+            instance_data = self.rename_key(data, "leaf", "tts_is_leaf")
 
         return instance_data
 
@@ -173,20 +148,20 @@ class HierarchyBuilder:
         """
         parent = None
         if model is Chapter:
-            parent = self.lookup_parent(Section, data['goods_nomenclature_sid'])
+            parent = self.lookup_parent(Section, data["goods_nomenclature_sid"])
 
         elif model is Heading:
-            parent = self.lookup_parent(Chapter, data['parent_goods_nomenclature_sid'])
+            parent = self.lookup_parent(Chapter, data["parent_goods_nomenclature_sid"])
 
         elif model is SubHeading:
-            parent = self.lookup_parent(Heading, data['goods_nomenclature_sid'])
+            parent = self.lookup_parent(Heading, data["goods_nomenclature_sid"])
 
         elif model is Commodity:
             try:
-                parent = self.lookup_parent(Heading, data['goods_nomenclature_sid'])
+                parent = self.lookup_parent(Heading, data["goods_nomenclature_sid"])
             except ObjectDoesNotExist as exception:
                 logger.info("No Heading for commodity: {0}".format(exception.args))
-                parent = self.lookup_parent(SubHeading, data['goods_nomenclature_sid'])
+                parent = self.lookup_parent(SubHeading, data["goods_nomenclature_sid"])
         return parent
 
     def data_scanner(self, model_names=None):
@@ -205,7 +180,10 @@ class HierarchyBuilder:
 
             json_data = self.load_data(model_name)
 
-            model = apps.get_model(app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name)
+            model = apps.get_model(
+                app_label=hierarchy_model_map[model_name]["app_name"],
+                model_name=model_name,
+            )
 
             for data in json_data:
                 instance = self.instance_builder(model, data)
@@ -213,12 +191,16 @@ class HierarchyBuilder:
                     logger.info("CODE: storing instance {0}".format(str(instance)))
                     self.data[model_name]["objects"].append(instance)
 
-            logger.info("CODE: model data items {0} == model instances {1}".format(
-                len(self.data[model_name]["data"]),
-                len(self.data[model_name]["objects"])
-            ))
+            logger.info(
+                "CODE: model data items {0} == model instances {1}".format(
+                    len(self.data[model_name]["data"]),
+                    len(self.data[model_name]["objects"]),
+                )
+            )
 
-            if len(self.data[model_name]["data"]) == len(self.data[model_name]["objects"]):
+            if len(self.data[model_name]["data"]) == len(
+                self.data[model_name]["objects"]
+            ):
                 logger.info("CODE: creating instances")
                 model.objects.bulk_create(self.data[model_name]["objects"])
             else:
@@ -236,7 +218,7 @@ class HierarchyBuilder:
         :param file_path: path location and filename of file to write to
 
         """
-        with open(file_path, 'w') as outfile:
+        with open(file_path, "w") as outfile:
             json.dump(data, outfile)
 
     def read_api_from_file(self, file_path):
@@ -264,7 +246,10 @@ class HierarchyBuilder:
             if data_type == "sections":
                 data_type_ids = [item["id"] for item in data_type_json["data"]]
             elif data_type == "chapters":
-                data_type_ids = [item["attributes"]["goods_nomenclature_item_id"][:2] for item in data_type_json["data"]]
+                data_type_ids = [
+                    item["attributes"]["goods_nomenclature_item_id"][:2]
+                    for item in data_type_json["data"]
+                ]
 
             data = self.get_item_data_from_api(data_type, data_type_ids)
 
@@ -278,7 +263,9 @@ class HierarchyBuilder:
         data = []
         child_data = []
         for item_id in item_ids:
-            path = "{0}/{1}".format("commodities" if data_type == "subheadings" else data_type, item_id)
+            path = "{0}/{1}".format(
+                "commodities" if data_type == "subheadings" else data_type, item_id
+            )
             url = settings.TRADE_TARIFF_API["BASE_URL"].format(path)
 
             resp = requests.get(url)
@@ -288,12 +275,21 @@ class HierarchyBuilder:
                 data.append(item_json)
 
                 if data_type == "chapters":
-                    child_data.extend([item["attributes"]["goods_nomenclature_item_id"][:4]
-                                      for item in item_json["included"] if item["type"] == "heading"])
+                    child_data.extend(
+                        [
+                            item["attributes"]["goods_nomenclature_item_id"][:4]
+                            for item in item_json["included"]
+                            if item["type"] == "heading"
+                        ]
+                    )
                 elif data_type == "headings":
                     child_data.extend(
-                        [item["attributes"]["goods_nomenclature_item_id"] for item in item_json["included"] if
-                         item["type"] == "commodity"])
+                        [
+                            item["attributes"]["goods_nomenclature_item_id"]
+                            for item in item_json["included"]
+                            if item["type"] == "commodity"
+                        ]
+                    )
             else:
                 logger.debug("{0} returned a {1} error".format(url, resp.status_code))
         return data, child_data
@@ -307,9 +303,15 @@ class HierarchyBuilder:
         """
 
         # read serialized api data from the filesystem
-        sections = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/sections.json"))
-        chapters = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/chapters.json"))
-        headings = self.read_api_from_file(settings.IMPORT_DATA_PATH.format("downloaded/headings.json"))
+        sections = self.read_api_from_file(
+            settings.IMPORT_DATA_PATH.format("downloaded/sections.json")
+        )
+        chapters = self.read_api_from_file(
+            settings.IMPORT_DATA_PATH.format("downloaded/chapters.json")
+        )
+        headings = self.read_api_from_file(
+            settings.IMPORT_DATA_PATH.format("downloaded/headings.json")
+        )
 
         headings = self.remove_duplicate_headings_from_api(headings)
 
@@ -323,120 +325,227 @@ class HierarchyBuilder:
         if sections:
 
             for section in sections:
-                sections_data.append({
-                    "section_id": section["data"]["attributes"]["id"],
-                    "roman_numeral": section["data"]["attributes"]["numeral"],
-                    "title": section["data"]["attributes"]["title"],
-                    "child_goods_nomenclature_sids": [item["attributes"]["goods_nomenclature_sid"]
-                                                      for item in section["included"] if item["type"] == "chapter"],
-                    "position": section["data"]["attributes"]["position"]})
+                sections_data.append(
+                    {
+                        "section_id": section["data"]["attributes"]["id"],
+                        "roman_numeral": section["data"]["attributes"]["numeral"],
+                        "title": section["data"]["attributes"]["title"],
+                        "child_goods_nomenclature_sids": [
+                            item["attributes"]["goods_nomenclature_sid"]
+                            for item in section["included"]
+                            if item["type"] == "chapter"
+                        ],
+                        "position": section["data"]["attributes"]["position"],
+                    }
+                )
 
         if chapters:
 
             for chapter in chapters:
-                chapters_data.append({
-                            "goods_nomenclature_item_id": chapter["data"]["attributes"]["goods_nomenclature_item_id"],
-                            "goods_nomenclature_sid": chapter["data"]["attributes"]["goods_nomenclature_sid"],
-                            "productline_suffix": "80",
-                            "leaf": "0",
-                            "parent_goods_nomenclature_item_id": "",
-                            "parent_goods_nomenclature_sid": "-1",
-                            "parent_productline_suffix": "",
-                            "description": chapter["data"]["attributes"]["description"],
-                            "number_indents": "0"})
+                chapters_data.append(
+                    {
+                        "goods_nomenclature_item_id": chapter["data"]["attributes"][
+                            "goods_nomenclature_item_id"
+                        ],
+                        "goods_nomenclature_sid": chapter["data"]["attributes"][
+                            "goods_nomenclature_sid"
+                        ],
+                        "productline_suffix": "80",
+                        "leaf": "0",
+                        "parent_goods_nomenclature_item_id": "",
+                        "parent_goods_nomenclature_sid": "-1",
+                        "parent_productline_suffix": "",
+                        "description": chapter["data"]["attributes"]["description"],
+                        "number_indents": "0",
+                    }
+                )
 
                 # extract all the heading objects from the chapter's list of included child objects
-                child_headings = [item for item in chapter["included"] if item["type"] == "heading"
-                                  and "relationships" in item.keys()]
+                child_headings = [
+                    item
+                    for item in chapter["included"]
+                    if item["type"] == "heading" and "relationships" in item.keys()
+                ]
                 if child_headings:
                     for heading in child_headings:
 
-                        headings_data.append({
-                            "goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
-                            "goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
-                            "productline_suffix": heading["attributes"]["producline_suffix"],
-                            "leaf": heading["attributes"]["leaf"],
-                            "parent_goods_nomenclature_item_id": chapter["data"]["attributes"]["goods_nomenclature_item_id"],
-                            "parent_goods_nomenclature_sid": chapter["data"]["attributes"]["goods_nomenclature_sid"],
-                            "parent_productline_suffix": "",
-                            "description": heading["attributes"]["description"],
-                            "number_indents": "0"
-                        })
+                        headings_data.append(
+                            {
+                                "goods_nomenclature_item_id": heading["attributes"][
+                                    "goods_nomenclature_item_id"
+                                ],
+                                "goods_nomenclature_sid": heading["attributes"][
+                                    "goods_nomenclature_sid"
+                                ],
+                                "productline_suffix": heading["attributes"][
+                                    "producline_suffix"
+                                ],
+                                "leaf": heading["attributes"]["leaf"],
+                                "parent_goods_nomenclature_item_id": chapter["data"][
+                                    "attributes"
+                                ]["goods_nomenclature_item_id"],
+                                "parent_goods_nomenclature_sid": chapter["data"][
+                                    "attributes"
+                                ]["goods_nomenclature_sid"],
+                                "parent_productline_suffix": "",
+                                "description": heading["attributes"]["description"],
+                                "number_indents": "0",
+                            }
+                        )
 
                         if "relationships" in heading.keys():
                             children = heading["relationships"]["children"]["data"]
                             for child in children:
-                                for sub_heading in [item for item in headings if item["data"]["id"] == child["id"]]:
-                                    leaves = [item for item in sub_heading["data"]["relationships"]]
-                                    sub_headings_data.append({
-                                        "goods_nomenclature_item_id": sub_heading["data"]["attributes"]["goods_nomenclature_item_id"],
-                                        "goods_nomenclature_sid": sub_heading["data"]["id"],
-                                        "productline_suffix": "",
-                                        "leaf": True if 'commodities' in leaves else False,
-                                        "parent_goods_nomenclature_item_id": heading["attributes"]["goods_nomenclature_item_id"],
-                                        "parent_goods_nomenclature_sid": heading["attributes"]["goods_nomenclature_sid"],
-                                        "parent_productline_suffix": "",
-                                        "description": sub_heading["data"]["attributes"]["description"],
-                                        "number_indents": "1"
-                                    })
+                                for sub_heading in [
+                                    item
+                                    for item in headings
+                                    if item["data"]["id"] == child["id"]
+                                ]:
+                                    leaves = [
+                                        item
+                                        for item in sub_heading["data"]["relationships"]
+                                    ]
+                                    sub_headings_data.append(
+                                        {
+                                            "goods_nomenclature_item_id": sub_heading[
+                                                "data"
+                                            ]["attributes"][
+                                                "goods_nomenclature_item_id"
+                                            ],
+                                            "goods_nomenclature_sid": sub_heading[
+                                                "data"
+                                            ]["id"],
+                                            "productline_suffix": "",
+                                            "leaf": True
+                                            if "commodities" in leaves
+                                            else False,
+                                            "parent_goods_nomenclature_item_id": heading[
+                                                "attributes"
+                                            ][
+                                                "goods_nomenclature_item_id"
+                                            ],
+                                            "parent_goods_nomenclature_sid": heading[
+                                                "attributes"
+                                            ]["goods_nomenclature_sid"],
+                                            "parent_productline_suffix": "",
+                                            "description": sub_heading["data"][
+                                                "attributes"
+                                            ]["description"],
+                                            "number_indents": "1",
+                                        }
+                                    )
 
         if headings:
             for heading in headings:
-                heading_id = heading["data"]['id']
+                heading_id = heading["data"]["id"]
                 code = heading["data"]["attributes"]["goods_nomenclature_item_id"]
 
-                sub_headings = [item for item in heading["included"]
-                                if item["type"] == "commodity" and item["attributes"]["leaf"] is False]
+                sub_headings = [
+                    item
+                    for item in heading["included"]
+                    if item["type"] == "commodity"
+                    and item["attributes"]["leaf"] is False
+                ]
 
                 for sub_heading in sub_headings:
                     parent_sid = sub_heading["attributes"]["parent_sid"]
 
                     sub_headings_data.append(
-                        {"goods_nomenclature_item_id": sub_heading["attributes"]["goods_nomenclature_item_id"],
-                         "goods_nomenclature_sid": sub_heading["attributes"]["goods_nomenclature_sid"],
-                         "productline_suffix": sub_heading["attributes"]["producline_suffix"],
-                         "leaf": sub_heading["attributes"]["leaf"],
-                         "parent_goods_nomenclature_item_id": code,
-                         "parent_goods_nomenclature_sid": parent_sid if parent_sid is not None else heading_id,
-                         "parent_productline_suffix": "",
-                         "description": sub_heading["attributes"]["description"],
-                         "number_indents": sub_heading["attributes"]["number_indents"]})
+                        {
+                            "goods_nomenclature_item_id": sub_heading["attributes"][
+                                "goods_nomenclature_item_id"
+                            ],
+                            "goods_nomenclature_sid": sub_heading["attributes"][
+                                "goods_nomenclature_sid"
+                            ],
+                            "productline_suffix": sub_heading["attributes"][
+                                "producline_suffix"
+                            ],
+                            "leaf": sub_heading["attributes"]["leaf"],
+                            "parent_goods_nomenclature_item_id": code,
+                            "parent_goods_nomenclature_sid": parent_sid
+                            if parent_sid is not None
+                            else heading_id,
+                            "parent_productline_suffix": "",
+                            "description": sub_heading["attributes"]["description"],
+                            "number_indents": sub_heading["attributes"][
+                                "number_indents"
+                            ],
+                        }
+                    )
 
-                commodities = [item for item in heading["included"]
-                               if item["type"] == "commodity" and item["attributes"]["leaf"] is True]
+                commodities = [
+                    item
+                    for item in heading["included"]
+                    if item["type"] == "commodity"
+                    and item["attributes"]["leaf"] is True
+                ]
 
                 commodity_lookup = {
-                    item["attributes"]["goods_nomenclature_sid"]: item["attributes"]["goods_nomenclature_item_id"]
-                    for item in heading["included"] if item["type"] == "commodity"
+                    item["attributes"]["goods_nomenclature_sid"]: item["attributes"][
+                        "goods_nomenclature_item_id"
+                    ]
+                    for item in heading["included"]
+                    if item["type"] == "commodity"
                 }
 
                 for commodity in commodities:
 
                     parent_sid = commodity["attributes"]["parent_sid"]
 
-                    commodities_data.append({
-                        "goods_nomenclature_item_id": commodity["attributes"]["goods_nomenclature_item_id"],
-                        "goods_nomenclature_sid": commodity["attributes"]["goods_nomenclature_sid"],
-                        "productline_suffix": commodity["attributes"]["producline_suffix"],
-                        "leaf": commodity["attributes"]["leaf"],
-                        "parent_goods_nomenclature_item_id": commodity_lookup[int(parent_sid)]
-                                                                if parent_sid is not None else code,
-                        "parent_goods_nomenclature_sid": parent_sid if parent_sid is not None else heading_id,
-                        "parent_productline_suffix": "",
-                        "description": commodity["attributes"]["description"],
-                        "number_indents": commodity["attributes"]["number_indents"]})
+                    commodities_data.append(
+                        {
+                            "goods_nomenclature_item_id": commodity["attributes"][
+                                "goods_nomenclature_item_id"
+                            ],
+                            "goods_nomenclature_sid": commodity["attributes"][
+                                "goods_nomenclature_sid"
+                            ],
+                            "productline_suffix": commodity["attributes"][
+                                "producline_suffix"
+                            ],
+                            "leaf": commodity["attributes"]["leaf"],
+                            "parent_goods_nomenclature_item_id": commodity_lookup[
+                                int(parent_sid)
+                            ]
+                            if parent_sid is not None
+                            else code,
+                            "parent_goods_nomenclature_sid": parent_sid
+                            if parent_sid is not None
+                            else heading_id,
+                            "parent_productline_suffix": "",
+                            "description": commodity["attributes"]["description"],
+                            "number_indents": commodity["attributes"]["number_indents"],
+                        }
+                    )
 
         # remove any duplicates
         headings_data = [dict(t) for t in {tuple(d.items()) for d in headings_data}]
-        sub_headings_data = [dict(t) for t in {tuple(d.items()) for d in sub_headings_data}]
-        commodities_data = [dict(t) for t in {tuple(d.items()) for d in commodities_data}]
+        sub_headings_data = [
+            dict(t) for t in {tuple(d.items()) for d in sub_headings_data}
+        ]
+        commodities_data = [
+            dict(t) for t in {tuple(d.items()) for d in commodities_data}
+        ]
 
         # serialize to filesystem
-        self.write_data_to_file(sections_data, settings.IMPORT_DATA_PATH.format("prepared/sections.json"))
-        self.write_data_to_file(chapters_data, settings.IMPORT_DATA_PATH.format("prepared/chapters.json"))
-        self.write_data_to_file(headings_data, settings.IMPORT_DATA_PATH.format("prepared/headings.json"))
-        self.write_data_to_file(sub_headings_data, settings.IMPORT_DATA_PATH.format("prepared/sub_headings.json"))
-        self.write_data_to_file(commodities_data, settings.IMPORT_DATA_PATH.format("prepared/commodities.json"))
+        self.write_data_to_file(
+            sections_data, settings.IMPORT_DATA_PATH.format("prepared/sections.json")
+        )
+        self.write_data_to_file(
+            chapters_data, settings.IMPORT_DATA_PATH.format("prepared/chapters.json")
+        )
+        self.write_data_to_file(
+            headings_data, settings.IMPORT_DATA_PATH.format("prepared/headings.json")
+        )
+        self.write_data_to_file(
+            sub_headings_data,
+            settings.IMPORT_DATA_PATH.format("prepared/sub_headings.json"),
+        )
+        self.write_data_to_file(
+            commodities_data,
+            settings.IMPORT_DATA_PATH.format("prepared/commodities.json"),
+        )
 
     @staticmethod
     def remove_duplicate_headings_from_api(json_obj):
@@ -448,9 +557,9 @@ class HierarchyBuilder:
         seen = []
         new_json_obj = []
         for heading in json_obj:
-            if heading ['data']['attributes']['goods_nomenclature_item_id'] not in seen:
+            if heading["data"]["attributes"]["goods_nomenclature_item_id"] not in seen:
                 new_json_obj.append(heading)
-                seen.append(heading['data']['attributes']['goods_nomenclature_item_id'])
+                seen.append(heading["data"]["attributes"]["goods_nomenclature_item_id"])
         return new_json_obj
 
     def save_trade_tariff_service_api_data_json_to_file(self):
@@ -461,8 +570,10 @@ class HierarchyBuilder:
         main hierarchy structural elements
         :return:
         """
-        logger.info("This will retrieve the json data for Sections, Chapters and Headings from the trade tariff api"
-                    " service and save the json files to the filesystem.")
+        logger.info(
+            "This will retrieve the json data for Sections, Chapters and Headings from the trade tariff api"
+            " service and save the json files to the filesystem."
+        )
         download_dir = settings.IMPORT_DATA_PATH.format("downloaded")
         previous_dir = "{0}/previous".format(download_dir)
 
@@ -471,7 +582,11 @@ class HierarchyBuilder:
         # except FileExistsError as exception:
         #     logger.info("{0}".format(exception.args))
 
-        previous_files = [f for f in os.listdir(download_dir) if os.path.isfile(os.path.join(download_dir, f))]
+        previous_files = [
+            f
+            for f in os.listdir(download_dir)
+            if os.path.isfile(os.path.join(download_dir, f))
+        ]
 
         for f in previous_files:
             os.rename(os.path.join(download_dir, f), os.path.join(previous_dir, f))
@@ -479,17 +594,28 @@ class HierarchyBuilder:
         data_type = "sections"
         sections, _ = self.get_type_data_from_api(data_type=data_type)
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(sections, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
+        self.write_data_to_file(
+            sections,
+            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+        )
 
         data_type = "chapters"
         chapters, heading_ids = self.get_type_data_from_api(data_type=data_type)
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(chapters, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
+        self.write_data_to_file(
+            chapters,
+            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+        )
 
         data_type = "headings"
-        headings, commodity_ids = self.get_item_data_from_api(data_type=data_type, item_ids=heading_ids)
+        headings, commodity_ids = self.get_item_data_from_api(
+            data_type=data_type, item_ids=heading_ids
+        )
         logger.info("Writing {0} data".format(data_type))
-        self.write_data_to_file(headings, settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)))
+        self.write_data_to_file(
+            headings,
+            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+        )
 
     def lookup_parent(self, parent_model, child_parent_code):
         """
@@ -508,7 +634,9 @@ class HierarchyBuilder:
                     return Section.objects.get(section_id=int(item["section_id"]))
             else:
                 try:
-                    return parent_model.objects.get(goods_nomenclature_sid=child_parent_code)
+                    return parent_model.objects.get(
+                        goods_nomenclature_sid=child_parent_code
+                    )
                 except ObjectDoesNotExist as exception:
                     logger.debug("{0} lookup parent:{1} ".format(item, exception.args))
                     return None
@@ -521,7 +649,9 @@ class HierarchyBuilder:
         """
 
         logger.info("Processing orphaned subheading parents")
-        subheadings = SubHeading.objects.filter(heading_id=None, parent_subheading_id=None)
+        subheadings = SubHeading.objects.filter(
+            heading_id=None, parent_subheading_id=None
+        )
 
         count = 0
         for subheading in subheadings:
@@ -531,13 +661,21 @@ class HierarchyBuilder:
                 subheading.parent_subheading_id = parent.pk
                 subheading.save()
             except ObjectDoesNotExist as exception:
-                logger.info("{0} has no parent SubHeading {1}".format(subheading, exception.args))
+                logger.info(
+                    "{0} has no parent SubHeading {1}".format(
+                        subheading, exception.args
+                    )
+                )
                 try:
                     parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
                     subheading.heading_id = parent.pk
                     subheading.save()
                 except ObjectDoesNotExist as exception:
-                    logger.info("{0} has no parent Heading {1}".format(subheading, exception.args))
+                    logger.info(
+                        "{0} has no parent Heading {1}".format(
+                            subheading, exception.args
+                        )
+                    )
             count = count + 1
         return count
 
@@ -550,7 +688,9 @@ class HierarchyBuilder:
         """
 
         logger.info("Processing orphaned commodity parents")
-        commodities = Commodity.objects.filter(heading_id=None, parent_subheading_id=None)
+        commodities = Commodity.objects.filter(
+            heading_id=None, parent_subheading_id=None
+        )
 
         for commodity in commodities:
             parent_sid = commodity.parent_goods_nomenclature_sid
@@ -559,18 +699,24 @@ class HierarchyBuilder:
 
                 if parent_sid is None:
                     subheading = SubHeading.objects.get(
-                        commodity_code=commodity.parent_goods_nomenclature_item_id)
+                        commodity_code=commodity.parent_goods_nomenclature_item_id
+                    )
                     parent_sid = subheading.goods_nomenclature_sid
 
                 parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
-                logger.debug("Commodity {0} has no subheading parent parant {1}".format(commodity, exception.args))
+                logger.debug(
+                    "Commodity {0} has no subheading parent parant {1}".format(
+                        commodity, exception.args
+                    )
+                )
 
                 if parent_sid is None:
                     heading = Heading.objects.get(
-                        heading_code=commodity.parent_goods_nomenclature_item_id)
+                        heading_code=commodity.parent_goods_nomenclature_item_id
+                    )
                     parent_sid = heading.goods_nomenclature_sid
 
                 parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)

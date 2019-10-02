@@ -8,19 +8,18 @@ def admin_login_view(request):
     authentication flow. """
 
     next_url = request.GET.get(
-        'next',
-        request.session.get('admin_next_url',
-                            reverse('admin:index')))
+        "next", request.session.get("admin_next_url", reverse("admin:index"))
+    )
 
     if request.user.is_authenticated:
         if not request.user.is_staff:
             raise PermissionDenied
         else:
-            if 'admin_next_url' in request.session:
-                del request.session['admin_next_url']
+            if "admin_next_url" in request.session:
+                del request.session["admin_next_url"]
 
             return redirect(next_url)
     else:
-        request.session['admin_next_url'] = next_url
+        request.session["admin_next_url"] = next_url
 
-        return redirect('authbroker:login')
+        return redirect("authbroker:login")

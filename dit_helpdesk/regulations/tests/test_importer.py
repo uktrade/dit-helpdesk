@@ -87,11 +87,15 @@ class RegulationsImporterTestCase(TestCase):
     #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
 
     def test_data_loader_with_csv(self):
-        file_path = settings.REGULATIONS_DATA_PATH.format('product_specific_regulations.csv')
+        file_path = settings.REGULATIONS_DATA_PATH.format(
+            "product_specific_regulations.csv"
+        )
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 
     def test_data_loader_with_json(self):
-        file_path = settings.REGULATIONS_DATA_PATH.format('urls_with_text_description.json')
+        file_path = settings.REGULATIONS_DATA_PATH.format(
+            "urls_with_text_description.json"
+        )
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, dict))

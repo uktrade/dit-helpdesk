@@ -11,4 +11,3 @@ output = $TEST_OUTPUT_DIR/coverage.xml
 [html]
 directory = $TEST_OUTPUT_DIR/coverage_html
 title = DIT Helpdesk Coverage Report
-

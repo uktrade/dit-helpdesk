@@ -5,7 +5,7 @@ from healthcheck.models import HealthCheck
 
 
 class HealthCheckView(TemplateView):
-    template_name = 'healthcheck.html'
+    template_name = "healthcheck.html"
 
     def _do_check(self):
         """
@@ -23,7 +23,7 @@ class HealthCheckView(TemplateView):
     def get_context_data(self, **kwargs):
         """ Adds status and response time to response context"""
         context = super().get_context_data(**kwargs)
-        context['status'] = 'OK' if self._do_check() is True else 'FAIL'
+        context["status"] = "OK" if self._do_check() is True else "FAIL"
         # nearest approximation of a response time
-        context['response_time'] = time.time() - self.request.start_time
+        context["response_time"] = time.time() - self.request.start_time
         return context

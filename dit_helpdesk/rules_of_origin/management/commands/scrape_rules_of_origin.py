@@ -19,7 +19,7 @@ from django.conf import settings
 # RULES = defaultdict(list)
 # EXCLUSION_RULES = defaultdict(list)
 #
-roo_fp = 'rules_of_origin/management/commands/roo_chile.html'
+roo_fp = "rules_of_origin/management/commands/roo_chile.html"
 
 
 # roo_fp = 'rules_of_origin/management/commands/L_2013054EN.01000301.html'
@@ -27,7 +27,7 @@ roo_fp = 'rules_of_origin/management/commands/roo_chile.html'
 # roo_fp = 'rules_of_origin/html_source/EUR-Lex-32015R2446-EN-EUR-Lex.html'
 
 
-'''
+"""
 
 Example keys:
 
@@ -55,66 +55,73 @@ NOTE: this script doesn't parse these cases:  (which are in fact in the document
 ex ex7218, 7219 to 7222
 ex ex7224, 7225 to 7228
 8403 and ex ex8404
-'''
+"""
 
 ROW_CATEGORY_REGEXPS = [
-
-    (r'^ex Chapter (?P<chapter_num>\d{1,2})$', 'chapter_exclusion'),  # ex Chapter 4
-    (r'^(ex ex\d{4},\s)+(ex ex\d{4})$', 'heading_exclusion_list'),  # ex ex6202, ex ex6204, ex ex6206
-    (r'^ex ex(?P<heading_num>\d{4})$', 'heading_exclusion'),  # ex ex7616
-    (r'^ex ex(?P<start_heading>\d{4})-ex ex(?P<end_heading>\d{4})$', 'heading_exclusion_range'),  # ex ex4410-ex ex4413
-
-    (r'^Chapter (?P<chapter_num>\d{1,2})$', 'chapter'),
-    (r'^(?P<start_heading>\d{4})-(?P<end_heading>\d{4})$', 'heading_range'),  # 1507-1515
-    (r'^(\d{4},\s)+$', 'heading_list'),  # 4107, 4112
-    (r'^(?P<heading_num>\d{4})', 'heading'),
+    (r"^ex Chapter (?P<chapter_num>\d{1,2})$", "chapter_exclusion"),  # ex Chapter 4
+    (
+        r"^(ex ex\d{4},\s)+(ex ex\d{4})$",
+        "heading_exclusion_list",
+    ),  # ex ex6202, ex ex6204, ex ex6206
+    (r"^ex ex(?P<heading_num>\d{4})$", "heading_exclusion"),  # ex ex7616
+    (
+        r"^ex ex(?P<start_heading>\d{4})-ex ex(?P<end_heading>\d{4})$",
+        "heading_exclusion_range",
+    ),  # ex ex4410-ex ex4413
+    (r"^Chapter (?P<chapter_num>\d{1,2})$", "chapter"),
+    (
+        r"^(?P<start_heading>\d{4})-(?P<end_heading>\d{4})$",
+        "heading_range",
+    ),  # 1507-1515
+    (r"^(\d{4},\s)+$", "heading_list"),  # 4107, 4112
+    (r"^(?P<heading_num>\d{4})", "heading"),
 ]
 
 
 def get_keys(st, category, match_obj):
 
-    if category == 'chapter':
-        chapter_num = match_obj.groupdict()['chapter_num']
-        if len(chapter_num) == '1':
-            chapter_num = '0' + chapter_num
-        return ['chapter__' + chapter_num]
+    if category == "chapter":
+        chapter_num = match_obj.groupdict()["chapter_num"]
+        if len(chapter_num) == "1":
+            chapter_num = "0" + chapter_num
+        return ["chapter__" + chapter_num]
 
-    elif category == 'chapter_exclusion':
-        chapter_num = match_obj.groupdict()['chapter_num']
-        if len(chapter_num) == '1':
-            chapter_num = '0' + chapter_num
-        return ['chapter_exclusion__' + chapter_num]
+    elif category == "chapter_exclusion":
+        chapter_num = match_obj.groupdict()["chapter_num"]
+        if len(chapter_num) == "1":
+            chapter_num = "0" + chapter_num
+        return ["chapter_exclusion__" + chapter_num]
 
-    elif category == 'heading':
-        return ['heading__' + match_obj.groupdict()['heading_num']]
+    elif category == "heading":
+        return ["heading__" + match_obj.groupdict()["heading_num"]]
 
-    elif category == 'heading_exclusion':
-        return ['heading_exclusion__' + match_obj.groupdict()['heading_num']]
+    elif category == "heading_exclusion":
+        return ["heading_exclusion__" + match_obj.groupdict()["heading_num"]]
 
-    elif category == 'heading_exclusion_list':
+    elif category == "heading_exclusion_list":
         heading_strings = match_obj.groups()
         keys = []
         for heading_str in heading_strings:
-            heading_num = heading_str.lstrip('ex ex').strip().rstrip(',')
-            keys.append('heading_exclusion__' + heading_num)
+            heading_num = heading_str.lstrip("ex ex").strip().rstrip(",")
+            keys.append("heading_exclusion__" + heading_num)
         return keys
 
-    elif category == 'heading_exclusion_range':
+    elif category == "heading_exclusion_range":
         di = match_obj.groupdict()
-        start, end = int(di['start_heading']), int(di['end_heading'])
+        start, end = int(di["start_heading"]), int(di["end_heading"])
         keys = []
         for heading_num in range(start, end + 1):
-            keys.append('heading_exclusion__%s' % heading_num)
+            keys.append("heading_exclusion__%s" % heading_num)
         return keys
 
-    elif category == 'heading_range':
+    elif category == "heading_range":
         di = match_obj.groupdict()
-        start, end = int(di['start_heading']), int(di['end_heading'])
+        start, end = int(di["start_heading"]), int(di["end_heading"])
         keys = []
         for heading_num in range(start, end + 1):
-            keys.append('heading__' + str(heading_num))
+            keys.append("heading__" + str(heading_num))
         return keys
-    return ''
+    return ""
 
 
 class Command(BaseCommand):
@@ -123,12 +130,17 @@ class Command(BaseCommand):
 
         # html from: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2013.054.01.0003.01.ENG
         html = open(roo_fp).read()
-        soup = BeautifulSoup(html, 'html.parser')
-        tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2013054EN.01003001'}).children][5].children][9]
+        soup = BeautifulSoup(html, "html.parser")
+        tbody = [
+            ch
+            for ch in [
+                e for e in soup.find("div", {"id": "L_2013054EN.01003001"}).children
+            ][5].children
+        ][9]
         # tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2012111EN.01104601'}).children][5].children][9]
         # tbody = [ch for ch in [e for e in soup.find('div', {'id': 'L_2015343EN.01011101'}).children][5].children][9]
 
-        rows = [e for e in tbody.findChildren('tr', recursive=False)]
+        rows = [e for e in tbody.findChildren("tr", recursive=False)]
 
         table_segments = defaultdict(list)
 
@@ -137,8 +149,8 @@ class Command(BaseCommand):
 
             if i < 2:
                 continue
-            cols = row.findChildren('td', recursive=False)
-            left_col = cols[0].p.text.replace('\xa0', ' ').strip()
+            cols = row.findChildren("td", recursive=False)
+            left_col = cols[0].p.text.replace("\xa0", " ").strip()
             if len(cols) != 4:
                 continue
 
@@ -150,11 +162,11 @@ class Command(BaseCommand):
 
         for segment_title, row_positions in table_segments.items():
 
-            if segment_title in ('ex ex7218, 7219 to 7222', 'ex ex7224, 7225 to 7228'):
+            if segment_title in ("ex ex7218, 7219 to 7222", "ex ex7224, 7225 to 7228"):
                 continue  # todo: we need to include these
 
-            segment_title = segment_title.replace(' and ', ', ')
-            segment_title = segment_title.replace(' to ', '-')
+            segment_title = segment_title.replace(" and ", ", ")
+            segment_title = segment_title.replace(" to ", "-")
 
             for regex, category in ROW_CATEGORY_REGEXPS:
                 curr_match = re.search(regex, segment_title)
@@ -162,12 +174,10 @@ class Command(BaseCommand):
                     keys = get_keys(table_segments, category, curr_match)
                     for key in keys:
                         for row_pos in row_positions:
-                            html_fragments[key].append(
-                                str(rows[row_pos])
-                            )
+                            html_fragments[key].append(str(rows[row_pos]))
                     break
 
-        file = open('rules_of_origin/management/commands/roo_chile.json', 'w')
+        file = open("rules_of_origin/management/commands/roo_chile.json", "w")
         # file = open('rules_of_origin/management/commands/L_2013054EN.01000301.json', 'w')
         # file = open('rules_of_origin/management/commands/official.json', 'w')
         # file = open('rules_of_origin/data/EUR-Lex-32015R2446-EN-EUR-Lex.json', 'w')

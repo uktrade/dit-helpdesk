@@ -1,6 +1,6 @@
 # DIT Helpdesk
 
-This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the 
+This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the
 products that they want to export to the UK.
 
 
@@ -8,7 +8,7 @@ products that they want to export to the UK.
  - Python 3
  - Node [Active LTS][1] version (Current Active version is v10)
  - Docker (if developing locally with docker)
- 
+
  #### Optional. Only required for testing contact form submissions to zenddesk
  - Directory Forms API (https://github.com/uktrade/directory-forms-api)
     - redis (installed locally)
@@ -16,7 +16,7 @@ products that they want to export to the UK.
 
 ### Install using Docker
 
-If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about 
+If you have Docker installed, you can run this service without needing to set up the database yourself, worrying about
 virtual environments - it's all within the Docker instance.
 
 - Docker for mac - https://hub.docker.com/editions/community/docker-ce-desktop-mac
@@ -32,7 +32,7 @@ clone the directory
 git clone https://github.com/uktrade/directory-forms-api.git .
 ```
 
-create a hosts file entry for 
+create a hosts file entry for
 
 `127.0.0.0.1    forms.trade.great`
 
@@ -64,18 +64,18 @@ then run `make debug_webserver` to start the server
 
 access the application admin screens locally in you browser with the url http://forms.trade.great:8011/admin
 
-Click the add button in the Client section and add `helpdesk` as the name of the client then click submit. This will 
-generate the user identifier and accss key that you need to add to the .env file for the `dit_helpdesk` application 
- 
+Click the add button in the Client section and add `helpdesk` as the name of the client then click submit. This will
+generate the user identifier and accss key that you need to add to the .env file for the `dit_helpdesk` application
+
 ** ToDo: incorporate into docker as service
 
 ### UK Trade Helpdesk
 First clone the repo
 
 ```bash
-git@github.com:uktrade/dit-helpdesk.git . 
+git@github.com:uktrade/dit-helpdesk.git .
 
-``` 
+```
 
 then using a terminal move inside of the folder:
 
@@ -86,7 +86,7 @@ cd dit-helpdesk
 #### Frontend static asset installation
 
 First we need to install [GOV.UK Frontend][2] and
-[GOV.UK country and territory autocomplete][3] (Which will also also install the required [Accessible Autocomplete][4] 
+[GOV.UK country and territory autocomplete][3] (Which will also also install the required [Accessible Autocomplete][4]
 dependency), and other front end dependencies.
 
 This is all done by going to the project root folder, which contains `package.json`. Then run:
@@ -107,7 +107,7 @@ npm run build
 
 #### set environment variables
 
-copy the two development environment variables files 
+copy the two development environment variables files
 
 ```
 .envs/.development/.django.template
@@ -115,46 +115,46 @@ copy the two development environment variables files
 
 ```
 
-and rename them to 
+and rename them to
 
 ```
 .envs/.development/.django
 .envs/.development/.postgres
-```  
+```
 
 add entries where necessary (see comments for guidance)
 
-You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file. 
-To do so you will need to generate a github personal access token. This is needed to log into vault. 
-Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`. 
-Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github 
+You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file.
+To do so you will need to generate a github personal access token. This is needed to log into vault.
+Go here: [Vault][6] click `Generate new token` and make sure it has these scopes: `read:org`, `read:user`.
+Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github
 as your login option.
 
 #### Install for development with Docker
 
-Make sure that Docker is installed and running. 
+Make sure that Docker is installed and running.
 
 ##### Initial setup run
 
-This intial set up will take about an hour (depending upon machine and internet speed) to set up and fully import 
+This intial set up will take about an hour (depending upon machine and internet speed) to set up and fully import
 all content, on subsequent runs it will on take a minute or so to be up and running for development.
 
-The initial run (this section) only needs to be done when building a new or fresh docker container. Once this section 
+The initial run (this section) only needs to be done when building a new or fresh docker container. Once this section
 has been done and as long as the docker images are not destroyed, the only line that needs to be uncommented
 when running`docker-compose -f development.yml up` will be.
- 
+
 This section details manually running each command in turn to fuly import all content.
 
-NB: Alternatively, you can comment out `sleep infinity` and uncomment those that are commented, below, and the entire 
-process should run automatically on `docker-compose -f development.yml up`, ending with a running application accessible 
+NB: Alternatively, you can comment out `sleep infinity` and uncomment those that are commented, below, and the entire
+process should run automatically on `docker-compose -f development.yml up`, ending with a running application accessible
 at http://localhost:8000/choose-country/
 
 ```
 python manage.py runserver_plus 0.0.0.0:8000
 ```
 
-Open `compose/development/django/start.sh` and make sure the commands  
-of the Initialize section are commented as below 
+Open `compose/development/django/start.sh` and make sure the commands
+of the Initialize section are commented as below
 
 ```
     # ----------------- commands ----------------
@@ -190,13 +190,13 @@ To run the Docker containers, run:
 docker-compose -f development.yml up
 ```
 
-Open a second terminal and run the following command to activate a shell into the docker instance 
+Open a second terminal and run the following command to activate a shell into the docker instance
 for the trade helpdesk app with the command.
 
 ```
 docker exec -it dit_helpdesk_helpdesk_1 /bin/bash
-``` 
-NB: if `dit_helpdesk_helpdesk_1` is not found run `docker ps` in your host terminal to get a list of the docker images 
+```
+NB: if `dit_helpdesk_helpdesk_1` is not found run `docker ps` in your host terminal to get a list of the docker images
 and their correct names
 
 refer to "Running, then shelling in" section below
@@ -210,14 +210,14 @@ python manage.py migrate
 python manage.py loaddata countries_data
 ```
 
-Whilst still in the docker shell, run the following commands to collect the hierarchy content from the trade tariff API 
-and prepare it for import into the django database, then import 
+Whilst still in the docker shell, run the following commands to collect the hierarchy content from the trade tariff API
+and prepare it for import into the django database, then import
 
-** todo: rename scrape_section_hierarchy 
+** todo: rename scrape_section_hierarchy
 
 ###### Commodities and Hierarchy
 To populate the commodities in the database, we need to:
-- pull data from the api, 
+- pull data from the api,
 - prepare the api data for import
 - import the data.
 
@@ -265,7 +265,7 @@ python manage.py search_index --populate
 
 Note: See below for more details including generating data to import files and clearing the database
 
-When finished this process in a new host shell (not the docker shell, nor the host shell currently running the docker 
+When finished this process in a new host shell (not the docker shell, nor the host shell currently running the docker
 containers) run the following to shut down (not destroy) the running docker instance.
 
 ```
@@ -291,7 +291,7 @@ docker-compose -f development.yml up
 
 The site will be available at http://localhost:8000/choose-country/
 
-To trigger a build when any Sass is changed, run the following command in the root of the project folder in a 
+To trigger a build when any Sass is changed, run the following command in the root of the project folder in a
 `host machine` shell, not a `docker instance` shell:
 ```bash
 npm run watch:styles
@@ -299,7 +299,7 @@ npm run watch:styles
 
 ### Running, then shelling in
 
-If you want to be able to run commands in bash within the docker instance, we need to change the start 
+If you want to be able to run commands in bash within the docker instance, we need to change the start
 script `compose/development/django/start.sh` slightly.
 
 stop the docker instance
@@ -308,14 +308,14 @@ stop the docker instance
 docker-compose -f development.yml stop
 ```
 
-NB: do not use `docker-compose -f development.yml down` as that will stop the containers and delete the images and 
+NB: do not use `docker-compose -f development.yml down` as that will stop the containers and delete the images and
 you will need ot go through the whole intial process of building and setting up with content again.
 
 Uncomment the sleep command:
 ```
 sleep infinity
 ```
-and comment out the line that starts the app, 
+and comment out the line that starts the app,
 ```
 # python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
 ```
@@ -334,13 +334,13 @@ and for database access the postgres service
 ```
 docker exec -it dit-helpdesk_postgres_1 /bin/bash
 ```
- 
+
 ### Extracting Rules of Origin data from word documents ready for import
-There is a management command for extracting data from word documents that may be supplied for new content, 
-from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the 
-`scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the 
-`rules_of_origin/import_folder`where the importer command will read them from. 
-Be sure to archive any existing word files and/or json files should there be anyone clear the two folders. 
+There is a management command for extracting data from word documents that may be supplied for new content,
+from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the
+`scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the
+`rules_of_origin/import_folder`where the importer command will read them from.
+Be sure to archive any existing word files and/or json files should there be anyone clear the two folders.
 To extract data from word docx source content, run:
 ```bash
 python dit_helpdesk/manage.py scrape_rules_of_origin_docx
@@ -355,7 +355,7 @@ This should take a couple of minutes per word document.
 
 Make sure that you have the correct settings values for the authbroker sso integration
 
-If these have been set up on PaaS check either the vault or `cf env {yourapp}` for appropriate values. If they have not 
+If these have been set up on PaaS check either the vault or `cf env {yourapp}` for appropriate values. If they have not
 been set up check with system administrator.
 
 Use to django management command to get into an environment shell on you local development environment
@@ -363,7 +363,7 @@ Use to django management command to get into an environment shell on you local d
 ```
 ./manage.py shell_plus
 
-```   
+```
 
 Then create the super user like so:
 
@@ -374,7 +374,7 @@ user = get_user_model().objects.get(email='<<your gov.uk email address>>')
 user.is_superuser=True
 user.is_staff=True
 user.save()
-``` 
+```
 
 ### Running tests with Docker development deployment
 
@@ -399,8 +399,8 @@ for coverage reports run
 ```
 coverage -d reports html
 ```
-you will then be able to access the coverage report html from within your project folder's root 
-from your host machine at /reports 
+you will then be able to access the coverage report html from within your project folder's root
+from your host machine at /reports
 
 
 ### Running tests and generating coverage with Docker
@@ -411,7 +411,7 @@ docker-compose -f test.yml up
 
 ```
 
-This will display in the shell the following: 
+This will display in the shell the following:
 - all tests, showing passes and failures
 - coverage report
 
@@ -422,9 +422,9 @@ it will also generate the following reports into folder `reports` :
 
 ## Country synonyms
 
-The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or 
-synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to 
-add synonyms. Then run `npm run update-countries`. You should see the updated 
+The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or
+synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to
+add synonyms. Then run `npm run update-countries`. You should see the updated
 files in `dit_helpdesk/static_collected/js/`.
 
 
@@ -435,7 +435,7 @@ To run, we need to create a Python virtual environment and install any requireme
 ## Requirements
  - Python 3
  - Node [Active LTS][8] version (Current Active version is v10)
- - postgresql 
+ - postgresql
 
 When in the project folder, create a virtual environment.
 

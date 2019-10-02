@@ -32,7 +32,7 @@ class Section(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'section-%s' % self.section_id
+        return "section-%s" % self.section_id
 
     @property
     def chapter_range_str(self):
@@ -44,18 +44,18 @@ class Section(models.Model):
             int(chapter.chapter_code[:2]) for chapter in self.chapter_set.all()
         ]
         if len(chapter_codes) == 0:
-            return 'None'
+            return "None"
         if len(chapter_codes) == 1:
             return str(chapter_codes[0])
         min_code, max_code = min(chapter_codes), max(chapter_codes)
-        return '%s to %s' % (min_code, max_code)
+        return "%s to %s" % (min_code, max_code)
 
     def get_hierarchy_children(self):
         """
         Query returning a list of child chapters ordered by code
         :return:
         """
-        return self.chapter_set.all().order_by('chapter_code')
+        return self.chapter_set.all().order_by("chapter_code")
 
     def get_chapters_url(self):
         """
@@ -63,8 +63,7 @@ class Section(models.Model):
         :return:
         """
         return reverse(
-            'hierarchy-section-chapters',
-            kwargs={'section_id': str(self.section_id)}
+            "hierarchy-section-chapters", kwargs={"section_id": str(self.section_id)}
         )
 
     def get_hierarchy_url(self, country_code=None):
@@ -73,14 +72,12 @@ class Section(models.Model):
         :param country_code: string representing the country code
         :return: url
         """
-        kwargs = {
-            'node_id': 'section-%s' % self.section_id
-        }
+        kwargs = {"node_id": "section-%s" % self.section_id}
 
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
+            kwargs["country_code"] = country_code.lower()
 
-        return reverse('search:search-hierarchy', kwargs=kwargs)
+        return reverse("search:search-hierarchy", kwargs=kwargs)
 
     @property
     def ancestor_data(self):
@@ -127,7 +124,7 @@ class Chapter(models.Model):
     chapter_code = models.CharField(max_length=30)
 
     section = models.ForeignKey(
-        'Section', blank=True, null=True, on_delete=models.CASCADE
+        "Section", blank=True, null=True, on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -151,7 +148,7 @@ class Chapter(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'chapter-%s' % self.goods_nomenclature_sid
+        return "chapter-%s" % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -167,7 +164,7 @@ class Chapter(models.Model):
         Query returning a list of child Headings ordered by code
         :return:
         """
-        return self.headings.all().order_by('heading_code')
+        return self.headings.all().order_by("heading_code")
 
     def get_headings_url(self):
         """
@@ -175,8 +172,8 @@ class Chapter(models.Model):
         :return:
         """
         return reverse(
-            'hierarchy-section-chapter-headings',
-            kwargs={'chapter_code_2': self.chapter_code[:2]}
+            "hierarchy-section-chapter-headings",
+            kwargs={"chapter_code_2": self.chapter_code[:2]},
         )
 
     def get_hierarchy_url(self, country_code=None):
@@ -185,14 +182,12 @@ class Chapter(models.Model):
         :param country_code: string representing the country code
         :return: url
         """
-        kwargs = {
-            'node_id': 'chapter-%s' % self.goods_nomenclature_sid
-        }
+        kwargs = {"node_id": "chapter-%s" % self.goods_nomenclature_sid}
 
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
+            kwargs["country_code"] = country_code.lower()
 
-        return reverse('search:search-hierarchy', kwargs=kwargs)
+        return reverse("search:search-hierarchy", kwargs=kwargs)
 
     @property
     def ancestor_data(self):
@@ -218,12 +213,15 @@ class Chapter(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'section') and parent.section is not None:
-            tree[level].append({"id": parent.section.id,
-                                "description": parent.section.title,
-                                "commodity_code": parent.section.roman_numeral,
-                                "type": "section"
-                                })
+        if hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(
+                {
+                    "id": parent.section.id,
+                    "description": parent.section.title,
+                    "commodity_code": parent.section.roman_numeral,
+                    "type": "section",
+                }
+            )
 
         return tree
 
@@ -240,13 +238,14 @@ class Heading(models.Model):
     keywords = models.TextField(null=True, blank=True)
     ranking = models.SmallIntegerField(null=True, blank=True)
     heading_code = models.CharField(max_length=10)
-    heading_code_4 = models.CharField(
-        max_length=4, null=True, blank=True
-    )
+    heading_code_4 = models.CharField(max_length=4, null=True, blank=True)
     tts_json = models.TextField(blank=True, null=True)
     chapter = models.ForeignKey(
-        'hierarchy.Chapter', blank=True, null=True, on_delete=models.CASCADE,
-        related_name='headings'
+        "hierarchy.Chapter",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="headings",
     )
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -282,16 +281,19 @@ class Heading(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
             self.get_path(parent.parent_subheading, tree, level + 1)
             tree.insert(1, [parent.parent_subheading])
-        if hasattr(parent, 'heading') and parent.heading is not None:
+        if hasattr(parent, "heading") and parent.heading is not None:
             self.get_path(parent.heading, tree, level + 1)
             tree[level].append(parent.heading)
-        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
             self.get_path(parent.chapter, tree, level + 1)
             tree[level].append(parent.chapter)
-        elif hasattr(parent, 'section') and parent.section is not None:
+        elif hasattr(parent, "section") and parent.section is not None:
             tree[level].append(parent.section)
         elif self.parent_subheading is not parent:
             self._append_path_children(self.parent_subheading, tree, level)
@@ -321,16 +323,13 @@ class Heading(models.Model):
 
         country = Country.objects.get(country_code=country_code)
         groups = {}
-        rules_of_origin = {
-            "rules": [],
-            "footnotes": []
-        }
+        rules_of_origin = {"rules": [], "footnotes": []}
         for group_member in country.rulesgroupmember_set.all():
             for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin['footnotes'] = document.footnotes.all().order_by('id')
-                for rule in document.rule_set.all().order_by('id'):
+                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
+                for rule in document.rule_set.all().order_by("id"):
                     if rule.chapter == self.chapter:
-                        rules_of_origin['rules'].append(rule)
+                        rules_of_origin["rules"].append(rule)
             group_name = group_member.rules_group.description
             groups[group_name] = rules_of_origin
 
@@ -342,7 +341,7 @@ class Heading(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'heading-%s' % self.goods_nomenclature_sid
+        return "heading-%s" % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -361,18 +360,22 @@ class Heading(models.Model):
         Method returning the rul of the current instance
         :return:
         """
-        kwargs = {'heading_code': self.heading_code_4 or self.heading_code}
+        kwargs = {"heading_code": self.heading_code_4 or self.heading_code}
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
-        return reverse('heading-detail', kwargs=kwargs)
+            kwargs["country_code"] = country_code.lower()
+        return reverse("heading-detail", kwargs=kwargs)
 
     def get_hierarchy_children(self):
         """
         Query returning a list of child SubHeadings and/or Commodities ordered by code
         :return:
         """
-        sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
-        commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
+        sub_headings = [
+            obj for obj in self.child_subheadings.all().order_by("commodity_code")
+        ]
+        commodities = [
+            obj for obj in self.children_concrete.all().order_by("commodity_code")
+        ]
         return sub_headings + commodities
 
     def get_hierarchy_url(self, country_code=None):
@@ -381,14 +384,12 @@ class Heading(models.Model):
         :param country_code: string representing the country code
         :return: url
         """
-        kwargs = {
-            'node_id': 'heading-%s' % self.goods_nomenclature_sid
-        }
+        kwargs = {"node_id": "heading-%s" % self.goods_nomenclature_sid}
 
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
+            kwargs["country_code"] = country_code.lower()
 
-        return reverse('search:search-hierarchy', kwargs=kwargs)
+        return reverse("search:search-hierarchy", kwargs=kwargs)
 
     def update_content(self):
         """
@@ -422,12 +423,12 @@ class Heading(models.Model):
         :return: json string
         """
         obj = json.loads(resp_content)
-        for idx, measure in enumerate(obj['import_measures']):
-            measure['measure_id'] = idx
-            for i, condition in enumerate(measure['measure_conditions']):
+        for idx, measure in enumerate(obj["import_measures"]):
+            measure["measure_id"] = idx
+            for i, condition in enumerate(measure["measure_conditions"]):
                 if isinstance(condition, dict):
-                    condition['measure_id'] = idx
-                    condition['condition_id'] = i
+                    condition["measure_id"] = idx
+                    condition["condition_id"] = i
 
         return json.dumps(obj)
 
@@ -455,18 +456,25 @@ class Heading(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'chapter') and parent.chapter is not None:
+        if hasattr(parent, "chapter") and parent.chapter is not None:
             self.get_ancestor_data(parent.chapter, tree, level + 1)
-            tree[level].append({"id": parent.chapter.id,
-                             "description": parent.chapter.description,
-                             "commodity_code": parent.chapter.commodity_code,
-                             "type": "chapter"})
-        elif hasattr(parent, 'section') and parent.section is not None:
-            tree[level].append({"id": parent.section.id,
-                                "description": parent.section.title,
-                                "commodity_code": parent.section.roman_numeral,
-                                "type": "section"
-                                })
+            tree[level].append(
+                {
+                    "id": parent.chapter.id,
+                    "description": parent.chapter.description,
+                    "commodity_code": parent.chapter.commodity_code,
+                    "type": "chapter",
+                }
+            )
+        elif hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(
+                {
+                    "id": parent.section.id,
+                    "description": parent.section.title,
+                    "commodity_code": parent.section.roman_numeral,
+                    "type": "section",
+                }
+            )
 
         return tree
 
@@ -495,17 +503,23 @@ class SubHeading(models.Model):
     tts_is_leaf = models.BooleanField()
 
     heading = models.ForeignKey(
-        'hierarchy.Heading', blank=True, null=True,
-        related_name='child_subheadings', on_delete=models.CASCADE
+        "hierarchy.Heading",
+        blank=True,
+        null=True,
+        related_name="child_subheadings",
+        on_delete=models.CASCADE,
     )
 
     parent_subheading = models.ForeignKey(
-        'self', blank=True, null=True,
-        related_name='child_subheadings', on_delete=models.CASCADE
+        "self",
+        blank=True,
+        null=True,
+        related_name="child_subheadings",
+        on_delete=models.CASCADE,
     )
 
     class Meta:
-        unique_together = ('commodity_code', 'description')
+        unique_together = ("commodity_code", "description")
 
     def __str__(self):
         return "Sub Heading {0}".format(self.commodity_code)
@@ -516,7 +530,7 @@ class SubHeading(models.Model):
         Property method returning the key used to identify the node in the hierarchy html of the search view template
         :return: string
         """
-        return 'sub_heading-%s' % self.goods_nomenclature_sid
+        return "sub_heading-%s" % self.goods_nomenclature_sid
 
     @property
     def harmonized_code(self):
@@ -540,22 +554,24 @@ class SubHeading(models.Model):
         :param country_code: string representing the country code
         :return: url
         """
-        kwargs = {
-            'node_id': 'sub_heading-%s' % self.goods_nomenclature_sid
-        }
+        kwargs = {"node_id": "sub_heading-%s" % self.goods_nomenclature_sid}
 
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
+            kwargs["country_code"] = country_code.lower()
 
-        return reverse('search:search-hierarchy', kwargs=kwargs)
+        return reverse("search:search-hierarchy", kwargs=kwargs)
 
     def get_hierarchy_children(self):
         """
         Query returning a list of child SubHeadings and/or Commodities ordered by code
         :return:
         """
-        sub_headings = [obj for obj in self.child_subheadings.all().order_by('commodity_code')]
-        commodities = [obj for obj in self.children_concrete.all().order_by('commodity_code')]
+        sub_headings = [
+            obj for obj in self.child_subheadings.all().order_by("commodity_code")
+        ]
+        commodities = [
+            obj for obj in self.children_concrete.all().order_by("commodity_code")
+        ]
         return commodities + sub_headings
 
     @property
@@ -582,30 +598,50 @@ class SubHeading(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
             self.get_ancestor_data(parent.parent_subheading, tree, level + 1)
-            tree.insert(1, [{"id": parent.parent_subheading.id,
-                             "description": parent.parent_subheading.description,
-                             "commodity_code": parent.parent_subheading.commodity_code,
-                             "type": "sub_heading"}])
-        if hasattr(parent, 'heading') and parent.heading is not None:
+            tree.insert(
+                1,
+                [
+                    {
+                        "id": parent.parent_subheading.id,
+                        "description": parent.parent_subheading.description,
+                        "commodity_code": parent.parent_subheading.commodity_code,
+                        "type": "sub_heading",
+                    }
+                ],
+            )
+        if hasattr(parent, "heading") and parent.heading is not None:
             self.get_ancestor_data(parent.heading, tree, level + 1)
-            tree[level].append({"id": parent.heading.id,
-                             "description": parent.heading.description,
-                             "commodity_code": parent.heading.commodity_code,
-                             "type": "heading"})
-        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+            tree[level].append(
+                {
+                    "id": parent.heading.id,
+                    "description": parent.heading.description,
+                    "commodity_code": parent.heading.commodity_code,
+                    "type": "heading",
+                }
+            )
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
             self.get_ancestor_data(parent.chapter, tree, level + 1)
-            tree[level].append({"id": parent.chapter.id,
-                             "description": parent.chapter.description,
-                             "commodity_code": parent.chapter.commodity_code,
-                             "type": "chapter"})
-        elif hasattr(parent, 'section') and parent.section is not None:
-            tree[level].append({"id": parent.section.id,
-                                "description": parent.section.title,
-                                "commodity_code": parent.section.roman_numeral,
-                                "type": "section"
-                                })
+            tree[level].append(
+                {
+                    "id": parent.chapter.id,
+                    "description": parent.chapter.description,
+                    "commodity_code": parent.chapter.commodity_code,
+                    "type": "chapter",
+                }
+            )
+        elif hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(
+                {
+                    "id": parent.section.id,
+                    "description": parent.section.title,
+                    "commodity_code": parent.section.roman_numeral,
+                    "type": "section",
+                }
+            )
 
         return tree
-

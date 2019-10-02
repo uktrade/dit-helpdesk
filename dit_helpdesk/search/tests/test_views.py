@@ -10,7 +10,11 @@ from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _get_hierarchy_level_html
 from search.forms import CommoditySearchForm
-from search.views import search_hierarchy, process_commodity_code, _generate_commodity_code_html
+from search.views import (
+    search_hierarchy,
+    process_commodity_code,
+    _generate_commodity_code_html,
+)
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -18,7 +22,6 @@ logger.setLevel(logging.INFO)
 
 
 class CommoditySetupMixin:
-
     def setUp(self):
         self.section = mixer.blend(
             Section,
@@ -26,7 +29,7 @@ class CommoditySetupMixin:
             title=settings.TEST_SECTION_DESCRIPTION,
             roman_numeral="X",
             tts_json="{}",
-            commodity_code=10
+            commodity_code=10,
         )
         """create three chapters starting at 47 and attach to section 10"""
         self.chapters = mixer.cycle(3).blend(
@@ -34,24 +37,71 @@ class CommoditySetupMixin:
             tts_json="{}",
             section=self.section,
             chapter_code=(x for x in [4700000000, 4800000000, 4900000000]),
-            goods_nomenclature_sid=(x for x in [4700000000, 4800000000, 4900000000])
+            goods_nomenclature_sid=(x for x in [4700000000, 4800000000, 4900000000]),
         )
         """create 11 headings starting at 4901 and attached to chapter 49"""
         self.headings = mixer.cycle(11).blend(
             Heading,
             chapter=self.chapters[2],
-            heading_code=(x for x in [4901000000, 4902000000, 4903000000, 4904000000, 4905000000, 4906000000,
-                                      4907000000, 4908000000, 4909000000, 4910000000, 4911000000]),
-            goods_nomenclature_sid=(x for x in [4901000000, 4902000000, 4903000000, 4904000000, 4905000000, 4906000000,
-                                                4907000000, 4908000000, 4909000000, 4910000000, 4911000000]),
+            heading_code=(
+                x
+                for x in [
+                    4901000000,
+                    4902000000,
+                    4903000000,
+                    4904000000,
+                    4905000000,
+                    4906000000,
+                    4907000000,
+                    4908000000,
+                    4909000000,
+                    4910000000,
+                    4911000000,
+                ]
+            ),
+            goods_nomenclature_sid=(
+                x
+                for x in [
+                    4901000000,
+                    4902000000,
+                    4903000000,
+                    4904000000,
+                    4905000000,
+                    4906000000,
+                    4907000000,
+                    4908000000,
+                    4909000000,
+                    4910000000,
+                    4911000000,
+                ]
+            ),
         )
         """create 6 subheadings starting at 4901 attached to heading 4901"""
         self.parent_subheadings = mixer.cycle(6).blend(
             SubHeading,
             heading=self.headings[0],
-            commodity_code=(x for x in [4901000000, 4902000000, 4905000000, 4907000000, 4908000000, 4911000000]),
-            goods_nomenclature_sid=(x for x in
-                                    [4901000000, 4902000000, 4905000000, 4907000000, 4908000000, 4911000000]),
+            commodity_code=(
+                x
+                for x in [
+                    4901000000,
+                    4902000000,
+                    4905000000,
+                    4907000000,
+                    4908000000,
+                    4911000000,
+                ]
+            ),
+            goods_nomenclature_sid=(
+                x
+                for x in [
+                    4901000000,
+                    4902000000,
+                    4905000000,
+                    4907000000,
+                    4908000000,
+                    4911000000,
+                ]
+            ),
         )
         """create 2 subheadings attached to subheading 4911"""
         self.subheadings = mixer.cycle(2).blend(
@@ -73,7 +123,7 @@ class CommoditySetupMixin:
             parent_subheading=self.sub_subheadings[0],
             commodity_code=(x for x in [4911910010, 4911910090, 4911990000]),
             goods_nomenclature_sid=(x for x in [4911910010, 4911910090, 4911990000]),
-            description=(x for x in ["Paper", "Scissors", "Rock"])
+            description=(x for x in ["Paper", "Scissors", "Rock"]),
         )
         self.client = Client()
 
@@ -101,17 +151,19 @@ class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
         self.assertEqual(len(Commodity.objects.all()), 3)
 
     def test_commodity_search_is_using_the_correct_template(self):
-        url = reverse('search:search-commodity', kwargs={"country_code": "au"})
+        url = reverse("search:search-commodity", kwargs={"country_code": "au"})
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'search/commodity_search.html')
+        self.assertTemplateUsed(response, "search/commodity_search.html")
 
     def test_search_view_returns_http_200(self):
-        resp = self.client.get(reverse('search:search-commodity', kwargs={"country_code": "au"}))
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"})
+        )
         self.assertEqual(resp.status_code, 200)
 
     def test_search_view_with_code_the_form_is_valid_is_redirected(self):
         url = reverse("search:search-commodity", kwargs={"country_code": "au"})
-        data = {"q": '4901', "country": "au"}
+        data = {"q": "4901", "country": "au"}
         resp = self.client.get(url, data=data, follow=False)
         self.assertEqual(resp.status_code, 302)
 
@@ -128,7 +180,7 @@ class CommoditySearchAPIViewTestCase(CommoditySetupMixin, TestCase):
     """
 
     def test_search_view_missing_term_returns_http_400(self):
-        resp = self.client.get(reverse('search:commodity-api-search'))
+        resp = self.client.get(reverse("search:commodity-api-search"))
         self.assertEqual(resp.status_code, 400)
 
     def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
@@ -140,14 +192,13 @@ class CommoditySearchAPIViewTestCase(CommoditySetupMixin, TestCase):
 
 
 class SearchFormTestCase(TestCase):
-
     def test_form_is_valid_with_a_query(self):
-        form_data = {'q': 'Paper', 'country': 'AU'}
+        form_data = {"q": "Paper", "country": "AU"}
         form = CommoditySearchForm(data=form_data)
         self.assertTrue(form.is_valid())
 
     def test_form_is_not_valid_with_missing_query(self):
-        form_data = {'q': '', 'country': 'AU'}
+        form_data = {"q": "", "country": "AU"}
         form = CommoditySearchForm(data=form_data)
         self.assertFalse(form.is_valid())
 
@@ -168,24 +219,32 @@ class CommodityKeywordSearchViewTestCase(TestCase):
         self.assertIn("q", resp.request["QUERY_STRING"])
 
     def test_commodity_keyword_search_query_is_empty(self):
-        resp = self.client.get(reverse("search:search-commodity", kwargs={"country_code": "au"}),
-                               data={"q": "", "country": "au"})
-        self.assertEqual(resp.context['form'].is_valid(), False)
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"}),
+            data={"q": "", "country": "au"},
+        )
+        self.assertEqual(resp.context["form"].is_valid(), False)
 
     def test_commodity_keyword_search_query_context_has_correct_country(self):
-        resp = self.client.get(reverse("search:search-commodity", kwargs={"country_code": "au"}),
-                               data={"q": "Paper", "country": "au"})
-        self.assertEqual(resp.context['selected_origin_country_name'], "Australia")
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"}),
+            data={"q": "Paper", "country": "au"},
+        )
+        self.assertEqual(resp.context["selected_origin_country_name"], "Australia")
 
     def test_commodity_keyword_search_query_is_using_the_correct_form(self):
-        resp = self.client.get(reverse("search:search-commodity", kwargs={"country_code": "au"}),
-                               data={"q": "Paper", "country": "au"})
-        self.assertIsInstance(resp.context['form'], CommoditySearchForm)
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"}),
+            data={"q": "Paper", "country": "au"},
+        )
+        self.assertIsInstance(resp.context["form"], CommoditySearchForm)
 
     def test_commodity_keyword_search_query_is_at_page_one(self):
-        resp = self.client.get(reverse("search:search-commodity", kwargs={"country_code": "au"}),
-                               data={"q": "Paper", "country": "au"})
-        self.assertEqual(resp.context['form'].is_valid(), True)
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"}),
+            data={"q": "Paper", "country": "au"},
+        )
+        self.assertEqual(resp.context["form"].is_valid(), True)
 
 
 class ProcessCommodityCodeTestCase(TestCase):
@@ -261,11 +320,14 @@ class GenerateCommodityCodeHTMLTestCase(TestCase):
 
     def test_generate_commodity_code_html(self):
         code = _generate_commodity_code_html("4104115900")
-        self.assertEqual(code, '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span '
-                               'class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span '
-                               'class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span '
-                               'class="app-commodity-code__highlight '
-                               'app-commodity-code__highlight--3">115900</span></span>')
+        self.assertEqual(
+            code,
+            '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span '
+            'class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span '
+            'class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span '
+            'class="app-commodity-code__highlight '
+            'app-commodity-code__highlight--3">115900</span></span>',
+        )
 
 
 class TestSearchHierarchyTestCase(TestCase):
@@ -279,8 +341,12 @@ class TestSearchHierarchyTestCase(TestCase):
     fixtures = [settings.COUNTRIES_DATA]
 
     def test_search_hierarchy(self):
-        request = RequestFactory().get(reverse("search:search-hierarchy",
-                                               kwargs={"country_code": "au", "node_id": "section-1"}))
+        request = RequestFactory().get(
+            reverse(
+                "search:search-hierarchy",
+                kwargs={"country_code": "au", "node_id": "section-1"},
+            )
+        )
         middleware = SessionMiddleware()
         middleware.process_request(request)
         request.session["origin_country"] = "au"
@@ -290,12 +356,16 @@ class TestSearchHierarchyTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test__get_hierarchy_level_html(self):
-        resp = _get_hierarchy_level_html('root', ['section-1'], 'au')
+        resp = _get_hierarchy_level_html("root", ["section-1"], "au")
         self.assertIn('class="app-hierarchy-tree"', format(resp))
 
     def test_search_hierarchy_when_country_code_is_None(self):
-        request = RequestFactory().get(reverse("search:search-hierarchy",
-                                               kwargs={"country_code": "au", "node_id": "section-1"}))
+        request = RequestFactory().get(
+            reverse(
+                "search:search-hierarchy",
+                kwargs={"country_code": "au", "node_id": "section-1"},
+            )
+        )
         middleware = SessionMiddleware()
         middleware.process_request(request)
         request.session["origin_country"] = None
@@ -317,24 +387,29 @@ class TestSearchHierarchyAPITestCase(CommoditySetupMixin, TestCase):
     fixtures = [settings.COUNTRIES_DATA]
 
     def test_search_hierarchy(self):
-        url = reverse('search:hierarchy-api-search')
+        url = reverse("search:hierarchy-api-search")
 
         response = self.client.get(url, {"country_code": "au", "node_id": "section-1"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {
-            'results': [
-                {
-                    'key': 'section-10',
-                    'type': 'branch',
-                    'roman_numeral': 'X',
-                    'chapter_range_str': '47 to 49',
-                    'label': 'Live animals; animal products'
-                }
-            ]
-        })
+        self.assertEqual(
+            response.json(),
+            {
+                "results": [
+                    {
+                        "key": "section-10",
+                        "type": "branch",
+                        "roman_numeral": "X",
+                        "chapter_range_str": "47 to 49",
+                        "label": "Live animals; animal products",
+                    }
+                ]
+            },
+        )
 
     def test_search_hierarchy_when_country_code_is_None(self):
-        response = self.client.get(reverse('search:hierarchy-api-search'), {"node_id": "section-1"})
+        response = self.client.get(
+            reverse("search:hierarchy-api-search"), {"node_id": "section-1"}
+        )
 
         self.assertEqual(response.status_code, 400)

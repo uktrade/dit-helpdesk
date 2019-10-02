@@ -21,6 +21,7 @@ class Commodity(models.Model):
     """
     Commodity model
     """
+
     commodity_code = models.CharField(max_length=10, unique=True)
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
@@ -37,12 +38,18 @@ class Commodity(models.Model):
     tts_is_leaf = models.BooleanField()
 
     heading = models.ForeignKey(
-        'hierarchy.Heading', blank=True, null=True,
-        related_name='children_concrete', on_delete=models.CASCADE
+        "hierarchy.Heading",
+        blank=True,
+        null=True,
+        related_name="children_concrete",
+        on_delete=models.CASCADE,
     )
     parent_subheading = models.ForeignKey(
-        'hierarchy.SubHeading', blank=True, null=True,
-        related_name='children_concrete', on_delete=models.CASCADE
+        "hierarchy.SubHeading",
+        blank=True,
+        null=True,
+        related_name="children_concrete",
+        on_delete=models.CASCADE,
     )
 
     last_updated = models.DateTimeField(auto_now=True)
@@ -50,7 +57,7 @@ class Commodity(models.Model):
     objects = models.Manager()
 
     class Meta:
-        unique_together = ('commodity_code', 'goods_nomenclature_sid')
+        unique_together = ("commodity_code", "goods_nomenclature_sid")
         verbose_name_plural = "commodities"
 
     @property
@@ -59,10 +66,10 @@ class Commodity(models.Model):
         Hierarchy key used in the template to identify the node
         :return: string
         """
-        return 'commodity-%s' % self.pk
+        return "commodity-%s" % self.pk
 
     def __str__(self):
-        return 'Commodity %s' % self.commodity_code
+        return "Commodity %s" % self.commodity_code
 
     def get_absolute_url(self, country_code=None):
         """
@@ -70,10 +77,10 @@ class Commodity(models.Model):
         :param country_code: string
         :return: url
         """
-        kwargs = {'commodity_code': self.commodity_code}
+        kwargs = {"commodity_code": self.commodity_code}
         if country_code is not None:
-            kwargs['country_code'] = country_code.lower()
-        return reverse('commodity-detail', kwargs=kwargs)
+            kwargs["country_code"] = country_code.lower()
+        return reverse("commodity-detail", kwargs=kwargs)
 
     @property
     def commodity_code_split(self):
@@ -129,16 +136,13 @@ class Commodity(models.Model):
 
         country = Country.objects.get(country_code=country_code)
         groups = {}
-        rules_of_origin = {
-            "rules": [],
-            "footnotes": []
-        }
+        rules_of_origin = {"rules": [], "footnotes": []}
         for group_member in country.rulesgroupmember_set.all():
             for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin['footnotes'] = document.footnotes.all().order_by('id')
-                for rule in document.rule_set.all().order_by('id'):
+                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
+                for rule in document.rule_set.all().order_by("id"):
                     if rule.chapter == self.get_heading().chapter:
-                        rules_of_origin['rules'].append(rule)
+                        rules_of_origin["rules"].append(rule)
             group_name = group_member.rules_group.description
             groups[group_name] = rules_of_origin
 
@@ -163,16 +167,19 @@ class Commodity(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
             self.get_path(parent.parent_subheading, tree, level + 1)
             tree.insert(1, [parent.parent_subheading])
-        if hasattr(parent, 'heading') and parent.heading is not None:
+        if hasattr(parent, "heading") and parent.heading is not None:
             self.get_path(parent.heading, tree, level + 1)
             tree[level].append(parent.heading)
-        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
             self.get_path(parent.chapter, tree, level + 1)
             tree[level].append(parent.chapter)
-        elif hasattr(parent, 'section') and parent.section is not None:
+        elif hasattr(parent, "section") and parent.section is not None:
             tree[level].append(parent.section)
         elif self.parent_subheading is not parent:
             self._append_path_children(self.parent_subheading, tree, level)
@@ -203,30 +210,51 @@ class Commodity(models.Model):
         if len(tree) < level + 1:
             tree.append([])
 
-        if hasattr(parent, 'parent_subheading') and parent.parent_subheading is not None:
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
             self.get_ancestor_data(parent.parent_subheading, tree, level + 1)
-            tree.insert(1, [{"id": parent.parent_subheading.id,
-                             "description": parent.parent_subheading.description,
-                             "commodity_code": parent.parent_subheading.commodity_code,
-                             "type": "sub_heading"}])
-        if hasattr(parent, 'heading') and parent.heading is not None:
+            tree.insert(
+                1,
+                [
+                    {
+                        "id": parent.parent_subheading.id,
+                        "description": parent.parent_subheading.description,
+                        "commodity_code": parent.parent_subheading.commodity_code,
+                        "type": "sub_heading",
+                    }
+                ],
+            )
+        if hasattr(parent, "heading") and parent.heading is not None:
             self.get_ancestor_data(parent.heading, tree, level + 1)
-            tree[level].append({"id": parent.heading.id,
-                                "description": parent.heading.description,
-                                "commodity_code": parent.heading.commodity_code,
-                                "type": "heading"})
-        elif hasattr(parent, 'chapter') and parent.chapter is not None:
+            tree[level].append(
+                {
+                    "id": parent.heading.id,
+                    "description": parent.heading.description,
+                    "commodity_code": parent.heading.commodity_code,
+                    "type": "heading",
+                }
+            )
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
             self.get_ancestor_data(parent.chapter, tree, level + 1)
-            tree[level].append({"id": parent.chapter.id,
-                                "description": parent.chapter.description,
-                                "commodity_code": parent.chapter.commodity_code,
-                                "type": "chapter"})
-        elif hasattr(parent, 'section') and parent.section is not None:
-            tree[level].append({"id": parent.section.id,
-                                "description": parent.section.title,
-                                "commodity_code": parent.section.roman_numeral,
-                                "type": "section"
-                                })
+            tree[level].append(
+                {
+                    "id": parent.chapter.id,
+                    "description": parent.chapter.description,
+                    "commodity_code": parent.chapter.commodity_code,
+                    "type": "chapter",
+                }
+            )
+        elif hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(
+                {
+                    "id": parent.section.id,
+                    "description": parent.section.title,
+                    "commodity_code": parent.section.roman_numeral,
+                    "type": "section",
+                }
+            )
         elif self.parent_subheading is not parent:
             self._append_descendant_data(self.parent_subheading, tree, level)
 
@@ -244,10 +272,14 @@ class Commodity(models.Model):
             children = parent.get_hierarchy_children()
             for child in children:
                 if child.commodity_code not in ["9900000000", "9950000000"]:
-                    tree[level].append({"id": child.id,
-                                        "description": child.description,
-                                        "commodity_code": child.commodity_code,
-                                        "type": child._meta.model_name})
+                    tree[level].append(
+                        {
+                            "id": child.id,
+                            "description": child.description,
+                            "commodity_code": child.commodity_code,
+                            "type": child._meta.model_name,
+                        }
+                    )
         except Exception as err:
             logger.debug("_append descendant data".format(err.args))
 
@@ -271,12 +303,12 @@ class Commodity(models.Model):
         :return: json string
         """
         obj = json.loads(resp_content)
-        for idx, measure in enumerate(obj['import_measures']):
-            measure['measure_id'] = idx
-            for i, condition in enumerate(measure['measure_conditions']):
+        for idx, measure in enumerate(obj["import_measures"]):
+            measure["measure_id"] = idx
+            for i, condition in enumerate(measure["measure_conditions"]):
                 if isinstance(condition, dict):
-                    condition['measure_id'] = idx
-                    condition['condition_id'] = i
+                    condition["measure_id"] = idx
+                    condition["condition_id"] = i
 
         return json.dumps(obj)
 

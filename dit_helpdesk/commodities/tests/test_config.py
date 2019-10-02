@@ -9,5 +9,5 @@ class CommoditiesConfigTestCase(TestCase):
     """
 
     def test_apps(self):
-        self.assertEqual(CommoditiesConfig.name,'commodities')
-        self.assertEqual(apps.get_app_config('commodities').name, 'commodities')
+        self.assertEqual(CommoditiesConfig.name, "commodities")
+        self.assertEqual(apps.get_app_config("commodities").name, "commodities")

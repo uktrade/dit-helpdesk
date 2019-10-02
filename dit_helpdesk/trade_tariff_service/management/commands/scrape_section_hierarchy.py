@@ -13,9 +13,8 @@ logger.setLevel(logging.INFO)
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
-        parser.add_argument('section_id', type=int, nargs='?', default=None)
+        parser.add_argument("section_id", type=int, nargs="?", default=None)
 
     def handle(self, *args, **options):
 

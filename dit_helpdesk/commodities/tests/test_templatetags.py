@@ -11,9 +11,9 @@ class TemplateTagsTestCase(TestCase):
     """
 
     def test_cell_cleaner_tag_filter_with_empty_value(self):
-        result = cell_cleaner('')
-        self.assertEqual(result, '-')
+        result = cell_cleaner("")
+        self.assertEqual(result, "-")
 
     def test_cell_cleaner_tag_filter_with_non_empty_value(self):
-        result = cell_cleaner('my value')
-        self.assertEqual(result, 'my value')
+        result = cell_cleaner("my value")
+        self.assertEqual(result, "my value")

@@ -3,7 +3,7 @@ if (!Array.prototype.filter){
       'use strict';
       if ( ! ((typeof func === 'Function' || typeof func === 'function') && this) )
           throw new TypeError();
-     
+
       var len = this.length >>> 0,
           res = new Array(len), // preallocate array
           t = this, c = 0, i = -1;
@@ -27,7 +27,7 @@ if (!Array.prototype.filter){
           }
         }
       }
-     
+
       res.length = c; // shrink down array to proper size
       return res;
     };
