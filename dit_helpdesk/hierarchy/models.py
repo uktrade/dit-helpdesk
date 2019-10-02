@@ -1,4 +1,5 @@
 import json
+import re
 
 import requests
 from django.conf import settings
@@ -468,6 +469,16 @@ class Heading(models.Model):
                                 })
 
         return tree
+
+    @property
+    def heading_code_split(self):
+        """
+        Used to display the code in the template
+        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        :return: list
+        """
+        code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.heading_code)
+        return [code_match_obj.group(i) for i in range(1, 4)]
 
 
 class SubHeading(models.Model):

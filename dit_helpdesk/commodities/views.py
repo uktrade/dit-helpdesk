@@ -58,6 +58,10 @@ def commodity_detail(request, commodity_code, country_code):
     accordion_title = commodity_hierarchy_section_header(commodity_path)
     rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 
+    modals_dict = {}
+    for measure_json in import_measures:
+        modals_dict.update(measure_json.measures_modals)
+
     context = {
         'selected_origin_country': country.country_code,
         'commodity': commodity,
@@ -68,7 +72,8 @@ def commodity_detail(request, commodity_code, country_code):
         'column_titles': TABLE_COLUMN_TITLES,
         'regulations': commodity.get_regulations(),
         'accordion_title': accordion_title,
-        'commodity_hierarchy_context': commodity_hierarchy_context(commodity_path, country.country_code, commodity_code)
+        'commodity_hierarchy_context': commodity_hierarchy_context(commodity_path, country.country_code, commodity_code),
+        'modals': modals_dict
     }
 
     return render(request, 'commodities/commodity_detail.html', context)
@@ -100,13 +105,57 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
 
     context = {
         'selected_origin_country': country.country_code,
-        'commodity': commodity,
+        'commodity_code': commodity.commodity_code,
+        'commodity_description': commodity.description,
         'selected_origin_country_name': country.name,
-        'import_measure': import_measure,
-        'conditions': conditions
+        'conditions': conditions,
+        'commodity_code_split': commodity.commodity_code_split,
+        'measure_type': import_measure.type_description,
+        'column_titles': ["Condition code", "Condition", "Document code", "Requirement", "Action", "Duty"],
     }
 
     return render(request, 'commodities/measure_condition_detail.html', context)
+
+
+def measure_quota_detail(request, commodity_code, country_code, measure_id, order_number):
+    """
+    View for an individual measure condition detail page template which takes three arguments, the commodity code that
+    the measure belongs to, the measure id of the individual measure being presented and the country code to
+    provide the exporter geographical context
+    :param request: django http request object
+    :param commodity_code: string
+    :param country_code: string
+    :param measure_id: int
+    :param order_number: string
+    :return:
+    """
+
+    country = Country.objects.filter(
+        country_code=country_code.upper()
+    ).first()
+
+    if not country:
+        messages.error(request, 'Invalid originCountry')
+        return redirect(reverse('choose-country'))
+
+    commodity = Commodity.objects.get(commodity_code=commodity_code)
+    import_measure = commodity.tts_obj.get_import_measure_by_id(int(measure_id), country_code=country_code)
+    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
+    quota_def = import_measure.get_measure_quota_definition_by_order_number(order_number)
+    geographical_area = import_measure.get_geographical_area()
+
+    context = {
+        'selected_origin_country': country.country_code,
+        'commodity_description': commodity.description,
+        'commodity_code': commodity.commodity_code,
+        'selected_origin_country_name': country.name,
+        'quota_def': quota_def,
+        'geographical_area': geographical_area,
+        'commodity_code_split': commodity.commodity_code_split,
+        'measure_type': import_measure.type_description
+    }
+
+    return render(request, 'commodities/measure_quota_detail.html', context)
 
 
 def commodity_hierarchy_context(commodity_path, country_code, commodity_code):

@@ -52,5 +52,7 @@
 // @import "accessible-autocomplete/dist/accessible-autocomplete.min";
 @import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";
 
+@import "./_modal.scss";
+
 // App specific styles
 @import "helpdesk/helpdesk";

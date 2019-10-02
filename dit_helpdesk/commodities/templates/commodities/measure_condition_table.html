@@ -1,0 +1,26 @@
+{% load static i18n cell_cleaner replace %}
+
+<table class="govuk-table app-flexible-table">
+    <caption class="govuk-table__caption govuk-heading-m">Conditions</caption>
+    <thead class="govuk-table__head app-flexible-table__head">
+    <tr class="govuk-table__row">
+        {% for title in column_titles %}
+        <th class="govuk-table__header app-flexible-table__header" scope="col">{{ title }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body app-flexible-table__body">
+    {% spaceless %}
+        {% for condition in conditions %}
+            <tr class="govuk-table__row app-flexible-table__row">
+                <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ column_titles.0 }}"><p>{{ condition.di.condition_code }}</p></th>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_titles.1 }}"><p>{{ condition.di.condition }}</p></td>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_titles.2 }}"><p>{{ condition.di.document_code | cell_cleaner }}</p></td>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_titles.3 }}"><p>{{ condition.di.requirement | safe }}</p></td>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_titles.4 }}"><p>{{ condition.di.action }}</p></td>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_titles.5 }}"><p>{{ condition.di.duty_expression | safe }}</p></td>
+            </tr>
+        {% endfor %}
+    {% endspaceless %}
+    </tbody>
+</table>

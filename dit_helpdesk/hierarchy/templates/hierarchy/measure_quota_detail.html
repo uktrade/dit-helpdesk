@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% load static staticfiles i18n cell_cleaner %}
+{% load static staticfiles i18n cell_cleaner l10n %}
 
 {% block title %}
     Commodity information for
@@ -32,7 +32,7 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {% include "commodities/measure_condition_table.html" %}
+            {% include "commodities/measure_quota_table.html" %}
         </div>
     </div>
 {% endblock %}
