@@ -540,3 +540,69 @@ class HeadingJson(object):
         ]
 
         return measures[0] if len(measures) == 1 else None
+
+
+class SubHeadingJson(object):
+    def __init__(self, di):
+        self.di = di
+
+    @property
+    def title(self):
+        return self.di["formatted_description"].replace("&nbsp;", " ").strip()
+
+    @property
+    def code(self):
+        return self.di["goods_nomenclature_item_id"]
+
+    @property
+    def commodity_dicts(self):
+        return [di for di in self.di.get("commodities", [])]
+
+    @property
+    def commodity_ids(self):
+        if "commodities" not in self.di:
+            tup = (self.code, self.title)
+            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
+            return []
+
+        return [
+            (di["goods_nomenclature_item_id"], di["leaf"])
+            for di in self.di["commodities"]
+        ]
+
+    @property
+    def commodity_urls(self):
+        return [
+            ((settings.COMMODITY_URL % _id), is_leaf)
+            for (_id, is_leaf) in self.commodity_ids
+        ]
+
+    def get_import_measures(self, origin_country, vat=None, excise=None):
+
+        measures = [
+            ImportMeasureJson(d, self.code, self.title, origin_country)
+            for d in self.di["import_measures"]
+        ]
+
+        measures = [
+            json_obj
+            for json_obj in measures
+            if json_obj.is_relevant_for_origin_country(origin_country)
+        ]
+
+        if vat is not None:
+            measures = [obj for obj in measures if obj.vat == vat]
+        if excise is not None:
+            measures = [obj for obj in measures if obj.excise == excise]
+
+        return measures
+
+    def get_import_measure_by_id(self, measure_id, country_code=None):
+
+        measures = [
+            measure
+            for measure in self.get_import_measures(country_code)
+            if measure.measure_id == measure_id
+        ]
+
+        return measures[0] if len(measures) == 1 else None
