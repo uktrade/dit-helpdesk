@@ -113,9 +113,8 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         if type(child) is Section:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif (
-            type(child) is Commodity
-            or Heading
-            and len(child.get_hierarchy_children()) is 0
+            type(child) in [Commodity, Heading, SubHeading]
+            and (type(child) is Commodity or len(child.get_hierarchy_children()) is 0)
         ):
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
@@ -250,6 +249,63 @@ def heading_detail(request, heading_code, country_code):
 
     return render(request, "hierarchy/heading_detail.html", context)
 
+
+def subheading_detail(request, commodity_code, country_code):
+    """
+    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
+    display and the two character country code to provide the exporter geographical context which is
+    used to display the appropriate related supporting content
+
+    :param heading_code:
+    :param request: django http request object
+    :param country_code: string
+    :return:
+    """
+
+    country = Country.objects.filter(country_code=country_code.upper()).first()
+
+    if not country:
+        messages.error(request, "Invalid originCountry")
+        return redirect(reverse("choose-country"))
+
+    # heading = Heading.objects.filter(heading_code=heading_code).first()
+
+    subheading = get_object_or_404(SubHeading, commodity_code=commodity_code)
+
+    if (
+        subheading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
+        or subheading.tts_json is None
+    ):
+        subheading.update_content()
+
+    import_measures = subheading.tts_obj.get_import_measures(country.country_code)
+    table_data = [measure_json.get_table_row() for measure_json in import_measures]
+
+    subheading_path = subheading.get_path()
+    accordion_title = heading_hierarchy_section_header(subheading_path)
+    rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
+
+    modals_dict = {}
+    for measure_json in import_measures:
+        modals_dict.update(measure_json.measures_modals)
+
+    context = {
+        "selected_origin_country": country.country_code,
+        "subheading": subheading,
+        "selected_origin_country_name": country.name,
+        "rules_of_origin": rules_of_origin,
+        "roo_footnotes": rules_of_origin,
+        "table_data": table_data,
+        "column_titles": TABLE_COLUMN_TITLES,
+        "regulations": subheading.get_regulations(),
+        "accordion_title": accordion_title,
+        "heading_hierarchy_context": heading_hierarchy_context(
+            subheading_path, country.country_code, commodity_code
+        ),
+        "modals": modals_dict,
+    }
+
+    return render(request, "hierarchy/subheading_detail.html", context)
 
 def heading_hierarchy_section_header(reversed_heading_tree):
     """

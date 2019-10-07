@@ -360,7 +360,7 @@ class Heading(models.Model):
         Method returning the rul of the current instance
         :return:
         """
-        kwargs = {"heading_code": self.heading_code_4 or self.heading_code}
+        kwargs = {"heading_code": self.heading_code}
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
         return reverse("heading-detail", kwargs=kwargs)
@@ -501,6 +501,13 @@ class SubHeading(models.Model):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     tts_is_leaf = models.BooleanField()
+    tts_json = models.TextField(blank=True, null=True)
+
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def heading_code_4(self):
+        return self.commodity_code[:4]
 
     heading = models.ForeignKey(
         "hierarchy.Heading",
@@ -523,6 +530,16 @@ class SubHeading(models.Model):
 
     def __str__(self):
         return "Sub Heading {0}".format(self.commodity_code)
+
+    def get_absolute_url(self, country_code=None):
+        """
+        Method returning the rul of the current instance
+        :return:
+        """
+        kwargs = {"commodity_code": self.commodity_code}
+        if country_code is not None:
+            kwargs["country_code"] = country_code.lower()
+        return reverse("subheading-detail", kwargs=kwargs)
 
     @property
     def hierarchy_key(self):
@@ -645,3 +662,137 @@ class SubHeading(models.Model):
             )
 
         return tree
+
+    def update_content(self):
+        """
+        gets the Commodity content from the trade tariff service url as json response and stores it in the
+        commodity's tts_json field
+
+        """
+        url = settings.HEADING_URL % self.commodity_code
+
+        resp = requests.get(url, timeout=10)
+        resp_content = None
+
+        if resp.status_code == 200:
+            resp_content = resp.content.decode()
+        elif resp.status_code == 404:
+            url = settings.HEADING_URL % self.commodity_code[:4]
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200:
+                resp_content = resp.content.decode()
+
+        resp_content = self._amend_measure_conditions(resp_content)
+
+        self.tts_json = resp_content
+        self.save()
+
+    @staticmethod
+    def _amend_measure_conditions(resp_content):
+        """
+        Modifies the structure of the json to find and display related import measures in the template
+        :param resp_content: json data from api call
+        :return: json string
+        """
+        obj = json.loads(resp_content)
+        for idx, measure in enumerate(obj["import_measures"]):
+            measure["measure_id"] = idx
+            for i, condition in enumerate(measure["measure_conditions"]):
+                if isinstance(condition, dict):
+                    condition["measure_id"] = idx
+                    condition["condition_id"] = i
+
+        return json.dumps(obj)
+
+    @property
+    def tts_obj(self):
+        """
+        gets the json object from the tts_json field and converts it to a python CommodityJson class instance
+        used to extract data from the json data structure to display in the template
+        :return: CommodityJson object
+        """
+        return HeadingJson(json.loads(self.tts_json))
+
+
+    def get_path(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the Commodity showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
+            self.get_path(parent.parent_subheading, tree, level + 1)
+            tree.insert(1, [parent.parent_subheading])
+        if hasattr(parent, "heading") and parent.heading is not None:
+            self.get_path(parent.heading, tree, level + 1)
+            tree[level].append(parent.heading)
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
+            self.get_path(parent.chapter, tree, level + 1)
+            tree[level].append(parent.chapter)
+        elif hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(parent.section)
+        elif self.parent_subheading is not parent:
+            self._append_path_children(self.parent_subheading, tree, level)
+
+        return tree
+
+    def get_rules_of_origin(self, country_code):
+        """
+        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
+        country code parameter.
+        the dictionary has two keys one for the list of rules and one for the related footnotes
+        :param country_code: string
+        :return: dictionary
+        """
+
+        country = Country.objects.get(country_code=country_code)
+        groups = {}
+        rules_of_origin = {"rules": [], "footnotes": []}
+        for group_member in country.rulesgroupmember_set.all():
+            for document in group_member.rules_group.rulesdocument_set.all():
+                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
+                for rule in document.rule_set.all().order_by("id"):
+                    if rule.chapter == self.chapter:
+                        rules_of_origin["rules"].append(rule)
+            group_name = group_member.rules_group.description
+            groups[group_name] = rules_of_origin
+
+        return groups
+
+    def get_regulations(self):
+        """
+        Returns a list of regulations instances either related to the commodity or it's parent subheading
+        :return: queryset
+        """
+        regulations = list(self.regulation_set.all())
+
+        # if self.parent_subheading:
+        #     regulations + list(self.parent_subheading.regulation_set.all())
+
+        return regulations
+
+    @property
+    def subheading_code_split(self):
+        """
+        Used to display the code in the template
+        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        :return: list
+        """
+        code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
+        return [code_match_obj.group(i) for i in range(1, 4)]

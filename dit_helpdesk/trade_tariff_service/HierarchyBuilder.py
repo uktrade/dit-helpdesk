@@ -360,12 +360,18 @@ class HierarchyBuilder:
                     }
                 )
 
-                # extract all the heading objects from the chapter's list of included child objects
+                # extract all the heading objects with child items from the chapter's list of included children
                 child_headings = [
                     item
                     for item in chapter["included"]
                     if item["type"] == "heading" and "relationships" in item.keys()
                 ]
+                heading_leaves = [
+                    item
+                    for item in chapter["included"]
+                    if item["type"] == "heading" and item["attributes"]["leaf"] == True
+                ]
+
                 if child_headings:
                     for heading in child_headings:
 
@@ -395,6 +401,34 @@ class HierarchyBuilder:
 
                         if "relationships" in heading.keys():
                             children = heading["relationships"]["children"]["data"]
+
+                        for leaf in heading_leaves:
+                            if leaf["attributes"]["goods_nomenclature_sid"] in [id for id in children]:
+                                headings_data.append(
+                                    {
+                                        "goods_nomenclature_item_id": leaf["attributes"][
+                                            "goods_nomenclature_item_id"
+                                        ],
+                                        "goods_nomenclature_sid": leaf["attributes"][
+                                            "goods_nomenclature_sid"
+                                        ],
+                                        "productline_suffix": leaf["attributes"][
+                                            "producline_suffix"
+                                        ],
+                                        "leaf": leaf["attributes"]["leaf"],
+                                        "parent_goods_nomenclature_item_id": heading["data"][
+                                            "attributes"
+                                        ]["goods_nomenclature_item_id"],
+                                        "parent_goods_nomenclature_sid": heading["data"][
+                                            "attributes"
+                                        ]["goods_nomenclature_sid"],
+                                        "parent_productline_suffix": "",
+                                        "description": leaf["attributes"]["description"],
+                                        "number_indents": "0",
+                                    }
+                                )
+
+                        if "relationships" in heading.keys():
                             for child in children:
                                 for sub_heading in [
                                     item

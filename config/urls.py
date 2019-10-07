@@ -49,6 +49,11 @@ urlpatterns = [
         name="heading-detail",
     ),
     re_path(
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
+        hierarchy_views.subheading_detail,
+        name="subheading-detail",
+    ),
+    re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
         r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         commodity_views.measure_condition_detail,
