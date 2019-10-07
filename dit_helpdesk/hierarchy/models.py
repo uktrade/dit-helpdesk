@@ -768,7 +768,7 @@ class SubHeading(models.Model):
             for document in group_member.rules_group.rulesdocument_set.all():
                 rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
                 for rule in document.rule_set.all().order_by("id"):
-                    if rule.chapter == self.chapter:
+                    if rule.chapter == self.chapter or self.get_parent().chapter:
                         rules_of_origin["rules"].append(rule)
             group_name = group_member.rules_group.description
             groups[group_name] = rules_of_origin
