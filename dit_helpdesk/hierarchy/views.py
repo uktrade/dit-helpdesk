@@ -388,8 +388,8 @@ def _generate_commodity_code_html(item):
         if type(item) is Commodity:
             item.harmonized_code = item.commodity_code
 
-        code_regex = code_regex.search(item.harmonized_code)
-        code_split = [code_regex.group(1), code_regex.group(2), code_regex.group(3)]
+        matches = code_regex.search(item.harmonized_code)
+        code_split = [matches.group(1), matches.group(2), matches.group(3)]
 
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
