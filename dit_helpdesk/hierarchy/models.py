@@ -713,7 +713,6 @@ class SubHeading(models.Model):
         """
         return HeadingJson(json.loads(self.tts_json))
 
-
     def get_path(self, parent=None, tree=None, level=0):
         """
         Returns the context path of the Commodity showing its level in the hierarchy tree
@@ -768,7 +767,7 @@ class SubHeading(models.Model):
             for document in group_member.rules_group.rulesdocument_set.all():
                 rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
                 for rule in document.rule_set.all().order_by("id"):
-                    if rule.chapter == self.chapter or self.get_parent().chapter:
+                    if rule.chapter == self.get_chapter():
                         rules_of_origin["rules"].append(rule)
             group_name = group_member.rules_group.description
             groups[group_name] = rules_of_origin
@@ -796,3 +795,15 @@ class SubHeading(models.Model):
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
         return [code_match_obj.group(i) for i in range(1, 4)]
+
+    def get_chapter(self, ancestor=None):
+        """
+        recursive function to return the ancestoral chapter
+        :param ancestor: SubHesding or Heading
+        :return: chapter
+        """
+
+        if isinstance(self.get_parent(), Heading):
+            return self.get_parent().chapter
+        else:
+            return self.get_chapter(ancestor=self.get_parent())
