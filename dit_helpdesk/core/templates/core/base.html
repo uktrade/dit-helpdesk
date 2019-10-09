@@ -95,7 +95,14 @@
     {% block  ga_gta_body %}{% endblock ga_gta_body %}
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
-      <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. <a href="{% url 'cookies' %}" class="govuk-link">Find out more about cookies</a></p>
+      <div class="govuk-width-container">
+          <p class="app-cookie-banner__message">GOV.UK uses cookies which are essential for the site to work. We also use
+          non-essential cookies to help us improve government digital services. Any data collected is anonymised.
+          By continuing to use this site, you agree to our use of cookies.
+              </p>
+          <a href="{% url 'cookies' %}" class="govuk-button button--secondary">Accept cookies</a>
+          <a href="{% url 'cookies' %}" class="govuk-button button--secondary">Cookie settings</a>
+      </div>
     </div>
     <header class="govuk-header " role="banner" data-module="header">
       <div class="govuk-header__container govuk-width-container">
@@ -133,11 +140,11 @@
             </p>
           </div>
         {% endblock %}
-        <main id="main-content" class="govuk-main-wrapper">
-          {% block content %}
-          {% endblock content %}
-        </main>
       </div>
+
+    {% block content %}
+
+    {% endblock content %}
 
       <footer class="govuk-footer " role="contentinfo">
         <div class="govuk-width-container ">

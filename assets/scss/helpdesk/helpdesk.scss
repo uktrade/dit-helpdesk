@@ -73,7 +73,11 @@ abbr {
   }
 
   &--4 {
-    background-color: lighten(govuk-colour("orange"), 30%);
+    background-color: lighten(govuk-colour("turquoise"), 40%);
+  }
+
+  &--5 {
+    background-color: lighten(govuk-colour("turquoise"), 40%);
   }
 }
 
@@ -107,4 +111,12 @@ abbr {
 .govuk-table__rules-of-origin table td, .govuk-table__conditions table td, .govuk-table__conditions table th,
 .govuk-table__tariffs_and_measures table td, .govuk-table__tariffs_and_measures table th {
   vertical-align: top;
+}
+
+.previous-answer {
+  padding-bottom: govuk-spacing(2);
+}
+
+.helpdesk-exporting-from:after {
+    content: ' \2192';
 }

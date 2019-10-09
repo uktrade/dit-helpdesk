@@ -11,7 +11,7 @@ from commodities.views import TABLE_COLUMN_TITLES
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-code_regex = re.compile("([0-9]{6})([0-9]{2})([0-9]{2})")
+code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
 HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
 with open(HIERARCHY_JSON_PATH) as f:
     HIERARCHY_CACHED = json.loads(f.read())
@@ -97,7 +97,13 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
                 child.harmonized_code = child.commodity_code
 
             matches = code_regex.search(child.harmonized_code)
-            code_split = [matches.group(1), matches.group(2), matches.group(3)]
+            code_split = [
+                matches.group(1),
+                matches.group(2),
+                matches.group(3),
+                matches.group(4),
+                matches.group(5),
+            ]
             for index, code_segment in enumerate(code_split):
                 counter = str(int(index) + 1)
                 commodity_code_html = (
@@ -389,8 +395,14 @@ def _generate_commodity_code_html(item):
         if type(item) is Commodity:
             item.harmonized_code = item.commodity_code
 
-        matches = code_regex.search(item.harmonized_code)
-        code_split = [matches.group(1), matches.group(2), matches.group(3)]
+        code_result = code_regex.search(item.harmonized_code)
+        code_split = [
+            code_result.group(1),
+            code_result.group(2),
+            code_result.group(3),
+            code_result.group(4),
+            code_result.group(5),
+        ]
 
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
