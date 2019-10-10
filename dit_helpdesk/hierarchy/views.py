@@ -106,13 +106,22 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             ]
             for index, code_segment in enumerate(code_split):
                 counter = str(int(index) + 1)
-                commodity_code_html = (
-                    commodity_code_html
-                    + '<span class="app-commodity-code__highlight app-commodity-code__highlight--'
-                    + counter
-                    + '">'
-                    + code_segment
-                    + "</span>"
+
+                if child.harmonized_code[2:] == "00000000" and int(counter) > 1:
+                    blank_span = [
+                        '<span class="app-commodity-code__is-blank">',
+                        "</span>",
+                    ]
+                elif child.harmonized_code[4:] == "000000" and int(counter) > 2:
+                    blank_span = [
+                        '<span class="app-commodity-code__is-blank">',
+                        "</span>",
+                    ]
+                else:
+                    blank_span = ["", ""]
+
+                commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
+                    counter, blank_span[0], code_segment, blank_span[1]
                 )
 
             commodity_code_html = commodity_code_html + "</span>"
@@ -123,7 +132,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             type(child) in [Commodity, Heading, SubHeading]
             and (type(child) is Commodity or child.get_hierarchy_children_count() == 0)
         ):
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link">{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span> <br /><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">Select</a></div>{commodity_code_html}</li>'
         else:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{commodity_code_html}'
         html = html + li
@@ -313,6 +322,7 @@ def subheading_detail(request, commodity_code, country_code):
     }
 
     return render(request, "hierarchy/subheading_detail.html", context)
+
 
 def heading_hierarchy_section_header(reversed_heading_tree):
     """
