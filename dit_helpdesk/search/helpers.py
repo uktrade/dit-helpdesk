@@ -48,7 +48,7 @@ def search(query, page):
                 hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
             except KeyError as exception:
                 logger.info(
-                    "{0} {1}".format(hit["commodity_code_html"], exception.args)
+                    "{0} {1}".format(hit["commodity_code"], exception.args)
                 )
             results.append(hit)
         seen.append((hit["commodity_code"], hit["description"]))
