@@ -19,8 +19,6 @@ from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
 
-from search.views import _generate_commodity_code_html as _commodity_code_html
-
 
 def commodity_detail(request, commodity_code, country_code):
     """
@@ -279,3 +277,49 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     section = reversed_commodity_tree[section_index][0]
     html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
     return html
+
+
+def _commodity_code_html(code):
+    """
+    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
+    of 6, 2 and  digits and colour code formatted
+    :param item: model instance
+    :return: html
+    """
+    print("search Code: ", code)
+
+    commodity_code_html = (
+        '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+    )
+
+    if len(code) > 2 and code.isdigit():
+
+        code_regex = re.search(
+            "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
+        )
+        code_split = [
+            code_regex.group(1),
+            code_regex.group(2),
+            code_regex.group(3),
+            code_regex.group(4),
+            code_regex.group(5),
+        ]
+
+        for index, code_segment in enumerate(code_split):
+            counter = str(int(index) + 1)
+            if code[2:] == "00000000" and int(counter) > 1:
+                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+            elif code[4:] == "000000" and int(counter) > 2:
+                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+            else:
+                blank_span = ["", ""]
+
+            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
+                counter, blank_span[0], code_segment, blank_span[1]
+            )
+    else:
+        commodity_code_html + code
+
+    commodity_code_html = commodity_code_html + "</span>"
+
+    return commodity_code_html
