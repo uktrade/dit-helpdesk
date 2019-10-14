@@ -183,9 +183,11 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
     for index, lista in enumerate(reversedList):
         if index is 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
-            html += '<div class="helpdesk-breadcrumbs">'
+            html += '<div class="helpdesk-breadcrumbs"><nav>'
         else:
-            html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
+            html += (
+                f"<ul>"
+            )  # id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child"
             for i, item in enumerate(lista):
                 expand = "open"
                 if index is listSize:
@@ -194,17 +196,17 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                 if type(item) is Commodity:
                     if item.commodity_code == commodity_code:
                         html += f"""
-                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                            <li>
                                 <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_commodity_code_html(item.commodity_code)}
                             </li>
-                            """
+                            """  # id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"
                     else:
                         html += f"""
-                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
+                           <li>
                                 <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
                                 <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_commodity_code_html(item.commodity_code)}
                             </li>
-                            """
+                            """  # id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"
                 elif type(item) in [Chapter, Heading, SubHeading]:
                     # hasattr(item, "description"):
                     item_commodity_code = ""
@@ -215,19 +217,22 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                     else:
                         item_commodity_code = item.commodity_code
                     html += f"""
-                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
+                       <li>
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item_commodity_code)}"""
                     if index is listSize:
-                        html += "</li>"
+                        html += (
+                            "</li>"
+                        )  # id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}
                 else:
+                    # id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{expand}"
                     html += f"""
-                        <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{expand}">
+                        <li>
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html("{0}00000000".format(item.section_id))}"""
 
             if index is listSize:
                 for i in range(0, listSize):
                     # close
-                    html += "</ul></div>"
+                    html += "</ul></nav></div>"
 
     return html
 

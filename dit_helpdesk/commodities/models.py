@@ -86,11 +86,11 @@ class Commodity(models.Model):
     def commodity_code_split(self):
         """
         Used to display the code in the template
-        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        Splits the commodity code into 3 groups of 4 digits, 2 digits, 2 digits and 2 digits
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
     @property
     def tts_obj(self):

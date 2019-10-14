@@ -30,7 +30,7 @@
                     <p class="govuk-body-s">Last updated {{ commodity.last_updated }}</p>
 
                     <div id="app-hierarchy-context">
-                        <div>
+                        <div class="app-hierarchy-context__wrapper">
                         {{accordion_title}}
                         {{ commodity_hierarchy_context | safe }}
                         </div>
@@ -38,9 +38,9 @@
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text">Commodity notes</span>
+                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Commodity notes</span>
                                 </summary>
-                                <div class="govuk-details__text">
+                                <div class="govuk-details__text ">
 
                                     Commodity notes go here
 
@@ -48,17 +48,15 @@
                             </details>
                         </div>
                     </div>
-
+                </div>
+            </div>
                     <div id="app-action-links">
                         <ul>
                             <li><a href="#">New search</a></li>
                             <li><a href="#">Get email alerts when something changes</a></li>
-                            <li><a href="#">Subscribe to feed</a></li>
+                            <li class="feed"><a rel="nofollow" href="#">Subscribe to feed</a></li>
                         </ul>
                     </div>
-
-                </div>
-            </div>
         </div>
     </div>
 </div>

@@ -250,7 +250,7 @@ HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/%s.json"
 
 COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/%s.json"
 
-COMMODITY_CODE_REGEX = "([0-9]{6})([0-9]{2})([0-9]{2})"
+COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
