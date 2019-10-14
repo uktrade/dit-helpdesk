@@ -15,75 +15,79 @@
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
 {% block content %}
+<div class="app-commodity-summary">
+    <div class="govuk-width-container">
+        <div id="app-commodity-overview">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
 
-<div class="govuk-width-container">
-    <div id="app-commodity-overview">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Export
+                        {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
+                        from {{ selected_origin_country_name }} to the United Kingdom
+                    </h2>
 
-                <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Export
-                    {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                    from {{ selected_origin_country_name }} to the United Kingdom
-                </h2>
+                    <p class="govuk-body-s">Last updated {{ commodity.last_updated }}</p>
 
-                <p class="govuk-body-s">Last updated {{ commodity.last_updated }}</p>
+                    <div id="app-hierarchy-context">
+                        <div>
+                        {{accordion_title}}
+                        {{ commodity_hierarchy_context | safe }}
+                        </div>
 
-                <div id="hierarchy_context">
-                    <div>
-                    {{accordion_title}}
-                    {{ commodity_hierarchy_context | safe }}
+                        <div id="app-commodity-notes">
+                            <details class="govuk-details govuk-!-margin-bottom-0">
+                                <summary class="govuk-details__summary">
+                                  <span class="govuk-details__summary-text">Commodity notes</span>
+                                </summary>
+                                <div class="govuk-details__text">
+
+                                    Commodity notes go here
+
+                                </div>
+                            </details>
+                        </div>
                     </div>
 
-                    <div id="commodity_notes">
-                        <details class="govuk-details govuk-!-margin-bottom-0">
-                            <summary class="govuk-details__summary">
-                              <span class="govuk-details__summary-text">Commodity notes</span>
-                            </summary>
-                            <div class="govuk-details__text">
-
-                                Commodity notes go here
-
-                            </div>
-                        </details>
+                    <div id="app-action-links">
+                        <ul>
+                            <li><a href="#">New search</a></li>
+                            <li><a href="#">Get email alerts when something changes</a></li>
+                            <li><a href="#">Subscribe to feed</a></li>
+                        </ul>
                     </div>
-                </div>
 
-                <div id="action-links">
-                    <ul>
-                        <li><a href="#">New search</a></li>
-                        <li><a href="#">Get email alerts when something changes</a></li>
-                        <li><a href="#">Subscribe to feed</a></li>
-                    </ul>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="govuk-width-container">
     <main id="main-content" class="govuk-main-wrapper">
 
         <div id="app-commodity-details">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    Contents
-
-                    <ul>
-                        <li>Tariffs and other measures</li>
-                        <li>Product-specific regulations</li>
+                <div class="govuk-grid-column-full ">
+                {%  if rules_of_origin or regulations %}
+                    <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
+                    <ul class="app-contents govuk-!-margin-bottom-9">
+                        <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#tariffs_and_other_measures">Tariffs and other measures</a></li>
+                        {%  if rules_of_origin %}
+                            <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#rules_of_origin">Rules of origin</a></li>
+                        {% endif %}
+                        {%  if regulations %}
+                            <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#regulations">Product-specific regulations</a></li>
+                        {% endif %}
                     </ul>
-
+                {% endif %}
                      <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                         Tariffs and other measures - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
+                         <a name="tariffs_and_other_measures">Tariffs and other measures</a> - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
                      </h3>
                      <div>
                         <p class="govuk-body-s">{{ selected_origin_country_name }} -> United Kingdom</p>
-                        <p class="govuk-body-s">Updated on: {{ commodity.last_updated }}</p>
                      </div>
-                     <p class="govuk-body">The table below shows all the tariffs and other measures that apply for this product and the selected country.</p>
+                     <p class="govuk-body app-info">The table below shows all the tariffs and other measures that apply for this product and the selected country.</p>
 
                       <table class="govuk-table govuk-table__tariffs_and_measures app-flexible-table govuk-!-margin-bottom-6" >
                         <caption class="govuk-table__caption govuk-visually-hidden">The table below shows all the tariffs and other
@@ -243,7 +247,7 @@
                 {% if rules_of_origin %}
 
                   <div class="govuk-grid-column-full" id="rules-of-origin">
-                    <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
+                      <h3 class="govuk-heading-m"><a name="rules_of_origin">Rules of origin for tariff preference</a></h3>
                     <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin -
                       ‘non-originating’ - it must meet the <a class="govuk-link"
                         href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules
@@ -361,7 +365,7 @@
 
                 {% if regulations %}
                   <div class="govuk-grid-column-full">
-                    <h3 class="govuk-heading-m">Product-specific regulations</h3>
+                      <h3 class="govuk-heading-m"><a name="regulations">Product-specific regulations</a></h3>
                     <p class="govuk-body">These regulations apply to this product. </P>
                     <div class="govuk-accordion"
                         data-module="accordion"

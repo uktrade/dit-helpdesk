@@ -120,3 +120,56 @@ abbr {
 .helpdesk-exporting-from:after {
     content: ' \2192';
 }
+
+.govuk-hint {
+  color: $govuk-text-colour;
+}
+
+.app-select--inline {
+    @include mq ($from: tablet) {
+      @include govuk-clearfix;
+  }
+  text-align: right;
+}
+
+.app-\!-font-size-19 {
+  font-size: 19px;
+}
+
+.app-commodity-summary {
+  background-color: #f2f2f2;
+}
+
+#app-hierarchy-context {
+  border: solid 1px #bfc1c3;
+  background-color: #ffffff;
+  padding: 0;
+
+  div {
+    padding: 1em;
+  }
+}
+
+#app-commodity-notes {
+  border-top: 1px #bfc1c3 solid;
+}
+
+#app-action-links li {
+  display: inline-block;
+}
+
+.app-info{
+  background-color: #e9f4f9;
+  border-left: solid .5em #098dc1;
+  padding: .5em;
+}
+
+.app-contents {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.helpdesk-breadcrumbs {
+
+}
