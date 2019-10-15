@@ -108,11 +108,8 @@ abbr {
   color: red;
 }
 
-.govuk-table__rules-of-origin table td,
-.govuk-table__conditions table td,
-.govuk-table__conditions table th,
-.govuk-table__tariffs_and_measures table td,
-.govuk-table__tariffs_and_measures table th {
+.govuk-table td,
+.govuk-table  th {
   vertical-align: top;
 }
 
@@ -120,7 +117,7 @@ abbr {
   padding-bottom: govuk-spacing(2);
 }
 
-.helpdesk-exporting-from:after {
+.helpdesk-direction__left-to-right:after {
     content: ' \2192';
 }
 
@@ -147,19 +144,30 @@ abbr {
   border: solid 1px #bfc1c3;
   background-color: #ffffff;
   padding: 0;
+}
 
-  div {
-    padding: 1em;
-  }
+#app-commodity-overview {
+  padding-bottom: 0.5em;
 }
 
 #app-commodity-notes {
   border-top: 1px #bfc1c3 solid;
+  padding: 1em;
 }
 
-#app-action-links li {
-  display: inline-block;
+#app-action-links {
+  margin: 0;
+  padding: 0;
+  li {
+    display: inline-block;
+    margin-right: .5em;
+  }
 }
+
+.app-contents li:before {
+      content: "\2014";
+      margin: 0 1em 0 0;
+    }
 
 .app-info{
   background-color: #e9f4f9;
@@ -176,21 +184,26 @@ abbr {
 .helpdesk-breadcrumbs {
 
   position: relative;
-  padding: 1em;
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
   margin: 0 0 30px 0;
 
-   nav ul {
-      position: relative;
-      list-style: none;
-      padding-left: 15px;
+   nav {
+     padding-left: 0.5em;
+     ul {
+        position: relative;
+        list-style: none;
+        padding-left: 15px;
 
-    li {
-      position: relative;
-      display: block;
-      line-height: 25px;
-      margin-top: 5px;
-      word-wrap: break-word;
-    }
+      li {
+        position: relative;
+        display: block;
+        line-height: 25px;
+        margin-top: 5px;
+        word-wrap: break-word;
+      }
+     }
   }
 }
 
@@ -230,7 +243,8 @@ abbr {
     margin-right: 0
 }
 
-.helpdesk-breadcrumbs nav ul li.commodity-li .chapter-code, .helpdesk-breadcrumbs nav ul li.commodity-li .heading-code {
+.helpdesk-breadcrumbs nav ul li.commodity-li .chapter-code,
+.helpdesk-breadcrumbs nav ul li.commodity-li .heading-code {
     margin-right: 0
 }
 
@@ -240,4 +254,28 @@ abbr {
 
 .app-hierarchy-context__wrapper {
   padding: 0;
+}
+
+
+.helpdesk-icon {
+    background-position-x: -2px;
+    background-position-y: 0;
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    vertical-align: bottom;
+}
+
+.helpdesk-icon__feed {
+  background-image: url(/assets/images/outline_rss_feed_black_18dp.png);
+}
+
+.helpdesk-icon__email {
+  background-image: url(/assets/images/outline_email_black_18dp.png);
+}
+
+.helpdesk-caption {
+  color: #6f777b;
 }

@@ -508,7 +508,7 @@ class Heading(models.Model):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.heading_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
 
 class SubHeading(models.Model):
@@ -823,7 +823,7 @@ class SubHeading(models.Model):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
     def get_chapter(self, ancestor=None):
         """

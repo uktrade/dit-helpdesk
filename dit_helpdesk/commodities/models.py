@@ -157,7 +157,6 @@ class Commodity(models.Model):
         :param level: int
         :return: list
         """
-
         if tree is None:
             tree = []
         if not parent:
