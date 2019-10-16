@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "countries",
     "feedback",
     "contact",
+    "iee_contact",
     "hierarchy",
     "index",
     "rules_of_origin",
@@ -322,3 +323,5 @@ DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 10
 
 APP_START_DOMAIN = os.environ.get("APP_START_DOMAIN")
 FEEDBACK_DESTINATION_EMAIL = os.environ.get("FEEDBACK_DESTINATION_EMAIL")
+
+HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")

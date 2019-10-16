@@ -1,0 +1,44 @@
+{% extends "iee_contact/contact_form_base.html" %}
+{% load i18n %}
+
+
+{% block title_form_page %}Contact us{% endblock %}
+
+{% block form_page_title %}
+    {{ wizard.form.location.label }}
+    <p class="govuk-hint govuk-!-margin-bottom-1">Contact the Department for International Trade (DIT) for
+        questions about trade and investment.</p>
+{% endblock %}
+
+{% block form_body %}
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+        <h2 class="govuk-fieldset__legend--m">{{ wizard.form.label_tag }}</h2>
+
+    </legend>
+
+    <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
+        {% if wizard.form.errors %}
+            {% for error in wizard.form.errors %}
+                <span id="location-error"
+                      class="govuk-error-location">{{ error | escape }}</span>
+            {% endfor %}
+        {% endif %}
+        <div class="govuk-radios govuk-radios" id="id_step_one-location">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_one-location_0" required
+                       name="step_one-location" type="radio" checked="checked"
+                       value="{{ wizard.form.fields.location.choices.0.0 }}">
+                <label class="govuk-label govuk-radios__label" for="id_step_one-location_0">
+                    {{ wizard.form.fields.location.choices.0.1 }}</label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_one-location_1" required
+                       name="step_one-location" type="radio" value="{{ wizard.form.fields.location.choices.1.0 }}">
+                <label class="govuk-label govuk-radios__label" for="id_step_one-location_1">
+                    {{ wizard.form.fields.location.choices.1.1 }}
+                </label>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
