@@ -139,8 +139,8 @@ class IEEContactFormWizardView(SessionWizardView):
             [context["recipient_email"]],
             headers=headers,
         )
-
-        email.send()
+        if hasattr(settings, "EMAIL_BACKEND"):
+            email.send()
 
     @staticmethod
     def send_to_zenddesk(context):
