@@ -84,7 +84,11 @@ class HierarchyModelsTestCase(TestCase):
         )
 
     def test_section_has_hierarchy_children(self):
-        self.assertTrue(len(self.section.get_hierarchy_children()) > 0)
+        children = self.section.get_hierarchy_children()
+        child_count = self.section.get_hierarchy_children_count()
+        self.assertTrue(len(children) > 0)
+        self.assertTrue(child_count > 0)
+        self.assertEqual(len(children), child_count)
 
     def test_section_has_child_chapters(self):
         self.assertTrue(self.section.chapter_range_str is not None)
@@ -119,7 +123,11 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(self.chapter.harmonized_code, settings.TEST_CHAPTER_CODE)
 
     def test_chapter_has_hierarchy_children(self):
-        self.assertTrue(len(self.chapter.get_hierarchy_children()) > 0)
+        children = self.chapter.get_hierarchy_children()
+        child_count = self.chapter.get_hierarchy_children_count()
+        self.assertTrue(len(children) > 0)
+        self.assertTrue(child_count > 0)
+        self.assertEqual(len(children), child_count)
 
     def test_chapter_has_the_correct_hierarchy_url(self):
         self.assertEqual(
@@ -156,7 +164,11 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(self.heading.harmonized_code, settings.TEST_HEADING_CODE)
 
     def test_heading_has_hierarchy_children(self):
-        self.assertTrue(len(self.heading.get_hierarchy_children()) > 0)
+        children = self.heading.get_hierarchy_children()
+        child_count = self.heading.get_hierarchy_children_count()
+        self.assertTrue(len(children) > 0)
+        self.assertTrue(child_count > 0)
+        self.assertEqual(len(children), child_count)
 
     def test_heading_has_the_correct_hierarchy_url(self):
         self.assertEqual(
@@ -190,7 +202,11 @@ class HierarchyModelsTestCase(TestCase):
         self.assertTrue(self.subheading.harmonized_code, settings.TEST_SUBHEADING_CODE)
 
     def test_subheading_has_hierarchy_children(self):
-        self.assertTrue(len(self.subheading.get_hierarchy_children()) > 0)
+        children = self.subheading.get_hierarchy_children()
+        child_count = self.subheading.get_hierarchy_children_count()
+        self.assertTrue(len(children) > 0)
+        self.assertTrue(child_count > 0)
+        self.assertEqual(len(children), child_count)
 
     def test_subheading_has_the_correct_hierarchy_url(self):
         self.assertEqual(
