@@ -47,11 +47,7 @@ class IEEContactFormWizardView(SessionWizardView):
         # if the chosen topic is in the last four options then go to zendesk
         # otherwise send an email
 
-        print(
-            "settings.DIRECTORY_FORMS_API_BASE_URL: ",
-            settings.DIRECTORY_FORMS_API_BASE_URL,
-        )
-        if context["topic"] in list(TOPICS.values())[4:]:
+        if context["type"] == "Zendesk":
             IEEContactFormWizardView.send_to_zenddesk(context)
         else:
             IEEContactFormWizardView.send_mail(context)
@@ -95,32 +91,24 @@ class IEEContactFormWizardView(SessionWizardView):
                 context["message"] = form["message"]
 
         if context["topic"] == TOPICS[2]:
-            context["recipient_email"] = "defra.helpline@defra.gov.uk"
+            context["type"] = "email"
+            context["recipient_email"] = "EUExitDIT@defra.gov.uk"
             context["recipient_full_name"] = "DEFRA"
 
         elif context["topic"] == TOPICS[3]:
+            context["type"] = "email"
             context["recipient_email"] = "TBC"
-            context["recipient_full_name"] = "TBC"
+            context["recipient_full_name"] = "DCMS"
 
         elif context["topic"] == TOPICS[4]:
-            context["recipient_email"] = "David.Hughes10@homeoffice.gov.uk"
-            context["recipient_full_name"] = "David Hughes"
+            context["type"] = "Zendesk"
+            context["recipient_email"] = "euexit@trade.gov.uk"
+            context["recipient_full_name"] = "euexit"
 
         elif context["topic"] == TOPICS[5]:
-            context["destination"] = "zendesk euexit@trade.gov.uk"
-            context["recipient_full_name"] = "Martin Cook"
-
-        elif context["topic"] == TOPICS[6]:
-            context["destination"] = "zendesk euexit@trade.gov.uk"
-            context["recipient_full_name"] = "Martin Cook"
-
-        elif context["topic"] == TOPICS[7]:
-            context["destination"] = "zendesk euexit@trade.gov.uk"
-            context["recipient_full_name"] = "ajid @ live services"
-
-        elif context["topic"] == TOPICS[8]:
-            context["destination"] = "zendesk euexit@trade.gov.uk"
-            context["recipient_full_name"] = "Martin Cook"
+            context["type"] = "Zendesk"
+            context["destination"] = "sajid.arif@digital.trade.gov.uk"
+            context["recipient_full_name"] = "Sajid Arif"
 
         template = get_template("iee_contact/contact_message_tmpl.txt")
         context["content"] = template.render(context)

@@ -4,17 +4,17 @@ from django import forms
 IEE_LOCATION_CHOICES = ((1, "Exporting from the UK"), (2, "Brexit enquiries"))
 
 IEE_TOPIC_CHOICES = (
-    (1, "Commodity codes"),
+    (
+        1,
+        "Customs declarations and procedures, commodity codes, duties and tariff rates",
+    ),
     (
         2,
         "Exporting animals, plants or food, environmental regulations, sanitary & phytosanitary regulations",
     ),
     (3, "Exporting cultural goods"),
-    (4, "Exporting drug precursor chemicals"),
-    (5, "Exporting any other products"),
-    (6, "Trade agreements, rules of origin, tariffs and quotas"),
-    (7, """Help using the "Export goods from the UK" service"""),
-    (8, "Other"),
+    (4, "Exporting any other products"),
+    (6, "Technical help with using the 'Export goods from the UK' service itself"),
 )
 
 

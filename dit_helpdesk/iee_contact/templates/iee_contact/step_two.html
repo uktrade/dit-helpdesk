@@ -10,9 +10,9 @@
 
 {% block form_body %}
 
-    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">
-        <h2> {{ wizard.form.fields.enquiry_topic.label }}</h2>
-    </div>
+{#    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">#}
+{#        <h2> {{ wizard.form.fields.enquiry_topic.label }}</h2>#}
+{#    </div>#}
 
     <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
         {% if wizard.form.errors %}
@@ -67,7 +67,7 @@
                        for="id_step_two-enquiry_topic_3">
                     {{ wizard.form.fields.enquiry_topic.choices.3.1|safe }}
                     <p class="govuk-hint">
-                        Your enquiry will be sent to the Home Office
+                        Your enquiry will be sent to the Department for International Trade (DIT)
                     </p>
                 </label>
             </div>
@@ -78,42 +78,6 @@
                 <label class="govuk-label govuk-radios__label"
                        for="id_step_two-enquiry_topic_5">
                     {{ wizard.form.fields.enquiry_topic.choices.4.1|safe }}
-                    <p class="govuk-hint">
-                        Your enquiry will be sent to the Department for International Trade (DIT)
-                    </p>
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_6" required
-                       name="step_two-enquiry_topic" type="radio"
-                       value="{{ wizard.form.fields.enquiry_topic.choices.5.0 }}">
-                <label class="govuk-label govuk-radios__label"
-                       for="id_step_two-enquiry_topic_6">
-                    {{ wizard.form.fields.enquiry_topic.choices.5.1|safe }}
-                    <p class="govuk-hint">
-                        Your enquiry will be sent to the Department for International Trade (DIT)
-                    </p>
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_6" required
-                       name="step_two-enquiry_topic" type="radio"
-                       value="{{ wizard.form.fields.enquiry_topic.choices.6.0 }}">
-                <label class="govuk-label govuk-radios__label"
-                       for="id_step_two-enquiry_topic_6">
-                    {{ wizard.form.fields.enquiry_topic.choices.6.1|safe }}
-                    <p class="govuk-hint">
-                        Your enquiry will be sent to the Department for International Trade (DIT)
-                    </p>
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_6" required
-                       name="step_two-enquiry_topic" type="radio"
-                       value="{{ wizard.form.fields.enquiry_topic.choices.7.0 }}">
-                <label class="govuk-label govuk-radios__label"
-                       for="id_step_two-enquiry_topic_6">
-                    {{ wizard.form.fields.enquiry_topic.choices.7.1|safe }}
                     <p class="govuk-hint">
                         Your enquiry will be sent to the Department for International Trade (DIT)
                     </p>
