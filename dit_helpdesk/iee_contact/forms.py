@@ -14,7 +14,7 @@ IEE_TOPIC_CHOICES = (
     ),
     (3, "Exporting cultural goods"),
     (4, "Exporting any other products"),
-    (6, "Technical help with using the 'Export goods from the UK' service itself"),
+    (5, "Technical help with using the 'Export goods from the UK' service itself"),
 )
 
 
