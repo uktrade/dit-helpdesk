@@ -45,7 +45,7 @@ urlpatterns = [
         name="section-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{2})$",
+        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})$",
         hierarchy_views.chapter_detail,
         name="chapter-detail",
     ),

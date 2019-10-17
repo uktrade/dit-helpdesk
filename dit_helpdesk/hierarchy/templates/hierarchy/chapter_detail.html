@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+
+{% comment %}
+# -----------------------------------------------------------------------------
+# NOTE - table column headers.
+# -----------------------------------------------------------------------------
+# If the table columns headings are changed, they also need to be updated in
+# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
+# smaller screens will break.
+# -----------------------------------------------------------------------------
+{% endcomment %}
+
+{% load static staticfiles i18n cell_cleaner replace %}
+
+{% block title %}Chapter information for {% for commodity_code_segment in chapter.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
+
+{% block content %}
+
+<div class="app-commodity-summary">
+    <div class="govuk-width-container">
+        <div id="app-commodity-overview">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">Back</a>
+
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Export
+                        {% for chapter_code_segment in chapter.chapter_code_split %}{{ chapter_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
+                        from {{ selected_origin_country_name }} to the United Kingdom
+                    </h2>
+
+                    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
+                        Choose the commodity code below that best matches your goods to see more information
+                    </h3>
+
+                    <p class="govuk-body">
+                        If your item is not listed by name, it may be shown under what it's used for, what it's made from or 'other'.
+                    </p>
+
+                    <div class="govuk-inset-text">
+                        There are <a href="#chapter_notes">important notes for classifying your goods</a> show further down this page
+                    </div>
+
+                    <div id="app-hierarchy-context">
+                        <div class="app-hierarchy-context__wrapper">
+                            <div class="helpdesk-breadcrumbs">
+                                <p class="govuk-body govuk-!-font-size-16">{{accordion_title}}</p>
+                                    {{ chapter_hierarchy_context | safe }}
+                            </div>
+                        </div>
+
+                        <div id="app-commodity-notes">
+                            <details class="govuk-details govuk-!-margin-bottom-0">
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text govuk-!-font-size-16"><a name="chapter_notes">Chapter notes</a></span>
+                                </summary>
+                                <div class="govuk-details__text ">
+
+                                    Chapter notes go here
+
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul id="app-action-links" class="govuk-!-margin-top-5 govuk-!-margin-bottom-5">
+                    <li><a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}">New search</a></li>
+                    <li><i class="helpdesk-icon helpdesk-icon__email"></i><a href="#">Get email alerts when something changes</a></li>
+                    <li><i class="helpdesk-icon helpdesk-icon__feed"></i><a rel="nofollow" href="#">Subscribe to feed</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper">
+        <div id="app-commodity-details">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

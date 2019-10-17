@@ -126,8 +126,11 @@
                     <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold govuk-!-margin-right-2">Select</a>
                     {%  else %}
                         {% if result.node_id %}
-{#                            {{ result.meta.index }}#}
-                            <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Show in goods browser</a>
+                            {% if result.meta.index == 'chapter' %}
+                                <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
+                            {% else %}
+                                <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Show in goods browser</a>
+                            {% endif %}
                         {% endif %}
                     {%  endif %}
                   </section>

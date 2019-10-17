@@ -9,6 +9,8 @@ from django.urls import reverse
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson
 
+CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
+
 
 class Section(models.Model):
     """
@@ -238,6 +240,55 @@ class Chapter(models.Model):
             )
 
         return tree
+
+    def get_path(self, parent=None, tree=None, level=0):
+        """
+        Returns the context path of the Commodity showing its level in the hierarchy tree
+        and its ancestors
+        :param parent: parent model instance
+        :param tree: list of ancestor instances
+        :param level: int
+        :return: list
+        """
+
+        if tree is None:
+            tree = []
+        if not parent:
+            tree = []
+            parent = self
+
+        if len(tree) < level + 1:
+            tree.append([])
+
+        if (
+            hasattr(parent, "parent_subheading")
+            and parent.parent_subheading is not None
+        ):
+            self.get_path(parent.parent_subheading, tree, level + 1)
+            tree.insert(1, [parent.parent_subheading])
+        if hasattr(parent, "heading") and parent.heading is not None:
+            self.get_path(parent.heading, tree, level + 1)
+            tree[level].append(parent.heading)
+        elif hasattr(parent, "chapter") and parent.chapter is not None:
+            self.get_path(parent.chapter, tree, level + 1)
+            tree[level].append(parent.chapter)
+        elif hasattr(parent, "section") and parent.section is not None:
+            tree[level].append(parent.section)
+        elif self.parent_subheading is not parent:
+            self._append_path_children(self.parent_subheading, tree, level)
+
+        return tree
+
+    @property
+    def chapter_code_split(self):
+        """
+        Used to display the code in the template
+        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        :return: list
+        """
+
+        code_match_obj = re.search(CHAPTER_CODE_REGEX, self.chapter_code)
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
 
 class Heading(models.Model):
