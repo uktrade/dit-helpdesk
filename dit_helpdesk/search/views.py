@@ -74,15 +74,8 @@ class CommoditySearchView(FormView):
                 query = self.request.GET.get("q")
                 context["query"] = query
 
-                client = Elasticsearch(hosts=[settings.ES_URL])
-
                 if query.isdigit():
-
-                    processed_query = process_commodity_code(query)
-                    query_object = {"term": {"commodity_code": processed_query}}
-                    request = Search().using(client).query(query_object)
-                    response = request.execute()
-
+                    response = helpers.search_by_code(code=query)
                     if response:
                         hit = response[0]
                         if hit.meta["index"] == "commodity":
@@ -126,7 +119,7 @@ class CommoditySearchView(FormView):
                         return self.render_to_response(context)
                 else:
                     page = int(self.request.GET.get("page", "1"))
-                    context.update(helpers.search(query=query, page=page))
+                    context.update(helpers.search_by_term(query=query, page=page))
                     context[
                         "next_url"
                     ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
@@ -179,7 +172,7 @@ class CommoditySearchView(FormView):
         return context
 
 
-class CommoditySearchAPIView(generics.ListAPIView):
+class CommodityTermSearchAPIView(generics.ListAPIView):
     serializer_class = CommoditySearchSerializer
     permission_classes = []
     authentication_classes = []
@@ -187,11 +180,23 @@ class CommoditySearchAPIView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        context = helpers.search(
+        context = helpers.search_by_term(
             query=serializer.validated_data["q"], page=serializer.validated_data["page"]
         )
         context["results"] = [hit.to_dict() for hit in context["results"]]
         return Response(context)
+
+
+class CommodityCodeSearchAPIView(generics.ListAPIView):
+    serializer_class = CommoditySearchSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        context = helpers.search_by_code(code=serializer.validated_data["q"])
+        return Response({'results': [hit.to_dict() for hit in context]})
 
 
 class HierarchySearchAPIView(generics.ListAPIView):
@@ -218,51 +223,6 @@ class CommodityDocumentViewSet(DocumentViewSet):
 
     # Define search fields
     search_fields = ("commodity_code", "description")
-
-
-def process_commodity_code(code):
-
-    if len(code) == 1:
-        code = "0" + code
-
-    if code in ["00", "99"]:
-        code = "9999"
-
-    if len(code) == 4 and code[2:] == "00":
-        code = code[:2]
-
-    if len(code) == 6 and code[2:] == "0000":
-        code = code[:2]
-
-    if len(code) in [3, 5, 7, 9]:
-        code = code[:-1]
-
-    if len(code) < 10:
-
-        if len(code) == 2:
-            result = code + "00000000"
-            return result
-
-        if len(code) == 4:
-            result = code + "000000"
-            return result
-
-        if len(code) == 6:
-            result = code + "0000"
-            return result
-
-        if len(code) == 8:
-            result = code + "00"
-            return result
-
-    elif len(code) > 10:
-        result = code[:8] + "00"
-        return result
-
-    else:
-        print("code: ", code)
-        result = code
-        return result
 
 
 def _generate_commodity_code_html(code):

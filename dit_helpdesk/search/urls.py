@@ -16,9 +16,14 @@ urlpatterns = [
         name="search-hierarchy",
     ),
     path(
-        "api/commodity/",
-        views.CommoditySearchAPIView.as_view(),
-        name="commodity-api-search",
+        "api/commodity-term/",
+        views.CommodityTermSearchAPIView.as_view(),
+        name="commodity-term-api-search",
+    ),
+    path(
+        "api/commodity-code/",
+        views.CommodityCodeSearchAPIView.as_view(),
+        name="commodity-code-api-search",
     ),
     path(
         "api/hierarchy/",
