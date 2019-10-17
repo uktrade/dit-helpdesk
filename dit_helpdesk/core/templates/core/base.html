@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {% block  ga_gta_head %}{% endblock ga_gta_head %}
 
     <title>{% block title %}{% endblock %} - Trade with the UK: look up tariffs, taxes and rules</title>
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
@@ -91,6 +92,7 @@
     <script>
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled')
     </script>
+    {% block  ga_gta_body %}{% endblock ga_gta_body %}
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
       <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. <a href="{% url 'cookies' %}" class="govuk-link">Find out more about cookies</a></p>
