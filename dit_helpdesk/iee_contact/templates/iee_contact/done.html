@@ -21,20 +21,4 @@
 
     <p class="govuk-body govuk-!-margin-bottom-9">Return to <a href="/">find information about exporting to the UK</a>.</p>
 
-    <h3>DEBUG</h3>
-    Subject :{{ context.subject }}<br/>
-    Service: {{ context.service_name }}<br/><br />
-
-    Sender Email address: {{ context.email_address }}<br />
-    Sender Name: {{  context.name }}<br /><br />
-
-    {% if context.destination %}
-        Recipient zendesk: {{ context.destination }}<br />
-    {% elif context.recipient_email %}
-        Recipient Email: {{ context.recipient_email }}<br />
-    {%  endif %}
-    Recipient Name: {{ context.recipient_full_name }}<br /><br>
-
-    <pre>{{ context.content|safe }}</pre>
-
 {% endblock %}
