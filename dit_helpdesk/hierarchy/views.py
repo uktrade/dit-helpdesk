@@ -298,25 +298,15 @@ def chapter_detail(request, chapter_code, country_code):
 
     chapter_path = chapter.get_path()
     chapter_path.insert(0, [chapter])
-    chapter_path = chapter._append_path_children(
-        chapter, chapter_path, len(chapter_path) - 1
-    )
-    accordion_title = chapter_hierarchy_section_header(chapter_path)
-    # rules_of_origin = chapter.get_rules_of_origin(country_code=country.country_code)
 
-    modals_dict = {}
-    # for measure_json in import_measures:
-    #     modals_dict.update(measure_json.measures_modals)
+    accordion_title = chapter_hierarchy_section_header(chapter_path)
+
+    print(chapter_path, country.country_code, chapter_code)
 
     context = {
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
-        # "rules_of_origin": rules_of_origin,
-        # "roo_footnotes": rules_of_origin,
-        # "table_data": table_data,
-        # "column_titles": TABLE_COLUMN_TITLES,
-        # "regulations": chapter.get_regulations(),
         "accordion_title": accordion_title,
         "chapter_hierarchy_context": chapter_hierarchy_context(
             chapter_path, country.country_code, chapter_code
