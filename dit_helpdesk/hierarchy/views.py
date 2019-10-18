@@ -297,6 +297,10 @@ def chapter_detail(request, chapter_code, country_code):
     # table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     chapter_path = chapter.get_path()
+    chapter_path.insert(0, [chapter])
+    chapter_path = chapter._append_path_children(
+        chapter, chapter_path, len(chapter_path) - 1
+    )
     accordion_title = chapter_hierarchy_section_header(chapter_path)
     # rules_of_origin = chapter.get_rules_of_origin(country_code=country.country_code)
 
@@ -345,38 +349,51 @@ def heading_detail(request, heading_code, country_code):
 
     heading = get_object_or_404(Heading, heading_code=heading_code)
 
-    if (
-        heading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
-        or heading.tts_json is None
-    ):
-        heading.update_content()
+    import_measures = []
+    table_data = []
+    modals_dict = {}
 
-    import_measures = heading.tts_obj.get_import_measures(country.country_code)
-    table_data = [measure_json.get_table_row() for measure_json in import_measures]
+    try:
+
+        if (
+            heading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
+            or heading.tts_json is None
+        ):
+            heading.update_content()
+
+        import_measures = heading.tts_obj.get_import_measures(country.country_code)
+        table_data = [measure_json.get_table_row() for measure_json in import_measures]
+        for measure_json in import_measures:
+            modals_dict.update(measure_json.measures_modals)
+    except Exception as ex:
+        print(ex.args)
 
     heading_path = heading.get_path()
+    heading_path.insert(0, [heading])
     accordion_title = heading_hierarchy_section_header(heading_path)
     rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
-
-    modals_dict = {}
-    for measure_json in import_measures:
-        modals_dict.update(measure_json.measures_modals)
 
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
-        "rules_of_origin": rules_of_origin,
-        "roo_footnotes": rules_of_origin,
-        "table_data": table_data,
-        "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": heading.get_regulations(),
         "accordion_title": accordion_title,
         "heading_hierarchy_context": heading_hierarchy_context(
             heading_path, country.country_code, heading_code
         ),
-        "modals": modals_dict,
     }
+
+    if import_measures and table_data:
+        context.update(
+            {
+                "table_data": table_data,
+                "column_titles": TABLE_COLUMN_TITLES,
+                "modals": modals_dict,
+                "rules_of_origin": rules_of_origin,
+                "roo_footnotes": rules_of_origin,
+                "regulations": heading.get_regulations(),
+            }
+        )
 
     return render(request, "hierarchy/heading_detail.html", context)
 
@@ -403,38 +420,49 @@ def subheading_detail(request, commodity_code, country_code):
 
     subheading = get_object_or_404(SubHeading, commodity_code=commodity_code)
 
-    if (
-        subheading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
-        or subheading.tts_json is None
-    ):
-        subheading.update_content()
+    import_measures = []
+    table_data = []
+    modals_dict = {}
+    try:
+        if (
+            subheading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
+            or subheading.tts_json is None
+        ):
+            subheading.update_content()
 
-    import_measures = subheading.tts_obj.get_import_measures(country.country_code)
-    table_data = [measure_json.get_table_row() for measure_json in import_measures]
+        import_measures = subheading.tts_obj.get_import_measures(country.country_code)
+        table_data = [measure_json.get_table_row() for measure_json in import_measures]
+        for measure_json in import_measures:
+            modals_dict.update(measure_json.measures_modals)
+    except Exception as ex:
+        print(ex.args)
 
     subheading_path = subheading.get_path()
+    subheading_path.insert(0, [subheading])
     accordion_title = heading_hierarchy_section_header(subheading_path)
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
-
-    modals_dict = {}
-    for measure_json in import_measures:
-        modals_dict.update(measure_json.measures_modals)
 
     context = {
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
-        "rules_of_origin": rules_of_origin,
-        "roo_footnotes": rules_of_origin,
-        "table_data": table_data,
-        "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": subheading.get_regulations(),
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": heading_hierarchy_context(
             subheading_path, country.country_code, commodity_code
         ),
-        "modals": modals_dict,
     }
+
+    if import_measures and table_data:
+        context.update(
+            {
+                "table_data": table_data,
+                "column_titles": TABLE_COLUMN_TITLES,
+                "modals": modals_dict,
+                "rules_of_origin": rules_of_origin,
+                "roo_footnotes": rules_of_origin,
+                "regulations": subheading.get_regulations(),
+            }
+        )
 
     return render(request, "hierarchy/subheading_detail.html", context)
 

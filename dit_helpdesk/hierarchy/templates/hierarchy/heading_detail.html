@@ -69,8 +69,9 @@
 
         <div id="app-commodity-details">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
 
+                {% if table_data %}
+                <div class="govuk-grid-column-full">
                     <nav>
                         <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
                         <ul class="app-contents govuk-!-margin-bottom-9">
@@ -256,6 +257,7 @@
                     </div>
 
                 </div>
+                {% endif %}
 
                 {% if rules_of_origin %}
                   <div class="govuk-grid-column-full" id="rules-of-origin">
@@ -374,8 +376,8 @@
                     {% endfor %}
                     </div>
                   </div>
-
                 {% endif %}
+
                 {% if regulations %}
                   <div class="govuk-grid-column-full">
                       <h3 class="govuk-heading-m"><a name="regulations">Product-specific regulations</a></h3>
@@ -415,6 +417,7 @@
                     </div>
                   </div>
                 {% endif %}
+
             </div>
         </div>
 

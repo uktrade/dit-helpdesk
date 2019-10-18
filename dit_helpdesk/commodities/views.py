@@ -50,6 +50,7 @@ def commodity_detail(request, commodity_code, country_code):
     table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     commodity_path = commodity.get_path()
+    commodity_path.insert(0, [commodity])
     accordion_title = commodity_hierarchy_section_header(commodity_path)
     rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 

@@ -50,6 +50,11 @@ urlpatterns = [
         name="chapter-detail",
     ),
     re_path(
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
+        hierarchy_views.subheading_detail,
+        name="subheading-detail",
+    ),
+    re_path(
         r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$",
         hierarchy_views.heading_detail,
         name="heading-detail",

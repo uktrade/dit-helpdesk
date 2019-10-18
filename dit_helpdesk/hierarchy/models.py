@@ -279,6 +279,18 @@ class Chapter(models.Model):
 
         return tree
 
+    @staticmethod
+    def _append_path_children(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        children = parent.get_hierarchy_children()
+        for child in children:
+            tree[level].append(child)
+
     @property
     def chapter_code_split(self):
         """
@@ -364,6 +376,18 @@ class Heading(models.Model):
             self._append_path_children(self.parent_subheading, tree, level)
 
         return tree
+
+    @staticmethod
+    def _append_path_children(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        children = parent.get_hierarchy_children()
+        for child in children:
+            tree[level].append(child)
 
     def get_regulations(self):
         """

@@ -68,6 +68,7 @@
 
             <div id="app-commodity-details">
                 <div class="govuk-grid-row">
+                {% if table_data %}
                     <div class="govuk-grid-column-full">
 
                         <nav>
@@ -251,6 +252,7 @@
                           </details>
                         </div>
                     </div>
+                    {% endif %}
 
                     {% if rules_of_origin %}
                       <div class="govuk-grid-column-full" id="rules-of-origin">

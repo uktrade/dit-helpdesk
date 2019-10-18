@@ -122,17 +122,18 @@
                     {% endif %}
                     </p>
 
-                    {% if result.meta.index == "commodity" %}
-                    <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold govuk-!-margin-right-2">Select</a>
-                    {%  else %}
-                        {% if result.node_id %}
-                            {% if result.meta.index == 'chapter' %}
-                                <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
-                            {% else %}
-                                <a href="{% url 'search:search-hierarchy' country_code=country_code node_id=result.node_id %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Show in goods browser</a>
-                            {% endif %}
-                        {% endif %}
-                    {%  endif %}
+                    {% if result.meta.index == 'commodity' %}
+                        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold govuk-!-margin-right-2">Select</a>
+                    {% elif result.meta.index == 'chapter' %}
+                        <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
+                    {% elif result.meta.index == 'section' %}
+                        <a href="{% url 'section-detail' country_code=country_code section_id=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
+                    {% elif result.meta.index == 'heading' %}
+                        <a href="{% url 'heading-detail' country_code=country_code heading_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
+                    {% elif result.meta.index == 'sub_heading' %}
+                        <a href="{% url 'subheading-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link app-!-font-size-19 govuk-!-font-weight-bold">Select</a>
+                    {% endif %}
+
                   </section>
                   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
