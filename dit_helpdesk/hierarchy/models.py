@@ -57,6 +57,13 @@ class Section(models.Model):
         """
         return self.chapter_set.all().order_by("chapter_code")
 
+    def get_hierarchy_children_count(self):
+        """
+        Query returning a count of children
+        :return: int
+        """
+        return self.get_hierarchy_children().count()
+
     def get_chapters_url(self):
         """
         Returns a section url to a view listing the child chapters
@@ -165,6 +172,13 @@ class Chapter(models.Model):
         :return:
         """
         return self.headings.all().order_by("heading_code")
+
+    def get_hierarchy_children_count(self):
+        """
+        Query returning a count of children
+        :return: int
+        """
+        return self.get_hierarchy_children().count()
 
     def get_headings_url(self):
         """
@@ -378,6 +392,14 @@ class Heading(models.Model):
         ]
         return sub_headings + commodities
 
+    def get_hierarchy_children_count(self):
+        """
+        Query returning a count of children
+        :return: int
+        """
+        return self.child_subheadings.count() + self.children_concrete.count()
+
+
     def get_hierarchy_url(self, country_code=None):
         """
         Return the url of the model instance as used in the hierarchy html
@@ -590,6 +612,13 @@ class SubHeading(models.Model):
             obj for obj in self.children_concrete.all().order_by("commodity_code")
         ]
         return commodities + sub_headings
+
+    def get_hierarchy_children_count(self):
+        """
+        Query returning a count of children
+        :return: int
+        """
+        return self.child_subheadings.count() + self.children_concrete.count()
 
     @property
     def ancestor_data(self):

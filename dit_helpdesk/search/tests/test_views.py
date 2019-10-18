@@ -10,11 +10,9 @@ from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _get_hierarchy_level_html
 from search.forms import CommoditySearchForm
-from search.views import (
-    search_hierarchy,
-    process_commodity_code,
-    _generate_commodity_code_html,
-)
+from search.views import search_hierarchy, _generate_commodity_code_html
+from search.helpers import process_commodity_code
+
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -174,21 +172,38 @@ class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
         self.assertEqual(resp.status_code, 200)
 
 
-class CommoditySearchAPIViewTestCase(CommoditySetupMixin, TestCase):
+class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
     """
     Test Commodity name search Search view
     """
 
     def test_search_view_missing_term_returns_http_400(self):
-        resp = self.client.get(reverse("search:commodity-api-search"))
+        resp = self.client.get(reverse("search:commodity-term-api-search"))
         self.assertEqual(resp.status_code, 400)
 
     def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
-        url = reverse("search:commodity-api-search")
+        url = reverse("search:commodity-term-api-search")
         data = {"q": "Scissors"}
         resp = self.client.get(url, data=data)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["results"][0]["description"], "Scissors")
+
+
+class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
+    """
+    Test Commodity code search Search view
+    """
+
+    def test_search_view_missing_term_returns_http_400(self):
+        resp = self.client.get(reverse("search:commodity-code-api-search"))
+        self.assertEqual(resp.status_code, 400)
+
+    def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
+        url = reverse("search:commodity-code-api-search")
+        data = {"q": "4911910090"}
+        resp = self.client.get(url, data=data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["results"][0]["commodity_code"], "4911910090")
 
 
 class SearchFormTestCase(TestCase):

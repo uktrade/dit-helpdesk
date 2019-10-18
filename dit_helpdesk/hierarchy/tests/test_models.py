@@ -44,7 +44,13 @@ class SectionTestCase(TestCase):
         self.chapters = mixer.cycle(5).blend(
             Chapter, section=self.section, chapter_code=seq(0)
         )
-        self.assertTrue(len(self.section.get_hierarchy_children()) == 5)
+
+        children = self.section.get_hierarchy_children()
+        child_count = self.section.get_hierarchy_children_count()
+        self.assertEqual(len(children), 5)
+        self.assertEqual(child_count, 5)
+        self.assertEqual(len(children), child_count)
+
 
     def test_chapters_url_raises_NoReverseMatchError(self):
         # TODO: remove method

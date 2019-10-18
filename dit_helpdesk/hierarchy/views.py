@@ -3,6 +3,7 @@ import json
 import re
 from datetime import datetime, timedelta, timezone
 from django.contrib import messages
+from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
 from commodities.models import Commodity
@@ -72,7 +73,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
     :return: html snippet that represents the expanded section of the hierarchy
     """
     if node == "root":  # if root it list only sections
-        children = Section.objects.all().order_by("section_id")
+        children = Section.objects.all().order_by("section_id").prefetch_related('chapter_set')
         html = '<ul class="app-hierarchy-tree">'
         end = "\n</ul>"
     else:
@@ -114,7 +115,7 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif (
             type(child) in [Commodity, Heading, SubHeading]
-            and (type(child) is Commodity or len(child.get_hierarchy_children()) is 0)
+            and (type(child) is Commodity or child.get_hierarchy_children_count() == 0)
         ):
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child"><span>{child.description}</span><span class="govuk-visually-hidden"> &ndash; </span><b class="app-hierarchy-button">Select</b></a>{commodity_code_html}</li>'
         else:
@@ -141,7 +142,7 @@ def _get_hierarchy_level_json(node, expanded, origin_country):
     serialized = []
 
     if node == "root":  # if root it list only sections
-        children = Section.objects.all().order_by("section_id")
+        children = Section.objects.all().order_by("section_id").prefetch_related('chapter_set')
     else:
         children = node.get_hierarchy_children()
 
@@ -157,7 +158,7 @@ def _get_hierarchy_level_json(node, expanded, origin_country):
                 }
             )
         else:
-            if type(child) is Commodity or len(child.get_hierarchy_children()) is 0:
+            if type(child) is Commodity or child.get_hierarchy_children_count() == 0:
                 element["type"] = "leaf"
             else:
                 element["type"] = "parent"

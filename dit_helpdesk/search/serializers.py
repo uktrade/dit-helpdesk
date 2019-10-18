@@ -19,6 +19,8 @@ class CommodityDocumentSerializer(DocumentSerializer):
             "keywords",
             "ranking",
             "last_updated",
+            "hierarchy_context",
+            "node_id",
             "_score",
         )
 
@@ -26,25 +28,57 @@ class CommodityDocumentSerializer(DocumentSerializer):
 class ChapterDocumentSerializer(DocumentSerializer):
     class Meta:
         document = ChapterDocument
-        fields = ("id", "commodity_code", "description", "keywords", "ranking")
+        fields = (
+            "id",
+            "commodity_code",
+            "description",
+            "keywords",
+            "ranking",
+            "hierarchy_context",
+            "node_id",
+        )
 
 
 class HeadingDocumentSerializer(DocumentSerializer):
     class Meta:
         document = HeadingDocument
-        fields = ("id", "commodity_code", "description", "keywords", "ranking")
+        fields = (
+            "id",
+            "commodity_code",
+            "description",
+            "keywords",
+            "ranking",
+            "hierarchy_context",
+            "node_id",
+        )
 
 
 class SubHeadingDocumentSerializer(DocumentSerializer):
     class Meta:
         document = SubHeadingDocument
-        fields = ("id", "commodity_code", "description", "keywords", "ranking")
+        fields = (
+            "id",
+            "commodity_code",
+            "description",
+            "keywords",
+            "ranking",
+            "hierarchy_context",
+            "node_id",
+        )
 
 
 class SectionDocumentSerializer(DocumentSerializer):
     class Meta:
         document = SectionDocument
-        fields = ("id", "section_id", "title", "keywords", "ranking")
+        fields = (
+            "id",
+            "section_id",
+            "title",
+            "keywords",
+            "ranking",
+            "hierarchy_context",
+            "node_id",
+        )
 
 
 class CommoditySearchSerializer(serializers.Serializer):
