@@ -44,14 +44,14 @@ def search_by_term(query, page):
         except KeyError as exception:
             logger.info("{0} {1}".format(hit["commodity_code"], exception.args))
 
-    for hit in response:
-        if (hit["commodity_code"], hit["description"]) not in seen:
-            try:
-                hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
-            except KeyError as exception:
-                logger.info("{0} {1}".format(hit["commodity_code"], exception.args))
-            results.append(hit)
-        seen.append((hit["commodity_code"], hit["description"]))
+    # for hit in response:
+    #     if (hit["commodity_code"], hit["description"]) not in seen:
+    #         try:
+    #             hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
+    #         except KeyError as exception:
+    #             logger.info("{0} {1}".format(hit["commodity_code"], exception.args))
+    #         results.append(hit)
+    #     seen.append((hit["commodity_code"], hit["description"]))
     return {
         "results": hits,
         "page_range_start": start if start != 0 else start + 1,
