@@ -50,7 +50,6 @@ def commodity_detail(request, commodity_code, country_code):
     table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     commodity_path = commodity.get_path()
-    commodity_path.insert(0, [commodity])
     accordion_title = commodity_hierarchy_section_header(commodity_path)
     rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 
@@ -218,8 +217,8 @@ def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
                        <li>
                             <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item_commodity_code)}"""
 
-                    if index is listSize:
-                        html += "</li>"
+                if index is listSize:
+                    html += "</li>"
 
             if index is listSize:
                 for i in range(0, listSize):
@@ -283,7 +282,6 @@ def _commodity_code_html(code):
     :param item: model instance
     :return: html
     """
-    print("search Code: ", code)
 
     commodity_code_html = (
         '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'

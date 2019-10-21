@@ -279,6 +279,9 @@ class Chapter(models.Model):
 
         return tree
 
+    def get_path_children(self):
+        return self._append_path_children(self, tree=[[]], level=0)
+
     @staticmethod
     def _append_path_children(parent, tree, level):
         """
@@ -911,3 +914,18 @@ class SubHeading(models.Model):
             return self.get_parent().chapter
         else:
             return self.get_chapter(ancestor=self.get_parent())
+
+    def get_path_children(self):
+        return self._append_path_children(self, tree=[[]], level=0)
+
+    @staticmethod
+    def _append_path_children(parent, tree, level):
+        """
+        Appends a tree of descendants to the passed tree from passed parent
+        :param parent: parent model instance
+        :param tree: list of descendants
+        :param level: int
+        """
+        children = parent.get_hierarchy_children()
+        for child in children:
+            tree[level].append(child)
