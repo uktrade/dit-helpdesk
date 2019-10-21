@@ -147,7 +147,6 @@ class CommoditySearchView(FormView):
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
                     context["page_total"] = len(context["results"])
                     for hit in context["results"]:
-                        print(dir(hit))
                         if isinstance(hit["commodity_code"], str):
                             hit["commodity_code_html"] = _generate_commodity_code_html(
                                 hit["commodity_code"]
