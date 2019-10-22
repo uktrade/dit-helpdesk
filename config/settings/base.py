@@ -121,7 +121,7 @@ ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.section": "section",
     "search.documents.chapter": "chapter",
     "search.documents.heading": "heading",
-    "search.documents.subheading": "sub_heading",
+    "search.documents.subheading": "subheading",
     "search.documents.commodity": "commodity",
 }
 
