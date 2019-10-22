@@ -47,9 +47,7 @@ def search_by_term(query, page):
     return {
         "results": hits,
         "page_range_start": start if start != 0 else start + 1,
-        "page_range_end": end
-        if len(hits) == settings.RESULTS_PER_PAGE
-        else start + len(hits),
+        "page_range_end": end if len(hits) == settings.RESULTS_PER_PAGE else start + len(hits),
         "total_pages": total_full_pages + 1 if orphan_results > 0 else total_full_pages,
         "total_results": total_results,
     }
