@@ -118,7 +118,7 @@ abbr {
 }
 
 .helpdesk-direction__left-to-right:after {
-    content: ' \2192';
+    content: ' \279E';
 }
 
 .govuk-hint {
@@ -130,10 +130,6 @@ abbr {
       @include govuk-clearfix;
   }
   text-align: right;
-}
-
-.app-\!-font-size-19 {
-  font-size: 19px;
 }
 
 .app-commodity-summary {
