@@ -84,19 +84,13 @@
                     </div>
                   </fieldset>
                 </div>
-results: {{ results }}
-                {% for result in results %}
-                    {{ result }}<br />
-                    {{ result.meta.index }}<br>
-                    {{ result.commodity_code }}<br>
-                    {{ result.description }}
 
+                {% for result in results %}
                   <section>
                     <div class="govuk-grid-row">
                       <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
 
                         <h1 class="govuk-heading-m govuk-!-margin-bottom-3">
-Description
                             {% if result.meta.index == 'commodity' %}
                                 <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
                             {% elif result.meta.index == 'chapter' %}
@@ -105,7 +99,7 @@ Description
                                 <a href="{% url 'section-detail' country_code=country_code section_id=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
                             {% elif result.meta.index == 'heading' %}
                                 <a href="{% url 'heading-detail' country_code=country_code heading_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
-                            {% elif result.meta.index == 'sub_heading' %}
+                            {% elif result.meta.index == 'subheading' %}
                                 <a href="{% url 'subheading-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
                             {% endif %}
 
@@ -114,8 +108,6 @@ Description
 
                       <div class="govuk-grid-column-one-quarter text-right">
                         <a class="govuk-link " href="#a">
-                        code -
-                        {{ result.commodity_code_html }}<br>
 
                           {% if result.commodity_code_html %}
                             {{ result.commodity_code_html | safe }}
@@ -128,12 +120,9 @@ Description
                       </div>
                     </div>
 
-                    <p class="govuk-body"> context {{ result.hierarchy_context }}
+                    <p class="govuk-body">
                     {% if  result.hierarchy_context %}
                         {% for item in result.hierarchy_context %}
-                            {{ item }}<br>
-                            {{ item.0 }}<br>
-                            {{ item.0.description }}
                             {% if item.0.description %}
                             <span class="{% if forloop.last %}breadcrumb-item-last{%  else %}breadcrumb-item {% endif %}">{{ item.0.description|lower|capfirst }}</span>
                             {%  endif %}
