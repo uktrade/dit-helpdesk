@@ -91,7 +91,7 @@
                       <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
 
                         <h1 class="govuk-heading-m govuk-!-margin-bottom-3">
-
+Description
                             {% if result.meta.index == 'commodity' %}
                                 <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}" class="govuk-link">{{ result.description | safe }}</a>
                             {% elif result.meta.index == 'chapter' %}
@@ -109,6 +109,7 @@
 
                       <div class="govuk-grid-column-one-quarter text-right">
                         <a class="govuk-link " href="#a">
+                        code -
                           {% if result.commodity_code_html %}
                             {{ result.commodity_code_html | safe }}
                           {% elif result.heading_code %}
@@ -120,7 +121,7 @@
                       </div>
                     </div>
 
-                    <p class="govuk-body">
+                    <p class="govuk-body"> context
                     {% if  result.hierarchy_context %}
                         {% for item in result.hierarchy_context %}
                             {% if item.0.description %}
