@@ -86,6 +86,11 @@
                 </div>
 results: {{ results }}
                 {% for result in results %}
+                    {{ result }}<br />
+                    {{ result.meta.index }}<br>
+                    {{ result.commodity_code }}<br>
+                    {{ result.description }}
+
                   <section>
                     <div class="govuk-grid-row">
                       <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
@@ -110,6 +115,8 @@ Description
                       <div class="govuk-grid-column-one-quarter text-right">
                         <a class="govuk-link " href="#a">
                         code -
+                        {{ result.commodity_code_html }}<br>
+
                           {% if result.commodity_code_html %}
                             {{ result.commodity_code_html | safe }}
                           {% elif result.heading_code %}
@@ -121,9 +128,12 @@ Description
                       </div>
                     </div>
 
-                    <p class="govuk-body"> context
+                    <p class="govuk-body"> context {{ result.hierarchy_context }}
                     {% if  result.hierarchy_context %}
                         {% for item in result.hierarchy_context %}
+                            {{ item }}<br>
+                            {{ item.0 }}<br>
+                            {{ item.0.description }}
                             {% if item.0.description %}
                             <span class="{% if forloop.last %}breadcrumb-item-last{%  else %}breadcrumb-item {% endif %}">{{ item.0.description|lower|capfirst }}</span>
                             {%  endif %}
