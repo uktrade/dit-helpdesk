@@ -40,7 +40,7 @@
             <form action="{% url 'search:search-commodity' country_code=country_code %}#search-results" class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
                 <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
                   <label class="govuk-hint" for="search">
-                      Search by keyword or commodity code, or <a href="#browse">browse</a> the categories of goods below.
+                      Search by keyword or commodity code, or <a href="{% url 'search:search-commodity' country_code=country_code %}#browse">browse</a> the categories of goods below.
                   </label>
                   {% if form.q.errors %}
                     <span id="commodity-code-error" class="govuk-error-message">

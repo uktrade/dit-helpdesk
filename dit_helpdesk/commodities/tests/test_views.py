@@ -9,7 +9,7 @@ from django.urls import reverse, NoReverseMatch
 from mixer.backend.django import mixer
 
 from commodities.models import Commodity
-from commodities.views import commodity_hierarchy_context, _generate_commodity_code_html
+from commodities.views import _generate_commodity_code_html
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocument

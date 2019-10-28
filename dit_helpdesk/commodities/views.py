@@ -14,10 +14,10 @@ from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
-from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
+from hierarchy.views import get_hierarchy_context
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
+from hierarchy.helpers import TABLE_COLUMN_TITLES
 
 
 def commodity_detail(request, commodity_code, country_code):
@@ -67,7 +67,7 @@ def commodity_detail(request, commodity_code, country_code):
         "column_titles": TABLE_COLUMN_TITLES,
         "regulations": commodity.get_regulations(),
         "accordion_title": accordion_title,
-        "commodity_hierarchy_context": commodity_hierarchy_context(
+        "commodity_hierarchy_context": get_hierarchy_context(
             commodity_path, country.country_code, commodity_code
         ),
         "modals": modals_dict,
@@ -166,68 +166,6 @@ def measure_quota_detail(
     return render(request, "commodities/measure_quota_detail.html", context)
 
 
-def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
-    """
-    View helper function that returns an html representation of the context of the commodity within the
-    hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
-    commodity code
-    :param commodity_path: string
-    :param country_code: string
-    :param commodity_code: string
-    :return: html
-    """
-    listSize = len(commodity_path)
-    html = ""
-    reversedList = reversed(commodity_path)
-
-    for index, lista in enumerate(reversedList):
-        if index is 0:
-            # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
-            html += "<nav>"
-        else:
-            html += f"<ul>"
-            for i, item in enumerate(lista):
-                expand = "open"
-                if index is listSize:
-                    expand = "closed"
-
-                if type(item) is Commodity:
-                    if item.commodity_code == commodity_code:
-                        html += f"""
-                            <li>
-                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span>{_commodity_code_html(item.commodity_code)}
-                            </li>
-                            """
-                    else:
-                        html += f"""
-                           <li>
-                                <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
-                                <span>{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_commodity_code_html(item.commodity_code)}
-                            </li>
-                            """
-                elif type(item) in [Chapter, Heading, SubHeading]:
-                    item_commodity_code = ""
-                    if type(item) is Chapter:
-                        item_commodity_code = item.chapter_code
-                    elif type(item) is Heading:
-                        item_commodity_code = item.heading_code
-                    else:
-                        item_commodity_code = item.commodity_code
-                    html += f"""
-                       <li>
-                            <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item_commodity_code)}"""
-
-                if index is listSize:
-                    html += "</li>"
-
-            if index is listSize:
-                for i in range(0, listSize):
-                    # close
-                    html += "</ul></nav>"
-
-    return html
-
-
 def _generate_commodity_code_html(item):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
@@ -273,48 +211,3 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     section = reversed_commodity_tree[section_index][0]
     html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
     return html
-
-
-def _commodity_code_html(code):
-    """
-    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
-    of 6, 2 and  digits and colour code formatted
-    :param item: model instance
-    :return: html
-    """
-
-    commodity_code_html = (
-        '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-    )
-
-    if len(code) > 2 and code.isdigit():
-
-        code_regex = re.search(
-            "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
-        )
-        code_split = [
-            code_regex.group(1),
-            code_regex.group(2),
-            code_regex.group(3),
-            code_regex.group(4),
-            code_regex.group(5),
-        ]
-
-        for index, code_segment in enumerate(code_split):
-            counter = str(int(index) + 1)
-            if code[2:] == "00000000" and int(counter) > 1:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            elif code[4:] == "000000" and int(counter) > 2:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            else:
-                blank_span = ["", ""]
-
-            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
-                counter, blank_span[0], code_segment, blank_span[1]
-            )
-    else:
-        commodity_code_html + code
-
-    commodity_code_html = commodity_code_html + "</span>"
-
-    return commodity_code_html

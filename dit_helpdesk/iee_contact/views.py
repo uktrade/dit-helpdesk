@@ -153,11 +153,9 @@ class IEEContactFormWizardView(SessionWizardView):
         if settings.DIRECTORY_FORMS_API_BASE_URL:
 
             zendesk_form.save(
-                email_address=context["email_address"],
-                full_name=context["name"],
+                email_address=context["recipient_email"],
                 form_url="/iee_contact/",
                 service_name=context["service_name"],
                 spam_control=spam_control,
                 sender=sender,
-                subject=context["subject"],
             )

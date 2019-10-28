@@ -183,7 +183,7 @@ abbr {
   padding-top: 1em;
   padding-left: 1em;
   padding-right: 1em;
-  margin: 0 0 30px 0;
+  margin: 0 0 20px 0;
 
    nav {
      padding-left: 0.5em;
@@ -204,14 +204,14 @@ abbr {
 }
 
 .helpdesk-breadcrumbs nav ul li::before {
-  border-top: 2px solid #999;
-  top: 13px;
+  border-top: 1px solid #000;
+  top: 10px;
   width: 10px;
   height: 0
 }
 
 .helpdesk-breadcrumbs nav ul li::after {
-  border-left: 2px solid #999;
+  border-left: 1px solid #000;
   height: 100%;
   width: 0px;
   top: 2px
@@ -225,7 +225,7 @@ abbr {
 }
 
 .helpdesk-breadcrumbs nav ul li:last-child::after {
-  height: 12px
+  height: 8px
 }
 
 .helpdesk-breadcrumbs nav ul li .chapter-code,

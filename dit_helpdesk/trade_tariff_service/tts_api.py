@@ -441,14 +441,14 @@ class ImportMeasureJson(object):
         :return: dictionary or None
         """
         if self.di["order_number"]["number"] == order_number:
-
-            if isinstance(
+            print(self.di["order_number"])
+            if self.di["order_number"]["definition"] and isinstance(
                 self.di["order_number"]["definition"]["validity_start_date"], str
             ):
                 self.di["order_number"]["definition"]["validity_start_date"] = parse_dt(
                     self.di["order_number"]["definition"]["validity_start_date"]
                 )
-            if isinstance(
+            if self.di["order_number"]["definition"] and isinstance(
                 self.di["order_number"]["definition"]["validity_end_date"], str
             ):
                 self.di["order_number"]["definition"]["validity_end_date"] = parse_dt(

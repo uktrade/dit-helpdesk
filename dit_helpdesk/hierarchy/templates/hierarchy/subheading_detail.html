@@ -39,12 +39,12 @@
 
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
-                                <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Commodity notes</span>
+                                <summary class="govuk-details__summary govuk-!-margin-bottom-0">
+                                  <span class="govuk-details__summary-text govuk-!-font-size-16">{% if table_data %}Commodity{% else %}Heading{% endif %} notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
 
-                                    Commodity notes go here
+                                    Notes go here
 
                                 </div>
                             </details>
@@ -89,9 +89,9 @@
                         <div id="tariffs_and_measures">
 
                             <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                                <a name="tariffs_and_other_measures">Tariffs and other measures</a>
+                                <a name="tariffs_and_other_measures">Tariffs and other measures
                                 - {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                            </h3>
+                                </a></h3>
                             <div class="govuk-caption-m ">
                                <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
                             </div>
@@ -145,7 +145,7 @@
                             </summary>
                             <div class="govuk-details__text">
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">Value Added Tax (VAT)</span>
                                 </summary>
@@ -156,7 +156,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">Third country duty</span>
                                 </summary>
@@ -165,7 +165,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Tariff preference
@@ -180,7 +180,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Quotas
@@ -193,7 +193,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Reliefs
@@ -204,7 +204,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Anti-dumping duty
@@ -218,7 +218,7 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details govuk-!-margin-bottom-2">
+                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Import controls
@@ -233,19 +233,19 @@
                                 </div>
                               </details>
 
-                              <details class="govuk-details">
+                              <details class="govuk-details govuk-!-font-size-16">
                                 <summary class="govuk-details__summary">
                                   <span class="govuk-details__summary-text">
                                     Supplementary unit
                                   </span>
                                 </summary>
                                 <div class="govuk-details__text">
-                                  <p class="govuk-body">This is used when an additional measurement unit is needed, for example, the weight
+                                  This is used when an additional measurement unit is needed, for example, the weight
                                     as
                                     well as the quantity of the products. The importer might need to declare this information. The product
                                     might not be allowed into the UK if the supplementary unit is not given. <a class="govuk-link"
                                        href="https://www.uktradeinfo.com/TradeTools/ICN/Pages/ICNSupplementaryUnits.aspx">Check a list of
-                                      supplementary units and their descriptions</a>.</p>
+                                      supplementary units and their descriptions</a>.
                                 </div>
                               </details>
                             </div>
@@ -255,8 +255,8 @@
                     {% endif %}
 
                     {% if rules_of_origin %}
-                      <div class="govuk-grid-column-full" id="rules-of-origin">
-                          <h3 class="govuk-heading-m"><a name="rules_of_origin">Rules of origin for tariff preference</a></h3>
+                      <div class="govuk-grid-column-full govuk-!-margin-bottom-9" id="rules-of-origin">
+                          <h3 class="govuk-heading-m"><a name="rules_of_origin">Rules of origin for tariff preference - {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</a></h3>
                         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin -
                           ‘non-originating’ - it must meet the <a class="govuk-link"
                             href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules
@@ -271,7 +271,7 @@
                               How to use the rules of origin table
                             </span>
                           </summary>
-                          <div class="govuk-details__text govuk-!-padding-bottom-0">
+                          <div class="govuk-details__text govuk-!-padding-bottom-0 govuk-!-font-size-16">
                             <p class="govuk-body">The rules of origin table contains:</p>
 
                             <ul class="govuk-list--bullet">
@@ -282,10 +282,10 @@
                                 (column 3)</li>
                             </ul>
 
-                            <p class="govuk-body">In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating
+                            <p>In some cases there may be 2 columns (columns 3 and 4) that describe how non-originating
                               materials must be worked or processed.</p>
 
-                            <p class="govuk-body">For each row:</p>
+                            <p>For each row:</p>
 
                             <ul class="govuk-list--bullet">
                               <li>check column 1 to find the product classification heading or chapter number for the product being
@@ -296,14 +296,14 @@
                                 origin status</li>
                             </ul>
 
-                            <p class="govuk-body">Unless preceded by ‘ex’, the rules in column 3 (or 4 if present) apply to all products
+                            <p>Unless preceded by ‘ex’, the rules in column 3 (or 4 if present) apply to all products
                               that come under the headings and chapters in column 1.</p>
 
-                            <p class="govuk-body">If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if present)
+                            <p>If the heading in column 1 starts with ‘ex’, the rules in column 3 (and 4 if present)
                               will
                               only apply to the product as described in column 2.</p>
 
-                            <p class="govuk-body">If there are 2 columns that describe how non-originating materials must be worked or
+                            <p>If there are 2 columns that describe how non-originating materials must be worked or
                               processed (if columns 3 and 4 are present), you can apply either rule.</p>
                             {% if roo_footnotes %}
                             <details class="govuk-details">
@@ -376,7 +376,7 @@
 
                     {% if regulations %}
                       <div class="govuk-grid-column-full">
-                          <h3 class="govuk-heading-m"><a name="regulations">Product-specific regulations</a></h3>
+                          <h3 class="govuk-heading-m"><a name="regulations">Product-specific regulations - {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</a></h3>
                         <p class="govuk-body">These regulations apply to this product. </P>
                         <div class="govuk-accordion"
                             data-module="accordion"
