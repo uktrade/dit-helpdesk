@@ -8,34 +8,58 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('hierarchy', '0001_initial'),
-    ]
+    dependencies = [("hierarchy", "0001_initial")]
 
     operations = [
         migrations.CreateModel(
-            name='Commodity',
+            name="Commodity",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('commodity_code', models.CharField(max_length=10, unique=True)),
-                ('goods_nomenclature_sid', models.CharField(max_length=10)),
-                ('productline_suffix', models.CharField(max_length=2)),
-                ('parent_goods_nomenclature_item_id', models.CharField(max_length=10)),
-                ('parent_goods_nomenclature_sid', models.CharField(max_length=10)),
-                ('parent_productline_suffix', models.CharField(max_length=2)),
-                ('description', models.TextField()),
-                ('number_indents', models.SmallIntegerField()),
-                ('keywords', models.TextField()),
-                ('ranking', models.SmallIntegerField(null=True)),
-                ('tts_json', models.TextField(blank=True, null=True)),
-                ('tts_is_leaf', models.BooleanField()),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('heading', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children_concrete', to='hierarchy.Heading')),
-                ('parent_subheading', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children_concrete', to='hierarchy.SubHeading')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("commodity_code", models.CharField(max_length=10, unique=True)),
+                ("goods_nomenclature_sid", models.CharField(max_length=10)),
+                ("productline_suffix", models.CharField(max_length=2)),
+                ("parent_goods_nomenclature_item_id", models.CharField(max_length=10)),
+                ("parent_goods_nomenclature_sid", models.CharField(max_length=10)),
+                ("parent_productline_suffix", models.CharField(max_length=2)),
+                ("description", models.TextField()),
+                ("number_indents", models.SmallIntegerField()),
+                ("keywords", models.TextField()),
+                ("ranking", models.SmallIntegerField(null=True)),
+                ("tts_json", models.TextField(blank=True, null=True)),
+                ("tts_is_leaf", models.BooleanField()),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "heading",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="children_concrete",
+                        to="hierarchy.Heading",
+                    ),
+                ),
+                (
+                    "parent_subheading",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="children_concrete",
+                        to="hierarchy.SubHeading",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'commodities',
-                'unique_together': {('commodity_code', 'goods_nomenclature_sid')},
+                "verbose_name_plural": "commodities",
+                "unique_together": {("commodity_code", "goods_nomenclature_sid")},
             },
-        ),
+        )
     ]

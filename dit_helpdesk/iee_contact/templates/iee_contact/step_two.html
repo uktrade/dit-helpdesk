@@ -1,0 +1,88 @@
+{% extends "iee_contact/contact_form_base.html" %}
+{% load i18n %}
+
+
+{% block title_form_page %}Contact us{% endblock %}
+
+{% block form_page_title %}
+    {{ wizard.form.enquiry_topic.label }}
+{% endblock %}
+
+{% block form_body %}
+
+{#    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">#}
+{#        <h2> {{ wizard.form.fields.enquiry_topic.label }}</h2>#}
+{#    </div>#}
+
+    <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
+        {% if wizard.form.errors %}
+            {% for error in wizard.form.errors %}
+                <span id="enquiry_type-error"
+                      class="govuk-error-enquiry_topic">{{ error | escape }}</span>
+            {% endfor %}
+        {% endif %}
+
+        <div class="govuk-radios govuk-radios" id="id_step_two-enquiry_topic">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_0" required
+                       name="step_two-enquiry_topic" type="radio" checked="checked"
+                       value="{{ wizard.form.fields.enquiry_topic.choices.0.0 }}">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_two-enquiry_topic_0">
+                    {{ wizard.form.fields.enquiry_topic.choices.0.1|safe }}
+                    <p class="govuk-hint">
+                        You will be redirected to Her Majesty's Revenue and Customs (HMRC) contact form
+                    </p>
+                </label>
+
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_1" required
+                       name="step_two-enquiry_topic" type="radio"
+                       value="{{ wizard.form.fields.enquiry_topic.choices.1.0 }}">
+                <label class="govuk-label govuk-radios__label" for="id_step_two-enquiry_topic_1">
+                    {{ wizard.form.fields.enquiry_topic.choices.1.1|safe }}
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for Environment, Food & Rural Affairs (Defra)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_2" required
+                       name="step_two-enquiry_topic" type="radio"
+                       value="{{ wizard.form.fields.enquiry_topic.choices.2.0 }}">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_two-enquiry_topic_2">
+                    {{ wizard.form.fields.enquiry_topic.choices.2.1|safe }}
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for Digital, Culture, Media & Sport (DCMS)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_3" required
+                       name="step_two-enquiry_topic" type="radio"
+                       value="{{ wizard.form.fields.enquiry_topic.choices.3.0 }}">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_two-enquiry_topic_3">
+                    {{ wizard.form.fields.enquiry_topic.choices.3.1|safe }}
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for International Trade (DIT)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_two-enquiry_topic_5" required
+                       name="step_two-enquiry_topic" type="radio"
+                       value="{{ wizard.form.fields.enquiry_topic.choices.4.0 }}">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_two-enquiry_topic_5">
+                    {{ wizard.form.fields.enquiry_topic.choices.4.1|safe }}
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for International Trade (DIT)
+                    </p>
+                </label>
+            </div>
+        </div>
+    </div>
+{% endblock %}

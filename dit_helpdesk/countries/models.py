@@ -7,4 +7,4 @@ class Country(models.Model):
     name = models.CharField(max_length=250)
 
     def __str__(self):
-        return '%s %s' % (self.country_code, self.name)
+        return "%s %s" % (self.country_code, self.name)

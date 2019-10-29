@@ -1,0 +1,12 @@
+
+To {{ recipient_full_name }}
+
+I would you like to know more about {{ location }}
+
+I would you like to know more about {{ topic }}
+
+{{ message }}
+
+Thank you
+{{ name }}
+{{ email_address }}

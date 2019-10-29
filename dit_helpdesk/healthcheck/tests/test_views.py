@@ -14,7 +14,7 @@ class TestViews(TestCase):
         self.anonymous_client = Client()
 
     def test_check_view(self):
-        response = self.anonymous_client.get('/check/')
+        response = self.anonymous_client.get("/check/")
         tree = ET.fromstring(response.content)
         pingdom_status = tree[0].text
         pingdom_response_time = float(tree[1].text)
@@ -25,7 +25,7 @@ class TestViews(TestCase):
 
     def test_check_view_no_data_fail(self):
         HealthCheck.objects.all().delete()
-        response = self.anonymous_client.get('/check/')
+        response = self.anonymous_client.get("/check/")
         tree = ET.fromstring(response.content)
         pingdom_status = tree[0].text
         pingdom_response_time = float(tree[1].text)

@@ -9,7 +9,7 @@ from .models import User
 class UserCreationForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ("email",)
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -22,33 +22,47 @@ class UserCreationForm(forms.ModelForm):
 class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+        )
 
 
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_superuser')
-    list_filter = ('is_staff',)
+    list_display = ("email", "first_name", "last_name", "is_staff", "is_superuser")
+    list_filter = ("is_staff",)
 
     fieldsets = (
-        (None, {'fields': ('email', )}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
-        (_('Permissions'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
-        }),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {"fields": ("email",)}),
+        (_("Personal info"), {"fields": ("first_name", "last_name")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
 
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'first_name', 'last_name')}
-        ),
+        (None, {"classes": ("wide",), "fields": ("email", "first_name", "last_name")}),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
+    search_fields = ("email",)
+    ordering = ("email",)
     filter_horizontal = ()
+
 
 admin.site.register(User, UserAdmin)

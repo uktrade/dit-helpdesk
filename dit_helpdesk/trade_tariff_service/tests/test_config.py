@@ -9,5 +9,7 @@ class TradeTariffServiceConfigTestCase(TestCase):
     """
 
     def test_apps(self):
-        self.assertEqual(TradeTariffServiceConfig.name, 'trade_tariff_service')
-        self.assertEqual(apps.get_app_config('trade_tariff_service').name, 'trade_tariff_service')
+        self.assertEqual(TradeTariffServiceConfig.name, "trade_tariff_service")
+        self.assertEqual(
+            apps.get_app_config("trade_tariff_service").name, "trade_tariff_service"
+        )

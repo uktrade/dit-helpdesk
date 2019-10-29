@@ -17,20 +17,22 @@ class UserCreationFormTestCase(TestCase):
     """
 
     def test_saving_user_created_via_form(self):
-        email = 'test@user.com'
-        form_data = {'email': email}
+        email = "test@user.com"
+        form_data = {"email": email}
         form = UserCreationForm(data=form_data)
         form.save(commit=True)
         user = User.objects.get(email=email)
 
         self.assertTrue(form.is_valid())
-        self.assertTrue(form.cleaned_data['email'], user.email)
+        self.assertTrue(form.cleaned_data["email"], user.email)
 
     def test_saving_user_created_via_form_without_committing(self):
-        email = 'test@user.com'
-        form_data = {'email': email}
+        email = "test@user.com"
+        form_data = {"email": email}
         form = UserCreationForm(data=form_data)
         form.save(commit=False)
 
         self.assertTrue(form.is_valid())
-        self.assertRaises(ObjectDoesNotExist, lambda: User.objects.get(email=email).email)
+        self.assertRaises(
+            ObjectDoesNotExist, lambda: User.objects.get(email=email).email
+        )

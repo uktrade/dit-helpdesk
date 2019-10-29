@@ -9,5 +9,5 @@ class RegulationsConfigTestCase(TestCase):
     """
 
     def test_apps(self):
-        self.assertEqual(RegulationsConfig.name,'regulations')
-        self.assertEqual(apps.get_app_config('regulations').name, 'regulations')
+        self.assertEqual(RegulationsConfig.name, "regulations")
+        self.assertEqual(apps.get_app_config("regulations").name, "regulations")

@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% if form.errors %}
+        Error - Contact us
+    {% else %}
+        Contact us
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <h2 class="govuk-heading-l">
+            <span class="govuk-caption-l">
+                Your enquiry has been submitted successfully
+            </span>
+        Thank you for your enquiry
+    </h2>
+    {{ wizard.management_form }}
+
+    <p class="govuk-body govuk-!-margin-bottom-9">Return to <a href="/">find information about exporting to the UK</a>.</p>
+
+{% endblock %}

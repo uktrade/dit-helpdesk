@@ -8,12 +8,12 @@ from docx import Document
 from jsonschema import validate
 
 """
-table heading row regular expressions used to identify and filter out table heading rows 
+table heading row regular expressions used to identify and filter out table heading rows
 """
 HEADINGS_LOOKUP = {
     0: "commodity|heading",
     1: "^description of product|^description of goods",
-    2: "^working or processing|^conditions which must|^qualifying operation"
+    2: "^working or processing|^conditions which must|^qualifying operation",
 }
 
 """
@@ -29,15 +29,11 @@ JSON_SCHEMA = {
                 {
                     "type": "object",
                     "properties": {
-                        "anchor": {
-                            "type": "string"
-                        },
-                        "note": {
-                            "type": "string"
-                        }
-                    }
+                        "anchor": {"type": "string"},
+                        "note": {"type": "string"},
+                    },
                 }
-            ]
+            ],
         },
         "chapters": {
             "type": "array",
@@ -45,9 +41,7 @@ JSON_SCHEMA = {
                 {
                     "type": "object",
                     "properties": {
-                        "number": {
-                            "type": "string"
-                        },
+                        "number": {"type": "string"},
                         "rows": {
                             "type": "array",
                             "items": [
@@ -56,52 +50,31 @@ JSON_SCHEMA = {
                                     "properties": {
                                         "descriptions": {
                                             "type": "array",
-                                            "items": [
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
+                                            "items": [{"type": "string"}],
                                         },
                                         "ids": {
                                             "type": "array",
-                                            "items": [
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
+                                            "items": [{"type": "string"}],
                                         },
                                         "workingLeft": {
                                             "type": "array",
-                                            "items": [
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
+                                            "items": [{"type": "string"}],
                                         },
                                         "workingRight": {
                                             "type": "array",
-                                            "items": [
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
-                                        }
+                                            "items": [{"type": "string"}],
+                                        },
                                     },
                                 }
-                            ]
-                        }
+                            ],
+                        },
                     },
-                    "required": [
-                        "number",
-                        "rows"
-                    ]
+                    "required": ["number", "rows"],
                 }
-            ]
-        }
+            ],
+        },
     },
-    "required": [
-        "chapters"
-    ]
+    "required": ["chapters"],
 }
 
 try:
@@ -114,13 +87,12 @@ Module that extract text from MS XML Word document (.docx).
 (Inspired by python-docx <https://github.com/mikemaccana/python-docx>)
 """
 
-WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
-PARA = WORD_NAMESPACE + 'p'
-TEXT = WORD_NAMESPACE + 't'
+WORD_NAMESPACE = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+PARA = WORD_NAMESPACE + "p"
+TEXT = WORD_NAMESPACE + "t"
 
 
 class DocxScraper:
-
     def __init__(self):
         self.table_dict = {"chapters": []}
         self.table_heading = None
@@ -158,7 +130,7 @@ class DocxScraper:
                 if self.is_chapter_row(row, chapter_regex):
                     chapter_number = chapter_regex.search(row[0][0]).group(1)
                     item = self.get_chapter_number(chapter_number)
-                    item['rows'].append(self.create_rule_item(row))
+                    item["rows"].append(self.create_rule_item(row))
                     self.table_dict["chapters"].append(item)
 
                 else:
@@ -167,24 +139,36 @@ class DocxScraper:
 
                         if len(row[0]) > 0:
                             if not self.is_table_heading(row):
-                                self.table_dict['chapters'][last_chap_idx]['rows'].append(self.create_rule_item(row))
+                                self.table_dict["chapters"][last_chap_idx][
+                                    "rows"
+                                ].append(self.create_rule_item(row))
                         else:
-                            last_row_index = len(self.table_dict['chapters'][last_chap_idx]['rows']) - 1
-                            keys = list(self.table_dict['chapters'][last_chap_idx]['rows'][last_row_index].keys())
+                            last_row_index = (
+                                len(self.table_dict["chapters"][last_chap_idx]["rows"])
+                                - 1
+                            )
+                            keys = list(
+                                self.table_dict["chapters"][last_chap_idx]["rows"][
+                                    last_row_index
+                                ].keys()
+                            )
 
                             for idx, cell in enumerate(row):
                                 if len(cell) > 0:
                                     for text in cell:
-                                        self.table_dict['chapters'][last_chap_idx]['rows'][last_row_index][keys[idx]] \
-                                            .append(text)
+                                        self.table_dict["chapters"][last_chap_idx][
+                                            "rows"
+                                        ][last_row_index][keys[idx]].append(text)
 
-        self.table_dict['footnotes'] = self.footnotes
+        self.table_dict["footnotes"] = self.footnotes
 
         validate(instance=self.table_dict, schema=JSON_SCHEMA)
 
         # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_heading.json')), heading_rows)
         # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_columns.json')), number_cols)
-        self.data_writer(self.data_path.format("import/{0}".format(docx_file)), self.table_dict)
+        self.data_writer(
+            self.data_path.format("import/{0}".format(docx_file)), self.table_dict
+        )
 
     @staticmethod
     def process_footnote(text):
@@ -193,10 +177,10 @@ class DocxScraper:
         :param text: text string
         :return: text string with html formatted footnote link
         """
-        matched = re.match(u'\u2014', text)
+        matched = re.match(u"\u2014", text)
         if matched:
-            text = text.replace(u'\u2014', "- ")
-        return re.sub(r'\(([\d]+)\)', "(<a href=\"#footnote_\\1\">\\1</a>)", text)
+            text = text.replace(u"\u2014", "- ")
+        return re.sub(r"\(([\d]+)\)", '(<a href="#footnote_\\1">\\1</a>)', text)
 
     def create_rule_item(self, cells):
         """
@@ -248,7 +232,10 @@ class DocxScraper:
         """
         if len(row) > 3:
             return False
-        matched_row = [[re.search(HEADINGS_LOOKUP[idx], text.lower()) for text in cell] for idx, cell in enumerate(row)]
+        matched_row = [
+            [re.search(HEADINGS_LOOKUP[idx], text.lower()) for text in cell]
+            for idx, cell in enumerate(row)
+        ]
         match_tests = []
         for cell in matched_row:
             for match in cell:
@@ -262,7 +249,7 @@ class DocxScraper:
         :param number: string
         :return: dictionary object
         """
-        return {'number': "{0:02d}".format(int(number)), 'rows': []}
+        return {"number": "{0:02d}".format(int(number)), "rows": []}
 
     def build_footnotes(self, document):
         """
@@ -270,14 +257,16 @@ class DocxScraper:
         :param document: python-docx word docx object
 
         """
-        pattern = r'^\(([\d]+)\)\s(.+)$'
-        footnote_matches = [re.match(pattern, paragraph.text) for paragraph in document.paragraphs]
+        pattern = r"^\(([\d]+)\)\s(.+)$"
+        footnote_matches = [
+            re.match(pattern, paragraph.text) for paragraph in document.paragraphs
+        ]
 
         for match in footnote_matches:
             if match is not None:
                 footnote = {
                     "anchor": '<a name="#footnote_{0}">{0}</a>'.format(match.group(1)),
-                    "note": match.group(2)
+                    "note": match.group(2),
                 }
                 self.footnotes.append(footnote)
 
@@ -292,7 +281,7 @@ class DocxScraper:
 
         file_name = Path(file_path).stem.upper()
 
-        outfile = open(self.data_path.format("import/{0}.json".format(file_name)), 'w+')
+        outfile = open(self.data_path.format("import/{0}.json".format(file_name)), "w+")
         json.dump(data, outfile)
 
     @staticmethod
@@ -302,8 +291,10 @@ class DocxScraper:
         :param row: list is lists of text
         :return: Boolean
         """
-        pattern = '^\(([\d]+)\)|or$'
-        matched_row = [[re.search(pattern, text) for text in cell] for idx, cell in enumerate(row)]
+        pattern = "^\(([\d]+)\)|or$"
+        matched_row = [
+            [re.search(pattern, text) for text in cell] for idx, cell in enumerate(row)
+        ]
         match_tests = []
         for cell in matched_row:
             for match in cell:
@@ -331,9 +322,27 @@ class DocxScraper:
         row_obj_1 = self.iter_unique_cells(row)
         row_obj_2 = self.iter_unique_cells(row)
 
-        row1 = [[para.text for para in cell.paragraphs if para.text != ''] for cell in row_obj_1]
-        row2 = [[''.join([''.join([''.join([para.text for para in cell.paragraphs]) for cell in row.cells])
-                          for row in table.rows]) for table in cell.tables] for cell in row_obj_2]
+        row1 = [
+            [para.text for para in cell.paragraphs if para.text != ""]
+            for cell in row_obj_1
+        ]
+        row2 = [
+            [
+                "".join(
+                    [
+                        "".join(
+                            [
+                                "".join([para.text for para in cell.paragraphs])
+                                for cell in row.cells
+                            ]
+                        )
+                        for row in table.rows
+                    ]
+                )
+                for table in cell.tables
+            ]
+            for cell in row_obj_2
+        ]
 
         for idx, item in enumerate(row1):
             if row2[idx]:

@@ -24,13 +24,13 @@ def data_loader(file_path):
 
     extension = Path(file_path).suffix
 
-    if extension == '.json':
+    if extension == ".json":
         with open(file_path) as f:
-            json_data = json.load(f, )
+            json_data = json.load(f)
         return json_data
     else:
         with open(file_path) as f:
-            data_frame = pandas.read_csv(f, encoding='utf8')
+            data_frame = pandas.read_csv(f, encoding="utf8")
         return data_frame
 
 
@@ -41,7 +41,7 @@ def data_writer(file_path, data):
     :param data: data to write to the file
     """
 
-    outfile = open(file_path, 'w+')
+    outfile = open(file_path, "w+")
     json.dump(data, outfile)
 
 
@@ -54,7 +54,7 @@ class RegulationsImporter:
     def __init__(self):
         self.data = []
         self.documents = None
-        self.app_label = __package__.rsplit('.', 1)[-1]
+        self.app_label = __package__.rsplit(".", 1)[-1]
         self.data_path = settings.REGULATIONS_DATA_PATH
         self.missing_commodities = []
 
@@ -77,16 +77,16 @@ class RegulationsImporter:
 
         parent_subheadings = self.get_subheading_parents(parent_commodities, data_map)
 
-        regulation_field_data = {"title": data_map['title']}
+        regulation_field_data = {"title": data_map["title"]}
 
         regulation = self._create_instance("Regulation", regulation_field_data)
         regulation.headings.add(*list(parent_headings))
         regulation.commodities.add(*list(parent_commodities))
         regulation.subheadings.add(*list(parent_subheadings))
 
-        if data_map['document']['url'] is None:
-            data_map['document']['url'] = ''
-        document = self._create_instance("Document", data_map['document'])
+        if data_map["document"]["url"] is None:
+            data_map["document"]["url"] = ""
+        document = self._create_instance("Document", data_map["document"])
         document.regulations.add(regulation)
         document.save()
 
@@ -101,7 +101,9 @@ class RegulationsImporter:
         :return: subheading items
         """
         seen_codes = [commodity.commodity_code for commodity in commodities]
-        missed_codes = [code for code in data_map['parent_codes'] if code not in seen_codes]
+        missed_codes = [
+            code for code in data_map["parent_codes"] if code not in seen_codes
+        ]
         subheadings = SubHeading.objects.filter(commodity_code__in=missed_codes)
         return subheadings
 
@@ -112,7 +114,7 @@ class RegulationsImporter:
         :param data_map: regulation item data
         :return: heading items
         """
-        headings = Heading.objects.filter(heading_code__in=data_map['parent_codes'])
+        headings = Heading.objects.filter(heading_code__in=data_map["parent_codes"])
         return headings
 
     @staticmethod
@@ -122,7 +124,9 @@ class RegulationsImporter:
         :param data_map:
         :return:
         """
-        commodities = Commodity.objects.filter(commodity_code__in=data_map['parent_codes'])
+        commodities = Commodity.objects.filter(
+            commodity_code__in=data_map["parent_codes"]
+        )
         return commodities
 
     def _create_instance(self, model_name, field_data):
@@ -135,9 +139,7 @@ class RegulationsImporter:
 
         model = apps.get_model(app_label=self.app_label, model_name=model_name)
 
-        instance, created = model.objects.get_or_create(
-            **field_data
-        )
+        instance, created = model.objects.get_or_create(**field_data)
         if created:
             logger.info("{0} instance created".format(model_name))
         else:
@@ -166,17 +168,30 @@ class RegulationsImporter:
 
         if data_path:
 
-            product_regulations = data_loader(data_path.format('product_specific_regulations.csv'))
+            product_regulations = data_loader(
+                data_path.format("product_specific_regulations.csv")
+            )
 
-            commodity_regulations_map = json.loads(data_loader(data_path.format('product_reqs_v2.csv')
-                                                           ).to_json(orient='records'))
-            document_urls_title_map = data_loader(data_path.format('urls_with_text_description.json'))
+            commodity_regulations_map = json.loads(
+                data_loader(data_path.format("product_reqs_v2.csv")).to_json(
+                    orient="records"
+                )
+            )
+            document_urls_title_map = data_loader(
+                data_path.format("urls_with_text_description.json")
+            )
 
-            regulations_data = self.clean_and_extend_regulations_data(document_urls_title_map, product_regulations)
+            regulations_data = self.clean_and_extend_regulations_data(
+                document_urls_title_map, product_regulations
+            )
 
-            titles_to_codes_map = self.build_titles_to_codes_map(commodity_regulations_map)
+            titles_to_codes_map = self.build_titles_to_codes_map(
+                commodity_regulations_map
+            )
 
-            self.data = self.build_list_of_regulation_maps(regulations_data, titles_to_codes_map)
+            self.data = self.build_list_of_regulation_maps(
+                regulations_data, titles_to_codes_map
+            )
 
     def process(self):
         """
@@ -184,7 +199,7 @@ class RegulationsImporter:
         instance builder method
         """
         for regulation_map in self.data:
-            if not regulation_map['document']['title'] is None:
+            if not regulation_map["document"]["title"] is None:
                 self.instance_builder(regulation_map)
 
     @staticmethod
@@ -197,7 +212,7 @@ class RegulationsImporter:
         :param regulations: table of regulation titles with urls
         :return: return list of regulations each with a corresponding document url and title
         """
-        regulations_table = regulations[['Title', 'UK Reg']].values.tolist()
+        regulations_table = regulations[["Title", "UK Reg"]].values.tolist()
 
         for item in regulations_table:
             if item[1] is not nan and item[1] in documents.keys():
@@ -219,21 +234,25 @@ class RegulationsImporter:
         map_list = []
         for item in data_table:
             try:
-                parent_codes = [self._normalise_commodity_code(code) for code in titles_to_codes_map[item[0]]]
+                parent_codes = [
+                    self._normalise_commodity_code(code)
+                    for code in titles_to_codes_map[item[0]]
+                ]
 
                 if item[0] in titles_to_codes_map.keys():
                     map_list.append(
                         {
                             "parent_codes": parent_codes,
                             "title": item[0],
-                            "document": {
-                                "url": item[1],
-                                "title": item[2]
-                            }
+                            "document": {"url": item[1], "title": item[2]},
                         }
                     )
             except KeyError as key_err:
-                logger.debug("Missing regulations documents for {0}: with error {1} ".format(item[0], key_err.args))
+                logger.debug(
+                    "Missing regulations documents for {0}: with error {1} ".format(
+                        item[0], key_err.args
+                    )
+                )
 
         return map_list
 
@@ -249,10 +268,12 @@ class RegulationsImporter:
         """
         data_map = {}
         for commodity in commodity_titles:
-            for document in commodity['Documents'].split('|'):
+            for document in commodity["Documents"].split("|"):
                 doc_title = document.strip()
-                if doc_title in data_map.keys() and isinstance(data_map[doc_title], list):
-                    data_map[doc_title].append(commodity['Commodity code'])
+                if doc_title in data_map.keys() and isinstance(
+                    data_map[doc_title], list
+                ):
+                    data_map[doc_title].append(commodity["Commodity code"])
                 else:
-                    data_map[doc_title] = [commodity['Commodity code']]
+                    data_map[doc_title] = [commodity["Commodity code"]]
         return data_map

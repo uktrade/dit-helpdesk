@@ -3,13 +3,13 @@ from .base import *
 DEBUG = True
 RESTRICT_ADMIN = False
 DATABASES = {
-    'default': {
-        'ENGINE': 'psqlextra.backend',  # 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DJANGO_POSTGRES_DATABASE'),
-        'USER': os.environ.get('DJANGO_POSTGRES_USER'),
-        'PASSWORD': os.environ.get('DJANGO_POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('DJANGO_POSTGRES_HOST'),
-        'PORT': os.environ.get('DJANGO_POSTGRES_PORT')
+    "default": {
+        "ENGINE": "psqlextra.backend",  # 'django.db.backends.postgresql_psycopg2',
+        "NAME": os.environ.get("DJANGO_POSTGRES_DATABASE"),
+        "USER": os.environ.get("DJANGO_POSTGRES_USER"),
+        "PASSWORD": os.environ.get("DJANGO_POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("DJANGO_POSTGRES_HOST"),
+        "PORT": os.environ.get("DJANGO_POSTGRES_PORT"),
     }
 }
 
@@ -18,31 +18,25 @@ SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
 
-STATIC_ROOT = 'dit_helpdesk/static'
-INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost']
+STATIC_ROOT = "dit_helpdesk/static"
+INTERNAL_IPS = ["127.0.0.1", "0.0.0.0", "localhost"]
 
-INSTALLED_APPS += ['debug_toolbar']
+INSTALLED_APPS += ["debug_toolbar"]
 
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 
 def show_toolbar(request):
     return True
 
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
-}
 
-ES_URL = 'http://es:9200'
+DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": show_toolbar}
 
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': ES_URL
-    },
-}
+ES_URL = "http://es:9200"
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = BASE_DIR+'/app-messages'
+ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 
-FEEDBACK_DESTINATION_EMAIL = os.environ.get('FEEDBACK_DESTINATION_EMAIL')
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR + "/app-messages"
 
+FEEDBACK_DESTINATION_EMAIL = os.environ.get("FEEDBACK_DESTINATION_EMAIL")
