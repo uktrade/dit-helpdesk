@@ -40,7 +40,12 @@
             <form action="{% url 'search:search-commodity' country_code=country_code %}#search-results" class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
                 <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
                   <label class="govuk-hint" for="search">
-                      Search by keyword or commodity code, or <a href="{% url 'search:search-commodity' country_code=country_code %}#browse">browse</a> the categories of goods below.
+                      Here you can look for:
+                      <ul>
+                          <li>the name of what you are exporting</li>
+                          <li>the commodity code of what you are exporting</li>
+                      </ul>
+                      you can search for your commodity code using the catalogue below
                   </label>
                   {% if form.q.errors %}
                     <span id="commodity-code-error" class="govuk-error-message">
@@ -61,13 +66,13 @@
                 <div class="govuk-form-group">
                   <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
                     <div class="govuk-radios govuk-radios--inline govuk-grid-column-two-thirds">
-                      <div class="govuk-radios__item">
+                      <div class="govuk-radios__item govuk-visually-hidden">
                         <input class="govuk-radios__input" id="show-headings" name="show-headings" type="radio" checked="checked" value="true">
                         <label class="govuk-label govuk-radios__label" for="show-headings">
                           Show headings
                         </label>
                       </div>
-                      <div class="govuk-radios__item">
+                      <div class="govuk-radios__itemg govuk-visually-hidden">
                         <input class="govuk-radios__input" id="hide-headings" name="show-headings" type="radio" value="false">
                         <label class="govuk-label govuk-radios__label" for="hide-headings">
                           Hide headings
@@ -75,7 +80,7 @@
                       </div>
                     </div>
                     <div class="govuk-select--inline govuk-al">
-                        <label class="govuk-label" for="sort">Sort by
+                        <label class="govuk-label govuk-visually-hidden" for="sort">Sort by
                             <select class="govuk-select" name="sort" id="sort">
                                 <option value="description">Description</option>
                                 <option value="code">Code</option>

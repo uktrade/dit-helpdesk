@@ -29,7 +29,7 @@
                     </h2>
 
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        Choose the commodity code below that best matches your goods to see more information
+                        Choose the commodity code below that is closest your goods to see more information
                     </h3>
 
                     <p class="govuk-body">
@@ -65,9 +65,9 @@
             </div>
             <nav>
                 <ul id="app-action-links" class="govuk-!-margin-top-5 govuk-!-margin-bottom-5">
-                    <li><a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}">New search</a></li>
-                    <li><i class="helpdesk-icon helpdesk-icon__email"></i><a href="#">Get email alerts when something changes</a></li>
-                    <li><i class="helpdesk-icon helpdesk-icon__feed"></i><a rel="nofollow" href="#">Subscribe to feed</a></li>
+                    <li class="govuk-visually-hidden"><a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}">New search</a></li>
+                    <li class="govuk-visually-hidden"><i class="helpdesk-icon helpdesk-icon__email"></i><a href="#">Get email alerts when something changes</a></li>
+                    <li class="govuk-visually-hidden"><i class="helpdesk-icon helpdesk-icon__feed"></i><a rel="nofollow" href="#">Subscribe to feed</a></li>
                 </ul>
             </nav>
         </div>

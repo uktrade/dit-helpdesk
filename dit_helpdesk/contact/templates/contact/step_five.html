@@ -23,9 +23,7 @@
           Do not include personal or financial information, like your National Insurance number or credit card details.
         </strong>
       </div>
-        <textarea class="govuk-textarea govuk-!-margin-bottom-0" id="id_step_five-message" name="step_five-message" rows="7">
-            {% if wizard.form.message.data %}{{ wizard.form.message.data }}{% endif %}
-        </textarea>
+        <textarea class="govuk-textarea govuk-!-margin-bottom-0" id="id_step_five-message" name="step_five-message" rows="7">{% if wizard.form.message.data %}{{ wizard.form.message.data }}{% endif %}</textarea>
         <p class="govuk-hint govuk-character-count__message govuk-!-margin-top-2 govuk-!-margin-bottom-8">You can enter up to 1,000 characters.</p>
     </div>
 

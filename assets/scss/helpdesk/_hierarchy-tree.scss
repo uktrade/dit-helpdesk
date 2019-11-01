@@ -91,6 +91,7 @@
 
   @include govuk-media-query($from: tablet) {
     padding-top: 0.5em;
+    margin-bottom: 20px;
   }
 }
 
@@ -106,10 +107,17 @@
 
 .app-hierarchy-tree__commodity-code {
   margin-top: 0.125em;
+  margin-bottom: 20px;
 
   @include govuk-media-query($from: tablet) {
     width: 10.5em;
   }
+}
+
+.app-hierarchy-tree a {
+  padding-bottom: 0px;
+  vertical-align: -webkit-baseline-middle;
+
 }
 
 .app-hierarchy-tree__link {
@@ -134,7 +142,6 @@
 }
 
 .app-hierarchy-tree__link--child {
-  font-weight: bold;
 
   &:hover {
     .app-hierarchy-button {
