@@ -24,13 +24,13 @@
         <div class="govuk-radios govuk-radios" id="id_step_one-location">
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="id_step_one-location_0" required
-                       name="step_one-location" type="radio" checked="checked" value="1">
+                       name="step_one-location" type="radio" {% if not wizard.form.location.value or wizard.form.location.value  == '1' %}checked="checked"{% endif %} value="1">
                 <label class="govuk-label govuk-radios__label" for="id_step_one-location_0">The
                     UK</label>
             </div>
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="id_step_one-location_1" required
-                       name="step_one-location" type="radio" value="2">
+                       name="step_one-location" type="radio" {% if wizard.form.location.value == '2' %}checked="checked"{% endif %} value="2">
                 <label class="govuk-label govuk-radios__label" for="id_step_one-location_1">Outside
                     the UK</label>
             </div>

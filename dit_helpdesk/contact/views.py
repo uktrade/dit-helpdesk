@@ -2,21 +2,22 @@ import logging
 
 from directory_forms_api_client import helpers
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.loader import get_template
 from formtools.wizard.views import SessionWizardView
 
+from contact import constants
 from contact.forms import (
     ContactFormStepOne,
     ContactFormStepTwo,
+    ContactFormStepThree,
     ContactFormStepFour,
-    ContactFormStepFive,
     LOCATION_CHOICES,
     CATEGORY_CHOICES,
     TOPIC_CHOICES,
     ZendeskForm,
+    ZendeskEmailForm,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,15 +26,15 @@ logger = logging.getLogger(__name__)
 FORMS = [
     ("step_one", ContactFormStepOne),
     ("step_two", ContactFormStepTwo),
+    ("step_three", ContactFormStepThree),
     ("step_four", ContactFormStepFour),
-    ("step_five", ContactFormStepFive),
 ]
 
 TEMPLATES = {
     "step_one": "contact/step_one.html",
     "step_two": "contact/step_two.html",
+    "step_three": "contact/step_three.html",
     "step_four": "contact/step_four.html",
-    "step_five": "contact/step_five.html",
 }
 
 LOCATIONS, CATEGORIES, TOPICS = (
@@ -52,10 +53,10 @@ class ContactFormWizardView(SessionWizardView):
     def done(self, form_list, **kwargs):
         context = self.process_form_data(form_list)
 
-        if context["topic"] in list(TOPICS.values())[4:]:
-            ContactFormWizardView.send_to_zenddesk(context)
+        if context["type"] == "Zendesk":
+            resp = ContactFormWizardView.send_to_zenddesk(context)
         else:
-            ContactFormWizardView.send_mail(context)
+            resp = ContactFormWizardView.send_mail(context)
 
         return render_to_response("contact/done.html", {"context": context})
 
@@ -67,10 +68,13 @@ class ContactFormWizardView(SessionWizardView):
         :param kwargs: passed keyword arguments
         :return: render to response
         """
-        if self.steps.next == "step_five" and form.cleaned_data["enquiry_topic"] == "1":
-            return HttpResponseRedirect(
-                "https://www.tax.service.gov.uk/shortforms/form/CITEX_CGEF"
-            )
+        print("Form: :", form)
+        if (
+            "enquiry_topic" in form.cleaned_data
+            and self.steps.next == "step_three"
+            and form.cleaned_data["enquiry_topic"] == "1"
+        ):
+            return HttpResponseRedirect(settings.HMRC_TAX_FORM_URL)
         else:
             return super(ContactFormWizardView, self).render_next_step(form, **kwargs)
 
@@ -78,10 +82,7 @@ class ContactFormWizardView(SessionWizardView):
     def process_form_data(form_list):
         form_data = [form.cleaned_data for form in form_list]
 
-        context = {
-            "subject": "New UK Trade Helpdesk Enquiry",
-            "service_name": "UK Trade Helpdesk",
-        }
+        context = {"subject": constants.SUBJECT, "service_name": constants.SERVICE_NAME}
 
         for form in form_data:
             if "location" in form.keys():
@@ -99,78 +100,79 @@ class ContactFormWizardView(SessionWizardView):
 
         if context["topic"] == TOPICS[2]:
             # Importing animals, plants or food, environmental regulations, sanitary and phytosanitary regulations
-            context["recipient_email"] = "euexitDIT@defra.gov.uk"
-            context["recipient_full_name"] = "DEFRA"
+            context["type"] = "Email"
+            context["recipient_email"] = settings.DEFRA_EMAIL
+            context["recipient_full_name"] = settings.DEFRA_CONTACT
 
         elif context["topic"] == TOPICS[3]:
             # Product safety and standards, packaging and labelling
-            context["recipient_email"] = "enquiries@beis.gov.uk"
-            context["recipient_full_name"] = "BEIS"
+            context["type"] = "Email"
+            context["recipient_email"] = settings.BEIS_EMAIL
+            context["recipient_full_name"] = settings.BEIS_CONTACT
 
         elif context["topic"] == TOPICS[4]:
             # Topic: Import controls, trade agreements, rules of origin
-            context[
-                "destination"
-            ] = "Send to the DIT EU exit enquiries Zendesk - Susan Watersons Team"
+            context["type"] = "Zendesk"
+            context["subject"] += constants.DDAT_SUBJECT_SUFFIX
+            context["subdomain"] = constants.DIT_SUBDOMAIN
 
         elif context["topic"] == TOPICS[5]:
             # TOPIC: Help using the “Trade with the UK: look up tariffs, taxes and rules” service
-            context[
-                "destination"
-            ] = """go to DDAT support team headed up by Madeline Lasko (internal zendesk instance
-                            support@uktrade.zendesk.com same place as feedback we are using Forms API for)"""
+            context["type"] = "Zendesk"
+            context["subject"] += constants.DIT_SUBJECT_SUFFIX
+            context["subdomain"] = constants.DIT_SUBDOMAIN
+            # go to  headed up by  (internal zendesk instance support@uktrade.zendesk.com same place as feedback we are using Forms API for)
 
         elif context["topic"] == TOPICS[6]:
             # Other
-            destination = (
-                "Send to the DIT EU exit enquiries Zendesk - Susan Watersons Team"
-            )
+            context["type"] = "Zendesk"
+            context["subject"] += " DIT EU Exit Enquiries"
+            context["subdomain"] = constants.DIT_SUBDOMAIN
 
         template = get_template("contact/contact_message_tmpl.txt")
+
         context["content"] = template.render(context)
+
+        context["spam_control"] = helpers.SpamControl(contents=context["content"])
+
+        context["sender"] = helpers.Sender(email_address=context["email_address"])
+
+        context["form_url"] = "/contact/"
 
         return context
 
     @staticmethod
     def send_mail(context):
+        email_form = ZendeskEmailForm(data={"message": context["content"]})
 
-        headers = {"Reply-To": context["email_address"]}
+        assert email_form.is_valid()
 
-        email = EmailMessage(
-            context["subject"],
-            context["content"],
-            context["email_address"],
-            [context["recipient_email"]],
-            headers=headers,
+        resp = email_form.save(
+            recipients=[context["recipient_email"], "glen.lavery@digital.trade.gov.uk"],
+            subject=context["subject"],
+            reply_to=[context["email_address"]],
+            form_url=context["form_url"],
         )
-
-        email.send()
+        return resp
 
     @staticmethod
     def send_to_zenddesk(context):
-
         zendesk_form = ZendeskForm(
             data={
-                "message": context["message"],
+                "message": context["content"],
                 "email_address": context["email_address"],
                 "name": context["name"],
             }
         )
-
-        spam_control = helpers.SpamControl(contents=context["content"])
-
-        sender = helpers.Sender(email_address=context["email_address"])
-
         assert zendesk_form.is_valid()
-
-        if settings.DIRECTORY_FORMS_API_BASE_URL:
-
-            zendesk_form.save(
-                email_address=context["email_address"],
-                full_name=context["name"],
-                form_url="/contact/",
-                service_name=context["service_name"],
-                spam_control=spam_control,
-                sender=sender,
-                subject=context["subject"],
-            )
+        resp = zendesk_form.save(
+            email_address=context["email_address"],
+            full_name=context["name"],
+            form_url=context["form_url"],
+            service_name=context["service_name"],
+            spam_control=context["spam_control"],
+            sender=context["sender"],
+            subject=context["subject"],
+            subdomain=context["subdomain"],
+        )
+        return resp
