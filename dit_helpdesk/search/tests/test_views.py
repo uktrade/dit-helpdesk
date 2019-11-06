@@ -8,15 +8,13 @@ from mixer.backend.django import mixer
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
-from hierarchy.views import _get_hierarchy_level_html
+from hierarchy.views import _get_hierarchy_level_html, _commodity_code_html
 from search.forms import CommoditySearchForm
-from search.views import search_hierarchy, _generate_commodity_code_html
+from search.views import search_hierarchy
 from search.helpers import process_commodity_code
 
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
 
 
 class CommoditySetupMixin:
@@ -333,11 +331,11 @@ class GenerateCommodityCodeHTMLTestCase(TestCase):
     Test Generate commodity code HTML
     """
 
-    def test_generate_commodity_code_html(self):
-        code = _generate_commodity_code_html("4104115900")
+    def test_commodity_code_html(self):
+        code = _commodity_code_html("4104115900")
         self.assertEqual(
             code,
-            '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">11</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4">59</span><span class="app-commodity-code__highlight app-commodity-code__highlight--5">00</span></span>',
+            '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">11</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4">59</span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>',
         )
 
 

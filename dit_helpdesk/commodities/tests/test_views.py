@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 from django.apps import apps
 from django.conf import settings
@@ -9,14 +9,12 @@ from django.urls import reverse, NoReverseMatch
 from mixer.backend.django import mixer
 
 from commodities.models import Commodity
-from commodities.views import _generate_commodity_code_html
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.views import _commodity_code_html
 from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocument
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
 
 
 def get_data(file_path):
@@ -223,25 +221,25 @@ class CommodityViewTestCase(TestCase):
         self.assertTrue("rules_of_origin" in resp.context)
         self.assertTrue(resp.context["rules_of_origin"])
 
-    def test_generate_commodity_code_html_for_commodity(self):
-        html = _generate_commodity_code_html(self.commodity)
-        self.assertInHTML("010121", html)
+    def test_commodity_code_html_for_commodity(self):
+        html = _commodity_code_html(self.commodity.commodity_code)
+        code_html = """<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">21</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>"""
+        self.assertInHTML(code_html, html)
 
-    def test_generate_commodity_code_html_for_section(self):
-        html = _generate_commodity_code_html(self.section)
-        self.assertEqual(html, "")
+    def test_commodity_code_html_for_heading(self):
+        html = _commodity_code_html(self.heading.heading_code)
+        code_html = """<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--4"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>"""
+        self.assertInHTML(code_html, html)
 
-    def test_generate_commodity_code_html_for_heading(self):
-        html = _generate_commodity_code_html(self.heading)
-        self.assertInHTML("010100", html)
+    def test_commodity_code_html_for_sub_heading(self):
+        html = _commodity_code_html(self.subheading.commodity_code)
+        code_html = """<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">21</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>"""
+        self.assertInHTML(code_html, html)
 
-    def test_generate_commodity_code_html_for_sub_heading(self):
-        html = _generate_commodity_code_html(self.subheading)
-        self.assertInHTML("010121", html)
-
-    def test_generate_commodity_code_html_for_chapter(self):
-        html = _generate_commodity_code_html(self.chapter)
-        self.assertInHTML("010000", html)
+    def test_commodity_code_html_for_chapter(self):
+        html = _commodity_code_html(self.chapter.chapter_code)
+        code_html = """<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">01</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--3"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--4"><span class="app-commodity-code__is-blank">00</span></span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>"""
+        self.assertInHTML(code_html, html)
 
 
 class MeasureConditionDetailTestCase(TestCase):
