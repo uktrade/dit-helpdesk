@@ -7,32 +7,40 @@
 {% endblock title %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <a href="{% url 'commodity-detail' commodity_code=commodity_code country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
-            <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
-                <span class="govuk-caption-l">Exporting from {{ selected_origin_country_name }} to the UK</span>
-                {{ measure_type }} for
-                {% spaceless %}
-                    <span class="app-commodity-code">
-                    {% for commodity_code_segment in commodity_code_split %}
-                        <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
-                        {{ commodity_code_segment }}
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <a href="{% url 'commodity-detail' commodity_code=commodity_code country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+                <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+                    <span class="govuk-caption-l">Exporting from {{ selected_origin_country_name }} to the UK</span>
+                    {{ measure_type }} for
+                    {% spaceless %}
+                        <span class="app-commodity-code">
+                        {% for commodity_code_segment in commodity_code_split %}
+                            <span class="app-commodity-code__highlight app-commodity-code__highlight--{{ forloop.counter }}">
+                            {{ commodity_code_segment }}
+                            </span>
+                        {% endfor %}
                         </span>
-                    {% endfor %}
-                    </span>
-                {% endspaceless %}
-            </h2>
+                    {% endspaceless %}
+                </h2>
+            </div>
         </div>
-    </div>
-    <div class="govuk-grid-row govuk-!-margin-bottom-7">
-        <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">{{ commodity_description }}</p>
+        <div class="govuk-grid-row govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">{{ commodity_description }}</p>
+            </div>
         </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            {% include "commodities/measure_quota_table.html" %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                {% include "commodities/measure_quota_table.html" %}
+            </div>
         </div>
-    </div>
+
+    </main>
+</div>
+
 {% endblock %}

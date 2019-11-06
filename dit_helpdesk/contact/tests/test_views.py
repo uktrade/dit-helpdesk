@@ -28,22 +28,22 @@ class ContactFormViewTestCase(TestCase):
             "step_two-enquiry_type": "1",
             "session_contact_wizard-current_step": "step_two",
         }
-        contact_form_step_four = {
+        contact_form_step_three = {
             "step_four-enquiry_topic": "2",
-            "session_contact_wizard-current_step": "step_four",
+            "session_contact_wizard-current_step": "step_three",
         }
-        contact_form_step_five = {
-            "step_five-name": "John Doe",
-            "step_five-email_address": "john.doe@domain.com",
-            "step_five-message": "The test message for the form",
-            "step_five-terms_and_conditions": "True",
-            "session_contact_wizard-current_step": "step_five",
+        contact_form_step_four = {
+            "step_four-name": "John Doe",
+            "step_four-email_address": "john.doe@domain.com",
+            "step_four-message": "The test message for the form",
+            "step_four-terms_and_conditions": "True",
+            "session_contact_wizard-current_step": "step_four",
         }
         wizard_steps_data = (
             contact_form_step_one,
             contact_form_step_two,
+            contact_form_step_three,
             contact_form_step_four,
-            contact_form_step_five,
         )
 
         response = self.client.get(self.wizard_url)
@@ -52,7 +52,7 @@ class ContactFormViewTestCase(TestCase):
         self.assertEqual(wizard["steps"].current, "step_one")
         self.assertEqual(wizard["steps"].step0, 0)
         self.assertEqual(wizard["steps"].step1, 1)
-        self.assertEqual(wizard["steps"].last, "step_five")
+        self.assertEqual(wizard["steps"].last, "step_four")
         self.assertEqual(wizard["steps"].prev, None)
         self.assertEqual(wizard["steps"].next, "step_two")
         self.assertEqual(wizard["steps"].count, 4)

@@ -7,11 +7,12 @@ import re
 
 import requests
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
-from hierarchy.models import Heading
+from hierarchy.models import Heading, SubHeading, Chapter
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
@@ -86,11 +87,11 @@ class Commodity(models.Model):
     def commodity_code_split(self):
         """
         Used to display the code in the template
-        Splits the commodity code into 3 groups of 6 digits, 2 digits and 2 digits
+        Splits the commodity code into 3 groups of 4 digits, 2 digits, 2 digits and 2 digits
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
     @property
     def tts_obj(self):
@@ -157,7 +158,6 @@ class Commodity(models.Model):
         :param level: int
         :return: list
         """
-
         if tree is None:
             tree = []
         if not parent:
@@ -181,8 +181,9 @@ class Commodity(models.Model):
             tree[level].append(parent.chapter)
         elif hasattr(parent, "section") and parent.section is not None:
             tree[level].append(parent.section)
-        elif self.parent_subheading is not parent:
-            self._append_path_children(self.parent_subheading, tree, level)
+
+        if isinstance(parent, Commodity):
+            tree.insert(0, [self])
 
         return tree
 

@@ -23,12 +23,49 @@
 
 .app-hierarchy-tree__part {
   @extend .govuk-body;
-  // background-color: rgba(0, 0, 0, 0.01);
-  border-top: 1px solid $govuk-border-colour;
   line-height: 1.35;
   margin: 0.5em 0 0 0;
-  padding: 0.5em 0 0 0;
+  padding: 0.5em 0 0.5em 0;
   text-align: right;
+}
+
+.app-hierarchy-tree__part {
+  border-bottom: 1px solid $govuk-border-colour;
+  padding-bottom: 10px;
+}
+
+.app-hierarchy-tree__part.app-hierarchy-tree__parent--open:last-child {
+  border-bottom: none;
+}
+
+.app-hierarchy-tree__parent--closed {
+  border-bottom: 1px solid $govuk-border-colour;
+  margin-bottom: 10px;
+}
+
+.app-hierarchy-tree__section:last-child {
+  border-bottom: none;
+}
+
+.app-hierarchy-tree__parent--open .app-hierarchy-tree--child {
+  border-top: 1px solid $govuk-border-colour;
+  margin-bottom: 10px;
+}
+
+.app-hierarchy-tree--child a {
+  padding-bottom: 10px;
+}
+
+.app-hierarchy-tree__parent--open{
+  border-bottom: none;
+}
+
+.app-hierarchy-tree__part  {
+  text-align: left;
+}
+
+.app-hierarchy-tree__commodity .app-hierarchy-tree__link--child {
+  text-decoration: underline;
 }
 
 .app-hierarchy-tree__chapter,
@@ -40,16 +77,8 @@
   }
 }
 
-.app-hierarchy-tree__commodity {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 8 16' fill='currentColor'><path fill-rule='evenodd' d='M8 12H0V4h8v8z'/></svg>");
-  background-size: 0.9em 0.9em;
-  background-position: 0.75em 0.9em;
-  background-repeat: no-repeat;
-  padding-left: 2em;
-
-  @include govuk-media-query($from: tablet) {
-    background-position: 0.9em 0.85em;
-  }
+.app-commodity-code__is-blank{
+  visibility: hidden;
 }
 
 .app-hierarchy-tree__section-numbers,
@@ -62,6 +91,7 @@
 
   @include govuk-media-query($from: tablet) {
     padding-top: 0.5em;
+    margin-bottom: 20px;
   }
 }
 
@@ -77,10 +107,17 @@
 
 .app-hierarchy-tree__commodity-code {
   margin-top: 0.125em;
+  margin-bottom: 20px;
 
   @include govuk-media-query($from: tablet) {
-    width: 9em;
+    width: 10.5em;
   }
+}
+
+.app-hierarchy-tree a {
+  padding-bottom: 0px;
+  vertical-align: -webkit-baseline-middle;
+
 }
 
 .app-hierarchy-tree__link {
@@ -99,14 +136,12 @@
   }
 
   @include govuk-media-query($from: tablet) {
-    // background-position: 0.5em 0.5em;
     vertical-align: top;
-    width: calc(100% - 10em);
+    width: calc(100% - 10.5em);
   }
 }
 
 .app-hierarchy-tree__link--child {
-  font-weight: bold;
 
   &:hover {
     .app-hierarchy-button {
@@ -139,9 +174,9 @@
 
 
 .app-hierarchy-tree__link--parent {
-  padding-left: 1.25em;
+  padding-left: -.5em;
   &:before {
-    color: black;
+    color: #005fa2;
     display: inline-block;
     margin-left: -1.25em;
     padding-right: 0.5em;
@@ -153,7 +188,7 @@
       content: "\25BC";
       font-size: 16px;
     }
-    font-weight: bold;
+    font-weight: normal;
   }
 
   .app-hierarchy-tree__parent--closed & {

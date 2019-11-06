@@ -3,15 +3,20 @@
 {% block title %}Error{% endblock title %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl">
-        Sorry, there is a problem with the service
-    </h1>
-    <p class="govuk-body">Try again later.</p>
-    <p class="govuk-body">
-      If you keep getting the same error, <a href="{% url 'feedback-view' %}" class="govuk-link">contact the support team</a>.
-    </p>
-  </div>
-</div>
-{% endblock content%}
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl">
+                        Sorry, there is a problem with the service
+                    </h1>
+                    <p class="govuk-body">Try again later.</p>
+                    <p class="govuk-body">
+                        If you keep getting the same error, <a href="{% url 'feedback-view' %}" class="govuk-link">contact
+                        the support team</a>.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock content %}

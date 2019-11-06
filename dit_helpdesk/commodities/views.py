@@ -14,10 +14,10 @@ from django.contrib import messages
 
 from commodities.models import Commodity
 from countries.models import Country
-from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
-from hierarchy.models import Section
+from hierarchy.views import get_hierarchy_context
+from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
+from hierarchy.helpers import TABLE_COLUMN_TITLES
 
 
 def commodity_detail(request, commodity_code, country_code):
@@ -67,7 +67,7 @@ def commodity_detail(request, commodity_code, country_code):
         "column_titles": TABLE_COLUMN_TITLES,
         "regulations": commodity.get_regulations(),
         "accordion_title": accordion_title,
-        "commodity_hierarchy_context": commodity_hierarchy_context(
+        "commodity_hierarchy_context": get_hierarchy_context(
             commodity_path, country.country_code, commodity_code
         ),
         "modals": modals_dict,
@@ -164,60 +164,6 @@ def measure_quota_detail(
     }
 
     return render(request, "commodities/measure_quota_detail.html", context)
-
-
-def commodity_hierarchy_context(commodity_path, country_code, commodity_code):
-    """
-    View helper function that returns an html representation of the context of the commodity within the
-    hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
-    commodity code
-    :param commodity_path: string
-    :param country_code: string
-    :param commodity_code: string
-    :return: html
-    """
-    listSize = len(commodity_path)
-    html = ""
-    reversedList = reversed(commodity_path)
-
-    for index, lista in enumerate(reversedList):
-        if index is 0:
-            # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
-            html += ""
-        else:
-            html += f'<ul id="hierarchy-tree-list-{index}" class="app-hierarchy-tree--child">'
-            for i, item in enumerate(lista):
-                expand = "open"
-                if index is listSize:
-                    expand = "closed"
-
-                if type(item) is Commodity:
-                    if item.commodity_code == commodity_code:
-                        html += f"""
-                            <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
-                                <span class="govuk-!-font-weight-bold app-hierarchy-tree__link">{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span>{_generate_commodity_code_html(item)}
-                            </li>
-                            """
-                    else:
-                        html += f"""
-                           <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity">
-                                <a href="{item.get_absolute_url(country_code)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--child">
-                                <span>{item.description}</span><span class="govuk-visually-hidden"> &ndash; </span></a>{_generate_commodity_code_html(item)}
-                            </li>
-                            """
-                elif hasattr(item, "description"):
-                    html += f"""
-                       <li id="tree-list-{index}-item-{i}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{expand}">
-                            <a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_generate_commodity_code_html(item)}"""
-                    if index is listSize:
-                        html += "</li>"
-
-            if index is listSize:
-                for i in range(0, listSize):
-                    # close
-                    html += "</ul>"
-
-    return html
 
 
 def _generate_commodity_code_html(item):

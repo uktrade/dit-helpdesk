@@ -1,0 +1,111 @@
+{% extends "contact/contact_form_base.html" %}
+{% load i18n %}
+
+
+{% block title_form_page %}Contact us{% endblock %}
+
+{% block form_page_title %}
+    What would you like to know more about?
+{% endblock %}
+
+{% block form_body %}
+
+    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">
+        <h2>{{ wizard.form.label_tag }}</h2>
+    </div>
+
+    <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
+
+        {% if wizard.form.errors %}
+            {% for error in wizard.form.errors %}
+                <span id="enquiry_type-error" class="govuk-error-enquiry_topic">{{ error | escape }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="govuk-form-group">
+        <div class="govuk-radios govuk-radios" id="id_step_three-enquiry_topic">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_0"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if not wizard.form.enquiry_topic.value or wizard.form.enquiry_topic.value  == '1' %}checked="checked"{% endif %}
+                       value="1">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_0">Commodity codes, tariffs and measures,
+                    import procedures
+                    <p class="govuk-hint">
+                        You will be redirected to Her Majesty's Revenue and Customs (HMRC)
+                        contact form
+                    </p>
+                </label>
+
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_1"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if  wizard.form.enquiry_topic.value  == '2' %}checked="checked"{% endif %}
+                       value="2">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_1">Importing animals, plants or food,
+                    environmental regulations, sanitary and phytosanitary regulations
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for Environment,
+                        Food and Rural Affairs (Defra)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_2"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if wizard.form.enquiry_topic.value  == '3' %}checked="checked"{% endif %}
+                       value="3">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_2">Product safety and standards,
+                    packaging and labelling
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the department for Business,
+                        Energy and Industrial Strategy (BEIS)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_3"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if wizard.form.enquiry_topic.value  == '4' %}checked="checked"{% endif %}
+                       value="4">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_3">Import controls, trade agreements,
+                    rules of origin
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for International Trade (DIT)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_4"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if wizard.form.enquiry_topic.value  == '5' %}checked="checked"{% endif %}
+                       value="5">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_4">Help using the "Trade with the UK:
+                    look up tariffs, taxes and rules" service
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for International Trade (DIT)
+                    </p>
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="id_step_three-enquiry_topic_5"
+                       name="step_three-enquiry_topic" type="radio"
+                       {% if wizard.form.enquiry_topic.value  == '6' %}checked="checked"{% endif %}
+                       value="6">
+                <label class="govuk-label govuk-radios__label"
+                       for="id_step_three-enquiry_topic_5">Other
+                    <p class="govuk-hint">
+                        Your enquiry will be sent to the Department for International Trade (DIT)
+                    </p>
+                </label>
+            </div>
+        </div>
+    </div>
+{% endblock %}

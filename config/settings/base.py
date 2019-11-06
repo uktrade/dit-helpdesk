@@ -121,7 +121,7 @@ ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.section": "section",
     "search.documents.chapter": "chapter",
     "search.documents.heading": "heading",
-    "search.documents.subheading": "sub_heading",
+    "search.documents.subheading": "subheading",
     "search.documents.commodity": "commodity",
 }
 
@@ -250,7 +250,7 @@ HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/%s.json"
 
 COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/%s.json"
 
-COMMODITY_CODE_REGEX = "([0-9]{6})([0-9]{2})([0-9]{2})"
+COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 # Secure cookie settings.
 SESSION_COOKIE_SECURE = True
@@ -325,3 +325,10 @@ APP_START_DOMAIN = os.environ.get("APP_START_DOMAIN")
 FEEDBACK_DESTINATION_EMAIL = os.environ.get("FEEDBACK_DESTINATION_EMAIL")
 
 HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
+
+DEFRA_EMAIL = os.environ.get("DEFRA_EMAIL")
+DEFRA_CONTACT = os.environ.get("DEFRA_CONTACT")
+BEIS_EMAIL = os.environ.get("BEIS_EMAIL")
+BEIS_CONTACT = os.environ.get("BEIS_CONTACT")
+
+HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")

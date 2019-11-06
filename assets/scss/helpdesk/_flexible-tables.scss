@@ -47,7 +47,7 @@
 }
 
 .app-flexible-table__header {
-  background-color: govuk-colour("grey-3");
+  font-size: 0.9em;
 }
 
 @media screen and (min-width: 800px) {
@@ -55,7 +55,7 @@
     &:nth-child(even) {
       th,
       td {
-        background-color: govuk-colour("grey-4");
+
       }
     }
   }

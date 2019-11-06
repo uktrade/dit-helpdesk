@@ -40,9 +40,19 @@ urlpatterns = [
     path("choose-country/", country_views.choose_country_view, name="choose-country"),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     re_path(
-        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$",
-        commodity_views.commodity_detail,
-        name="commodity-detail",
+        r"^country/(?P<country_code>\w+)/section/(?P<section_id>\d{1,2})$",
+        hierarchy_views.section_detail,
+        name="section-detail",
+    ),
+    re_path(
+        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})$",
+        hierarchy_views.chapter_detail,
+        name="chapter-detail",
+    ),
+    re_path(
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
+        hierarchy_views.subheading_detail,
+        name="subheading-detail",
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$",
@@ -53,6 +63,11 @@ urlpatterns = [
         r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
         hierarchy_views.subheading_detail,
         name="subheading-detail",
+    ),
+    re_path(
+        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$",
+        commodity_views.commodity_detail,
+        name="commodity-detail",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
@@ -92,7 +107,6 @@ urlpatterns = [
         feedback_views.FeedbackSuccessView.as_view(),
         name="feedback-success-view",
     ),
-    # re_path('feedback/', include('feedback.urls', namespace="feedback")),
     path(
         "privacy-terms-and-conditions/",
         privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(),

@@ -20,6 +20,7 @@ var nodeListForEach = common.nodeListForEach
 */
 var CookieBanner = {
   init: function (name, value, options) {
+
     if (typeof value !== 'undefined') {
       if (value === false || value === null) {
         return CookieBanner.setCookie(name, '', { days: -1 })
@@ -65,8 +66,15 @@ var CookieBanner = {
 
     var isCookiesPage = document.URL.indexOf('cookies') !== -1
 
+    var acceptCookiesBtn = document.querySelector('.js-accept-cookie')
+
+    if (acceptCookiesBtn) {
+      console.log(acceptCookiesBtn)
+      this.addListener(acceptCookiesBtn)
+    }
+
     // we only want to dismiss the cookie banner once they've visited the cookie page
-    if (isCookiesPage) {
+    if (isCookiesPage || acceptCookiesBtn) {
       CookieBanner.init('cookie_seen', 'true', { days: 28 })
     }
 
@@ -74,11 +82,20 @@ var CookieBanner = {
     if (hasCookieMessage) {
       message.className = message.className.replace(/js--cookie-banner/, 'app-cookie-banner--show')
     }
+  },
+  addListener: function (target) {
+    // Support for IE < 9
+    if (target.attachEvent) {
+      target.attachEvent('onclick', this.addCookieMessage)
+    } else {
+      console.log(target)
+      target.addEventListener('click', this.addCookieMessage, false)
+    }
   }
 }
 
-CookieBanner.addCookieMessage()
-
+// CookieBanner.addCookieMessage()
+console.log(document.querySelector('.js-accept-cookie'))
 // accessibility feature
 new Button(document).init()
 

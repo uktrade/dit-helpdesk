@@ -11,7 +11,11 @@
 {% block feedback_banner %}{% endblock %}
 
 {% block content %}
-<form action="./#form"
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper">
+
+        <form action="./#form"
       method="post">
   <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
     <h2 class="govuk-fieldset__heading">Send feedback</h2>
@@ -132,4 +136,8 @@
   <button type="submit"
           class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Send feedback</button>
 </form>
+
+    </main>
+</div>
+
 {% endblock %}

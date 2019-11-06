@@ -74,7 +74,9 @@ class CommodityTestCase(TestCase):
         )
 
     def test_commodity_code_split(self):
-        self.assertEquals(self.commodity.commodity_code_split, ["010121", "00", "00"])
+        self.assertEquals(
+            self.commodity.commodity_code_split, ["0101", "21", "00", "00"]
+        )
 
     def test_tts_json_is_a_string_representing_a_json_object(self):
         self.assertTrue(isinstance(self.commodity.tts_json, str))

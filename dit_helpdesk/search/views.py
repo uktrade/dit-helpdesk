@@ -64,6 +64,13 @@ class CommoditySearchView(FormView):
     form_class = CommoditySearchForm
     template_name = "search/commodity_search.html"
 
+    def get_success_url(self, *args, **kwargs):
+        success_url = super(CommoditySearchView, self).get_success_url()
+        print("CommoditySearchView: ", success_url)
+        return "{0}?q={1}&country=".format(
+            success_url, self.form.cleaned_data["search"]
+        )
+
     def get(self, request, *args, **kwargs):
 
         self.form = self.get_form(self.form_class)
@@ -153,6 +160,7 @@ class CommoditySearchView(FormView):
 
     def get_form(self, form_class=None):
         form = CommoditySearchForm(self.request.GET or form_class)
+        print("FORM: ", form.fields)
         return form
 
     def get_context_data(self, **kwargs):
@@ -168,6 +176,8 @@ class CommoditySearchView(FormView):
         context["hierarchy_html"] = hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
+
+        print("Context: ", context.keys())
 
         return context
 
@@ -232,6 +242,7 @@ def _generate_commodity_code_html(code):
     :param item: model instance
     :return: html
     """
+    print("search Code: ", code)
 
     commodity_code_html = (
         '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
@@ -239,14 +250,28 @@ def _generate_commodity_code_html(code):
 
     if len(code) > 2 and code.isdigit():
 
-        code_regex = re.search("([0-9]{2})([0-9]{2})([0-9]{6})", code)
-        code_split = [code_regex.group(1), code_regex.group(2), code_regex.group(3)]
+        code_regex = re.search(
+            "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
+        )
+        code_split = [
+            code_regex.group(1),
+            code_regex.group(2),
+            code_regex.group(3),
+            code_regex.group(4),
+            code_regex.group(5),
+        ]
 
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
-            commodity_code_html = (
-                commodity_code_html + f'<span class="app-commodity-code__highlight '
-                f'app-commodity-code__highlight--{counter}">{code_segment}</span>'
+            if code[2:] == "00000000" and int(counter) > 1:
+                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+            elif code[4:] == "000000" and int(counter) > 2:
+                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+            else:
+                blank_span = ["", ""]
+
+            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
+                counter, blank_span[0], code_segment, blank_span[1]
             )
     else:
         commodity_code_html + code

@@ -1,5 +1,6 @@
-from directory_forms_api_client.forms import ZendeskAPIForm
+from directory_forms_api_client.forms import ZendeskAPIForm, EmailAPIForm
 from django import forms
+from django.forms import fields
 
 LOCATION_CHOICES = ((1, "The UK"), (2, "Outside the UK"))
 
@@ -8,7 +9,6 @@ CATEGORY_CHOICES = (
     (2, "Exporting to the UK"),
     (3, "Find a UK business partner"),
     (4, "EU exit enquiries"),
-    (5, "Other"),
 )
 
 TOPIC_CHOICES = (
@@ -19,9 +19,8 @@ TOPIC_CHOICES = (
     ),
     (3, "Product safety and standards, packaging and labelling"),
     (4, "Import controls, trade agreements, rules of origin"),
-    (5, "Exporting from a developing nation"),
-    (6, 'Help using the "Trade with the UK: look up tariffs, taxes and rules" service'),
-    (7, "Other"),
+    (5, 'Help using the "Trade with the UK: look up tariffs, taxes and rules" service'),
+    (6, "Other"),
 )
 
 
@@ -38,13 +37,13 @@ class ContactFormStepTwo(forms.Form):
     )
 
 
-class ContactFormStepFour(forms.Form):
+class ContactFormStepThree(forms.Form):
     enquiry_topic = forms.ChoiceField(
         choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True
     )
 
 
-class ContactFormStepFive(forms.Form):
+class ContactFormStepFour(forms.Form):
     name = forms.CharField(required=True)
     email_address = forms.EmailField(required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)
@@ -75,28 +74,27 @@ class ContactFormStepFive(forms.Form):
             },
         }
 
-    # def clean(self):
-    #     """
-    #     form data cleansing and validation raises validation errors on failure
-    #     :return: form object
-    #     """
-    #     cleaned_data = super().clean()
-    #     email_address = cleaned_data.get("email_address")
-    #     name = cleaned_data.get("name")
-    #
-    #     if name and not email_address:
-    #         raise forms.ValidationError(
-    #             {'email_address': ["Enter an email address"]}
-    #         )
-    #
-    #     if email_address and not name:
-    #         raise forms.ValidationError(
-    #             {'name': ["Enter your full name"]}
-    #         )
-
 
 class ZendeskForm(ZendeskAPIForm):
     # note that the base form provides `requester_email` email field
     name = forms.CharField()
     email_address = forms.EmailField()
     message = forms.CharField(widget=forms.Textarea)
+
+
+class ZendeskEmailForm(EmailAPIForm):
+    message = fields.CharField()
+
+    @property
+    def text_body(self):
+        """ Override text_body to text template of email body."""
+
+        text = str(self.cleaned_data["message"])
+        return text
+
+    @property
+    def html_body(self):
+        """ Override html_body to return html template of email body."""
+        cleaned = str(self.cleaned_data["message"]).replace("\n", "<br />")
+        cleaned_html = "<p>" + cleaned + "</p>"
+        return cleaned_html
