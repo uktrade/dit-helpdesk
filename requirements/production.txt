@@ -3,3 +3,4 @@
 -r ./base.txt
 
 gunicorn==19.9.0  # https://github.com/benoitc/gunicorn
+gevent==1.4.0
