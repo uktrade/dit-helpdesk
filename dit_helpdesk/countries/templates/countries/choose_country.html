@@ -34,7 +34,7 @@
       <form action="{% url 'choose-country' %}" method="post">
         <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
           {% csrf_token %}
-          <label class="govuk-hint" for="country-picker"></label>
+          <label class="govuk-hint" for="country-picker">
           {% if isError %}
             <span id="select-country-error" class="govuk-error-message">
               <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage}}
@@ -50,6 +50,7 @@
               {% endif %}
             {% endfor %}
           </select>
+          </label>
         </div>
         <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
       </form>
