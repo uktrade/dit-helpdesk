@@ -256,7 +256,7 @@ class ImportMeasureJson(object):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
     @property
     def get_conditions_table(self):
