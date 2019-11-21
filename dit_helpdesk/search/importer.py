@@ -125,6 +125,7 @@ class SearchKeywordsImporter:
 
                 app_label = "commodities" if model_name == "Commodity" else "hierarchy"
                 model = apps.get_model(app_label=app_label, model_name=model_name)
+                obj = created = None
                 if model_name == "Chapter":
                     obj, created = model.objects.update_or_create(
                         chapter_code=commodity_code, defaults=field_data
@@ -144,6 +145,8 @@ class SearchKeywordsImporter:
                         logger.debug(
                             "multiple found {0} {1}".format(m_err.args, commodity_code)
                         )
+                    except Exception as ex:
+                        logger.debug(ex.args)
                 else:
                     try:
                         obj, created = model.objects.update_or_create(
@@ -159,6 +162,18 @@ class SearchKeywordsImporter:
                         logger.debug(
                             "multiple found {0} {1}".format(m_err.args, commodity_code)
                         )
+                    except Exception as ex:
+                        logger.debug(ex.args)
+
+                if not isinstance(obj, Commodity):
+                    try:
+                        if obj.get_hierarchy_children_count() > 0:
+                            obj.leaf = False
+                        else:
+                            obj.leaf = True
+                        obj.save()
+                    except AttributeError as ae:
+                        logger.debug(ae.args)
 
                 if not created:
                     logger.info("{0} instance updated".format(obj))

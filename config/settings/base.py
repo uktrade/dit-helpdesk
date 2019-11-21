@@ -124,7 +124,8 @@ ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.subheading": "subheading",
     "search.documents.commodity": "commodity",
 }
-
+ELASTICSEARCH_DSL_AUTO_REFRESH = False
+ELASTICSEARCH_DSL_AUTOSYNC = False
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 

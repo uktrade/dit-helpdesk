@@ -29,5 +29,7 @@ class SubHeadingDocument(DocType):
 
     ranking = fields.IntegerField()
 
+    leaf = fields.BooleanField(attr="leaf")
+
     class Meta:
         model = SubHeading

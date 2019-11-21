@@ -18,8 +18,7 @@ var commodityTree = {
 
     if ($parentNode.className.indexOf('app-hierarchy-tree__parent--open') !== -1) {
       event.preventDefault()
-      $parentNode.className =
-        $parentNode.className.replace(/app-hierarchy-tree__parent--open/, 'app-hierarchy-tree__parent--closed js-closed')
+      $parentNode.className = $parentNode.className.replace(/app-hierarchy-tree__parent--open/, 'app-hierarchy-tree__parent--closed js-closed')
       var childList = Array.prototype.filter.call($parentNode.childNodes, function (el) {
         return el.className === 'app-hierarchy-tree--child'
       })
@@ -27,8 +26,7 @@ var commodityTree = {
       childList[0].style.display = 'none'
     } else if ($parentNode.className.indexOf('js-closed') !== -1) {
       event.preventDefault()
-      $parentNode.className =
-         $parentNode.className.replace(/app-hierarchy-tree__parent--closed js-closed/, 'app-hierarchy-tree__parent--open')
+      $parentNode.className = $parentNode.className.replace(/app-hierarchy-tree__parent--closed js-closed/, 'app-hierarchy-tree__parent--open')
       var childList = Array.prototype.filter.call($parentNode.childNodes, function (el) {
         return el.className === 'app-hierarchy-tree--child'
       })
@@ -36,21 +34,21 @@ var commodityTree = {
       childList[0].style.display = 'block'
     }
   },
-  scrollToElement: function(url){
+  scrollToElement: function (url) {
     // only run when the search has found a valid code
-    if(window.location.pathname.indexOf('hierarchy') === -1) {
+    if (window.location.pathname.indexOf('hierarchy') === -1) {
       return false
     }
     var element = document.getElementById(this.getFragmentFromUrl(url))
     element.scrollIntoView()
     // focus on the link
-    element.childNodes[0].focus({ preventScroll: true })
+    element.childNodes[0].focus({ preventScroll: false })
   },
   getFragmentFromUrl: function(url){
     if (url.indexOf('#') === -1) {
-      return url.substring(url.lastIndexOf("/") + 1, url.length)
+      return url.substring(url.lastIndexOf('/') + 1, url.length)
     } else {
-      return url.substring(url.lastIndexOf("#") + 1, url.length)
+      return url.substring(url.lastIndexOf('#') + 1, url.length)
     }
   }
 }

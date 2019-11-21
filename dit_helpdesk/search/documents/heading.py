@@ -30,5 +30,7 @@ class HeadingDocument(DocType):
 
     ranking = fields.IntegerField()
 
+    leaf = fields.BooleanField(attr="leaf")
+
     class Meta:
         model = Heading

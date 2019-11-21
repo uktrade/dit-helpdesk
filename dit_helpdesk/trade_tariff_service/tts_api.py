@@ -88,6 +88,10 @@ class CommodityJson(object):
 
         return measures[0] if len(measures) == 1 else None
 
+    @property
+    def footnotes(self):
+        return self.di["footnotes"]
+
 
 class ImportMeasureJson(object):
     def __init__(self, di, commodity_code, commodity_title, country_code):
@@ -531,6 +535,10 @@ class HeadingJson(object):
 
         return measures
 
+    @property
+    def footnotes(self):
+        return self.di["footnotes"]
+
     def get_import_measure_by_id(self, measure_id, country_code=None):
 
         measures = [
@@ -576,6 +584,10 @@ class SubHeadingJson(object):
             ((settings.COMMODITY_URL % _id), is_leaf)
             for (_id, is_leaf) in self.commodity_ids
         ]
+
+    @property
+    def footnotes(self):
+        return self.di["footnotes"]
 
     def get_import_measures(self, origin_country, vat=None, excise=None):
 

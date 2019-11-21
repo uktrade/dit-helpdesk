@@ -321,6 +321,7 @@ def heading_detail(request, heading_code, country_code):
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
+        "footnotes": heading.tts_obj.footnotes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code
@@ -390,6 +391,7 @@ def subheading_detail(request, commodity_code, country_code):
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
+        "footnotes": subheading.tts_obj.footnotes,
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": get_hierarchy_context(
             subheading_path, country.country_code, commodity_code

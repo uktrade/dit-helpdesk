@@ -67,6 +67,7 @@ def commodity_detail(request, commodity_code, country_code):
         "column_titles": TABLE_COLUMN_TITLES,
         "regulations": commodity.get_regulations(),
         "accordion_title": accordion_title,
+        "footnotes": commodity.tts_obj.footnotes,
         "commodity_hierarchy_context": get_hierarchy_context(
             commodity_path, country.country_code, commodity_code
         ),
@@ -164,40 +165,6 @@ def measure_quota_detail(
     }
 
     return render(request, "commodities/measure_quota_detail.html", context)
-
-
-# def _generate_commodity_code_html(item):
-#     """
-#     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
-#     of 6, 2 and  digits and colour code formatted
-#     :param item: model instance
-#     :return: html
-#     """
-#     commodity_code_html = ""
-#     if type(item) is not Section:
-#         commodity_code_html = (
-#             '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-#         )
-#
-#         if type(item) is Commodity:
-#             item.harmonized_code = item.commodity_code
-#
-#         code_regex = re.search("([0-9]{6})([0-9]{2})([0-9]{2})", item.harmonized_code)
-#         code_split = [code_regex.group(1), code_regex.group(2), code_regex.group(3)]
-#
-#         for index, code_segment in enumerate(code_split):
-#             counter = str(int(index) + 1)
-#             commodity_code_html = (
-#                 commodity_code_html
-#                 + '<span class="app-commodity-code__highlight app-commodity-code__highlight--'
-#                 + counter
-#                 + '">'
-#                 + code_segment
-#                 + "</span>"
-#             )
-#
-#         commodity_code_html = commodity_code_html + "</span>"
-#     return commodity_code_html
 
 
 def commodity_hierarchy_section_header(reversed_commodity_tree):

@@ -76,8 +76,10 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertEqual(instance.heading_code, "2509000000")
 
     def test_instance_builder_for_subheading(self):
+
         model_name = "SubHeading"
         data = HierarchyBuilder.file_loader(model_name=model_name)
+
         model = apps.get_model(
             app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
@@ -86,7 +88,6 @@ class HierarchyBuilderTestCase(TestCase):
         instance_data = [
             item for item in data if item["goods_nomenclature_item_id"] == "0204430000"
         ]
-
         instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
         self.assertEqual(instance.commodity_code, "0204430000")
@@ -240,9 +241,6 @@ class HierarchyBuilderTestCase(TestCase):
             parent_subheading = builder.rename_key(
                 parent_subheading, "goods_nomenclature_item_id", "commodity_code"
             )
-            parent_subheading = builder.rename_key(
-                parent_subheading, "leaf", "tts_is_leaf"
-            )
             model.objects.create(**parent_subheading)
 
         model = apps.get_model(
@@ -252,9 +250,6 @@ class HierarchyBuilderTestCase(TestCase):
         for parent_subheading in parent_subheadings:
             parent_subheading = builder.rename_key(
                 parent_subheading, "goods_nomenclature_item_id", "commodity_code"
-            )
-            parent_subheading = builder.rename_key(
-                parent_subheading, "leaf", "tts_is_leaf"
             )
             model.objects.create(**parent_subheading)
 
@@ -266,7 +261,6 @@ class HierarchyBuilderTestCase(TestCase):
             subheading = builder.rename_key(
                 subheading, "goods_nomenclature_item_id", "commodity_code"
             )
-            subheading = builder.rename_key(subheading, "leaf", "tts_is_leaf")
             model.objects.create(**subheading)
 
         self.assertTrue(builder.process_orphaned_subheadings() >= 3)

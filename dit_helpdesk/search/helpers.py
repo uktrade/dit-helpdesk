@@ -12,10 +12,12 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def search_by_term(query, page):
+def search_by_term(
+    query, page, sort_by="ranking", sort_order="desc", filter_on_leaf=False
+):
     client = Elasticsearch(hosts=[settings.ES_URL])
 
-    sort_object = {"ranking": {"order": "desc"}}
+    sort_object = {sort_by: {"order": sort_order}}
     query_object = {
         "multi_match": {
             "query": query,
@@ -24,7 +26,14 @@ def search_by_term(query, page):
             "operator": "and" if "," not in query else "or",
         }
     }
-    request = Search().using(client).query(query_object).sort(sort_object)
+
+    request = (
+        Search()
+        .using(client)
+        .query(query_object)
+        .sort(sort_object)
+        .filter("term", leaf=filter_on_leaf)
+    )
 
     start = (page - 1) * settings.RESULTS_PER_PAGE
     end = start + settings.RESULTS_PER_PAGE
@@ -47,7 +56,9 @@ def search_by_term(query, page):
     return {
         "results": hits,
         "page_range_start": start if start != 0 else start + 1,
-        "page_range_end": end if len(hits) == settings.RESULTS_PER_PAGE else start + len(hits),
+        "page_range_end": end
+        if len(hits) == settings.RESULTS_PER_PAGE
+        else start + len(hits),
         "total_pages": total_full_pages + 1 if orphan_results > 0 else total_full_pages,
         "total_results": total_results,
     }

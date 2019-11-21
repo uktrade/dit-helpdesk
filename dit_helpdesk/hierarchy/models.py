@@ -7,7 +7,7 @@ from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
-from trade_tariff_service.tts_api import HeadingJson
+from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson
 
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
@@ -477,7 +477,6 @@ class Heading(models.Model):
         """
         return self.child_subheadings.count() + self.children_concrete.count()
 
-
     def get_hierarchy_url(self, country_code=None):
         """
         Return the url of the model instance as used in the hierarchy html
@@ -600,7 +599,7 @@ class SubHeading(models.Model):
     ranking = models.SmallIntegerField(null=True, blank=True)
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
-    tts_is_leaf = models.BooleanField()
+    leaf = models.BooleanField()
     tts_json = models.TextField(blank=True, null=True)
 
     last_updated = models.DateTimeField(auto_now=True)
@@ -776,7 +775,7 @@ class SubHeading(models.Model):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.commodity_code
+        url = settings.COMMODITY_URL % self.commodity_code
 
         resp = requests.get(url, timeout=10)
         resp_content = None
@@ -818,7 +817,7 @@ class SubHeading(models.Model):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return HeadingJson(json.loads(self.tts_json))
+        return SubHeadingJson(json.loads(self.tts_json))
 
     def get_path(self, parent=None, tree=None, level=0):
         """
@@ -906,14 +905,17 @@ class SubHeading(models.Model):
     def get_chapter(self, ancestor=None):
         """
         recursive function to return the ancestoral chapter
-        :param ancestor: SubHesding or Heading
+        :param ancestor: SubHeading or Heading
         :return: chapter
         """
+        if not ancestor:
+            ancestor = self.get_parent()
 
-        if isinstance(self.get_parent(), Heading):
-            return self.get_parent().chapter
+        while not isinstance(ancestor, Heading):
+            parent = ancestor.get_parent()
+            return self.get_chapter(ancestor=parent)
         else:
-            return self.get_chapter(ancestor=self.get_parent())
+            return ancestor.chapter
 
     def get_path_children(self):
         return self._append_path_children(self, tree=[[]], level=0)

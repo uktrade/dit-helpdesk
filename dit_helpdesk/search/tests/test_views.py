@@ -184,7 +184,7 @@ class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
         data = {"q": "Scissors"}
         resp = self.client.get(url, data=data)
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["results"][0]["description"], "Scissors")
+        self.assertIn("Scissors", resp.json()["results"][0]["keywords"])
 
 
 class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):

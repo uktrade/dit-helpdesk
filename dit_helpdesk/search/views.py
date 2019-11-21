@@ -72,13 +72,20 @@ class CommoditySearchView(FormView):
 
     def get(self, request, *args, **kwargs):
 
-        self.form = self.get_form(self.form_class)
+        # self.form = self.get_form(self.form_class)
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
-        if "q" in self.request.GET:
-            if self.form.is_valid():
+        if request.GET:
+            form = CommoditySearchForm(request.GET)
+            if form.is_valid() and "q" in self.request.GET:
+
                 query = self.request.GET.get("q")
                 context["query"] = query
+                sort_order = "asc"
+                sort_by = self.request.GET.get("sort")
+                filter_on_leaf = (
+                    False if self.request.GET.get("show_headings") == "false" else True
+                )
 
                 if query.isdigit():
                     response = helpers.search_by_code(code=query)
@@ -108,24 +115,36 @@ class CommoditySearchView(FormView):
                                         },
                                     )
                                 )
-                        else:
-                            return redirect(
-                                reverse(
-                                    "search:search-hierarchy",
-                                    kwargs={
-                                        "node_id": "{0}-{1}".format(
-                                            hit.meta["index"], hit.id
-                                        ),
-                                        "country_code": context["country_code"],
-                                    },
+                            else:
+                                return redirect(
+                                    reverse(
+                                        "search:search-hierarchy",
+                                        kwargs={
+                                            "node_id": "{0}-{1}".format(
+                                                hit.meta["index"], hit.id
+                                            ),
+                                            "country_code": context["country_code"],
+                                        },
+                                    )
                                 )
-                            )
-                    else:
-                        context["message"] = "nothing found for that number"
-                        return self.render_to_response(context)
+                        else:
+                            context["message"] = "nothing found for that number"
+                            return self.render_to_response(context)
                 else:
                     page = int(self.request.GET.get("page", "1"))
-                    context.update(helpers.search_by_term(query=query, page=page))
+                    sort_by = "ranking" if not sort_by else sort_by
+                    sort_order = "desc" if not sort_order else sort_order
+                    filter_on_leaf = False if not filter_on_leaf else filter_on_leaf
+
+                    context.update(
+                        helpers.search_by_term(
+                            query=query,
+                            page=page,
+                            sort_by=sort_by,
+                            sort_order=sort_order,
+                            filter_on_leaf=filter_on_leaf,
+                        )
+                    )
                     context[
                         "next_url"
                     ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
@@ -152,8 +171,9 @@ class CommoditySearchView(FormView):
                             )
 
                     return self.render_to_response(context)
+
             else:
-                return self.form_invalid(self.form)
+                return self.render_to_response(context)
         else:
             return self.render_to_response(context)
 
