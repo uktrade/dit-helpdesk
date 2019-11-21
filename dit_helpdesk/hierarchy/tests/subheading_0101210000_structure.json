@@ -2,7 +2,7 @@
 		"commodity_code": "0101210000",
 		"goods_nomenclature_sid": "93797",
 		"productline_suffix": "10",
-		"tts_is_leaf": "0",
+		"leaf": "0",
 		"parent_goods_nomenclature_item_id": "0101000000",
 		"parent_goods_nomenclature_sid": "27624",
 		"parent_productline_suffix": "80",
