@@ -13,8 +13,9 @@ from django_elasticsearch_dsl.search import Search
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
 
+from commodities.models import Commodity
 from countries.models import Country
-from hierarchy.models import Heading
+from hierarchy.models import Heading, Chapter, SubHeading
 from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
 from search.documents.chapter import ChapterDocument
@@ -84,7 +85,7 @@ class CommoditySearchView(FormView):
                 sort_order = "asc"
                 sort_by = self.request.GET.get("sort")
                 filter_on_leaf = (
-                    False if self.request.GET.get("show_headings") == "false" else True
+                    True if self.request.GET.get("show_headings") == "true" else False
                 )
 
                 if query.isdigit():
@@ -134,7 +135,6 @@ class CommoditySearchView(FormView):
                     page = int(self.request.GET.get("page", "1"))
                     sort_by = "ranking" if not sort_by else sort_by
                     sort_order = "desc" if not sort_order else sort_order
-                    filter_on_leaf = False if not filter_on_leaf else filter_on_leaf
 
                     context.update(
                         helpers.search_by_term(
@@ -164,11 +164,27 @@ class CommoditySearchView(FormView):
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
                     context["page_total"] = len(context["results"])
+
                     for hit in context["results"]:
                         if isinstance(hit["commodity_code"], str):
-                            hit["commodity_code_html"] = _commodity_code_html(
-                                hit["commodity_code"]
-                            )
+                            if hit.meta["index"] == "chapter":
+                                item = Chapter.objects.get(
+                                    chapter_code=hit["commodity_code"]
+                                )
+                            elif hit.meta["index"] == "heading":
+                                item = Heading.objects.get(
+                                    heading_code=hit["commodity_code"]
+                                )
+                            elif hit.meta["index"] == "subheading":
+                                item = SubHeading.objects.get(
+                                    commodity_code=hit["commodity_code"]
+                                )
+                            else:
+                                item = Commodity.objects.get(
+                                    commodity_code=hit["commodity_code"]
+                                )
+
+                            hit["commodity_code_html"] = _commodity_code_html(item)
 
                     return self.render_to_response(context)
 

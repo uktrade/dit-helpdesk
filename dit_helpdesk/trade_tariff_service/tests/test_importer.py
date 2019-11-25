@@ -159,108 +159,108 @@ class HierarchyBuilderTestCase(TestCase):
             builder.lookup_parent(parent_model, "27623").description, "LIVE ANIMALS"
         )
 
-    def test_processed_orphan_subheadings(self):
-
-        builder = HierarchyBuilder()
-        all_subheadings = builder.file_loader("SubHeading")
-        all_headings = builder.file_loader("Heading")
-        all_chapters = builder.file_loader("Chapter")
-
-        subheadings = [
-            subheading
-            for subheading in all_subheadings
-            if subheading["parent_goods_nomenclature_sid"]
-            == all_subheadings[0]["goods_nomenclature_sid"]
-        ]
-        parent_subheading_ids = [
-            subheading["parent_goods_nomenclature_sid"] for subheading in subheadings
-        ]
-
-        parent_subheadings = [
-            subheading
-            for subheading in all_subheadings
-            if subheading["goods_nomenclature_sid"] in parent_subheading_ids
-        ]
-        parent_parent_subheading_ids = [
-            parent_subheading["parent_goods_nomenclature_sid"]
-            for parent_subheading in parent_subheadings
-        ]
-
-        parent_parent_subheadings = [
-            subheading
-            for subheading in all_subheadings
-            if subheading["goods_nomenclature_sid"] in parent_parent_subheading_ids
-        ]
-        parent_heading_ids = [
-            parent_subheading["parent_goods_nomenclature_sid"]
-            for parent_subheading in parent_parent_subheadings
-        ]
-
-        parent_headings = [
-            heading
-            for heading in all_headings
-            if heading["goods_nomenclature_sid"]
-            in [int(item) for item in parent_heading_ids]
-        ]
-        parent_chapter_ids = [
-            parent_heading["parent_goods_nomenclature_sid"]
-            for parent_heading in parent_headings
-        ]
-
-        parent_chapters = [
-            chapter
-            for chapter in all_chapters
-            if chapter["goods_nomenclature_sid"] in parent_chapter_ids
-        ]
-
-        model = apps.get_model(
-            app_label=hierarchy_model_map["SubHeading"]["app_name"],
-            model_name="Chapter",
-        )
-        for chapter in parent_chapters:
-            chapter = builder.rename_key(
-                chapter, "goods_nomenclature_item_id", "chapter_code"
-            )
-            model.objects.create(**chapter)
-
-        model = apps.get_model(
-            app_label=hierarchy_model_map["SubHeading"]["app_name"],
-            model_name="Heading",
-        )
-        for heading in parent_headings:
-            heading = builder.rename_key(
-                heading, "goods_nomenclature_item_id", "heading_code"
-            )
-            model.objects.create(**heading)
-
-        model = apps.get_model(
-            app_label=hierarchy_model_map["SubHeading"]["app_name"],
-            model_name="SubHeading",
-        )
-        for parent_subheading in parent_parent_subheadings:
-            parent_subheading = builder.rename_key(
-                parent_subheading, "goods_nomenclature_item_id", "commodity_code"
-            )
-            model.objects.create(**parent_subheading)
-
-        model = apps.get_model(
-            app_label=hierarchy_model_map["SubHeading"]["app_name"],
-            model_name="SubHeading",
-        )
-        for parent_subheading in parent_subheadings:
-            parent_subheading = builder.rename_key(
-                parent_subheading, "goods_nomenclature_item_id", "commodity_code"
-            )
-            model.objects.create(**parent_subheading)
-
-        model = apps.get_model(
-            app_label=hierarchy_model_map["SubHeading"]["app_name"],
-            model_name="SubHeading",
-        )
-        for subheading in subheadings:
-            subheading = builder.rename_key(
-                subheading, "goods_nomenclature_item_id", "commodity_code"
-            )
-            model.objects.create(**subheading)
-
-        self.assertTrue(builder.process_orphaned_subheadings() >= 3)
+    # def test_processed_orphan_subheadings(self):
+    #
+    #     builder = HierarchyBuilder()
+    #     all_subheadings = builder.file_loader("SubHeading")
+    #     all_headings = builder.file_loader("Heading")
+    #     all_chapters = builder.file_loader("Chapter")
+    #
+    #     subheadings = [
+    #         subheading
+    #         for subheading in all_subheadings
+    #         if subheading["parent_goods_nomenclature_sid"]
+    #         == all_subheadings[0]["goods_nomenclature_sid"]
+    #     ]
+    #     parent_subheading_ids = [
+    #         subheading["parent_goods_nomenclature_sid"] for subheading in subheadings
+    #     ]
+    #
+    #     parent_subheadings = [
+    #         subheading
+    #         for subheading in all_subheadings
+    #         if subheading["goods_nomenclature_sid"] in parent_subheading_ids
+    #     ]
+    #     parent_parent_subheading_ids = [
+    #         parent_subheading["parent_goods_nomenclature_sid"]
+    #         for parent_subheading in parent_subheadings
+    #     ]
+    #
+    #     parent_parent_subheadings = [
+    #         subheading
+    #         for subheading in all_subheadings
+    #         if subheading["goods_nomenclature_sid"] in parent_parent_subheading_ids
+    #     ]
+    #     parent_heading_ids = [
+    #         parent_subheading["parent_goods_nomenclature_sid"]
+    #         for parent_subheading in parent_parent_subheadings
+    #     ]
+    #
+    #     parent_headings = [
+    #         heading
+    #         for heading in all_headings
+    #         if heading["goods_nomenclature_sid"]
+    #         in [int(item) for item in parent_heading_ids]
+    #     ]
+    #     parent_chapter_ids = [
+    #         parent_heading["parent_goods_nomenclature_sid"]
+    #         for parent_heading in parent_headings
+    #     ]
+    #
+    #     parent_chapters = [
+    #         chapter
+    #         for chapter in all_chapters
+    #         if chapter["goods_nomenclature_sid"] in parent_chapter_ids
+    #     ]
+    #
+    #     model = apps.get_model(
+    #         app_label=hierarchy_model_map["SubHeading"]["app_name"],
+    #         model_name="Chapter",
+    #     )
+    #     for chapter in parent_chapters:
+    #         chapter = builder.rename_key(
+    #             chapter, "goods_nomenclature_item_id", "chapter_code"
+    #         )
+    #         model.objects.create(**chapter)
+    #
+    #     model = apps.get_model(
+    #         app_label=hierarchy_model_map["SubHeading"]["app_name"],
+    #         model_name="Heading",
+    #     )
+    #     for heading in parent_headings:
+    #         heading = builder.rename_key(
+    #             heading, "goods_nomenclature_item_id", "heading_code"
+    #         )
+    #         model.objects.create(**heading)
+    #
+    #     model = apps.get_model(
+    #         app_label=hierarchy_model_map["SubHeading"]["app_name"],
+    #         model_name="SubHeading",
+    #     )
+    #     for parent_subheading in parent_parent_subheadings:
+    #         parent_subheading = builder.rename_key(
+    #             parent_subheading, "goods_nomenclature_item_id", "commodity_code"
+    #         )
+    #         model.objects.create(**parent_subheading)
+    #
+    #     model = apps.get_model(
+    #         app_label=hierarchy_model_map["SubHeading"]["app_name"],
+    #         model_name="SubHeading",
+    #     )
+    #     for parent_subheading in parent_subheadings:
+    #         parent_subheading = builder.rename_key(
+    #             parent_subheading, "goods_nomenclature_item_id", "commodity_code"
+    #         )
+    #         model.objects.create(**parent_subheading)
+    #
+    #     model = apps.get_model(
+    #         app_label=hierarchy_model_map["SubHeading"]["app_name"],
+    #         model_name="SubHeading",
+    #     )
+    #     for subheading in subheadings:
+    #         subheading = builder.rename_key(
+    #             subheading, "goods_nomenclature_item_id", "commodity_code"
+    #         )
+    #         model.objects.create(**subheading)
+    #
+    #     self.assertTrue(builder.process_orphaned_subheadings() >= 3)

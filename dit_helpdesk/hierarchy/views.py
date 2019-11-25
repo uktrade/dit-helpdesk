@@ -95,9 +95,9 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         elif type(child) in [Commodity, Heading, SubHeading] and (
             type(child) is Commodity or child.get_hierarchy_children_count() == 0
         ):
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">{child.description}<span class="govuk-visually-hidden"> &ndash; </span></a></div>{_commodity_code_html(child.commodity_code)}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">{child.description}<span class="govuk-visually-hidden"> &ndash; </span></a></div>{_commodity_code_html(child)}</li>'
         else:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{_commodity_code_html(child.harmonized_code)}'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{_commodity_code_html(child)}'
         html = html + li
 
         if child.hierarchy_key in expanded:
@@ -168,6 +168,12 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     """
     node_id = node_id.rstrip("/")
     expanded = _get_expanded_context(node_id)
+    print(
+        "JSON:",
+        _get_hierarchy_level_json(
+            node="root", expanded=expanded, origin_country=country_code
+        ),
+    )
     serializers = {"html": _get_hierarchy_level_html, "json": _get_hierarchy_level_json}
     serializer = serializers[content_type]
     return serializer(node="root", expanded=expanded, origin_country=country_code)
@@ -203,7 +209,7 @@ def section_detail(request, section_id, country_code):
     table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     section_path = section.get_path()
-    accordion_title = heading_hierarchy_section_header(section_path)
+    accordion_title = hierarchy_section_header(section_path)
     rules_of_origin = section.get_rules_of_origin(country_code=country.country_code)
 
     modals_dict = {}
@@ -253,7 +259,7 @@ def chapter_detail(request, chapter_code, country_code):
     if chapter.get_hierarchy_children_count() > 0:
         chapter_path.insert(0, chapter.get_hierarchy_children())
 
-    accordion_title = chapter_hierarchy_section_header(chapter_path)
+    accordion_title = hierarchy_section_header(chapter_path)
 
     context = {
         "selected_origin_country": country.country_code,
@@ -314,14 +320,14 @@ def heading_detail(request, heading_code, country_code):
     if heading.get_hierarchy_children_count() > 0:
         heading_path.insert(0, heading.get_hierarchy_children())
 
-    accordion_title = heading_hierarchy_section_header(heading_path)
+    accordion_title = hierarchy_section_header(heading_path)
     rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
 
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
-        "footnotes": heading.tts_obj.footnotes,
+        "footnotes": heading.footnotes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code
@@ -381,17 +387,25 @@ def subheading_detail(request, commodity_code, country_code):
         print(ex.args)
 
     subheading_path = subheading.get_path()
+    print("subheading_path 1:", subheading_path)
+    print("subheading_path 1:", subheading)
     subheading_path.insert(0, [subheading])
+    print("subheading_path 2:", subheading_path)
     if subheading.get_hierarchy_children_count() > 0:
+        # print(get_subpath())
         subheading_path.insert(0, subheading.get_hierarchy_children())
-    accordion_title = heading_hierarchy_section_header(subheading_path)
+
+    # print(subheading.get_hierarchy_children())
+    # print([(item.commodity_code, item.description, type(item)) for item in subheading.get_hierarchy_children()])
+
+    accordion_title = hierarchy_section_header(subheading_path)
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
     context = {
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
-        "footnotes": subheading.tts_obj.footnotes,
+        "footnotes": subheading.footnotes,
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": get_hierarchy_context(
             subheading_path, country.country_code, commodity_code
@@ -413,20 +427,7 @@ def subheading_detail(request, commodity_code, country_code):
     return render(request, "hierarchy/subheading_detail.html", context)
 
 
-def chapter_hierarchy_section_header(reversed_heading_tree):
-    """
-    View helper function to extract the Section Numeral and title for the hierarchy context of the heading
-    and returned as formatted html string
-    :param reversed_heading_tree:
-    :return: html
-    """
-    section_index = len(reversed_heading_tree) - 1
-    section = reversed_heading_tree[section_index][0]
-    html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
-    return html
-
-
-def heading_hierarchy_section_header(reversed_heading_tree):
+def hierarchy_section_header(reversed_heading_tree):
     """
     View helper function to extract the Section Numeral and title for the hierarchy context of the heading
     and returned as formatted html string
@@ -468,7 +469,7 @@ def get_hierarchy_item_by_code(code):
         pass
 
 
-def _commodity_code_html(code):
+def _commodity_code_html(item):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
     of 6, 2 and  digits and colour code formatted
@@ -476,8 +477,22 @@ def _commodity_code_html(code):
     :return: html
     """
 
+    if isinstance(item, str):
+        item
+
     leaf = False
-    item = get_hierarchy_item_by_code(code)
+    code = ""
+    if isinstance(item, str):
+        code = item
+    elif isinstance(item, Chapter):
+        code = item.chapter_code
+    elif isinstance(item, Heading):
+        code = item.heading_code
+    else:
+        code = item.commodity_code
+
+    if not isinstance(item, str):
+        print(code, item.description, type(item))
 
     if (
         hasattr(item, "get_hierarchy_children_count")
@@ -497,6 +512,7 @@ def _commodity_code_html(code):
         code_regex = re.search(
             "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
         )
+
         code_split = [
             code_regex.group(1),
             code_regex.group(2),
@@ -504,18 +520,19 @@ def _commodity_code_html(code):
             code_regex.group(4),
             code_regex.group(5),
         ]
+
         blank_span_html = ['<span class="app-commodity-code__is-blank">', "</span>"]
+
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
-
-            if code[2:] == "00000000" and int(counter) > 1 and not leaf:
-                blank_span = blank_span_html
-            elif code[4:] == "000000" and int(counter) > 2 and not leaf:
-                blank_span = blank_span_html
-            elif code[6:] == "0000" and int(counter) > 3 and not leaf:
-                blank_span = blank_span_html
-            elif code[8:] == "00" and int(counter) > 4 and not leaf:
-                blank_span = blank_span_html
+            if code[2:] == "00000000" and int(counter) > 1:
+                blank_span = blank_span_html if not leaf else ["", ""]
+            elif code[4:] == "000000" and int(counter) > 2:
+                blank_span = blank_span_html if not leaf else ["", ""]
+            elif code[6:] == "0000" and int(counter) > 3:
+                blank_span = blank_span_html if not leaf else ["", ""]
+            elif code[8:] == "00" and int(counter) > 4:
+                blank_span = blank_span_html if not leaf else ["", ""]
             else:
                 blank_span = ["", ""]
 
@@ -619,6 +636,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
     :param commodity_code: string
     :return: html
     """
+    # print("commodity_path: ", commodity_path)
 
     listSize = len(commodity_path)
     html = ""
@@ -648,11 +666,14 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
                 if index is listSize:
                     expand = "closed"
 
-                if item_commodity_code == commodity_code:
-                    html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item.commodity_code)}</strong></li>"""
+                if (
+                    item_commodity_code == commodity_code
+                    and commodity_type == "commodity"
+                ):
+                    html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
 
-                    html += f"""<li><a href="/country/{country_code}/{commodity_type}/{item_commodity_code}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item_commodity_code)}"""
+                    html += f"""<li><a href="/country/{country_code}/{commodity_type}/{item_commodity_code}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
 
                 if index is listSize:
                     html += "</li>"

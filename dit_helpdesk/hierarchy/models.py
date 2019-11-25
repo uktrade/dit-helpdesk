@@ -392,6 +392,12 @@ class Heading(models.Model):
         for child in children:
             tree[level].append(child)
 
+    @property
+    def footnotes(self):
+        if not self.tts_json:
+            return {}
+        return self.tts_obj.footnotes
+
     def get_regulations(self):
         """
         Returns a list of regulations instances either related to the commodity or it's parent subheading
@@ -696,6 +702,12 @@ class SubHeading(models.Model):
         :return: int
         """
         return self.child_subheadings.count() + self.children_concrete.count()
+
+    @property
+    def footnotes(self):
+        if not self.tts_json:
+            return {}
+        return self.tts_obj.footnotes
 
     @property
     def ancestor_data(self):
