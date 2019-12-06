@@ -130,6 +130,5 @@ def process_commodity_code(code):
         return result
 
     else:
-        print("code: ", code)
         result = code
         return result

@@ -49,7 +49,6 @@
                                   <span class="govuk-details__summary-text govuk-!-font-size-16">{% if table_data %}Commodity{% else %}Heading{% endif %} notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-
                                     <table class="govuk-table app-flexible-table">
                                         <caption class="govuk-table__caption govuk-visually-hidden"></caption>
                                         <thead class="govuk-table__head app-flexible-table__head">
@@ -62,7 +61,7 @@
                                         {% for footnote in footnotes %}
                                             <tr class="govuk-table__row app-flexible-table__row">
                                                 <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Code">{{ footnote.code }}</td>
-                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ footnote.description|escape }}</td>
+                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ footnote.description|safe }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

@@ -69,7 +69,7 @@ def commodity_detail(request, commodity_code, country_code):
         "accordion_title": accordion_title,
         "footnotes": commodity.tts_obj.footnotes,
         "commodity_hierarchy_context": get_hierarchy_context(
-            commodity_path, country.country_code, commodity_code
+            commodity_path, country.country_code, commodity_code, commodity
         ),
         "modals": modals_dict,
     }

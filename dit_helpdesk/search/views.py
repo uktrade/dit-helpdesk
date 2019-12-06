@@ -176,9 +176,11 @@ class CommoditySearchView(FormView):
                                     heading_code=hit["commodity_code"]
                                 )
                             elif hit.meta["index"] == "subheading":
-                                item = SubHeading.objects.filter(
+                                res = SubHeading.objects.filter(
                                     commodity_code=hit["commodity_code"]
-                                ).first()
+                                )
+
+                                item = res.first()
                             else:
                                 item = Commodity.objects.get(
                                     commodity_code=hit["commodity_code"]

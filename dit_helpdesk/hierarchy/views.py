@@ -1,7 +1,10 @@
+import logging
 import os
 import json
 import re
 from datetime import datetime, timedelta, timezone
+
+import requests
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.query import QuerySet
@@ -16,6 +19,8 @@ code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
 HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
 with open(HIERARCHY_JSON_PATH) as f:
     HIERARCHY_CACHED = json.loads(f.read())
+
+logger = logging.getLogger(__name__)
 
 
 def _get_expanded_context(selected_node_id):
@@ -168,12 +173,6 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     """
     node_id = node_id.rstrip("/")
     expanded = _get_expanded_context(node_id)
-    print(
-        "JSON:",
-        _get_hierarchy_level_json(
-            node="root", expanded=expanded, origin_country=country_code
-        ),
-    )
     serializers = {"html": _get_hierarchy_level_html, "json": _get_hierarchy_level_json}
     serializer = serializers[content_type]
     return serializer(node="root", expanded=expanded, origin_country=country_code)
@@ -261,13 +260,25 @@ def chapter_detail(request, chapter_code, country_code):
 
     accordion_title = hierarchy_section_header(chapter_path)
 
+    chapter_notes = {}
+    try:
+        if (
+            chapter.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
+            or chapter.tts_json is None
+        ):
+            chapter.update_content()
+
+    except Exception as ex:
+        logger.info("chapter notes: ", ex.args)
+
     context = {
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
+        "chapter_note": chapter.chapter_note,
         "accordion_title": accordion_title,
         "chapter_hierarchy_context": get_hierarchy_context(
-            chapter_path, country.country_code, chapter_code
+            chapter_path, country.country_code, chapter_code, chapter
         ),
     }
 
@@ -313,7 +324,7 @@ def heading_detail(request, heading_code, country_code):
         for measure_json in import_measures:
             modals_dict.update(measure_json.measures_modals)
     except Exception as ex:
-        print(ex.args)
+        logger.info(ex.args)
 
     heading_path = heading.get_path()
     heading_path.insert(0, [heading])
@@ -330,7 +341,7 @@ def heading_detail(request, heading_code, country_code):
         "footnotes": heading.footnotes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
-            heading_path, country.country_code, heading_code
+            heading_path, country.country_code, heading_code, heading
         ),
     }
 
@@ -384,19 +395,12 @@ def subheading_detail(request, commodity_code, country_code):
         for measure_json in import_measures:
             modals_dict.update(measure_json.measures_modals)
     except Exception as ex:
-        print(ex.args)
+        logger.info("subheading 2: ", ex.args)
 
     subheading_path = subheading.get_path()
-    print("subheading_path 1:", subheading_path)
-    print("subheading_path 1:", subheading)
     subheading_path.insert(0, [subheading])
-    print("subheading_path 2:", subheading_path)
     if subheading.get_hierarchy_children_count() > 0:
-        # print(get_subpath())
         subheading_path.insert(0, subheading.get_hierarchy_children())
-
-    # print(subheading.get_hierarchy_children())
-    # print([(item.commodity_code, item.description, type(item)) for item in subheading.get_hierarchy_children()])
 
     accordion_title = hierarchy_section_header(subheading_path)
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
@@ -408,7 +412,7 @@ def subheading_detail(request, commodity_code, country_code):
         "footnotes": subheading.footnotes,
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": get_hierarchy_context(
-            subheading_path, country.country_code, commodity_code
+            subheading_path, country.country_code, commodity_code, subheading
         ),
     }
 
@@ -490,9 +494,6 @@ def _commodity_code_html(item):
         code = item.heading_code
     else:
         code = item.commodity_code
-
-    if not isinstance(item, str):
-        print(code, item.description, type(item))
 
     if (
         hasattr(item, "get_hierarchy_children_count")
@@ -626,7 +627,7 @@ def measure_quota_detail(request, heading_code, country_code, measure_id, order_
     return render(request, "hierarchy/measure_quota_detail.html", context)
 
 
-def get_hierarchy_context(commodity_path, country_code, commodity_code):
+def get_hierarchy_context(commodity_path, country_code, commodity_code, current_item):
     """
     View helper function that returns an html representation of the context of the commodity within the
     hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
@@ -636,7 +637,6 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
     :param commodity_code: string
     :return: html
     """
-    # print("commodity_path: ", commodity_path)
 
     listSize = len(commodity_path)
     html = ""
@@ -656,20 +656,18 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
                 elif type(item) is Heading:
                     item_commodity_code = item.heading_code
                     commodity_type = "heading"
+                elif type(item) is SubHeading:
+                    item_commodity_code = item.commodity_code
+                    commodity_type = "subheading"
                 else:
                     item_commodity_code = item.commodity_code
-                    commodity_type = (
-                        "subheading" if type(item) == SubHeading else "commodity"
-                    )
+                    commodity_type = "commodity"
 
                 expand = "open"
                 if index is listSize:
                     expand = "closed"
 
-                if (
-                    item_commodity_code == commodity_code
-                    and commodity_type == "commodity"
-                ):
+                if item_commodity_code == commodity_code and item == current_item:
                     html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
 

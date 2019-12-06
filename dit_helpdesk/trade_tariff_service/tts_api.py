@@ -445,7 +445,6 @@ class ImportMeasureJson(object):
         :return: dictionary or None
         """
         if self.di["order_number"]["number"] == order_number:
-            print(self.di["order_number"])
             if self.di["order_number"]["definition"] and isinstance(
                 self.di["order_number"]["definition"]["validity_start_date"], str
             ):
@@ -478,6 +477,31 @@ class MeasureCondition(object):
     def __init__(self, di):
         # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
+
+
+class ChapterJson(object):
+    def __init__(self, di):
+        self.di = di
+
+    @property
+    def title(self):
+        return self.di["formatted_description"]
+
+    @property
+    def harmonized_code(self):
+        return self.di["goods_nomenclature_item_id"]
+
+    @property
+    def heading_ids(self):
+        return [di["goods_nomenclature_item_id"][:4] for di in self.di["headings"]]
+
+    @property
+    def heading_urls(self):
+        return [settings.HEADING_URL % id for id in self.heading_ids]
+
+    @property
+    def chapter_note(self):
+        return self.di["chapter_note"]
 
 
 class HeadingJson(object):

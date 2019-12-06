@@ -68,7 +68,7 @@ class ContactFormWizardView(SessionWizardView):
         :param kwargs: passed keyword arguments
         :return: render to response
         """
-        print("Form: :", form)
+
         if (
             "enquiry_topic" in form.cleaned_data
             and self.steps.next == "step_three"

@@ -1,7 +1,6 @@
 import json
 import logging
 from pathlib import Path
-from pprint import pprint
 
 import pandas
 from django.apps import apps
@@ -165,6 +164,7 @@ class SearchKeywordsImporter:
                     except Exception as ex:
                         logger.debug(ex.args)
 
+                # explicitly set branch items as leafs where they have no children nad have commodity detail data
                 if not isinstance(obj, Commodity):
                     try:
                         if obj.get_hierarchy_children_count() > 0:

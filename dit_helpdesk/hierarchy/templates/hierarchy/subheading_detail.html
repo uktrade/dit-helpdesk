@@ -61,7 +61,7 @@
                                         {% for footnote in footnotes %}
                                             <tr class="govuk-table__row app-flexible-table__row">
                                                 <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Code">{{ footnote.code }}</td>
-                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ footnote.description|escape }}</td>
+                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ footnote.description|safe }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -85,6 +85,7 @@
     </div>
 </div>
 
+{% if leaf %}
 <div class="govuk-width-container">
         <main id="main-content" class="govuk-main-wrapper">
 
@@ -450,5 +451,6 @@
         {% endif %}
 
     </div>
+{% endif %}
 
 {% endblock %}

@@ -7,7 +7,7 @@ from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
-from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson
+from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
 
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
@@ -131,13 +131,34 @@ class Chapter(models.Model):
     keywords = models.TextField(null=True, blank=True)
     ranking = models.SmallIntegerField(null=True, blank=True)
     chapter_code = models.CharField(max_length=30)
+    tts_json = models.TextField(blank=True, null=True)
 
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
     )
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
+
+    @staticmethod
+    def _amend_measure_conditions(resp_content):
+        """
+        Modifies the structure of the json to find and display related import measures in the template
+        :param resp_content: json data from api call
+        :return: json string
+        """
+
+        obj = json.loads(resp_content)
+        if "import_measures" in obj.keys():
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
+
+        return json.dumps(obj)
 
     @property
     def commodity_code(self):
@@ -304,6 +325,95 @@ class Chapter(models.Model):
 
         code_match_obj = re.search(CHAPTER_CODE_REGEX, self.chapter_code)
         return [code_match_obj.group(i) for i in range(1, 5)]
+
+        """
+        gets the Commodity content from the trade tariff service url as json response and stores it in the
+        commodity's tts_json field
+
+        """
+        url = settings.HEADING_URL % self.heading_code[:4]
+
+        resp = requests.get(url, timeout=10)
+        resp_content = None
+
+        if resp.status_code == 200:
+            resp_content = resp.content.decode()
+
+        resp_content = self._amend_measure_conditions(resp_content)
+        self.tts_json = resp_content
+        self.save()
+
+    def update_content(self):
+        url = settings.CHAPTER_URL.format(self.chapter_code[:2])
+
+        resp = requests.get(url, timeout=10)
+        resp_content = None
+        if resp.status_code == 200:
+            resp_content = resp.content.decode()
+
+        self.tts_json = resp_content
+        self.save()
+
+    @property
+    def tts_obj(self):
+        """
+        gets the json object from the tts_json field and converts it to a python CommodityJson class instance
+        used to extract data from the json data structure to display in the template
+        :return: CommodityJson object
+        """
+        return ChapterJson(json.loads(self.tts_json))
+
+    @property
+    def chapter_note(self):
+
+        if not self.tts_json:
+            return {}
+
+        chapter_note_items = self.tts_obj.chapter_note.split("\r\n")
+
+        chapter_notes = []
+        for item in chapter_note_items:
+            match = re.search(r"^\* (\d)\\. (.*)", item)
+            if match:
+                chapter_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                        match.group(1), match.group(2)
+                    )
+                )
+
+            match = re.search(r"^  \* \((\w)\) (.*)", item)
+            if match:
+                chapter_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
+                        match.group(1), match.group(2)
+                    )
+                )
+
+            match = re.search(r"^    ([\s*\\-]*)(.*)", item)
+            if match:
+                chapter_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
+                        "-", match.group(2)
+                    )
+                )
+
+            match = re.search(r"^\* ([^\d.]+)", item)
+            if match:
+                chapter_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
+                        match.group(1)
+                    )
+                )
+
+            match = re.search(r"^##(.+)##", item)
+            if match:
+                chapter_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                        match.group(1)
+                    )
+                )
+
+        return chapter_notes
 
 
 class Heading(models.Model):
@@ -502,21 +612,15 @@ class Heading(models.Model):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.heading_code
+        url = settings.HEADING_URL % self.heading_code[:4]
 
         resp = requests.get(url, timeout=10)
         resp_content = None
 
         if resp.status_code == 200:
             resp_content = resp.content.decode()
-        elif resp.status_code == 404:
-            url = settings.HEADING_URL % self.heading_code[:4]
-            resp = requests.get(url, timeout=10)
-            if resp.status_code == 200:
-                resp_content = resp.content.decode()
 
         resp_content = self._amend_measure_conditions(resp_content)
-
         self.tts_json = resp_content
         self.save()
 
@@ -528,12 +632,13 @@ class Heading(models.Model):
         :return: json string
         """
         obj = json.loads(resp_content)
-        for idx, measure in enumerate(obj["import_measures"]):
-            measure["measure_id"] = idx
-            for i, condition in enumerate(measure["measure_conditions"]):
-                if isinstance(condition, dict):
-                    condition["measure_id"] = idx
-                    condition["condition_id"] = i
+        if "import_measures" in obj.keys():
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
 
         return json.dumps(obj)
 
@@ -787,18 +892,13 @@ class SubHeading(models.Model):
         commodity's tts_json field
 
         """
-        url = settings.COMMODITY_URL % self.commodity_code
+        url = settings.HEADING_URL % self.commodity_code[:4]
 
         resp = requests.get(url, timeout=10)
         resp_content = None
 
         if resp.status_code == 200:
             resp_content = resp.content.decode()
-        elif resp.status_code == 404:
-            url = settings.HEADING_URL % self.commodity_code[:4]
-            resp = requests.get(url, timeout=10)
-            if resp.status_code == 200:
-                resp_content = resp.content.decode()
 
         resp_content = self._amend_measure_conditions(resp_content)
 
@@ -864,8 +964,8 @@ class SubHeading(models.Model):
             tree[level].append(parent.chapter)
         elif hasattr(parent, "section") and parent.section is not None:
             tree[level].append(parent.section)
-        elif self.parent_subheading is not parent:
-            self._append_path_children(self.parent_subheading, tree, level)
+        # elif self.parent_subheading is not parent:
+        #     self._append_path_children(self.parent_subheading, tree, level)
 
         return tree
 
