@@ -18,91 +18,78 @@
     <main id="main-content" class="govuk-main-wrapper">
 
         <form action="" method="post">
-    <div class="govuk-grid-row govuk-!-padding-bottom-9">
-        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-row govuk-!-padding-bottom-9">
+                <div class="govuk-grid-column-full">
 
-            {% if is_error %}
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-                     data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li>
-                                <a href="#commodity-code-error">{{ error_summary_message | safe }}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            {% endif %}
-
-            <h2 class="govuk-heading-l">
-                <span class="govuk-caption-l">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
-                {% block form_page_title %}{% endblock %}
-            </h2>
-
-
-
-                {% csrf_token %}
-
-                {{ form.non_field_errors }}
-
-                {% if form.errors %}
-                    <div id="form"
-                         class="govuk-error-summary"
-                         aria-labelledby="error-summary-title"
-                         role="alert"
-                         tabindex="-1"
-                         data-module="error-summary">
-                        <h3 class="govuk-error-summary__title"
-                            id="error-summary-title">Please fix the following errors</h3>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                {% for field in form %}
-                                    {% if field.errors %}
-                                        {{ field.name|title }}
-                                        {% for error in field.errors %}
-                                            <li><a href="#{{ field.name }}"
-                                                   class="error">{{ error|escape }}</a></li>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
+                    {% if is_error %}
+                        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
+                             data-module="error-summary">
+                            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                                There is a problem
+                            </h2>
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list">
+                                    <li>
+                                        <a href="#commodity-code-error">{{ error_summary_message | safe }}</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
 
-                {% for hidden_field in form.hidden_fields %}
-                    {{ hidden_field.errors }}
-                    {{ hidden_field }}
-                {% endfor %}
+                    <h2 class="govuk-heading-l">
+                        <span class="govuk-caption-l">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
+                        {% block form_page_title %}{% endblock %}
+                    </h2>
 
-                <fieldset class="govuk-fieldset">
+                        {% csrf_token %}
 
-                        {{ wizard.management_form }}
+                        {{ form.non_field_errors }}
 
-                    {% block form_body %}
+                        {% if form.errors %}
+                            <div id="form" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                                <h3 class="govuk-error-summary__title" id="error-summary-title">Please fix the following errors</h3>
+                                <div class="govuk-error-summary__body">
+                                    <ul class="govuk-list govuk-error-summary__list">
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                {{ field.name|title }}
+                                                {% for error in field.errors %}
+                                                    <li><a href="#{{ field.name }}" class="error">{{ error|escape }}</a></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
 
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field.errors }}
+                            {{ hidden_field }}
+                        {% endfor %}
 
+                        <fieldset class="govuk-fieldset">
 
-                    {% endblock %}
+                                {{ wizard.management_form }}
 
-                </fieldset>
+                            {% block form_body %}
+                            {% endblock %}
 
-                <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue
-                </button>
+                        </fieldset>
 
-                {% if wizard.steps.prev %}
-                    <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">
-                        <button class="govuk-button text-button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Go back</button>
-                    </div>
-                {% endif %}
+                        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue
+                        </button>
 
+                        {% if wizard.steps.prev %}
+                            <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0">
+                                <button class="govuk-button text-button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Go back</button>
+                            </div>
+                        {% endif %}
 
-        </div>
-    </div>
-</form>
+                </div>
+            </div>
+        </form>
 
     </main>
 </div>
