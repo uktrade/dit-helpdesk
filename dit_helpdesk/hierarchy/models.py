@@ -29,6 +29,10 @@ class Section(models.Model):
         return "Section {0}".format(self.roman_numeral)
 
     @property
+    def leaf(self):
+        return False
+
+    @property
     def hierarchy_key(self):
         """
         Property method returning the key used to identify the node in the hierarchy html of the search view template

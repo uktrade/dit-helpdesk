@@ -62,6 +62,10 @@ class Commodity(models.Model):
         verbose_name_plural = "commodities"
 
     @property
+    def leaf(self):
+        return True
+
+    @property
     def hierarchy_key(self):
         """
         Hierarchy key used in the template to identify the node
