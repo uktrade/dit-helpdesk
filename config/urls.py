@@ -93,7 +93,9 @@ urlpatterns = [
         hierarchy_views.measure_quota_detail,
         name="heading-measure-quota",
     ),
-    path("feedback/", feedback_views.FeedbackView.as_view(), name="feedback-view"),
+    path(
+        "feedback/", contact_views.ContactFormWizardView.as_view(), name="feedback-view"
+    ),
     path(
         "contact/", contact_views.ContactFormWizardView.as_view(), name="contact-view"
     ),

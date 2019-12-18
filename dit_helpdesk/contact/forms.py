@@ -29,10 +29,12 @@ TOPIC_CHOICE_HELP_TEXT = (
 
 
 class ContactFormStepOne(forms.Form):
+
     category = forms.ChoiceField(
         choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True
     )
     category.label = "What would you like to know more about?"
+    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
 
 
 class ContactFormStepTwo(forms.Form):

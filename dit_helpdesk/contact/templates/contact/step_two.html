@@ -17,15 +17,15 @@
             {% endfor %}
         {% endif %}
 
-        <div class="govuk-radios govuk-radios" id="id_step_three-topic">
+        <div class="govuk-radios govuk-radios" id="id_step_two-topic">
             {% for choice in wizard.form.fields.topic.choices %}
                 <div class="govuk-radios__item">
                     <input class="govuk-radios__input" id="id_step_two-topic_{{ forloop.counter0 }}" required
                            name="step_two-topic" type="radio" value="{{ choice.0 }}"
-                        {% if choice.0 == 1 %}checked="checked"{% endif %}
+                            {% ifequal wizard.form.topic.value|stringformat:"s" choice.0|stringformat:"s" %}checked="checked"{% endifequal %}
                     >
                     <label class="govuk-label govuk-radios__label" for="id_step_two-topic_{{ forloop.counter0 }}">
-                       {{ choice.1 }}
+                       <span>{{ choice.1 }}</span>
                         <p class="govuk-hint">{{ wizard.form.fields.topic.help_text|index:forloop.counter0 }}</p>
                     </label>
                 </div>
