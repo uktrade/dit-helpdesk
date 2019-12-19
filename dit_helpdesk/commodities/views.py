@@ -8,6 +8,8 @@
 
 import re
 from datetime import datetime, timedelta, timezone
+from pprint import pprint
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -17,7 +19,7 @@ from countries.models import Country
 from hierarchy.views import get_hierarchy_context
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-from hierarchy.helpers import TABLE_COLUMN_TITLES
+from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 
 
 def commodity_detail(request, commodity_code, country_code):
@@ -47,7 +49,29 @@ def commodity_detail(request, commodity_code, country_code):
         commodity.update_content()
 
     import_measures = commodity.tts_obj.get_import_measures(country.country_code)
-    table_data = [measure_json.get_table_row() for measure_json in import_measures]
+    # pprint(dir(import_measures[0]))
+    # pprint([(measure.type_description, measure.type_id) for measure in import_measures])
+
+    tariffs_and_charges_measures = get_nomenclature_group_measures(
+        commodity, "Tariffs and charges", country.country_code
+    )
+    tariffs_and_charges_table_data = [
+        measure_json.get_table_row() for measure_json in tariffs_and_charges_measures
+    ]
+
+    quotas_measures = get_nomenclature_group_measures(
+        commodity, "Quotas", country.country_code
+    )
+    quotas_table_data = [
+        measure_json.get_table_row() for measure_json in quotas_measures
+    ]
+
+    other_measures = get_nomenclature_group_measures(
+        commodity, "Other measures", country.country_code
+    )
+    other_table_data = [measure_json.get_table_row() for measure_json in other_measures]
+
+    # table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     commodity_path = commodity.get_path()
     accordion_title = commodity_hierarchy_section_header(commodity_path)
@@ -63,7 +87,9 @@ def commodity_detail(request, commodity_code, country_code):
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
         "roo_footnotes": rules_of_origin,
-        "table_data": table_data,
+        "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+        "quotas_table_data": quotas_table_data,
+        "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
         "regulations": commodity.get_regulations(),
         "accordion_title": accordion_title,

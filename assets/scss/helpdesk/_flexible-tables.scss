@@ -62,10 +62,6 @@
 
   .app-flexible-table__cell,
   .app-flexible-table__header {
-    &:first-child {
-      padding-left: 0.5em;
-    }
-
     &:last-child {
       padding-right: 0.5em;
     }

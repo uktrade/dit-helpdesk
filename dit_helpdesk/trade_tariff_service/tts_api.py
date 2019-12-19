@@ -18,8 +18,8 @@ COMMODITY_DETAIL_TABLE_KEYS = [
     ("measure_description", "Measure type"),
     ("measure_value", "Value"),
     ("conditions_html", "Conditions"),
-    ("excluded_countries", "Excluded countries"),
-    ("start_end_date", "Date"),
+    # ("excluded_countries", "Excluded countries"),
+    ("start_end_date", "Start date"),
 ]
 
 

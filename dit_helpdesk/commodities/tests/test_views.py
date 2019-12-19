@@ -137,14 +137,7 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(self.url)
         self.assertEqual(
             resp.context["column_titles"],
-            [
-                "Country",
-                "Measure type",
-                "Value",
-                "Conditions",
-                "Excluded countries",
-                "Date",
-            ],
+            ["Country", "Measure type", "Value", "Conditions", "Start date"],
         )
 
     def test_commodity_detail_without_country_code(self):

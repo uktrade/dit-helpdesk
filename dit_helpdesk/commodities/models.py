@@ -12,6 +12,7 @@ from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
+from hierarchy.helpers import IMPORT_MEASURE_GROUPS
 from hierarchy.models import Heading, SubHeading, Chapter
 from trade_tariff_service.tts_api import CommodityJson
 
