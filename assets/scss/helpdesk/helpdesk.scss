@@ -317,3 +317,8 @@ label[for="sort"] {
 .helpdesk-chapter-note-item__text span:last-child {
   display: inline;
 }
+
+.helpdesk-note {
+  border-left: solid 10px #ccc;
+  padding: 1em;
+}

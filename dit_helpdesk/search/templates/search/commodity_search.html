@@ -40,12 +40,11 @@
 
                 <div class="govuk-form-group{% if is_error %} govuk-form-group--error{% endif %}">
                   <label class="govuk-hint" for="search">
-                      Here you can look for:
+                      You can search using either:
                       <ul>
                           <li>the name of what you are exporting</li>
                           <li>the commodity code of what you are exporting</li>
                       </ul>
-                      You can search for your commodity code using the catalogue below
                   </label>
                   {% if form.q.errors %}
                     <span id="commodity-code-error" class="govuk-error-message">
@@ -55,7 +54,7 @@
                   <input class="govuk-input govuk-input--width-30 {% if form.q.errors %}govuk-input--error{% endif %}" id="search" name="q" type="text" {% if form.q.errors %} aria-describedby="select-country-error"{% endif %} value="{% if form.q.value %}{{ form.q.value }}{% endif %}">
                 </div>
                 <input type="hidden" name="country" value="{{ country_code }}" />
-                <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
+                <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Search</button>
 
                 <div class="govuk-form-group {% if not query %}govuk-visually-hidden{% endif %}">
                   <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
@@ -89,9 +88,10 @@
                     <div id="search-results">
                         <a name="search-results" id="search-results"></a>
                         <a href="{%  url  'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
-                        <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ query }}</h2>
+
 
                         {% for result in results %}
+                            <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ query }}</h2>
                           <section>
                             <div class="govuk-grid-row">
                               <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
@@ -136,7 +136,16 @@
                           </section>
                           <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                         {% empty %}
-                           <h3 class="govuk-heading-m">There are no results</h3>
+                           <h2 class="govuk-heading-l">There are no results for {{ query }}</h2>
+
+                            <div class="helpdesk-note">
+                                <p class="govuk-heading-m">Please search again and consider:</p>
+                                <ul class="govuk-hint">
+                                    <li>Searching what the item is used for or made from</li>
+                                    <li>Broadening your search criteria</li>
+                                    <li>Checking your spelling</li>
+                                </ul>
+                            </div>
                         {% endfor %}
 
                         <nav class="govuk-search-pagination" role="navigation" aria-label="Pagination">
