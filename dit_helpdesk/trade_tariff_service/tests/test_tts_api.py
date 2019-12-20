@@ -274,8 +274,7 @@ class ImportMeasureJsonTestCase(TestCase):
                 ["Measure type", "VAT standard rate"],
                 ["Value", "20.00 %"],
                 ["Conditions", "-"],
-                ["Excluded countries", ""],
-                ["Date", "1&nbsp;February&nbsp;2015"],
+                ["Start date", "1&nbsp;February&nbsp;2015"],
             ],
         )
 
