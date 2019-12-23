@@ -260,7 +260,6 @@ def chapter_detail(request, chapter_code, country_code):
 
     accordion_title = hierarchy_section_header(chapter_path)
 
-    chapter_notes = {}
     try:
         if (
             chapter.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
@@ -276,6 +275,7 @@ def chapter_detail(request, chapter_code, country_code):
         "chapter": chapter,
         "selected_origin_country_name": country.name,
         "chapter_note": chapter.chapter_note,
+        "section_notes": chapter.section.section_notes,
         "accordion_title": accordion_title,
         "chapter_hierarchy_context": get_hierarchy_context(
             chapter_path, country.country_code, chapter_code, chapter
@@ -360,11 +360,15 @@ def heading_detail(request, heading_code, country_code):
     accordion_title = hierarchy_section_header(heading_path)
     rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
 
+    chapter = heading.chapter
+
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
         "footnotes": heading.footnotes,
+        "chapter_note": chapter.chapter_note,
+        "section_notes": chapter.section.section_notes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code, heading

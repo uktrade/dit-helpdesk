@@ -36,10 +36,6 @@
                         If your item is not listed by name, it may be shown under what it's used for, what it's made from or 'other'.
                     </p>
 
-                    <div class="govuk-inset-text">
-                        There are <a href="#chapter_notes">important notes for classifying your goods</a> show further down this page
-                    </div>
-
                     <div id="app-hierarchy-context">
                         <div class="app-hierarchy-context__wrapper">
                             <div class="helpdesk-breadcrumbs">
@@ -52,28 +48,17 @@
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary">
-                                    <span class="govuk-details__summary-text govuk-!-font-size-16"><a name="chapter_notes">Chapter notes</a></span>
+                                    <span class="govuk-details__summary-text govuk-!-font-size-16"><a name="notes"></a>Notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-
-                                   <table class="govuk-table app-flexible-table">
-                                        <caption class="govuk-table__caption govuk-visually-hidden"></caption>
-                                        <thead class="govuk-table__head app-flexible-table__head">
-                                            <tr class="govuk-table__row">
-                                                <th class="govuk-table__header app-flexible-table__header govuk-!-font-size-16" scope="col">Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="govuk-table__body app-flexible-table__body">
-
-                                        {% for item in  chapter_note %}
-
-                                            <tr class="govuk-table__row app-flexible-table__row">
-                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ item|safe }}</td>
-                                            </tr>
-                                        {% endfor %}
-
-                                        </tbody>
-                                    </table>
+                                    {% if chapter_note %}
+                                        <h3>Chapter notes</h3>
+                                        {% include "hierarchy/_chapter_notes.html" %}
+                                    {% endif %}
+                                    {%  if section_notes %}
+                                        <h3>Section notes</h3>
+                                        {% include "hierarchy/_section_notes.html" %}
+                                    {% endif %}
                                 </div>
                             </details>
                         </div>

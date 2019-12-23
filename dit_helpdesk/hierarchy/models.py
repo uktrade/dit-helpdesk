@@ -93,6 +93,63 @@ class Section(models.Model):
         return reverse("search:search-hierarchy", kwargs=kwargs)
 
     @property
+    def section_notes(self):
+        url = "https://www.trade-tariff.service.gov.uk/api/v2/sections/{0}/section_note".format(
+            self.section_id
+        )
+        resp = requests.get(url, timeout=10)
+        resp_content = None
+
+        if resp.status_code == 200:
+            resp_content = resp.json()
+
+        section_note_items = resp_content["content"].split("\r\n")
+
+        section_notes = []
+        for item in section_note_items:
+            match = re.search(r"^\* (\d)\\. (.*)", item)
+            if match:
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                        match.group(1), match.group(2)
+                    )
+                )
+
+            match = re.search(r"^  \* \((\w)\) (.*)", item)
+            if match:
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
+                        match.group(1), match.group(2)
+                    )
+                )
+
+            match = re.search(r"^    ([\s*\\-]*)(.*)", item)
+            if match:
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
+                        "-", match.group(2)
+                    )
+                )
+
+            match = re.search(r"^\* ([^\d.]+)", item)
+            if match:
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
+                        match.group(1)
+                    )
+                )
+
+            match = re.search(r"^##(.+)##", item)
+            if match:
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                        match.group(1)
+                    )
+                )
+
+        return section_notes
+
+    @property
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
         ancestors.reverse()

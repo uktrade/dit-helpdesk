@@ -41,12 +41,25 @@
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary govuk-!-margin-bottom-0">
-                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Commodity notes</span>
+                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-
-                                    {% include "commodities/_commodity_notes.html" %}
-
+                                    {% if footnotes %}
+                                        <h3>Commodity notes</h3>
+                                        {% include "commodities/_commodity_notes.html" %}
+                                    {% endif %}
+                                    {%  if heading_notes %}
+                                        <h3>Heading notes</h3>
+                                        {% include "hierarchy/_heading_notes.html" %}
+                                    {% endif %}
+                                    {% if chapter_note %}
+                                        <h3>Chapter notes</h3>
+                                        {% include "hierarchy/_chapter_notes.html" %}
+                                    {% endif %}
+                                    {%  if section_notes %}
+                                        <h3>Section notes</h3>
+                                        {% include "hierarchy/_section_notes.html" %}
+                                    {% endif %}
                                 </div>
                             </details>
                         </div>

@@ -3,8 +3,8 @@
 
 
                   <div class="govuk-grid-column-full">
-                      <h3 class="govuk-heading-m"><a name="regulations">Product-specific regulations - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</a></h3>
-                    <p class="govuk-body app-info">These regulations apply to this product. </P>
+                      <h3 class="govuk-heading-m"><a name="regulations"></a>Product-specific regulations - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</h3>
+
                     <div class="govuk-accordion"
                         data-module="accordion"
                         id="accordion-default">
@@ -14,7 +14,7 @@
                             <h4 class="govuk-accordion__section-heading govuk-heading-s">
                               <span class="govuk-accordion__section-button"
                                     id="accordion-default-heading-{{ forloop.counter }}">
-                                  <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3"><a href="">{{ regulation.title  }}</a></p>
+                                  <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3"><a href="#">{{ regulation.title  }}</a></p>
                               </span>
                             </h4>
                           </div>

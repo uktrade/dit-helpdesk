@@ -82,6 +82,8 @@ def commodity_detail(request, commodity_code, country_code):
         modals_dict.update(measure_json.measures_modals)
 
     chapter = Chapter.objects.get(chapter_code=commodity_code[:2] + "00000000")
+    section = chapter.section
+    heading = commodity.get_heading()
 
     context = {
         "selected_origin_country": country.country_code,
@@ -97,6 +99,8 @@ def commodity_detail(request, commodity_code, country_code):
         "accordion_title": accordion_title,
         "footnotes": commodity.tts_obj.footnotes,
         "chapter_note": chapter.chapter_note,
+        "heading_note": heading.footnotes,
+        "section_notes": section.section_notes,
         "commodity_hierarchy_context": get_hierarchy_context(
             commodity_path, country.country_code, commodity_code, commodity
         ),

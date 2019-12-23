@@ -1,7 +1,7 @@
 {% load cell_cleaner %}
 
                              <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                                 <a name="other_measures">Other measures</a> - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
+                                 <a name="other_measures"></a>Other measures - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
                              </h3>
 
                              <div class="govuk-caption-m ">

@@ -43,11 +43,7 @@
           <select name="origin_country" class="govuk-select{% if isError %} govuk-select--error{% endif %}" id="country-picker" {% if isError %} aria-describedby="select-country-error"{% endif %}>
             <option value="">Select the export country</option>
             {% for country_code, country_name in country_options %}
-              {% if selected_country == country_code %}
-                  <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
-              {% else %}
                   <option value="{{ country_code | lower }}">{{ country_name }}</option>
-              {% endif %}
             {% endfor %}
           </select>
           </label>
