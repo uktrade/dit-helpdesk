@@ -44,7 +44,7 @@
                     </h2>
                 {% endif %}
 
-                <form action="{% url 'search:search-commodity' country_code=country_code %}" class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
+                <form id="commodity-search" action="{% url 'search:search-commodity' country_code=country_code %}" class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
                     {% if not request.GET.q %}
                         <div class="govuk-form-group{% if form.q.errors %} govuk-form-group--error{% endif %}">
                             <label class="govuk-hint" for="search">
@@ -71,6 +71,9 @@
                                 Search
                             </button>
                         </div>
+                    {% else %}
+                        <input type="hidden" name="q" value="{% if form.q.value %}{{ form.q.value }}{% endif %}"/>
+                        <input type="hidden" name="country" value="{{ country_code }}"/>
                     {% endif %}
 
                        <a href="{%  url  'choose-country' %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
@@ -81,27 +84,27 @@
 
                     <div class="govuk-form-group {% if not query %}govuk-visually-hidden{% endif %}">
                         <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
-                            <div class="govuk-radios govuk-radios--inline govuk-grid-column-two-thirds">
+                            <div id="toggle_headings" class="govuk-radios govuk-radios--inline govuk-grid-column-two-thirds">
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="show-headings" name="show_headings"
+                                    <input class="govuk-radios__input" id="show-headings" name="toggle_headings"
                                            type="radio"
-                                           {% if form.show_headings.value == True %}checked="checked"{% endif %}
-                                           value="true">
+                                           {% if request.GET.toggle_headings or request.GET.toggle_headings == '1' %}checked="checked"{% endif %}
+                                           value="1">
                                     <label class="govuk-label govuk-radios__label" for="show_headings">
                                         Show headings
                                     </label>
                                 </div>
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="hide-headings" name="show_headings"
+                                    <input class="govuk-radios__input" id="hide-headings" name="toggle_headings"
                                            type="radio"
-                                           {% if form.show_headings.value == False %}checked="checked"{% endif %}
-                                           value="false">
+                                           {% if request.GET.toggle_headings == '0' %}checked="checked"{% endif %}
+                                           value="0">
                                     <label class="govuk-label govuk-radios__label" for="hide_headings">
                                         Hide headings
                                     </label>
                                 </div>
                             </div>
-                            <div class="govuk-select--inline">
+                            <div id="select-sortby" class="govuk-select--inline">
                                 <label class="govuk-label" for="sort">Sort by
                                     <select class="govuk-select" name="sort" id="sort">
                                         <option value="ranking"

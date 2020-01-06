@@ -73,19 +73,24 @@ class CommoditySearchView(FormView):
 
     def get(self, request, *args, **kwargs):
 
-        # self.form = self.get_form(self.form_class)
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
         if request.GET:
             form = CommoditySearchForm(request.GET)
             if form.is_valid() and "q" in self.request.GET:
 
-                query = self.request.GET.get("q")
+                query = request.GET.get("q")
                 context["query"] = query
                 sort_order = "asc"
-                sort_by = self.request.GET.get("sort")
+                sort_by = request.GET.get("sort")
+
+                if "toggle_headings" not in request.GET.keys():
+                    if not request.GET._mutable:
+                        request.GET._mutable = True
+                        request.GET["toggle_headings"] = "1"
+
                 filter_on_leaf = (
-                    True if self.request.GET.get("show_headings") == "true" else False
+                    True if request.GET.get("toggle_headings") == "1" else False
                 )
 
                 if query.isdigit():
@@ -132,7 +137,7 @@ class CommoditySearchView(FormView):
                             context["message"] = "nothing found for that number"
                             return self.render_to_response(context)
                 else:
-                    page = int(self.request.GET.get("page", "1"))
+                    page = int(request.GET.get("page", "1"))
                     sort_by = "ranking" if not sort_by else sort_by
                     sort_order = "desc" if not sort_order else sort_order
 
@@ -148,17 +153,17 @@ class CommoditySearchView(FormView):
                     context[
                         "next_url"
                     ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
-                        self.request.GET.get("country"),
-                        self.request.GET.get("q"),
-                        self.request.GET.get("country"),
+                        request.GET.get("country"),
+                        request.GET.get("q"),
+                        request.GET.get("country"),
                         page + 1,
                     )
                     context[
                         "previous_url"
                     ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
-                        self.request.GET.get("country"),
-                        self.request.GET.get("q"),
-                        self.request.GET.get("country"),
+                        request.GET.get("country"),
+                        request.GET.get("q"),
+                        request.GET.get("country"),
                         page - 1,
                     )
                     context["current_page"] = page

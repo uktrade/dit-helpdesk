@@ -4,6 +4,7 @@ var Accordion = require('govuk-frontend/components/accordion/accordion.js')
 var ErrorSummary = require('govuk-frontend/components/error-summary/error-summary.js')
 var common = require('govuk-frontend/common')
 var commodityTree = require('./modules/commodity-tree')
+// var showHideHeadings = require('./modules/showhide-headings')
 var Modal = require('./modules/modal')
 var nodeListForEach = common.nodeListForEach
 
@@ -20,7 +21,6 @@ var nodeListForEach = common.nodeListForEach
 */
 var CookieBanner = {
   init: function (name, value, options) {
-
     if (typeof value !== 'undefined') {
       if (value === false || value === null) {
         return CookieBanner.setCookie(name, '', { days: -1 })
@@ -61,7 +61,8 @@ var CookieBanner = {
     return null
   },
   addCookieMessage: function () {
-    var message = document.querySelector('.js--cookie-banner')
+    var message = document.querySelector('.app-cookie-banner')
+
     var hasCookieMessage = (message && CookieBanner.init('cookie_seen') === null)
 
     var isCookiesPage = document.URL.indexOf('cookies') !== -1
@@ -69,13 +70,27 @@ var CookieBanner = {
     var acceptCookiesBtn = document.querySelector('.js-accept-cookie')
 
     if (acceptCookiesBtn) {
-      console.log(acceptCookiesBtn)
       this.addListener(acceptCookiesBtn)
     }
 
     // we only want to dismiss the cookie banner once they've visited the cookie page
-    if (isCookiesPage || acceptCookiesBtn) {
+    if (isCookiesPage) {
       CookieBanner.init('cookie_seen', 'true', { days: 28 })
+    }
+
+    if (acceptCookiesBtn) {
+      CookieBanner.init('cookie_seen', 'true', { days: 28 })
+
+      var banner = document.querySelector('.app-cookie-banner')
+      if (acceptCookiesBtn.attachEvent){
+        acceptCookiesBtn.attachEvent('onclick', function () {
+          banner.className = banner.className.replace(/app-cookie-banner--show/, '')
+        })
+      } else {
+        acceptCookiesBtn.addEventListener('click', function () {
+          banner.className = banner.className.replace(/app-cookie-banner--show/, '')
+        }, false)
+      }
     }
 
     // show the cookies banner until the cookie has been set
@@ -88,14 +103,13 @@ var CookieBanner = {
     if (target.attachEvent) {
       target.attachEvent('onclick', this.addCookieMessage)
     } else {
-      console.log(target)
       target.addEventListener('click', this.addCookieMessage, false)
     }
   }
 }
 
-// CookieBanner.addCookieMessage()
-console.log(document.querySelector('.js-accept-cookie'))
+CookieBanner.addCookieMessage()
+
 // accessibility feature
 new Button(document).init()
 
@@ -129,4 +143,37 @@ if ($modals) {
   nodeListForEach($modals, function ($modal) {
     new Modal($modal).start()
   })
+}
+
+var CommoditySearchForm = {
+  init: function (target, event, form) {
+    this.target = target
+    this.searchForm = form
+    for (var i = 0; i < target.length; i++) {
+      this.addListener(target[i], event)
+    }
+  },
+  addListener: function (target, event) {
+    var theForm = this.searchForm
+    if (target.attachEvent) {
+      target.attachEvent('on' + event, function () {
+        theForm.submit()
+      })
+    } else {
+      target.addEventListener(event, function () {
+        theForm.submit()
+      }, false)
+    }
+  }
+}
+
+var $searchForm = document.getElementById('commodity-search')
+var $radioToggleElems = document.querySelectorAll('#toggle_headings .govuk-radios__input')
+if ($radioToggleElems) {
+  CommoditySearchForm.init($radioToggleElems, 'click', $searchForm)
+}
+
+var $selectSortBy = document.querySelectorAll('#select-sortby select')
+if ($selectSortBy) {
+  CommoditySearchForm.init($selectSortBy, 'change', $searchForm)
 }

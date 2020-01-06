@@ -26,7 +26,7 @@ class CommoditySearchForm(forms.Form):
         self.fields["q"].widget.attrs["class"] = "govuk-select"
 
     q = forms.CharField()
-    show_headings = forms.BooleanField(initial=True, required=False)
+    toggle_headings = forms.BooleanField(initial=1, required=False)
     sort = forms.ChoiceField(choices=SORT_CHOICES, initial="ranking", required=False)
 
     country = forms.CharField(required=True, max_length=2, widget=forms.HiddenInput())
