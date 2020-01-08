@@ -48,9 +48,7 @@ def commodity_detail(request, commodity_code, country_code):
     ):
         commodity.update_content()
 
-    import_measures = commodity.tts_obj.get_import_measures(country.country_code)
-    # pprint(dir(import_measures[0]))
-    # pprint([(measure.type_description, measure.type_id) for measure in import_measures])
+    modals_dict = {}
 
     tariffs_and_charges_measures = get_nomenclature_group_measures(
         commodity, "Tariffs and charges", country.country_code
@@ -58,6 +56,8 @@ def commodity_detail(request, commodity_code, country_code):
     tariffs_and_charges_table_data = [
         measure_json.get_table_row() for measure_json in tariffs_and_charges_measures
     ]
+    for measure_json in tariffs_and_charges_measures:
+        modals_dict.update(measure_json.measures_modals)
 
     quotas_measures = get_nomenclature_group_measures(
         commodity, "Quotas", country.country_code
@@ -65,21 +65,19 @@ def commodity_detail(request, commodity_code, country_code):
     quotas_table_data = [
         measure_json.get_table_row() for measure_json in quotas_measures
     ]
+    for measure_json in quotas_measures:
+        modals_dict.update(measure_json.measures_modals)
 
     other_measures = get_nomenclature_group_measures(
         commodity, "Other measures", country.country_code
     )
     other_table_data = [measure_json.get_table_row() for measure_json in other_measures]
-
-    # table_data = [measure_json.get_table_row() for measure_json in import_measures]
+    for measure_json in other_measures:
+        modals_dict.update(measure_json.measures_modals)
 
     commodity_path = commodity.get_path()
     accordion_title = commodity_hierarchy_section_header(commodity_path)
     rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
-
-    modals_dict = {}
-    for measure_json in import_measures:
-        modals_dict.update(measure_json.measures_modals)
 
     chapter = Chapter.objects.get(chapter_code=commodity_code[:2] + "00000000")
     section = chapter.section

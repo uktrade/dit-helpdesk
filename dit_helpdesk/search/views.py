@@ -84,6 +84,8 @@ class CommoditySearchView(FormView):
                 sort_order = "asc"
                 sort_by = request.GET.get("sort")
 
+                page = int(request.GET.get("page")) if request.GET.get("page") else 1
+
                 if "toggle_headings" not in request.GET.keys():
                     if not request.GET._mutable:
                         request.GET._mutable = True
@@ -137,7 +139,6 @@ class CommoditySearchView(FormView):
                             context["message"] = "nothing found for that number"
                             return self.render_to_response(context)
                 else:
-                    page = int(request.GET.get("page", "1"))
                     sort_by = "ranking" if not sort_by else sort_by
                     sort_order = "desc" if not sort_order else sort_order
 
@@ -152,19 +153,23 @@ class CommoditySearchView(FormView):
                     )
                     context[
                         "next_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
+                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
                         request.GET.get("country"),
                         request.GET.get("q"),
                         request.GET.get("country"),
                         page + 1,
+                        request.GET.get("toggle_headings"),
+                        request.GET.get("sort"),
                     )
                     context[
                         "previous_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
+                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
                         request.GET.get("country"),
                         request.GET.get("q"),
                         request.GET.get("country"),
                         page - 1,
+                        request.GET.get("toggle_headings"),
+                        request.GET.get("sort"),
                     )
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE

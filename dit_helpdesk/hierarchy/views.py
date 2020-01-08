@@ -332,6 +332,8 @@ def heading_detail(request, heading_code, country_code):
             measure_json.get_table_row()
             for measure_json in tariffs_and_charges_measures
         ]
+        for measure_json in tariffs_and_charges_measures:
+            modals_dict.update(measure_json.measures_modals)
 
         quotas_measures = get_nomenclature_group_measures(
             heading, "Quotas", country.country_code
@@ -339,6 +341,8 @@ def heading_detail(request, heading_code, country_code):
         quotas_table_data = [
             measure_json.get_table_row() for measure_json in quotas_measures
         ]
+        for measure_json in quotas_measures:
+            modals_dict.update(measure_json.measures_modals)
 
         other_measures = get_nomenclature_group_measures(
             heading, "Other measures", country.country_code
@@ -346,9 +350,9 @@ def heading_detail(request, heading_code, country_code):
         other_table_data = [
             measure_json.get_table_row() for measure_json in other_measures
         ]
-
-        for measure_json in import_measures:
+        for measure_json in other_measures:
             modals_dict.update(measure_json.measures_modals)
+
     except Exception as ex:
         logger.info(ex.args)
 
@@ -375,12 +379,7 @@ def heading_detail(request, heading_code, country_code):
         ),
     }
 
-    if (
-        import_measures
-        and tariffs_and_charges_table_data
-        or quotas_table_data
-        or other_table_data
-    ):
+    if import_measures:
         context.update(
             {
                 "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
@@ -429,11 +428,13 @@ def subheading_detail(request, commodity_code, country_code):
         if (
             subheading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
             or subheading.tts_json is None
+            or subheading.tts_json == {}
         ):
+            subheading.update_content()
+        else:
             subheading.update_content()
 
         import_measures = subheading.tts_obj.get_import_measures(country.country_code)
-        # table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
         tariffs_and_charges_measures = get_nomenclature_group_measures(
             subheading, "Tariffs and charges", country.country_code
@@ -442,6 +443,8 @@ def subheading_detail(request, commodity_code, country_code):
             measure_json.get_table_row()
             for measure_json in tariffs_and_charges_measures
         ]
+        for measure_json in tariffs_and_charges_measures:
+            modals_dict.update(measure_json.measures_modals)
 
         quotas_measures = get_nomenclature_group_measures(
             subheading, "Quotas", country.country_code
@@ -449,6 +452,8 @@ def subheading_detail(request, commodity_code, country_code):
         quotas_table_data = [
             measure_json.get_table_row() for measure_json in quotas_measures
         ]
+        for measure_json in quotas_measures:
+            modals_dict.update(measure_json.measures_modals)
 
         other_measures = get_nomenclature_group_measures(
             subheading, "Other measures", country.country_code
@@ -456,9 +461,9 @@ def subheading_detail(request, commodity_code, country_code):
         other_table_data = [
             measure_json.get_table_row() for measure_json in other_measures
         ]
-
-        for measure_json in import_measures:
+        for measure_json in other_measures:
             modals_dict.update(measure_json.measures_modals)
+
     except Exception as ex:
         logger.info("subheading 2: ", ex.args)
 

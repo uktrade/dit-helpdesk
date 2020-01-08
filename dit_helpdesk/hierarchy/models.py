@@ -98,54 +98,53 @@ class Section(models.Model):
             self.section_id
         )
         resp = requests.get(url, timeout=10)
-        resp_content = None
+        section_notes = []
 
         if resp.status_code == 200:
             resp_content = resp.json()
 
-        section_note_items = resp_content["content"].split("\r\n")
+            section_note_items = resp_content["content"].split("\r\n")
 
-        section_notes = []
-        for item in section_note_items:
-            match = re.search(r"^\* (\d)\\. (.*)", item)
-            if match:
-                section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
-                        match.group(1), match.group(2)
+            for item in section_note_items:
+                match = re.search(r"^\* (\d)\\. (.*)", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                            match.group(1), match.group(2)
+                        )
                     )
-                )
 
-            match = re.search(r"^  \* \((\w)\) (.*)", item)
-            if match:
-                section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
-                        match.group(1), match.group(2)
+                match = re.search(r"^  \* \((\w)\) (.*)", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
+                            match.group(1), match.group(2)
+                        )
                     )
-                )
 
-            match = re.search(r"^    ([\s*\\-]*)(.*)", item)
-            if match:
-                section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
-                        "-", match.group(2)
+                match = re.search(r"^    ([\s*\\-]*)(.*)", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
+                            "-", match.group(2)
+                        )
                     )
-                )
 
-            match = re.search(r"^\* ([^\d.]+)", item)
-            if match:
-                section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
-                        match.group(1)
+                match = re.search(r"^\* ([^\d.]+)", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
+                            match.group(1)
+                        )
                     )
-                )
 
-            match = re.search(r"^##(.+)##", item)
-            if match:
-                section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
-                        match.group(1)
+                match = re.search(r"^##(.+)##", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                            match.group(1)
+                        )
                     )
-                )
 
         return section_notes
 
@@ -385,7 +384,11 @@ class Chapter(models.Model):
         """
 
         code_match_obj = re.search(CHAPTER_CODE_REGEX, self.chapter_code)
-        return [code_match_obj.group(i) for i in range(1, 5)]
+        return [
+            code_match_obj.group(i)
+            for i in range(1, 5)
+            if code_match_obj.group(i) != "00"
+        ]
 
         """
         gets the Commodity content from the trade tariff service url as json response and stores it in the
@@ -757,7 +760,12 @@ class Heading(models.Model):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.heading_code)
-        return [code_match_obj.group(i) for i in range(1, 5)]
+        code = [code_match_obj.group(i) for i in range(1, 5)]
+
+        if not self.leaf:
+            return code[:1]
+        else:
+            return code
 
 
 class SubHeading(models.Model):
@@ -871,6 +879,7 @@ class SubHeading(models.Model):
 
     @property
     def footnotes(self):
+
         if not self.tts_json:
             return {}
         return self.tts_obj.footnotes
@@ -964,6 +973,7 @@ class SubHeading(models.Model):
         resp_content = self._amend_measure_conditions(resp_content)
 
         self.tts_json = resp_content
+
         self.save()
 
     @staticmethod
@@ -973,13 +983,16 @@ class SubHeading(models.Model):
         :param resp_content: json data from api call
         :return: json string
         """
+
         obj = json.loads(resp_content)
-        for idx, measure in enumerate(obj["import_measures"]):
-            measure["measure_id"] = idx
-            for i, condition in enumerate(measure["measure_conditions"]):
-                if isinstance(condition, dict):
-                    condition["measure_id"] = idx
-                    condition["condition_id"] = i
+
+        if "import_measures" in obj.keys():
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
 
         return json.dumps(obj)
 
@@ -1073,7 +1086,11 @@ class SubHeading(models.Model):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 5)]
+        code = [code_match_obj.group(i) for i in range(1, 5)]
+        if not self.leaf:
+            return [x for x in code if x != "00"]
+        else:
+            return code
 
     def get_chapter(self, ancestor=None):
         """

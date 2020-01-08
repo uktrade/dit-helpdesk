@@ -28,5 +28,7 @@ class CommoditySearchForm(forms.Form):
     q = forms.CharField()
     toggle_headings = forms.BooleanField(initial=1, required=False)
     sort = forms.ChoiceField(choices=SORT_CHOICES, initial="ranking", required=False)
-
+    page = forms.CharField(
+        required=False, max_length=3, initial="1", widget=forms.HiddenInput()
+    )
     country = forms.CharField(required=True, max_length=2, widget=forms.HiddenInput())
