@@ -3,10 +3,10 @@
                                         <caption class="govuk-table__caption govuk-visually-hidden"></caption>
                                         <tbody class="govuk-table__body app-flexible-table__body">
 
-                                        {% for item in  chapter_note %}
+                                        {% for note in  chapter_notes %}
 
                                             <tr class="govuk-table__row app-flexible-table__row">
-                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ item|safe }}</td>
+                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ note|safe }}</td>
                                             </tr>
                                         {% endfor %}
 

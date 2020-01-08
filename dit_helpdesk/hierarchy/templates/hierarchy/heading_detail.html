@@ -42,18 +42,18 @@
                             </div>
                         </div>
 
-                        {% if footnotes %}
+                        {% if heading_notes or chapter_notes or section_notes %}
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary govuk-!-margin-bottom-0">
                                   <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-                                    {%  if footnotes %}
+                                    {%  if heading_notes %}
                                         <h3>Heading notes</h3>
                                         {% include "hierarchy/_heading_notes.html" %}
                                     {% endif %}
-                                    {% if chapter_note %}
+                                    {% if chapter_notes %}
                                         <h3>Chapter notes</h3>
                                         {% include "hierarchy/_chapter_notes.html" %}
                                     {% endif %}

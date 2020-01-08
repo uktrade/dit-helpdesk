@@ -274,7 +274,7 @@ def chapter_detail(request, chapter_code, country_code):
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
-        "chapter_note": chapter.chapter_note,
+        "chapter_notes": chapter.chapter_notes,
         "section_notes": chapter.section.section_notes,
         "accordion_title": accordion_title,
         "chapter_hierarchy_context": get_hierarchy_context(
@@ -365,14 +365,15 @@ def heading_detail(request, heading_code, country_code):
     rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
 
     chapter = heading.chapter
+    section = chapter.section
 
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
-        "footnotes": heading.footnotes,
-        "chapter_note": chapter.chapter_note,
-        "section_notes": chapter.section.section_notes,
+        "heading_notes": heading.heading_notes,
+        "chapter_notes": chapter.chapter_notes,
+        "section_notes": section.section_notes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code, heading
@@ -479,7 +480,9 @@ def subheading_detail(request, commodity_code, country_code):
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
-        "footnotes": subheading.footnotes,
+        "heading_notes": subheading.heading_notes,
+        "chapter_notes": subheading.get_chapter().chapter_notes,
+        "section_notes": subheading.get_chapter().section.section_notes,
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": get_hierarchy_context(
             subheading_path, country.country_code, commodity_code, subheading

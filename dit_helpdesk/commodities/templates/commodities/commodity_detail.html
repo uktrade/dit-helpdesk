@@ -44,7 +44,7 @@
                                   <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-                                    {% if footnotes %}
+                                    {% if commodity_notes %}
                                         <h3>Commodity notes</h3>
                                         {% include "commodities/_commodity_notes.html" %}
                                     {% endif %}
@@ -52,7 +52,7 @@
                                         <h3>Heading notes</h3>
                                         {% include "hierarchy/_heading_notes.html" %}
                                     {% endif %}
-                                    {% if chapter_note %}
+                                    {% if chapter_notes %}
                                         <h3>Chapter notes</h3>
                                         {% include "hierarchy/_chapter_notes.html" %}
                                     {% endif %}

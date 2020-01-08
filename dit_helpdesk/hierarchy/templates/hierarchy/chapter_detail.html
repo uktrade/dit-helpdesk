@@ -44,14 +44,14 @@
                             </div>
                         </div>
 
-                        {% if chapter_note %}
+                        {% if chapter_notes or section_notes %}
                         <div id="app-commodity-notes">
                             <details class="govuk-details govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary">
                                     <span class="govuk-details__summary-text govuk-!-font-size-16"><a name="notes"></a>Notes</span>
                                 </summary>
                                 <div class="govuk-details__text ">
-                                    {% if chapter_note %}
+                                    {% if chapter_notes %}
                                         <h3>Chapter notes</h3>
                                         {% include "hierarchy/_chapter_notes.html" %}
                                     {% endif %}

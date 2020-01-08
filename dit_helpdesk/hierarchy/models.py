@@ -428,7 +428,7 @@ class Chapter(models.Model):
         return ChapterJson(json.loads(self.tts_json))
 
     @property
-    def chapter_note(self):
+    def chapter_notes(self):
 
         if not self.tts_json:
             return {}
@@ -567,7 +567,8 @@ class Heading(models.Model):
             tree[level].append(child)
 
     @property
-    def footnotes(self):
+    def heading_notes(self):
+
         if not self.tts_json:
             return {}
         return self.tts_obj.footnotes
@@ -878,11 +879,22 @@ class SubHeading(models.Model):
         return self.child_subheadings.count() + self.children_concrete.count()
 
     @property
-    def footnotes(self):
+    def heading_notes(self):
 
-        if not self.tts_json:
-            return {}
-        return self.tts_obj.footnotes
+        notes = None
+        path = self.get_path()
+
+        for item in path:
+            if len(item) > 0:
+                if item[0].tts_json is not None:
+                    if isinstance(item[0], SubHeading) or isinstance(item[0], Heading):
+                        footnotes = item[0].tts_obj.footnotes
+                        if footnotes:
+                            if notes is not None:
+                                notes.update(footnotes)
+                            else:
+                                notes = footnotes
+        return notes
 
     @property
     def ancestor_data(self):
