@@ -20,7 +20,7 @@ class CommodityDocument(DocType):
 
     commodity_code = fields.KeywordField()
 
-    description = fields.TextField(analyzer=html_strip)
+    description = fields.TextField(analyzer=html_strip, fielddata=True)
 
     keywords = fields.TextField(analyzer=html_strip)
 
@@ -29,6 +29,8 @@ class CommodityDocument(DocType):
     node_id = fields.TextField(attr="hierarchy_key")
 
     ranking = fields.IntegerField()
+
+    leaf = fields.BooleanField(attr="leaf")
 
     class Meta:
         model = Commodity

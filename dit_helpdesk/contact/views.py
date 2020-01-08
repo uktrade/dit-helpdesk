@@ -12,36 +12,49 @@ from contact.forms import (
     ContactFormStepOne,
     ContactFormStepTwo,
     ContactFormStepThree,
-    ContactFormStepFour,
-    LOCATION_CHOICES,
     CATEGORY_CHOICES,
     TOPIC_CHOICES,
     ZendeskForm,
     ZendeskEmailForm,
+    TOPIC_CHOICE_HELP_TEXT,
 )
+from core.views import error500handler
 
 logger = logging.getLogger(__name__)
-
 
 FORMS = [
     ("step_one", ContactFormStepOne),
     ("step_two", ContactFormStepTwo),
     ("step_three", ContactFormStepThree),
-    ("step_four", ContactFormStepFour),
 ]
 
 TEMPLATES = {
     "step_one": "contact/step_one.html",
     "step_two": "contact/step_two.html",
     "step_three": "contact/step_three.html",
-    "step_four": "contact/step_four.html",
 }
 
-LOCATIONS, CATEGORIES, TOPICS = (
-    dict(LOCATION_CHOICES),
-    dict(CATEGORY_CHOICES),
-    dict(TOPIC_CHOICES),
-)
+CATEGORIES, TOPICS = (dict(CATEGORY_CHOICES), dict(TOPIC_CHOICES))
+
+
+def jump_to_step_two(wizard):
+    """ Returning false bypasses the first form"""
+    if wizard.request.path == "/feedback/":
+        return False
+    else:
+        return True
+
+
+def jump_to_step_three(wizard):
+    """ Returning False bypasses second form """
+    cleaned_data = wizard.get_cleaned_data_for_step("step_one") or {}
+    category = cleaned_data.get("category")
+    if not cleaned_data:
+        category = "3"
+    if category == "3":
+        return False
+    else:
+        return True
 
 
 class ContactFormWizardView(SessionWizardView):
@@ -50,13 +63,30 @@ class ContactFormWizardView(SessionWizardView):
 
     form_list = FORMS
 
+    initial_dict = {"step_one": {"category": 1}, "step_two": {"topic": 1}}
+
+    condition_dict = {"step_one": jump_to_step_two, "step_two": jump_to_step_three}
+
     def done(self, form_list, **kwargs):
         context = self.process_form_data(form_list)
 
+        context["topic_help"] = TOPIC_CHOICE_HELP_TEXT
+
+        resp = None
         if context["type"] == "Zendesk":
-            resp = ContactFormWizardView.send_to_zenddesk(context)
+            try:
+                resp = ContactFormWizardView.send_to_zenddesk(context)
+            except Exception as ex:
+                logger.debug(context)
+                logger.info(ex.args)
+                return error500handler(self.request)
         else:
-            resp = ContactFormWizardView.send_mail(context)
+            try:
+                resp = ContactFormWizardView.send_mail(context)
+            except Exception as ex:
+                logger.debug(context)
+                logger.info(ex.args)
+                return error500handler(self.request)
 
         return render_to_response("contact/done.html", {"context": context})
 
@@ -68,11 +98,11 @@ class ContactFormWizardView(SessionWizardView):
         :param kwargs: passed keyword arguments
         :return: render to response
         """
-        print("Form: :", form)
+
         if (
-            "enquiry_topic" in form.cleaned_data
+            "topic" in form.cleaned_data
             and self.steps.next == "step_three"
-            and form.cleaned_data["enquiry_topic"] == "1"
+            and form.cleaned_data["topic"] == "1"
         ):
             return HttpResponseRedirect(settings.HMRC_TAX_FORM_URL)
         else:
@@ -85,12 +115,16 @@ class ContactFormWizardView(SessionWizardView):
         context = {"subject": constants.SUBJECT, "service_name": constants.SERVICE_NAME}
 
         for form in form_data:
-            if "location" in form.keys():
-                context["location"] = LOCATIONS[int(form["location"])]
-            if "enquiry_type" in form.keys():
-                context["category"] = CATEGORIES[int(form["enquiry_type"])]
-            if "enquiry_topic" in form.keys():
-                context["topic"] = TOPICS[int(form["enquiry_topic"])]
+            if "country_code" in form.keys():
+                context["country_code"] = form["country_code"]
+            else:
+                context["country_code"] = "Not applicable"
+            if "category" in form.keys():
+                context["category"] = CATEGORIES[int(form["category"])]
+            if "topic" in form.keys():
+                context["topic"] = TOPICS[int(form["topic"])]
+            else:
+                context["topic"] = "Not applicable"
             if "email_address" in form.keys():
                 context["email_address"] = form["email_address"]
             if "name" in form.keys():
@@ -117,17 +151,17 @@ class ContactFormWizardView(SessionWizardView):
             context["subdomain"] = constants.DIT_SUBDOMAIN
 
         elif context["topic"] == TOPICS[5]:
-            # TOPIC: Help using the “Trade with the UK: look up tariffs, taxes and rules” service
-            context["type"] = "Zendesk"
-            context["subject"] += constants.DIT_SUBJECT_SUFFIX
-            context["subdomain"] = constants.DIT_SUBDOMAIN
-            # go to  headed up by  (internal zendesk instance support@uktrade.zendesk.com same place as feedback we are using Forms API for)
-
-        elif context["topic"] == TOPICS[6]:
             # Other
             context["type"] = "Zendesk"
             context["subject"] += " DIT EU Exit Enquiries"
             context["subdomain"] = constants.DIT_SUBDOMAIN
+
+        else:
+            """ Copied from contact forms #TODO: fix others accordingly """
+            context["type"] = "Zendesk"
+            context["recipient_email"] = constants.FEEDBACK_EMAIL
+            context["recipient_fullname"] = constants.FEEDBACK_FULLNAME
+            context["subdomain"] = "dit"
 
         template = get_template("contact/contact_message_tmpl.txt")
 
@@ -135,7 +169,9 @@ class ContactFormWizardView(SessionWizardView):
 
         context["spam_control"] = helpers.SpamControl(contents=context["content"])
 
-        context["sender"] = helpers.Sender(email_address=context["email_address"])
+        context["sender"] = helpers.Sender(
+            country_code=context["country_code"], email_address=context["email_address"]
+        )
 
         context["form_url"] = "/contact/"
 

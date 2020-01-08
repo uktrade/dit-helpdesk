@@ -265,7 +265,7 @@ class DocxScraper:
         for match in footnote_matches:
             if match is not None:
                 footnote = {
-                    "anchor": '<a name="#footnote_{0}">{0}</a>'.format(match.group(1)),
+                    "anchor": '<a name="footnote_{0}">{0}</a>'.format(match.group(1)),
                     "note": match.group(2),
                 }
                 self.footnotes.append(footnote)

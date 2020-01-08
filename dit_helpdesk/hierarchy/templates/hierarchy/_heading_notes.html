@@ -1,0 +1,17 @@
+                                    <table class="govuk-table app-flexible-table">
+                                        <caption class="govuk-table__caption govuk-visually-hidden"></caption>
+                                        <thead class="govuk-table__head app-flexible-table__head">
+                                            <tr class="govuk-table__row">
+                                                <th class="govuk-table__header app-flexible-table__header govuk-!-font-size-16" scope="col">Code</th>
+                                                <th class="govuk-table__header app-flexible-table__header govuk-!-font-size-16" scope="col">Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="govuk-table__body app-flexible-table__body">
+                                        {% for note in heading_notes %}
+                                            <tr class="govuk-table__row app-flexible-table__row">
+                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Code">{{ note.code }}</td>
+                                                <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular govuk-!-font-size-16" scope="row" data-column-heading="Description">{{ note.description|safe }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>

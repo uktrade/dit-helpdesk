@@ -252,7 +252,6 @@ abbr {
   padding: 0;
 }
 
-
 .helpdesk-icon {
     background-position-x: -2px;
     background-position-y: 0;
@@ -274,4 +273,52 @@ abbr {
 
 .helpdesk-caption {
   color: #6f777b;
+}
+
+label[for="sort"] {
+  float: right;
+}
+
+.helpdesk-chapter-note-item {
+  padding: 0;
+  margin: 0;
+}
+
+.helpdesk-chapter-note-item span {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.helpdesk-chapter-note-item__level-1 span:first-child {
+  width: 25px;
+}
+
+.helpdesk-chapter-note-item__level-2 span:first-child {
+  width: 25px;
+  margin-left: 25px;
+}
+
+.helpdesk-chapter-note-item__level-1 span:last-child,
+.helpdesk-chapter-note-item__level-2 span:last-child,
+.helpdesk-chapter-note-item__level-3 span:last-child {
+  width: 80%;
+}
+
+.helpdesk-chapter-note-item__level-3 span:first-child {
+  width: 25px;
+  margin-left: 50px;
+}
+
+.helpdesk-chapter-note-item__heading span:first-child {
+  font-weight: 700;
+}
+
+.helpdesk-chapter-note-item__heading span:last-child,
+.helpdesk-chapter-note-item__text span:last-child {
+  display: inline;
+}
+
+.helpdesk-note {
+  border-left: solid 10px #ccc;
+  padding: 1em;
 }

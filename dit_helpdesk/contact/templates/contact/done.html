@@ -9,21 +9,22 @@
     {% endif %}
 {% endblock %}
 
-{#{% block head %}#}
-{#    {{ wizzard.form.media }}#}
-{#{% endblock %}#}
-
 {% block content %}
 
-    <h2 class="govuk-heading-l">
-            <span class="govuk-caption-l">
-                Your enquiry has been submitted successfully
-            </span>
-        Thank you for your enquiry
-    </h2>
-    {{ wizard.management_form }}
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
 
-    <p class="govuk-body govuk-!-margin-bottom-9">Return to <a href="/">find information about exporting to the UK</a>.</p>
+            <h2 class="govuk-heading-l">
+                    <span class="govuk-caption-l">
+                        Your enquiry has been submitted successfully
+                    </span>
+                Thank you for your enquiry
+            </h2>
+            {{ wizard.management_form }}
 
+            <p class="govuk-body govuk-!-margin-bottom-9">Return to <a href="/">find information about exporting to the UK</a>.</p>
+
+        </main>
+    </div>
 
 {% endblock %}

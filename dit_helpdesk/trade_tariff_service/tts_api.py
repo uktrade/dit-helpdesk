@@ -18,8 +18,8 @@ COMMODITY_DETAIL_TABLE_KEYS = [
     ("measure_description", "Measure type"),
     ("measure_value", "Value"),
     ("conditions_html", "Conditions"),
-    ("excluded_countries", "Excluded countries"),
-    ("start_end_date", "Date"),
+    # ("excluded_countries", "Excluded countries"),
+    ("start_end_date", "Start date"),
 ]
 
 
@@ -60,6 +60,9 @@ class CommodityJson(object):
 
     def get_import_measures(self, origin_country, vat=None, excise=None):
 
+        if "import_measures" not in self.di:
+            return []
+
         measures = [
             ImportMeasureJson(d, self.code, self.title, origin_country)
             for d in self.di["import_measures"]
@@ -87,6 +90,10 @@ class CommodityJson(object):
         ]
 
         return measures[0] if len(measures) == 1 else None
+
+    @property
+    def footnotes(self):
+        return self.di["footnotes"]
 
 
 class ImportMeasureJson(object):
@@ -209,7 +216,7 @@ class ImportMeasureJson(object):
 
     @property
     def vue__legal_base_html(self):
-        # {'published_date': '2017-09-20', 'regulation_url': 'http://eur-lex.europa.eu/search.html?whOJ=NO_OJ%3D241,YEAR_OJ%3D2017,PAGE_FIRST%3D0001&DB_COLL_OJ=oj-l&type=advanced&lang=en', 'regulation_code': 'R1585/17', 'validity_end_date': None, 'validity_start_date': '2017-09-21T00:00:00.000Z', 'officialjournal_page': 1, 'officialjournal_number': 'L 241'} )
+
         if not self.di.get("legal_acts", []):  # todo: make this a property method
             return "-"
         hrefs = []
@@ -232,6 +239,7 @@ class ImportMeasureJson(object):
         self.measures_modals[modal_id] = self.get_modal(
             modal_id, self.get_conditions_table
         )
+
         return html
 
     def get_modal(self, modal_id, modal_body):
@@ -256,7 +264,7 @@ class ImportMeasureJson(object):
         :return: list
         """
         code_match_obj = re.search(settings.COMMODITY_CODE_REGEX, self.commodity_code)
-        return [code_match_obj.group(i) for i in range(1, 4)]
+        return [code_match_obj.group(i) for i in range(1, 5)]
 
     @property
     def get_conditions_table(self):
@@ -441,7 +449,6 @@ class ImportMeasureJson(object):
         :return: dictionary or None
         """
         if self.di["order_number"]["number"] == order_number:
-            print(self.di["order_number"])
             if self.di["order_number"]["definition"] and isinstance(
                 self.di["order_number"]["definition"]["validity_start_date"], str
             ):
@@ -472,8 +479,32 @@ class ImportMeasureJson(object):
 
 class MeasureCondition(object):
     def __init__(self, di):
-        # keys: ['action', 'condition', 'requirement', 'document_code', 'condition_code', 'duty_expression']
         self.di = di
+
+
+class ChapterJson(object):
+    def __init__(self, di):
+        self.di = di
+
+    @property
+    def title(self):
+        return self.di["formatted_description"]
+
+    @property
+    def harmonized_code(self):
+        return self.di["goods_nomenclature_item_id"]
+
+    @property
+    def heading_ids(self):
+        return [di["goods_nomenclature_item_id"][:4] for di in self.di["headings"]]
+
+    @property
+    def heading_urls(self):
+        return [settings.HEADING_URL % id for id in self.heading_ids]
+
+    @property
+    def chapter_note(self):
+        return self.di["chapter_note"]
 
 
 class HeadingJson(object):
@@ -531,6 +562,10 @@ class HeadingJson(object):
 
         return measures
 
+    @property
+    def footnotes(self):
+        return self.di["footnotes"]
+
     def get_import_measure_by_id(self, measure_id, country_code=None):
 
         measures = [
@@ -577,23 +612,33 @@ class SubHeadingJson(object):
             for (_id, is_leaf) in self.commodity_ids
         ]
 
+    @property
+    def footnotes(self):
+        if not isinstance(self.di, str) and "footnotes" in self.di.keys():
+            return self.di["footnotes"]
+        else:
+            return []
+
     def get_import_measures(self, origin_country, vat=None, excise=None):
 
-        measures = [
-            ImportMeasureJson(d, self.code, self.title, origin_country)
-            for d in self.di["import_measures"]
-        ]
+        measures = []
 
-        measures = [
-            json_obj
-            for json_obj in measures
-            if json_obj.is_relevant_for_origin_country(origin_country)
-        ]
+        if not isinstance(self.di, str) and "import_measures" in self.di.keys():
+            measures = [
+                ImportMeasureJson(d, self.code, self.title, origin_country)
+                for d in self.di["import_measures"]
+            ]
 
-        if vat is not None:
-            measures = [obj for obj in measures if obj.vat == vat]
-        if excise is not None:
-            measures = [obj for obj in measures if obj.excise == excise]
+            measures = [
+                json_obj
+                for json_obj in measures
+                if json_obj.is_relevant_for_origin_country(origin_country)
+            ]
+
+            if vat is not None:
+                measures = [obj for obj in measures if obj.vat == vat]
+            if excise is not None:
+                measures = [obj for obj in measures if obj.excise == excise]
 
         return measures
 

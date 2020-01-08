@@ -13,9 +13,10 @@ from django_elasticsearch_dsl.search import Search
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch import Elasticsearch
 
+from commodities.models import Commodity
 from countries.models import Country
-from hierarchy.models import Heading
-from hierarchy.views import hierarchy_data
+from hierarchy.models import Heading, Chapter, SubHeading
+from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
 from search.documents.chapter import ChapterDocument
 from search.documents.commodity import CommodityDocument
@@ -66,20 +67,33 @@ class CommoditySearchView(FormView):
 
     def get_success_url(self, *args, **kwargs):
         success_url = super(CommoditySearchView, self).get_success_url()
-        print("CommoditySearchView: ", success_url)
         return "{0}?q={1}&country=".format(
             success_url, self.form.cleaned_data["search"]
         )
 
     def get(self, request, *args, **kwargs):
 
-        self.form = self.get_form(self.form_class)
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
-        if "q" in self.request.GET:
-            if self.form.is_valid():
-                query = self.request.GET.get("q")
+        if request.GET:
+            form = CommoditySearchForm(request.GET)
+            if form.is_valid() and "q" in self.request.GET:
+
+                query = request.GET.get("q")
                 context["query"] = query
+                sort_order = "asc"
+                sort_by = request.GET.get("sort")
+
+                page = int(request.GET.get("page")) if request.GET.get("page") else 1
+
+                if "toggle_headings" not in request.GET.keys():
+                    if not request.GET._mutable:
+                        request.GET._mutable = True
+                        request.GET["toggle_headings"] = "1"
+
+                filter_on_leaf = (
+                    True if request.GET.get("toggle_headings") == "1" else False
+                )
 
                 if query.isdigit():
                     response = helpers.search_by_code(code=query)
@@ -109,58 +123,90 @@ class CommoditySearchView(FormView):
                                         },
                                     )
                                 )
-                        else:
-                            return redirect(
-                                reverse(
-                                    "search:search-hierarchy",
-                                    kwargs={
-                                        "node_id": "{0}-{1}".format(
-                                            hit.meta["index"], hit.id
-                                        ),
-                                        "country_code": context["country_code"],
-                                    },
+                            else:
+                                return redirect(
+                                    reverse(
+                                        "search:search-hierarchy",
+                                        kwargs={
+                                            "node_id": "{0}-{1}".format(
+                                                hit.meta["index"], hit.id
+                                            ),
+                                            "country_code": context["country_code"],
+                                        },
+                                    )
                                 )
-                            )
-                    else:
-                        context["message"] = "nothing found for that number"
-                        return self.render_to_response(context)
+                        else:
+                            context["message"] = "nothing found for that number"
+                            return self.render_to_response(context)
                 else:
-                    page = int(self.request.GET.get("page", "1"))
-                    context.update(helpers.search_by_term(query=query, page=page))
+                    sort_by = "ranking" if not sort_by else sort_by
+                    sort_order = "desc" if not sort_order else sort_order
+
+                    context.update(
+                        helpers.search_by_term(
+                            query=query,
+                            page=page,
+                            sort_by=sort_by,
+                            sort_order=sort_order,
+                            filter_on_leaf=filter_on_leaf,
+                        )
+                    )
                     context[
                         "next_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
-                        self.request.GET.get("country"),
-                        self.request.GET.get("q"),
-                        self.request.GET.get("country"),
+                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
+                        request.GET.get("country"),
+                        request.GET.get("q"),
+                        request.GET.get("country"),
                         page + 1,
+                        request.GET.get("toggle_headings"),
+                        request.GET.get("sort"),
                     )
                     context[
                         "previous_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}#search-results".format(
-                        self.request.GET.get("country"),
-                        self.request.GET.get("q"),
-                        self.request.GET.get("country"),
+                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
+                        request.GET.get("country"),
+                        request.GET.get("q"),
+                        request.GET.get("country"),
                         page - 1,
+                        request.GET.get("toggle_headings"),
+                        request.GET.get("sort"),
                     )
                     context["current_page"] = page
                     context["results_per_page"] = settings.RESULTS_PER_PAGE
                     context["page_total"] = len(context["results"])
+
                     for hit in context["results"]:
                         if isinstance(hit["commodity_code"], str):
-                            hit["commodity_code_html"] = _generate_commodity_code_html(
-                                hit["commodity_code"]
-                            )
+                            if hit.meta["index"] == "chapter":
+                                item = Chapter.objects.get(
+                                    chapter_code=hit["commodity_code"]
+                                )
+                            elif hit.meta["index"] == "heading":
+                                item = Heading.objects.get(
+                                    heading_code=hit["commodity_code"]
+                                )
+                            elif hit.meta["index"] == "subheading":
+                                res = SubHeading.objects.filter(
+                                    commodity_code=hit["commodity_code"]
+                                )
+
+                                item = res.first()
+                            else:
+                                item = Commodity.objects.get(
+                                    commodity_code=hit["commodity_code"]
+                                )
+
+                            hit["commodity_code_html"] = _commodity_code_html(item)
 
                     return self.render_to_response(context)
+
             else:
-                return self.form_invalid(self.form)
+                return self.render_to_response(context)
         else:
             return self.render_to_response(context)
 
     def get_form(self, form_class=None):
         form = CommoditySearchForm(self.request.GET or form_class)
-        print("FORM: ", form.fields)
         return form
 
     def get_context_data(self, **kwargs):
@@ -176,8 +222,6 @@ class CommoditySearchView(FormView):
         context["hierarchy_html"] = hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
-
-        print("Context: ", context.keys())
 
         return context
 
@@ -206,7 +250,7 @@ class CommodityCodeSearchAPIView(generics.ListAPIView):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
         context = helpers.search_by_code(code=serializer.validated_data["q"])
-        return Response({'results': [hit.to_dict() for hit in context]})
+        return Response({"results": [hit.to_dict() for hit in context]})
 
 
 class HierarchySearchAPIView(generics.ListAPIView):
@@ -233,49 +277,3 @@ class CommodityDocumentViewSet(DocumentViewSet):
 
     # Define search fields
     search_fields = ("commodity_code", "description")
-
-
-def _generate_commodity_code_html(code):
-    """
-    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
-    of 6, 2 and  digits and colour code formatted
-    :param item: model instance
-    :return: html
-    """
-    print("search Code: ", code)
-
-    commodity_code_html = (
-        '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-    )
-
-    if len(code) > 2 and code.isdigit():
-
-        code_regex = re.search(
-            "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
-        )
-        code_split = [
-            code_regex.group(1),
-            code_regex.group(2),
-            code_regex.group(3),
-            code_regex.group(4),
-            code_regex.group(5),
-        ]
-
-        for index, code_segment in enumerate(code_split):
-            counter = str(int(index) + 1)
-            if code[2:] == "00000000" and int(counter) > 1:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            elif code[4:] == "000000" and int(counter) > 2:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            else:
-                blank_span = ["", ""]
-
-            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
-                counter, blank_span[0], code_segment, blank_span[1]
-            )
-    else:
-        commodity_code_html + code
-
-    commodity_code_html = commodity_code_html + "</span>"
-
-    return commodity_code_html

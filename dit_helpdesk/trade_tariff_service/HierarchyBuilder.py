@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import sys
-from pprint import pprint
 
 import requests
 from django.apps import apps
@@ -77,11 +76,8 @@ class HierarchyBuilder:
         :param data:
         :return:
         """
-
         parent = self.get_instance_parent(data, model)
-
         instance_data = self.get_instance_data(data, model, parent)
-
         return model(**instance_data) if instance_data else None
 
     def get_instance_data(self, data, model, parent):
@@ -123,8 +119,9 @@ class HierarchyBuilder:
             if parent is not None:
                 data["heading_id"] = parent.pk
 
-            data = self.rename_key(data, "goods_nomenclature_item_id", "commodity_code")
-            instance_data = self.rename_key(data, "leaf", "tts_is_leaf")
+            instance_data = self.rename_key(
+                data, "goods_nomenclature_item_id", "commodity_code"
+            )
 
         elif model is Commodity:
 
@@ -403,12 +400,14 @@ class HierarchyBuilder:
                             children = heading["relationships"]["children"]["data"]
 
                         for leaf in heading_leaves:
-                            if leaf["attributes"]["goods_nomenclature_sid"] in [id for id in children]:
+                            if leaf["attributes"]["goods_nomenclature_sid"] in [
+                                id for id in children
+                            ]:
                                 headings_data.append(
                                     {
-                                        "goods_nomenclature_item_id": leaf["attributes"][
-                                            "goods_nomenclature_item_id"
-                                        ],
+                                        "goods_nomenclature_item_id": leaf[
+                                            "attributes"
+                                        ]["goods_nomenclature_item_id"],
                                         "goods_nomenclature_sid": leaf["attributes"][
                                             "goods_nomenclature_sid"
                                         ],
@@ -416,14 +415,16 @@ class HierarchyBuilder:
                                             "producline_suffix"
                                         ],
                                         "leaf": leaf["attributes"]["leaf"],
-                                        "parent_goods_nomenclature_item_id": heading["data"][
-                                            "attributes"
-                                        ]["goods_nomenclature_item_id"],
-                                        "parent_goods_nomenclature_sid": heading["data"][
-                                            "attributes"
-                                        ]["goods_nomenclature_sid"],
+                                        "parent_goods_nomenclature_item_id": heading[
+                                            "data"
+                                        ]["attributes"]["goods_nomenclature_item_id"],
+                                        "parent_goods_nomenclature_sid": heading[
+                                            "data"
+                                        ]["attributes"]["goods_nomenclature_sid"],
                                         "parent_productline_suffix": "",
-                                        "description": leaf["attributes"]["description"],
+                                        "description": leaf["attributes"][
+                                            "description"
+                                        ],
                                         "number_indents": "0",
                                     }
                                 )

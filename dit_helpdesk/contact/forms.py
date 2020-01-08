@@ -2,13 +2,10 @@ from directory_forms_api_client.forms import ZendeskAPIForm, EmailAPIForm
 from django import forms
 from django.forms import fields
 
-LOCATION_CHOICES = ((1, "The UK"), (2, "Outside the UK"))
-
 CATEGORY_CHOICES = (
-    (1, "Investing in the UK"),
-    (2, "Exporting to the UK"),
-    (3, "Find a UK business partner"),
-    (4, "EU exit enquiries"),
+    (1, "Exporting to the UK"),
+    (2, "Brexit enquiries"),
+    (3, "Technical help"),
 )
 
 TOPIC_CHOICES = (
@@ -19,31 +16,36 @@ TOPIC_CHOICES = (
     ),
     (3, "Product safety and standards, packaging and labelling"),
     (4, "Import controls, trade agreements, rules of origin"),
-    (5, 'Help using the "Trade with the UK: look up tariffs, taxes and rules" service'),
-    (6, "Other"),
+    (5, "Other"),
+)
+
+TOPIC_CHOICE_HELP_TEXT = (
+    "You will be redirected to Her Majesty's Revenue and Customs (HMRC) contact form",
+    "Your enquiry will be sent to the Department for Environment, Food and Rural Affairs (Defra)",
+    "Your enquiry will be sent to the department for Business, Energy and Industrial Strategy (BEIS)",
+    "Your enquiry will be sent to the Department for International Trade (DIT)",
+    "Your enquiry will be sent to the Department for International Trade (DIT)",
 )
 
 
 class ContactFormStepOne(forms.Form):
-    location = forms.ChoiceField(
-        choices=LOCATION_CHOICES, widget=forms.RadioSelect, required=True
+
+    category = forms.ChoiceField(
+        choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True
     )
-    location.label = "Where are you based?"
+    category.label = "What would you like to know more about?"
+    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
 
 
 class ContactFormStepTwo(forms.Form):
-    enquiry_type = forms.ChoiceField(
-        choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True
+    topic = forms.ChoiceField(
+        choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True
     )
+    topic.label = "What would you like to know more about?"
+    topic.help_text = TOPIC_CHOICE_HELP_TEXT
 
 
 class ContactFormStepThree(forms.Form):
-    enquiry_topic = forms.ChoiceField(
-        choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True
-    )
-
-
-class ContactFormStepFour(forms.Form):
     name = forms.CharField(required=True)
     email_address = forms.EmailField(required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)

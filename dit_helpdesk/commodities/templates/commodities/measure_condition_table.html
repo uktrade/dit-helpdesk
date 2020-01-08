@@ -18,7 +18,7 @@
                 <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_headers.2 }}"><p>{{ condition.di.document_code | cell_cleaner }}</p></td>
                 <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_headers.3 }}"><p>{{ condition.di.requirement | safe }}</p></td>
                 <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_headers.4 }}"><p>{{ condition.di.action }}</p></td>
-                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_headers.5 }}"><p>{{ condition.di.duty_expression | safe }}</p></td>
+                <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ column_headers.5 }}"><p>{{ condition.di.duty_expression | cell_cleaner | safe }}</p></td>
             </tr>
         {% endfor %}
     {% endspaceless %}

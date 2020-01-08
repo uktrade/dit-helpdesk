@@ -12,6 +12,7 @@ from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
+from hierarchy.helpers import IMPORT_MEASURE_GROUPS
 from hierarchy.models import Heading, SubHeading, Chapter
 from trade_tariff_service.tts_api import CommodityJson
 
@@ -60,6 +61,10 @@ class Commodity(models.Model):
     class Meta:
         unique_together = ("commodity_code", "goods_nomenclature_sid")
         verbose_name_plural = "commodities"
+
+    @property
+    def leaf(self):
+        return True
 
     @property
     def hierarchy_key(self):
@@ -119,11 +124,13 @@ class Commodity(models.Model):
         Returns a list of regulations instances either related to the commodity or it's parent subheading
         :return: queryset
         """
-        regulations = list(self.regulation_set.all())
-
-        if self.parent_subheading:
-            regulations + list(self.parent_subheading.regulation_set.all())
-
+        regulations = []
+        path = self.get_path()
+        for item in path:
+            if item and hasattr(item[0], "regulation_set"):
+                item_regulations = item[0].regulation_set.all()
+                if item_regulations:
+                    regulations.extend(list(item_regulations))
         return regulations
 
     def get_rules_of_origin(self, country_code):
@@ -303,13 +310,15 @@ class Commodity(models.Model):
         :param resp_content: json data from api call
         :return: json string
         """
+
         obj = json.loads(resp_content)
-        for idx, measure in enumerate(obj["import_measures"]):
-            measure["measure_id"] = idx
-            for i, condition in enumerate(measure["measure_conditions"]):
-                if isinstance(condition, dict):
-                    condition["measure_id"] = idx
-                    condition["condition_id"] = i
+        if "import_measures" in obj:
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
 
         return json.dumps(obj)
 

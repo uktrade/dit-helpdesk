@@ -34,7 +34,7 @@
       <form action="{% url 'choose-country' %}" method="post">
         <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
           {% csrf_token %}
-          <label class="govuk-hint" for="country-picker"></label>
+          <label class="govuk-hint" for="country-picker">
           {% if isError %}
             <span id="select-country-error" class="govuk-error-message">
               <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage}}
@@ -43,13 +43,10 @@
           <select name="origin_country" class="govuk-select{% if isError %} govuk-select--error{% endif %}" id="country-picker" {% if isError %} aria-describedby="select-country-error"{% endif %}>
             <option value="">Select the export country</option>
             {% for country_code, country_name in country_options %}
-              {% if selected_country == country_code %}
-                  <option value="{{ country_code | lower }}" selected>{{ country_name }}</option>
-              {% else %}
                   <option value="{{ country_code | lower }}">{{ country_name }}</option>
-              {% endif %}
             {% endfor %}
           </select>
+          </label>
         </div>
         <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
       </form>

@@ -51,7 +51,6 @@ class SectionTestCase(TestCase):
         self.assertEqual(child_count, 5)
         self.assertEqual(len(children), child_count)
 
-
     def test_chapters_url_raises_NoReverseMatchError(self):
         # TODO: remove method
         self.assertRaises(NoReverseMatch, lambda: self.section.get_chapters_url())
@@ -260,9 +259,9 @@ class HeadingTestCase(TestCase):
         self.assertTrue(isinstance(self.heading.tts_json, str))
         self.assertEquals(self.heading.tts_json, "{}")
 
-    def test_harmonized_code_equals_heading_code(self):
-        # TODO: Where is this property method used
-        self.assertEquals(self.heading.harmonized_code, self.heading.heading_code)
+    # def test_harmonized_code_equals_heading_code(self):
+    #     # TODO: Where is this property method used
+    #     self.assertEquals(self.heading.harmonized_code, self.heading.heading_code)
 
     def test_get_absolute_url(self):
         # TODO: remove from Heading model

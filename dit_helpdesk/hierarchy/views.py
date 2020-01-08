@@ -1,14 +1,17 @@
+import logging
 import os
 import json
 import re
 from datetime import datetime, timedelta, timezone
+
+import requests
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
 from commodities.models import Commodity
-from hierarchy.helpers import TABLE_COLUMN_TITLES
+from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
@@ -16,6 +19,8 @@ code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
 HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
 with open(HIERARCHY_JSON_PATH) as f:
     HIERARCHY_CACHED = json.loads(f.read())
+
+logger = logging.getLogger(__name__)
 
 
 def _get_expanded_context(selected_node_id):
@@ -90,53 +95,14 @@ def _get_hierarchy_level_html(node, expanded, origin_country):
         else:
             openclass = "closed"
 
-        commodity_code_html = ""
-        if type(child) is not Section:
-            commodity_code_html = (
-                '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-            )
-
-            if type(child) is Commodity:
-                child.harmonized_code = child.commodity_code
-
-            matches = code_regex.search(child.harmonized_code)
-            code_split = [
-                matches.group(1),
-                matches.group(2),
-                matches.group(3),
-                matches.group(4),
-                matches.group(5),
-            ]
-            for index, code_segment in enumerate(code_split):
-                counter = str(int(index) + 1)
-
-                if child.harmonized_code[2:] == "00000000" and int(counter) > 1:
-                    blank_span = [
-                        '<span class="app-commodity-code__is-blank">',
-                        "</span>",
-                    ]
-                elif child.harmonized_code[4:] == "000000" and int(counter) > 2:
-                    blank_span = [
-                        '<span class="app-commodity-code__is-blank">',
-                        "</span>",
-                    ]
-                else:
-                    blank_span = ["", ""]
-
-                commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
-                    counter, blank_span[0], code_segment, blank_span[1]
-                )
-
-            commodity_code_html = commodity_code_html + "</span>"
-
         if type(child) is Section:
             li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
         elif type(child) in [Commodity, Heading, SubHeading] and (
             type(child) is Commodity or child.get_hierarchy_children_count() == 0
         ):
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">{child.description}<span class="govuk-visually-hidden"> &ndash; </span></a></div>{commodity_code_html}</li>'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">{child.description}<span class="govuk-visually-hidden"> &ndash; </span></a></div>{_commodity_code_html(child)}</li>'
         else:
-            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{commodity_code_html}'
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}#{child.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{_commodity_code_html(child)}'
         html = html + li
 
         if child.hierarchy_key in expanded:
@@ -242,7 +208,7 @@ def section_detail(request, section_id, country_code):
     table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     section_path = section.get_path()
-    accordion_title = heading_hierarchy_section_header(section_path)
+    accordion_title = hierarchy_section_header(section_path)
     rules_of_origin = section.get_rules_of_origin(country_code=country.country_code)
 
     modals_dict = {}
@@ -289,16 +255,30 @@ def chapter_detail(request, chapter_code, country_code):
 
     chapter_path = chapter.get_path()
     chapter_path.insert(0, [chapter])
+    if chapter.get_hierarchy_children_count() > 0:
+        chapter_path.insert(0, chapter.get_hierarchy_children())
 
-    accordion_title = chapter_hierarchy_section_header(chapter_path)
+    accordion_title = hierarchy_section_header(chapter_path)
+
+    try:
+        if (
+            chapter.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
+            or chapter.tts_json is None
+        ):
+            chapter.update_content()
+
+    except Exception as ex:
+        logger.info("chapter notes: ", ex.args)
 
     context = {
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
+        "chapter_notes": chapter.chapter_notes,
+        "section_notes": chapter.section.section_notes,
         "accordion_title": accordion_title,
         "chapter_hierarchy_context": get_hierarchy_context(
-            chapter_path, country.country_code, chapter_code
+            chapter_path, country.country_code, chapter_code, chapter
         ),
     }
 
@@ -328,7 +308,10 @@ def heading_detail(request, heading_code, country_code):
     heading = get_object_or_404(Heading, heading_code=heading_code)
 
     import_measures = []
-    table_data = []
+    # table_data = []
+    tariffs_and_charges_table_data = []
+    quotas_table_data = []
+    other_table_data = []
     modals_dict = {}
 
     try:
@@ -340,31 +323,69 @@ def heading_detail(request, heading_code, country_code):
             heading.update_content()
 
         import_measures = heading.tts_obj.get_import_measures(country.country_code)
-        table_data = [measure_json.get_table_row() for measure_json in import_measures]
-        for measure_json in import_measures:
+        # table_data = [measure_json.get_table_row() for measure_json in import_measures]
+
+        tariffs_and_charges_measures = get_nomenclature_group_measures(
+            heading, "Tariffs and charges", country.country_code
+        )
+        tariffs_and_charges_table_data = [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+        ]
+        for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
+
+        quotas_measures = get_nomenclature_group_measures(
+            heading, "Quotas", country.country_code
+        )
+        quotas_table_data = [
+            measure_json.get_table_row() for measure_json in quotas_measures
+        ]
+        for measure_json in quotas_measures:
+            modals_dict.update(measure_json.measures_modals)
+
+        other_measures = get_nomenclature_group_measures(
+            heading, "Other measures", country.country_code
+        )
+        other_table_data = [
+            measure_json.get_table_row() for measure_json in other_measures
+        ]
+        for measure_json in other_measures:
+            modals_dict.update(measure_json.measures_modals)
+
     except Exception as ex:
-        print(ex.args)
+        logger.info(ex.args)
 
     heading_path = heading.get_path()
     heading_path.insert(0, [heading])
-    accordion_title = heading_hierarchy_section_header(heading_path)
+    if heading.get_hierarchy_children_count() > 0:
+        heading_path.insert(0, heading.get_hierarchy_children())
+
+    accordion_title = hierarchy_section_header(heading_path)
     rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
+
+    chapter = heading.chapter
+    section = chapter.section
 
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
+        "heading_notes": heading.heading_notes,
+        "chapter_notes": chapter.chapter_notes,
+        "section_notes": section.section_notes,
         "accordion_title": accordion_title,
         "heading_hierarchy_context": get_hierarchy_context(
-            heading_path, country.country_code, heading_code
+            heading_path, country.country_code, heading_code, heading
         ),
     }
 
-    if import_measures and table_data:
+    if import_measures:
         context.update(
             {
-                "table_data": table_data,
+                "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+                "quotas_table_data": quotas_table_data,
+                "other_table_data": other_table_data,
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
@@ -394,46 +415,91 @@ def subheading_detail(request, commodity_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    # heading = Heading.objects.filter(heading_code=heading_code).first()
-
-    subheading = get_object_or_404(SubHeading, commodity_code=commodity_code)
+    subheading = SubHeading.objects.filter(commodity_code=commodity_code).first()
 
     import_measures = []
-    table_data = []
+    # table_data = []
+
+    tariffs_and_charges_table_data = []
+    quotas_table_data = []
+    other_table_data = []
+
     modals_dict = {}
     try:
         if (
             subheading.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
             or subheading.tts_json is None
+            or subheading.tts_json == {}
         ):
+            subheading.update_content()
+        else:
             subheading.update_content()
 
         import_measures = subheading.tts_obj.get_import_measures(country.country_code)
-        table_data = [measure_json.get_table_row() for measure_json in import_measures]
-        for measure_json in import_measures:
+
+        tariffs_and_charges_measures = get_nomenclature_group_measures(
+            subheading, "Tariffs and charges", country.country_code
+        )
+        tariffs_and_charges_table_data = [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+        ]
+        for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
+
+        quotas_measures = get_nomenclature_group_measures(
+            subheading, "Quotas", country.country_code
+        )
+        quotas_table_data = [
+            measure_json.get_table_row() for measure_json in quotas_measures
+        ]
+        for measure_json in quotas_measures:
+            modals_dict.update(measure_json.measures_modals)
+
+        other_measures = get_nomenclature_group_measures(
+            subheading, "Other measures", country.country_code
+        )
+        other_table_data = [
+            measure_json.get_table_row() for measure_json in other_measures
+        ]
+        for measure_json in other_measures:
+            modals_dict.update(measure_json.measures_modals)
+
     except Exception as ex:
-        print(ex.args)
+        logger.info("subheading 2: ", ex.args)
 
     subheading_path = subheading.get_path()
     subheading_path.insert(0, [subheading])
-    accordion_title = heading_hierarchy_section_header(subheading_path)
+    if subheading.get_hierarchy_children_count() > 0:
+        subheading_path.insert(0, subheading.get_hierarchy_children())
+
+    accordion_title = hierarchy_section_header(subheading_path)
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
     context = {
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
+        "heading_notes": subheading.heading_notes,
+        "chapter_notes": subheading.get_chapter().chapter_notes,
+        "section_notes": subheading.get_chapter().section.section_notes,
         "accordion_title": accordion_title,
         "subheading_hierarchy_context": get_hierarchy_context(
-            subheading_path, country.country_code, commodity_code
+            subheading_path, country.country_code, commodity_code, subheading
         ),
     }
 
-    if import_measures and table_data:
+    if (
+        import_measures
+        and tariffs_and_charges_table_data
+        or quotas_table_data
+        or other_table_data
+    ):
         context.update(
             {
-                "table_data": table_data,
+                "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+                "quotas_table_data": quotas_table_data,
+                "other_table_data": other_table_data,
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
@@ -445,20 +511,7 @@ def subheading_detail(request, commodity_code, country_code):
     return render(request, "hierarchy/subheading_detail.html", context)
 
 
-def chapter_hierarchy_section_header(reversed_heading_tree):
-    """
-    View helper function to extract the Section Numeral and title for the hierarchy context of the heading
-    and returned as formatted html string
-    :param reversed_heading_tree:
-    :return: html
-    """
-    section_index = len(reversed_heading_tree) - 1
-    section = reversed_heading_tree[section_index][0]
-    html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
-    return html
-
-
-def heading_hierarchy_section_header(reversed_heading_tree):
+def hierarchy_section_header(reversed_heading_tree):
     """
     View helper function to extract the Section Numeral and title for the hierarchy context of the heading
     and returned as formatted html string
@@ -484,36 +537,53 @@ def get_hierarchy_item_by_code(code):
         pass
 
     try:
-        item = SubHeading.objects.filter(commodity_code=code)
-        return item.first()
+        subheading = SubHeading.objects.filter(commodity_code=code)
+        if type(subheading) == SubHeading:
+            return subheading
+        elif len(subheading) > 0:
+            return subheading.first()
+        else:
+            raise ObjectDoesNotExist
     except ObjectDoesNotExist as ex:
         pass
 
     try:
-        com = Commodity.objects.get(commodity_code=code)
-        return com
+        return Commodity.objects.get(commodity_code=code)
     except ObjectDoesNotExist as ex:
         pass
 
 
-def _commodity_code_html(code):
+def _commodity_code_html(item):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
     of 6, 2 and  digits and colour code formatted
     :param item: model instance
     :return: html
     """
+
+    if isinstance(item, str):
+        item
+
     leaf = False
-    item = get_hierarchy_item_by_code(code)
-    if type(item) == Commodity:
-        leaf = True
-    elif (
+    code = ""
+    if isinstance(item, str):
+        code = item
+    elif isinstance(item, Chapter):
+        code = item.chapter_code
+    elif isinstance(item, Heading):
+        code = item.heading_code
+    else:
+        code = item.commodity_code
+
+    if (
         hasattr(item, "get_hierarchy_children_count")
         and item.get_hierarchy_children_count() == 0
     ):
         leaf = True
 
-    print("leaf:", code, type(item), leaf)
+    if type(item) == Commodity:
+        leaf = True
+
     commodity_code_html = (
         '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
     )
@@ -523,6 +593,7 @@ def _commodity_code_html(code):
         code_regex = re.search(
             "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})", code
         )
+
         code_split = [
             code_regex.group(1),
             code_regex.group(2),
@@ -531,67 +602,29 @@ def _commodity_code_html(code):
             code_regex.group(5),
         ]
 
+        blank_span_html = ['<span class="app-commodity-code__is-blank">', "</span>"]
+
         for index, code_segment in enumerate(code_split):
             counter = str(int(index) + 1)
             if code[2:] == "00000000" and int(counter) > 1:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+                blank_span = blank_span_html if not leaf else ["", ""]
             elif code[4:] == "000000" and int(counter) > 2:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            elif code[6:] == "0000" and int(counter) > 3 and not leaf:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
-            elif code[8:] == "00" and int(counter) > 4 and not leaf:
-                blank_span = ['<span class="app-commodity-code__is-blank">', "</span>"]
+                blank_span = blank_span_html if not leaf else ["", ""]
+            elif code[6:] == "0000" and int(counter) > 3:
+                blank_span = blank_span_html if not leaf else ["", ""]
+            elif code[8:] == "00" and int(counter) > 4:
+                blank_span = blank_span_html if not leaf else ["", ""]
             else:
                 blank_span = ["", ""]
 
             commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
                 counter, blank_span[0], code_segment, blank_span[1]
             )
+
     else:
         commodity_code_html + code
 
     commodity_code_html = commodity_code_html + "</span>"
-
-    return commodity_code_html
-
-
-def _generate_commodity_code_html(item):
-    """
-    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
-    of 6, 2 and  digits and colour code formatted
-    :param item: model instance
-    :return: html
-    """
-    commodity_code_html = ""
-    if type(item) is not Section:
-        commodity_code_html = (
-            '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-        )
-
-        if type(item) is Commodity:
-            item.harmonized_code = item.commodity_code
-
-        code_result = code_regex.search(item.harmonized_code)
-        code_split = [
-            code_result.group(1),
-            code_result.group(2),
-            code_result.group(3),
-            code_result.group(4),
-            code_result.group(5),
-        ]
-
-        for index, code_segment in enumerate(code_split):
-            counter = str(int(index) + 1)
-            commodity_code_html = (
-                commodity_code_html
-                + '<span class="app-commodity-code__highlight app-commodity-code__highlight--'
-                + counter
-                + '">'
-                + code_segment
-                + "</span>"
-            )
-
-        commodity_code_html = commodity_code_html + "</span>"
 
     return commodity_code_html
 
@@ -674,7 +707,7 @@ def measure_quota_detail(request, heading_code, country_code, measure_id, order_
     return render(request, "hierarchy/measure_quota_detail.html", context)
 
 
-def get_hierarchy_context(commodity_path, country_code, commodity_code):
+def get_hierarchy_context(commodity_path, country_code, commodity_code, current_item):
     """
     View helper function that returns an html representation of the context of the commodity within the
     hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
@@ -684,6 +717,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
     :param commodity_code: string
     :return: html
     """
+
     listSize = len(commodity_path)
     html = ""
     reversedList = reversed(commodity_path)
@@ -695,22 +729,29 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code):
         else:
             html += f"<ul>"
             for i, item in enumerate(lista):
-
+                commodity_type = ""
                 if type(item) is Chapter:
                     item_commodity_code = item.chapter_code
+                    commodity_type = "chapter"
                 elif type(item) is Heading:
                     item_commodity_code = item.heading_code
+                    commodity_type = "heading"
+                elif type(item) is SubHeading:
+                    item_commodity_code = item.commodity_code
+                    commodity_type = "subheading"
                 else:
                     item_commodity_code = item.commodity_code
+                    commodity_type = "commodity"
 
                 expand = "open"
                 if index is listSize:
                     expand = "closed"
 
-                if item_commodity_code == commodity_code:
-                    html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><b>{_commodity_code_html(item.commodity_code)}</b></li>"""
+                if item_commodity_code == commodity_code and item == current_item:
+                    html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
-                    html += f"""<li><a href="{item.get_hierarchy_url(country_code)}#{item.hierarchy_key}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item_commodity_code)}"""
+
+                    html += f"""<li><a href="/country/{country_code}/{commodity_type}/{item_commodity_code}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
 
                 if index is listSize:
                     html += "</li>"

@@ -8,6 +8,8 @@
 
 import re
 from datetime import datetime, timedelta, timezone
+from pprint import pprint
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -17,7 +19,7 @@ from countries.models import Country
 from hierarchy.views import get_hierarchy_context
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-from hierarchy.helpers import TABLE_COLUMN_TITLES
+from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 
 
 def commodity_detail(request, commodity_code, country_code):
@@ -46,16 +48,40 @@ def commodity_detail(request, commodity_code, country_code):
     ):
         commodity.update_content()
 
-    import_measures = commodity.tts_obj.get_import_measures(country.country_code)
-    table_data = [measure_json.get_table_row() for measure_json in import_measures]
+    modals_dict = {}
+
+    tariffs_and_charges_measures = get_nomenclature_group_measures(
+        commodity, "Tariffs and charges", country.country_code
+    )
+    tariffs_and_charges_table_data = [
+        measure_json.get_table_row() for measure_json in tariffs_and_charges_measures
+    ]
+    for measure_json in tariffs_and_charges_measures:
+        modals_dict.update(measure_json.measures_modals)
+
+    quotas_measures = get_nomenclature_group_measures(
+        commodity, "Quotas", country.country_code
+    )
+    quotas_table_data = [
+        measure_json.get_table_row() for measure_json in quotas_measures
+    ]
+    for measure_json in quotas_measures:
+        modals_dict.update(measure_json.measures_modals)
+
+    other_measures = get_nomenclature_group_measures(
+        commodity, "Other measures", country.country_code
+    )
+    other_table_data = [measure_json.get_table_row() for measure_json in other_measures]
+    for measure_json in other_measures:
+        modals_dict.update(measure_json.measures_modals)
 
     commodity_path = commodity.get_path()
     accordion_title = commodity_hierarchy_section_header(commodity_path)
     rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 
-    modals_dict = {}
-    for measure_json in import_measures:
-        modals_dict.update(measure_json.measures_modals)
+    heading = commodity.get_heading()
+    chapter = heading.chapter
+    section = chapter.section
 
     context = {
         "selected_origin_country": country.country_code,
@@ -63,12 +89,18 @@ def commodity_detail(request, commodity_code, country_code):
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
         "roo_footnotes": rules_of_origin,
-        "table_data": table_data,
+        "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+        "quotas_table_data": quotas_table_data,
+        "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
         "regulations": commodity.get_regulations(),
         "accordion_title": accordion_title,
+        "commodity_notes": commodity.tts_obj.footnotes,
+        "chapter_notes": chapter.chapter_notes,
+        "heading_notes": heading.heading_notes,
+        "section_notes": section.section_notes,
         "commodity_hierarchy_context": get_hierarchy_context(
-            commodity_path, country.country_code, commodity_code
+            commodity_path, country.country_code, commodity_code, commodity
         ),
         "modals": modals_dict,
     }
@@ -164,40 +196,6 @@ def measure_quota_detail(
     }
 
     return render(request, "commodities/measure_quota_detail.html", context)
-
-
-def _generate_commodity_code_html(item):
-    """
-    View helper function that genrates an html representation of the ten digit commodity code broken into three groups
-    of 6, 2 and  digits and colour code formatted
-    :param item: model instance
-    :return: html
-    """
-    commodity_code_html = ""
-    if type(item) is not Section:
-        commodity_code_html = (
-            '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
-        )
-
-        if type(item) is Commodity:
-            item.harmonized_code = item.commodity_code
-
-        code_regex = re.search("([0-9]{6})([0-9]{2})([0-9]{2})", item.harmonized_code)
-        code_split = [code_regex.group(1), code_regex.group(2), code_regex.group(3)]
-
-        for index, code_segment in enumerate(code_split):
-            counter = str(int(index) + 1)
-            commodity_code_html = (
-                commodity_code_html
-                + '<span class="app-commodity-code__highlight app-commodity-code__highlight--'
-                + counter
-                + '">'
-                + code_segment
-                + "</span>"
-            )
-
-        commodity_code_html = commodity_code_html + "</span>"
-    return commodity_code_html
 
 
 def commodity_hierarchy_section_header(reversed_commodity_tree):
