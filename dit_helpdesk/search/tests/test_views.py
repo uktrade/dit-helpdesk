@@ -157,18 +157,6 @@ class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
         )
         self.assertEqual(resp.status_code, 200)
 
-    def test_search_view_with_code_the_form_is_valid_is_redirected(self):
-        url = reverse("search:search-commodity", kwargs={"country_code": "au"})
-        data = {"q": "4901", "country": "au"}
-        resp = self.client.get(url, data=data, follow=False)
-        self.assertEqual(resp.status_code, 302)
-
-    def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
-        url = reverse("search:search-commodity", kwargs={"country_code": "au"})
-        data = {"q": "4911910010", "country": "au"}
-        resp = self.client.get(url, data=data, follow=True)
-        self.assertEqual(resp.status_code, 200)
-
 
 class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
     """
@@ -178,13 +166,6 @@ class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
     def test_search_view_missing_term_returns_http_400(self):
         resp = self.client.get(reverse("search:commodity-term-api-search"))
         self.assertEqual(resp.status_code, 400)
-
-    # def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
-    #     url = reverse("search:commodity-term-api-search")
-    #     data = {"q": "Scissors"}
-    #     resp = self.client.get(url, data=data)
-    #     self.assertEqual(resp.status_code, 200)
-    #     self.assertEqual(resp.json()["results"][0]["description"], "Scissors")
 
 
 class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
@@ -226,38 +207,12 @@ class CommodityKeywordSearchViewTestCase(TestCase):
 
     fixtures = [settings.COUNTRIES_DATA]
 
-    # def test_commodity_keyword_search_has_query(self):
-    #     path = reverse("search:search-commodity", kwargs={"country_code": "au"})
-    #     resp = self.client.get(path, data={"q": "Paper", "country": "au"})
-    #     self.assertIn("q", resp.request["QUERY_STRING"])
-
     def test_commodity_keyword_search_query_is_empty(self):
         resp = self.client.get(
             reverse("search:search-commodity", kwargs={"country_code": "au"}),
             data={"q": "", "country": "au"},
         )
         self.assertEqual(resp.context["form"].is_valid(), False)
-
-    # def test_commodity_keyword_search_query_context_has_correct_country(self):
-    #     resp = self.client.get(
-    #         reverse("search:search-commodity", kwargs={"country_code": "au"}),
-    #         data={"q": "Paper", "country": "au"},
-    #     )
-    #     self.assertEqual(resp.context["selected_origin_country_name"], "Australia")
-
-    # def test_commodity_keyword_search_query_is_using_the_correct_form(self):
-    #     resp = self.client.get(
-    #         reverse("search:search-commodity", kwargs={"country_code": "au"}),
-    #         data={"q": "Paper", "country": "au"},
-    #     )
-    #     self.assertIsInstance(resp.context["form"], CommoditySearchForm)
-
-    # def test_commodity_keyword_search_query_is_at_page_one(self):
-    #     resp = self.client.get(
-    #         reverse("search:search-commodity", kwargs={"country_code": "au"}),
-    #         data={"q": "Paper", "country": "au"},
-    #     )
-    #     self.assertEqual(resp.context["form"].is_valid(), True)
 
 
 class ProcessCommodityCodeTestCase(TestCase):
