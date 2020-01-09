@@ -177,13 +177,6 @@ class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
         resp = self.client.get(reverse("search:commodity-code-api-search"))
         self.assertEqual(resp.status_code, 400)
 
-    def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
-        url = reverse("search:commodity-code-api-search")
-        data = {"q": "4911910090"}
-        resp = self.client.get(url, data=data)
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["results"][0]["commodity_code"], "4911910090")
-
 
 class SearchFormTestCase(TestCase):
     def test_form_is_valid_with_a_query(self):
