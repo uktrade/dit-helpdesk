@@ -1,11 +1,12 @@
 To {{ recipient_fullname }}
 
-I am located {{ location }}
+I am located in {{ location }}
 
 I would you like to know more about {{ category }} regarding {{ topic }}
 
 {{ message }}
 
 Thanks you
+
 {{ name }}
 {{ email_address }}
