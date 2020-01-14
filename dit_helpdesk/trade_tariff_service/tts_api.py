@@ -504,7 +504,9 @@ class ChapterJson(object):
 
     @property
     def chapter_note(self):
-        return self.di["chapter_note"]
+        if self.di and "chapter_note" in self.di.keys():
+            chapter_note = self.di["chapter_note"]
+        return
 
 
 class HeadingJson(object):
