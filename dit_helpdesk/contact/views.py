@@ -113,7 +113,6 @@ class ContactFormWizardView(SessionWizardView):
                 logger.info("Exception args: ", ex.args)
                 return error500handler(self.request)
 
-        print("SESH", self.request.session["origin_country"])
         return render_to_response("contact/done.html", {"context": context})
 
     def render_next_step(self, form, **kwargs):
