@@ -80,7 +80,7 @@
 
                         {% if results %}
                             <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ query }}</h2>
-                        {% endif %}
+
 
                     <div class="govuk-form-group {% if not query %}govuk-visually-hidden{% endif %}">
                         <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
@@ -91,7 +91,7 @@
                                            {% if request.GET.toggle_headings or request.GET.toggle_headings == '1' %}checked="checked"{% endif %}
                                            value="1">
                                     <label class="govuk-label govuk-radios__label" for="show_headings">
-                                        Show headings
+                                        All results
                                     </label>
                                 </div>
                                 <div class="govuk-radios__item">
@@ -100,7 +100,7 @@
                                            {% if request.GET.toggle_headings == '0' %}checked="checked"{% endif %}
                                            value="0">
                                     <label class="govuk-label govuk-radios__label" for="hide_headings">
-                                        Hide headings
+                                        Complete commodity codes only
                                     </label>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                 <label class="govuk-label" for="sort">Sort by
                                     <select class="govuk-select" name="sort" id="sort">
                                         <option value="ranking"
-                                                {% if form.sort.value == "ranking" %}selected{% endif %}>Ranking
+                                                {% if form.sort.value == "ranking" %}selected{% endif %}>Relevance
                                         </option>
                                         <option value="commodity_code"
                                                 {% if form.sort.value == "commodity_code" %}selected{% endif %}>Code
@@ -118,7 +118,7 @@
                             </div>
                         </fieldset>
                     </div>
-
+                        {% endif %}
 
                 {% if query %}
                     <div id="search-results">
@@ -168,12 +168,11 @@
                         {% empty %}
                            <h2 class="govuk-heading-l">There are no results for {{ query }}</h2>
 
-                            <div class="helpdesk-note">
-                                <p class="govuk-heading-m">Please search again and consider:</p>
+                            <div>
+                                <p class="govuk-heading-m">Search again and consider:</p>
                                 <ul class="govuk-hint">
-                                    <li>Searching what the item is used for or made from</li>
-                                    <li>Broadening your search criteria</li>
-                                    <li>Checking your spelling</li>
+                                    <li>searching what the item is used for or made from</li>
+                                    <li>checking your spelling</li>
                                 </ul>
                             </div>
                         {% endfor %}
