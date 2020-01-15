@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 import requests
@@ -8,6 +9,8 @@ from django.urls import reverse
 
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+
+logger = logging.getLogger(__name__)
 
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
@@ -432,8 +435,12 @@ class Chapter(models.Model):
 
         if not self.tts_json:
             return {}
-
-        chapter_note_items = self.tts_obj.chapter_note.split("\r\n")
+        chapter_note = ""
+        try:
+            chapter_note = self.tts_obj.chapter_note
+        except Exception as err:
+            logger.info("Chapter not exception: ", err.args)
+        chapter_note_items = chapter_note.split("\r\n")
 
         chapter_notes = []
         for item in chapter_note_items:

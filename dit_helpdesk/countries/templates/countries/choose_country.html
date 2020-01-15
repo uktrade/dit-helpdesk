@@ -1,71 +1,85 @@
 {% extends 'core/base.html' %}
-{%  load static %}
+{% load static %}
 
 {% block title %}Select country{% endblock title %}
 
 {% block content %}
 
-<div class="govuk-width-container">
-    <main id="main-content" class="govuk-main-wrapper">
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
 
-        <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {% if isError %}
-      <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-          There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-          <ul class="govuk-list govuk-error-summary__list">
-            <li>
-              <a href="#select-country-error">{{ errorSummaryMessage }}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      {% endif %}
-      <h2 class="govuk-heading-l govuk-!-margin-bottom-2 govuk-!-margin-top-6">
-        What country are you exporting from?
-      </h2>
-    </div>
-  </div>
-        <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
-      <form action="{% url 'choose-country' %}" method="post">
-        <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
-          {% csrf_token %}
-          <label class="govuk-hint" for="country-picker">
-          {% if isError %}
-            <span id="select-country-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> {{errorInputMessage}}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    {% if isError %}
+                        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert"
+                             tabindex="-1" data-module="error-summary">
+                            <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list">
+                                    <li>
+                                        <a href="#select-country-error">{{ errorSummaryMessage }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-2 govuk-!-margin-top-6">
+                        What country are you exporting from?
+                    </h2>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
+
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <form action="{% url 'choose-country' %}" method="post">
+                        <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
+                            {% csrf_token %}
+                            <label class="govuk-hint" for="country-picker">
+                                {% if isError %}
+                                    <span id="select-country-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ errorInputMessage }}
             </span>
-          {% endif %}
-          <select name="origin_country" class="govuk-select{% if isError %} govuk-select--error{% endif %}" id="country-picker" {% if isError %} aria-describedby="select-country-error"{% endif %}>
-            <option value="">Select the export country</option>
-            {% for country_code, country_name in country_options %}
-                  <option value="{{ country_code | lower }}">{{ country_name }}</option>
-            {% endfor %}
-          </select>
-          </label>
-        </div>
-        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">Continue</button>
-      </form>
-    </div>
-  </div>
+                                {% endif %}
+                                <select name="origin_country"
+                                        class="govuk-select{% if isError %} govuk-select--error{% endif %}"
+                                        id="country-picker" {% if isError %}
+                                        aria-describedby="select-country-error"{% endif %}>
+                                    <option value="">Select the export country</option>
+                                    {% for country_code, country_name in country_options %}
+                                        <option value="{{ country_code | lower }}">{{ country_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">
+                            Continue
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-    </main>
-</div>
+        </main>
+    </div>
 
 {% endblock %}
 
 {% block footer_additions %}
-  <script src="/assets/js/location-autocomplete.min.js"></script>
-  <script>
-    openregisterLocationPicker({
-      selectElement: document.getElementById('country-picker'),
-      url: '/assets/js/location-autocomplete-graph.json',
-      defaultValue: '',
-      displayMenu: 'overlay'
-    })
-  </script>
+    <script src="/assets/js/location-autocomplete.min.js"></script>
+    <script>
+        openregisterLocationPicker({
+            selectElement: document.getElementById('country-picker'),
+            url: '/assets/js/location-autocomplete-graph.json',
+            defaultValue: '',
+            displayMenu: 'overlay'
+        })
+    </script>
 {% endblock footer_additions %}

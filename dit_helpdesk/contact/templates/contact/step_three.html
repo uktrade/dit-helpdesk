@@ -10,7 +10,7 @@
 
 {% block form_body %}
 
-
+    <input type="hidden" name="step_three-country_code" id="id_step_three-country_code" value="{{ request.session.origin_country }}">
     <div class="govuk-form-group govuk-!-width-two-thirds govuk-!-margin-bottom-0 {% if wizard.form.message.errors %}govuk-form-group--error{% endif %}">
         <label class="govuk-label" for="id_step_three-message">{{ wizard.form.message.label_tag }}</label>
         {% if wizard.form.message.errors %}
