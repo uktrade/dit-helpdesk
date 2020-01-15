@@ -97,12 +97,20 @@
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
       <div class="govuk-width-container">
-          <p class="app-cookie-banner__message">GOV.UK uses cookies which are essential for the site to work. We also use
-          non-essential cookies to help us improve government digital services. Any data collected is anonymised.
-          By continuing to use this site, you agree to our use of cookies.
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+       <p class="app-cookie-banner__message">
+          <span class="govuk-heading-m">Tell us whether you accept cookies</span>
+          
+          <p class="govuk-body">We use <a class="govuk-link" href="/help/cookies">cookies to collect information</a> about how you use GOV.UK. <br />
+          We use this information to make the website work as well as possible and improve government services.</p>
+          
               </p>
-          <a href="#" class="govuk-button button--secondary js-accept-cookie">Accept cookies</a>
-          <a href="{% url 'cookies' %}" class="govuk-button button--secondary">Cookie settings</a>
+          <a href="#" class="govuk-button js-accept-cookie">Accept all cookies</a>
+          <a href="{% url 'cookies' %}" class="govuk-button ">Set cookie preferences</a>
+          </div>
+        </div>
+   
       </div>
     </div>
     <header class="govuk-header " role="banner" data-module="header">
