@@ -20,6 +20,10 @@ class ContactFormViewTestCase(TestCase):
 
     def test_initial_form_call(self):
 
+        session = self.client.session
+        session["origin_country"] = "eu"
+        session.save()
+
         contact_form_step_one = {
             "step_two-category": "1",
             "session_contact_wizard-current_step": "step_two",
@@ -41,9 +45,10 @@ class ContactFormViewTestCase(TestCase):
             contact_form_step_three,
         )
 
-        response = self.client.get(self.wizard_url)
-        wizard = response.context["wizard"]
+        response = self.client.get(self.wizard_url, follow=True)
         self.assertEqual(response.status_code, 200)
+        wizard = response.context["wizard"]
+
         self.assertEqual(wizard["steps"].current, "step_one")
         self.assertEqual(wizard["steps"].step0, 0)
         self.assertEqual(wizard["steps"].step1, 1)
