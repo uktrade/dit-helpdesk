@@ -29,15 +29,15 @@ TOPIC_CHOICE_HELP_TEXT = (
 
 
 class ContactFormStepOne(forms.Form):
-
+    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
     category = forms.ChoiceField(
         choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True
     )
     category.label = "What would you like to know more about?"
-    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
 
 
 class ContactFormStepTwo(forms.Form):
+    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
     topic = forms.ChoiceField(
         choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True
     )
@@ -48,14 +48,14 @@ class ContactFormStepTwo(forms.Form):
 class ContactFormStepThree(forms.Form):
     name = forms.CharField(required=True)
     email_address = forms.EmailField(required=True)
-    message = forms.CharField(widget=forms.Textarea, required=True)
     terms_and_conditions = forms.BooleanField(required=True)
-
+    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)
     message.label = "Tell us how we can help"
     message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."
 
     class Meta:
-        # model = Contact
+
         fields = ["message", "name", "email_address", "terms_and_conditions"]
         error_messages = {
             "message": {

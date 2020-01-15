@@ -34,15 +34,11 @@ class CountriesViewsTestCase(TestCase):
 
     def test_get_context_has_selected_country_and_value_is_false(self):
         resp = self.client.get(reverse("choose-country"))
-        self.assertTrue("selected_country" in resp.context)
-        self.assertEqual(resp.context["selected_country"], False)
+        self.assertFalse("selected_country" in resp.context)
 
-    def test_get_context_has_selected_country_and_value_is_country_code(self):
-        session = self.client.session
-        session["origin_country"] = "AU"
-        session.save()
+    def test_get_context_does_not_have_selected_country_and_value_is_cleared(self):
         resp = self.client.get(reverse("choose-country"))
-        self.assertEqual(resp.context["selected_country"], "AU")
+        self.assertTrue("selected_country" not in resp.context.keys())
 
     def test_post_is_ok_and_has_valid_csrftoken(self):
         resp = self.client.post(reverse("choose-country"))

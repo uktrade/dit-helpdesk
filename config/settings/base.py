@@ -323,13 +323,25 @@ DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS = os.environ.get(
 DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = 10
 
 APP_START_DOMAIN = os.environ.get("APP_START_DOMAIN")
-FEEDBACK_DESTINATION_EMAIL = os.environ.get("FEEDBACK_DESTINATION_EMAIL")
+FEEDBACK_EMAIL = os.environ.get("FEEDBACK_EMAIL")
 
-HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
+FEEDBACK_CONTACT = os.environ.get("FEEDBACK_CONTACT")
 
 DEFRA_EMAIL = os.environ.get("DEFRA_EMAIL")
 DEFRA_CONTACT = os.environ.get("DEFRA_CONTACT")
 BEIS_EMAIL = os.environ.get("BEIS_EMAIL")
 BEIS_CONTACT = os.environ.get("BEIS_CONTACT")
+
+DDAT_CONTACT = "DDAT Support Team"
+DIT_CONTACT = "DIT EU Exit Team"
+
+CONTACT_SUBJECT = "New UK Trade Helpdesk enquiry"
+FEEDBACK_SUBJECT = "UK Trade Helpdesk feedback"
+SUPPORT_SUBJECT = "UK Trade Helpdesk support request"
+SERVICE_NAME = "EU Exit"
+DIT_SUBDOMAIN = "dit"
+DIT_SUBJECT_SUFFIX = " - DIT EU Exit Enquiries"
+DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
+HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")

@@ -1,0 +1,7 @@
+To {{ recipient_fullname }},
+
+{{ message }}
+
+Thank you
+{{ name }}
+{{ email }}

@@ -303,12 +303,9 @@ def heading_detail(request, heading_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    # heading = Heading.objects.filter(heading_code=heading_code).first()
-
     heading = get_object_or_404(Heading, heading_code=heading_code)
 
     import_measures = []
-    # table_data = []
     tariffs_and_charges_table_data = []
     quotas_table_data = []
     other_table_data = []

@@ -10,6 +10,7 @@
 
 {% block form_body %}
 
+    <input type="hidden" name="step_two-country_code" id="id_step_two-country_code" value="{{ request.session.origin_country }}">
     <div class="govuk-form-group {% if wizard.form.errors %} govuk-form-group--error{% endif %}">
         {% if wizard.form.errors %}
             {% for error in wizard.form.errors %}

@@ -64,14 +64,16 @@
                             </div>
                         {% endif %}
 
-                        {% for hidden_field in form.hidden_fields %}
-                            {{ hidden_field.errors }}
-                            {{ hidden_field }}
-                        {% endfor %}
+
 
                         <fieldset class="govuk-fieldset">
 
                             {{ wizard.management_form }}
+
+                            {% for hidden_field in form.hidden_fields %}
+                                {{ hidden_field.errors }}
+                                {{ hidden_field }}
+                            {% endfor %}
 
                             {% block form_body %}{% endblock %}
 
