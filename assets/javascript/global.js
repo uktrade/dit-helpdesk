@@ -9,7 +9,8 @@ var Modal = require('./modules/modal')
 var CookieBanner = require('./modules/cookie-banner');
 var nodeListForEach = common.nodeListForEach
 
-CookieBanner.addCookieMessage()
+var banner = new CookieBanner(document, console);
+banner.init('.app-cookie-banner', '.js-accept-cookie', 'cookies');
 
 // accessibility feature
 new Button(document).init()
