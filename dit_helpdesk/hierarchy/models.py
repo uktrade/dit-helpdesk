@@ -434,12 +434,9 @@ class Chapter(models.Model):
     def chapter_notes(self):
 
         if not self.tts_json:
-            return {}
-        chapter_note = ""
-        try:
-            chapter_note = self.tts_obj.chapter_note
-        except Exception as err:
-            logger.info("Chapter not exception: ", err.args)
+            return []
+        chapter_note = self.tts_obj.chapter_note
+
         chapter_note_items = chapter_note.split("\r\n")
 
         chapter_notes = []
