@@ -332,4 +332,16 @@ DEFRA_CONTACT = os.environ.get("DEFRA_CONTACT")
 BEIS_EMAIL = os.environ.get("BEIS_EMAIL")
 BEIS_CONTACT = os.environ.get("BEIS_CONTACT")
 
+DDAT_CONTACT = "DDAT Support Team"
+DIT_CONTACT = "DIT EU Exit Team"
+
+CONTACT_SUBJECT = "New UK Trade Helpdesk enquiry"
+FEEDBACK_SUBJECT = "UK Trade Helpdesk feedback"
+SUPPORT_SUBJECT = "UK Trade Helpdesk support request"
+SERVICE_NAME = "EU Exit"
+DIT_SUBDOMAIN = "dit"
+DIT_SUBJECT_SUFFIX = " - DIT EU Exit Enquiries"
+DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
+HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
+
 HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")
