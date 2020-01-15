@@ -69,15 +69,13 @@ class ContactFormWizardView(SessionWizardView):
 
     condition_dict = {"step_one": jump_to_step_two, "step_two": jump_to_step_three}
 
-    def post(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
 
         if "origin_country" not in request.session:
-            messages.error(
-                request, "Please choose a country of origin before you proceed"
-            )
+            messages.error(request, "Enter a country")
             return redirect(reverse("choose-country"))
 
-        return super(ContactFormWizardView, self).post(request, *args, **kwargs)
+        return super(ContactFormWizardView, self).dispatch(request, *args, **kwargs)
 
     def done(self, form_list, **kwargs):
 
