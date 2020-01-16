@@ -1,5 +1,11 @@
-from django.test import TestCase
+import logging
+
+from django.test import TestCase, Client
 from django.urls import reverse
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 
 class FeedbackViewTestCase(TestCase):
@@ -7,25 +13,22 @@ class FeedbackViewTestCase(TestCase):
     Test Feedback View
     """
 
-    def test_get_feedback_view(self):
-        resp = self.client.get(reverse("feedback-view"))
+    def setUp(self):
+
+        self.client = Client()
+        self.wizard_url = "/contact/"
+
+    def test_get_feedback_view_with_no_country_code(self):
+        resp = self.client.get(reverse("feedback-view"), follow=True)
+        self.assertEquals(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "countries/choose_country.html")
+
+    def test_get_feedback_view_with_country_code(self):
+
+        session = self.client.session
+        session["origin_country"] = "eu"
+        session.save()
+
+        resp = self.client.get(reverse("feedback-view"), follow=True)
         self.assertEquals(resp.status_code, 200)
         self.assertTemplateUsed(resp, "contact/step_three.html")
-
-    # def test_submitting_form_redirects_to_success_page(self):
-    #     resp = self.client.post(
-    #         reverse("feedback-view"),
-    #         {"name": "test", "email": "test@test.com", "message": "feedback"},
-    #     )
-    #     self.assertRedirects(resp, reverse("feedback-success-view"))
-
-
-class FeedbackSuccessViewTestCase(TestCase):
-    """
-    Test Feedback Success View
-    """
-
-    def test_get_success_view(self):
-        resp = self.client.get(reverse("feedback-success-view"))
-        self.assertEquals(resp.status_code, 200)
-        self.assertTemplateUsed(resp, "feedback/feedback_success.html")

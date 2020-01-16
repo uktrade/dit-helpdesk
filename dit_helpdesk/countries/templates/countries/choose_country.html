@@ -33,13 +33,6 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
 
-                    {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
                     <form action="{% url 'choose-country' %}" method="post">
                         <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
                             {% csrf_token %}
