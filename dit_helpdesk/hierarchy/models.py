@@ -895,7 +895,10 @@ class SubHeading(models.Model):
                         footnotes = item[0].tts_obj.footnotes
                         if footnotes:
                             if notes is not None:
-                                notes.update(footnotes)
+                                if isinstance(notes, dict):
+                                    notes.update(footnotes)
+                                elif isinstance(notes, list):
+                                    notes.extend(footnotes)
                             else:
                                 notes = footnotes
         return notes
