@@ -138,6 +138,8 @@ class CommoditySearchView(FormView):
                         else:
                             context["message"] = "nothing found for that number"
                             return self.render_to_response(context)
+                    else:
+                        return self.render_to_response(context)
                 else:
                     sort_by = "ranking" if not sort_by else sort_by
                     sort_order = "desc" if not sort_order else sort_order
