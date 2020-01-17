@@ -342,7 +342,7 @@ class RulesOfOriginImporter:
             new_dict[new_key] = old_dict[key]
         return new_dict
 
-    def load(self, input_file=None, output_file=None, priority=None):
+    def load(self, input_file=None, output_file=None, priority=None, version="v1"):
         """
         Starting point of the class. Takes passed documents and loads the data into memory, processes the data
         data into organised data structures then creates the model instances and commits to the database and outputs a log
@@ -356,9 +356,19 @@ class RulesOfOriginImporter:
         self.priority = priority
 
         self.set_group_documents(
-            self.data_loader(settings.RULES_OF_ORIGIN_DOCUMENTS_FILE)
+            self.data_loader(
+                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                    "reference_{0}/group_documents.csv".format(version)
+                )
+            )
         )
-        self.set_rules_groups(self.data_loader(settings.RULES_OF_ORIGIN_GROUPS_FILE))
+        self.set_rules_groups(
+            self.data_loader(
+                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                    "reference_{0}/country_groups_v3.csv".format(version)
+                )
+            )
+        )
 
         self.working_group_name = Path(input_file).stem.upper()
 

@@ -26,7 +26,7 @@ class ImporterTestCase(TestCase):
 
     def test_load(self):
         importer = RulesOfOriginImporter()
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/OCTS.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/OCTS.json")
         importer.load(input_file=path, priority=1)
         self.assertEqual(len(importer.data.keys()), 94)
         self.assertTrue("OCTS" in importer.rules_groups.keys())
@@ -39,7 +39,7 @@ class ImporterTestCase(TestCase):
     fixtures = ["../../countries/fixtures/countries_data.json"]
 
     def test_instance_builder(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/OCTS.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/OCTS.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -49,7 +49,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_for_existing_items(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/GSP.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/GSP.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -57,7 +57,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesGroup.objects.all()), 1)
         self.assertEqual(len(RulesGroupMember.objects.all()), 82)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/GSP.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/GSP.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -98,7 +98,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_chile(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/CHILE_FTA.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/CHILE_FTA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -108,7 +108,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_ESA(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_ESA.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/EPA_ESA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -118,7 +118,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 10)
 
     def test_instance_builder_EPA_pacific(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_pacific.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/EPA_pacific.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -129,7 +129,7 @@ class ImporterTestCase(TestCase):
 
     def test_instance_builder_EPA_faroe_islands(self):
         path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/PEM_faroe_islands.json"
+            "import_v1/PEM_faroe_islands.json"
         )
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
@@ -140,7 +140,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_Israel(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/PEM_Israel.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/PEM_Israel.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -150,7 +150,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EPA_palestine(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/PEM_palestine.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/PEM_palestine.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
@@ -161,7 +161,7 @@ class ImporterTestCase(TestCase):
 
     def test_instance_builder_PEM_switzerland_liechtenstein(self):
         path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/PEM_switzerland_&_liechtenstein.json"
+            "import_v1/PEM_switzerland_&_liechtenstein.json"
         )
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
@@ -172,7 +172,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 11)
 
     def test_instance_builder_EEA(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EEA.json")
+        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import_v1/EEA.json")
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()

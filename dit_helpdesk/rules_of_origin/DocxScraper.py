@@ -167,7 +167,7 @@ class DocxScraper:
         # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_heading.json')), heading_rows)
         # self.data_writer(self.data_path.format("import/{0}".format(docx_file+'_columns.json')), number_cols)
         self.data_writer(
-            self.data_path.format("import/{0}".format(docx_file)), self.table_dict
+            self.data_path.format("import_v1/{0}".format(docx_file)), self.table_dict
         )
 
     @staticmethod
@@ -281,7 +281,9 @@ class DocxScraper:
 
         file_name = Path(file_path).stem.upper()
 
-        outfile = open(self.data_path.format("import/{0}.json".format(file_name)), "w+")
+        outfile = open(
+            self.data_path.format("import_v1/{0}.json".format(file_name)), "w+"
+        )
         json.dump(data, outfile)
 
     @staticmethod
