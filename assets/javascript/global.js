@@ -3,14 +3,14 @@ var Button = require('govuk-frontend/components/button/button.js')
 var Accordion = require('govuk-frontend/components/accordion/accordion.js')
 var ErrorSummary = require('govuk-frontend/components/error-summary/error-summary.js')
 var common = require('govuk-frontend/common')
-var commodityTree = require('./modules/commodity-tree')
+var commodityTreecommodityTree = require('./modules/commodity-tree')
 // var showHideHeadings = require('./modules/showhide-headings')
 var Modal = require('./modules/modal')
-var CookieBanner = require('./modules/cookie-banner');
+var CookiePolicy = require('./modules/cookie-policy');
 var nodeListForEach = common.nodeListForEach
 
-var banner = new CookieBanner(document, console);
-banner.init('.app-cookie-banner', '.js-accept-cookie', 'cookies');
+var cookiePolicy = new CookiePolicy(document, console);
+cookiePolicy.initBanner('.app-cookie-banner', '.js-accept-cookie', 'cookies');
 
 // accessibility feature
 new Button(document).init()
@@ -78,4 +78,9 @@ if ($radioToggleElems) {
 var $selectSortBy = document.querySelectorAll('#select-sortby select')
 if ($selectSortBy) {
   CommoditySearchForm.init($selectSortBy, 'change', $searchForm)
+}
+
+module.exports = {
+  bindCookiePolicyForm: cookiePolicy.bindForm,
+
 }

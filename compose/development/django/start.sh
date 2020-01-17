@@ -13,7 +13,7 @@
 # These commands only need running once, unless you destroy the containers and need to build the environment
 # from scratch again
 # ----------------- commands ----------------
-sleep infinity
+# sleep infinity
 # python manage.py collectstatic --noinput
 # python manage.py migrate
 # python manage.py loaddata countries_data
@@ -32,7 +32,7 @@ sleep infinity
 # so that the django server starts when running django-compose up.
 # Also do not forget to comment out the command in the INITIALISE SECTION
 # ----------------- commands ----------------
-# python manage.py runserver_plus 0.0.0.0:8000
+python manage.py runserver_plus 0.0.0.0:8000
 # --------------------------------------------
 
 # ----------------- instruction -------------
