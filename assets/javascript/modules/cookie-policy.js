@@ -49,6 +49,20 @@ function CookieBanner (document, console) {
     return null
   }
 
+  var gtmUsageEventFired = false
+
+  function raiseGTMUsageEvent () {
+    if (gtmUsageEventFired) return
+
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({
+      event: 'dit-enable-usage'
+    })
+
+    console.log('event has been raised')
+    gtmUsageEventFired = true
+  }
+
   function getDefaultPolicy () {
     var policy = {
       essential: true,
@@ -130,17 +144,14 @@ function CookieBanner (document, console) {
     bindAcceptAllCookiesButton(acceptButtonClassName, function () {
       console.log('clicked')
 
-      var defaultPolicy = getDefaultPolicy()
-      createPoliciesCookie(
-        defaultPolicy.settings,
-        defaultPolicy.usage,
-        defaultPolicy.campaigns
-      )
+      createPoliciesCookie(true, true, true)
 
       //confirm that we've seen preferences
       setPreferencesCookie()
 
       hideCookieBanner(bannerClassName)
+      raiseGTMUsageEvent()
+
       // return false in case button is a link
       return false
     })
@@ -163,6 +174,13 @@ function CookieBanner (document, console) {
     if ((!preferenceCookie || preferenceCookie == null) && !isCookiesPage) {
       enableCookieBanner(bannerClassName, acceptButtonClassName)
     }
+
+    var policy = getPolicyOrDefault()
+    console.log(policy)
+    if (policy.usage) {
+      raiseGTMUsageEvent()
+    }
+
   }
 
   /**
