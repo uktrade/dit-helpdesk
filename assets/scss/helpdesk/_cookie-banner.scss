@@ -41,8 +41,6 @@
   .cookie-settings__form-wrapper {
     display: block; // if no js then the form wont work anyway
   }
-
-
 }
 
 .cookie-preferences {
@@ -50,6 +48,13 @@
     color: $govuk-secondary-text-colour;
 
   }
+
+  .cookie-settings__confirmation {
+    border: solid 5px;
+    border-color:  $govuk-brand-colour;
+    display: none;
+  }
+
 }
 
 
