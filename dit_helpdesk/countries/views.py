@@ -41,12 +41,8 @@ def choose_country_view(request):
     context = {"country_options": [(c.country_code, c.name) for c in countries]}
 
     error_summary_message = "Enter a country"
-    print("session keys: ", request.session["no_country"])
-
-    if (
-        "no_country" in request.session.keys()
-        and request.session["no_country"] == "true"
-    ):
+    context["message"] = [message.message for message in get_messages(request)]
+    if error_summary_message in [message.message for message in get_messages(request)]:
         context["isError"] = True
         context["errorSummaryMessage"] = error_summary_message
         context["errorInputMessage"] = error_summary_message
