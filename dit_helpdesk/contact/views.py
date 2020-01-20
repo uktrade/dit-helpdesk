@@ -75,8 +75,10 @@ class ContactFormWizardView(SessionWizardView):
             "origin_country" not in request.session.keys()
             or request.session["origin_country"] == ""
         ):
-            messages.add_message(request, messages.ERROR, "Enter a country")
+            request.session["no_country"] = "true"
             return redirect(reverse("choose-country"))
+        else:
+            request.session["no_country"] = "false"
 
         return super(ContactFormWizardView, self).get(request, *args, **kwargs)
 
