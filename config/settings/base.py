@@ -191,7 +191,6 @@ STATICFILES_STORAGE = (
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
 IP_SAFELIST_XFF_INDEX = int(os.environ.get("IP_SAFELIST_XFF_INDEX", "-2"))
 
-
 RESTRICT_ADMIN = os.environ.get("RESTRICT_ADMIN", "True") == "True"
 ALLOWED_ADMIN_IPS = os.environ.get("ALLOWED_ADMIN_IPS", "127.0.0.1").split(",")
 ALLOWED_ADMIN_IP_RANGES = os.environ.get(
@@ -345,5 +344,3 @@ DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
 HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")
-
-# TODO GTM_CONTAINER_ID = os.environ.get("GTM_CONTAINER_ID", "GTM-ABCDEF")
