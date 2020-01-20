@@ -7,6 +7,7 @@ function CookieBanner (document, console) {
       }
 
       return {
+        error: nullf,
         log: nullf
       }
     })()
@@ -50,9 +51,27 @@ function CookieBanner (document, console) {
   }
 
   var gtmUsageEventFired = false
+  var gtmCampaignsEventFired = false
+
+  function raiseGTMCampaignsEvent () {
+    if (gtmCampaignsEventFired) {
+      return
+    }
+    console.log('raiseGTMCampaignsEvent')
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({
+      event: 'dit-enable-campaigns'
+    })
+
+    console.log('event has been raised')
+    gtmCampaignsEventFired = true
+
+  }
 
   function raiseGTMUsageEvent () {
+
     if (gtmUsageEventFired) return
+    console.log('raiseGTMUsageEvent')
 
     window.dataLayer = window.dataLayer || []
     window.dataLayer.push({
@@ -107,6 +126,7 @@ function CookieBanner (document, console) {
     policy.campaigns = campaigns || false
     var json = JSON.stringify(policy)
     setCookie(cookiesPolicyName, json, { days: cookiesPolicyDurationDays })
+    return policy
   }
 
   function hideCookieBanner (className) {
@@ -158,6 +178,16 @@ function CookieBanner (document, console) {
     return
   }
 
+  function raiseGTMEvents (policy) {
+    if (policy.usage) {
+      raiseGTMUsageEvent()
+    }
+
+    if (policy.campaigns) {
+      raiseGTMCampaignsEvent()
+    }
+  }
+
   function init (bannerClassName, acceptButtonClassName, cookiesPolicyUrl) {
     if (!bannerClassName) {
       throw 'Expected bannerClassName'
@@ -176,10 +206,7 @@ function CookieBanner (document, console) {
     }
 
     var policy = getPolicyOrDefault()
-    console.log(policy)
-    if (policy.usage) {
-      raiseGTMUsageEvent()
-    }
+    raiseGTMEvents(policy)
 
   }
 
@@ -227,8 +254,10 @@ function CookieBanner (document, console) {
       var usage = form[radioButtons.usage].value == 'on'
       var campaigns = form[radioButtons.campaigns].value == 'on'
 
-      createPoliciesCookie(settings, usage, campaigns)
+      var policy = createPoliciesCookie(settings, usage, campaigns)
       setPreferencesCookie()
+
+      raiseGTMEvents(policy)
 
       confirmation.style = 'display:block;'
       window.scrollTo(0, 0)

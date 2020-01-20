@@ -1,0 +1,20 @@
+<div class="app-cookie-banner js--cookie-banner">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="app-cookie-banner__message">
+                    <span class="govuk-heading-m">Tell us whether you accept cookies</span>
+
+                <p class="govuk-body">We use <a class="govuk-link" href="{% url 'cookies' %}">cookies to collect
+                    information</a> about how you use GOV.UK. <br/>
+                    We use this information to make the website work as well as possible and improve government
+                    services.</p>
+
+                </p>
+                <button class="govuk-button js-accept-cookie">Accept all cookies</button>
+                <a href="{% url 'cookies' %}" class="govuk-button ">Set cookie preferences</a>
+            </div>
+        </div>
+
+    </div>
+</div>
