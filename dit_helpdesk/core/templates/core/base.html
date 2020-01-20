@@ -85,7 +85,7 @@
           j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
           f.parentNode.insertBefore(j,f)
 
-        })(window, document, 'script', 'dataLayer', 'GTM-KMLFLZW')
+        })(window, document, 'script', 'dataLayer', {{ HELPDESK_GA_GTM }})
       }
     </script>
   </head>
@@ -93,7 +93,10 @@
     <script>
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled')
     </script>
-    {% block  ga_gta_body %}{% endblock ga_gta_body %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ HELPDESK_GA_GTM }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     <div class="app-cookie-banner js--cookie-banner">
       <div class="govuk-width-container">
