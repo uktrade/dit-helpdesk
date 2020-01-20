@@ -40,10 +40,12 @@ def choose_country_view(request):
 
     context = {"country_options": [(c.country_code, c.name) for c in countries]}
 
-    errorSummaryMessage = "Enter a country"
-    if errorSummaryMessage in [message.message for message in get_messages(request)]:
+    error_summary_message = "Enter a country"
+    storage = get_messages(request)
+
+    if error_summary_message in [message.message for message in storage]:
         context["isError"] = True
-        context["errorSummaryMessage"] = errorSummaryMessage
-        context["errorInputMessage"] = errorSummaryMessage
+        context["errorSummaryMessage"] = error_summary_message
+        context["errorInputMessage"] = error_summary_message
 
     return render(request, "countries/choose_country.html", context)
