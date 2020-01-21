@@ -113,9 +113,6 @@ const compileGovukFrontend = () => {
     .pipe(uglify({ie8:true}))
     .on('error', log.error)
     .pipe(sourcemaps.write('./'))
-    // .pipe(rename({
-    //   extname: '.min.js'
-    // }))
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
