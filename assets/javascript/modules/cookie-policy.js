@@ -1,18 +1,6 @@
 'use strict'
 
-function CookieBanner (document, console) {
-  if (!console) {
-    console = (function () {
-      var nullf = function () {
-      }
-
-      return {
-        error: nullf,
-        log: nullf
-      }
-    })()
-  }
-
+function CookieBanner () {
   var cookiePreferencesName = 'cookie_preferences_set'
   var cookiePreferencesDurationDays = 31
 
@@ -57,13 +45,11 @@ function CookieBanner (document, console) {
     if (gtmCampaignsEventFired) {
       return
     }
-    console.log('raiseGTMCampaignsEvent')
     window.dataLayer = window.dataLayer || []
     window.dataLayer.push({
       event: 'dit-enable-campaigns'
     })
 
-    console.log('event has been raised')
     gtmCampaignsEventFired = true
 
   }
@@ -71,14 +57,12 @@ function CookieBanner (document, console) {
   function raiseGTMUsageEvent () {
 
     if (gtmUsageEventFired) return
-    console.log('raiseGTMUsageEvent')
 
     window.dataLayer = window.dataLayer || []
     window.dataLayer.push({
       event: 'dit-enable-usage'
     })
 
-    console.log('event has been raised')
     gtmUsageEventFired = true
   }
 
@@ -93,12 +77,6 @@ function CookieBanner (document, console) {
     return policy
   }
 
-  /**
-   * Tries to find policy settings from saved cookie json.
-   * Returns default policy if the cookie isn't set
-   * Any errors parsing the cookie also returns default
-   * @returns {{settings: boolean, campaigns: boolean, usage: boolean, essential: boolean}}
-   */
   function getPolicyOrDefault () {
     var cookie = getCookie(cookiesPolicyName)
     var policy = getDefaultPolicy()
@@ -130,13 +108,11 @@ function CookieBanner (document, console) {
   }
 
   function hideCookieBanner (className) {
-    console.log('hide cookiebanner with classname ' + className)
     var banner = document.querySelector(className)
     banner.className = banner.className.replace(/app-cookie-banner--show/, '')
   }
 
   function displayCookieBanner (className) {
-    console.log('displaying cookiebanner with classname ' + className)
     var banner = document.querySelector(className)
 
     banner.className = banner.className.replace(
@@ -162,17 +138,13 @@ function CookieBanner (document, console) {
     console.log('preferences have not been set - display cookie banner')
     displayCookieBanner(bannerClassName)
     bindAcceptAllCookiesButton(acceptButtonClassName, function () {
-      console.log('clicked')
-
       createPoliciesCookie(true, true, true)
 
-      //confirm that we've seen preferences
       setPreferencesCookie()
 
       hideCookieBanner(bannerClassName)
       raiseGTMUsageEvent()
 
-      // return false in case button is a link
       return false
     })
     return
@@ -193,13 +165,8 @@ function CookieBanner (document, console) {
       throw 'Expected bannerClassName'
     }
 
-    //Has the cookie policy been set?
     var preferenceCookie = getCookie(cookiePreferencesName)
-    console.log(preferenceCookie)
-    console.log('init cookie banner')
-
     var isCookiesPage = document.URL.indexOf(cookiesPolicyUrl) !== -1
-    console.log(isCookiesPage)
 
     if ((!preferenceCookie || preferenceCookie == null) && !isCookiesPage) {
       enableCookieBanner(bannerClassName, acceptButtonClassName)
@@ -210,25 +177,11 @@ function CookieBanner (document, console) {
 
   }
 
-  /**
-   *
-   * @param formSelector
-   * @param radioButtons
-   * Object {
-   *   usage: "name-of-form-field",
-   *   campaign : "name-of-campaign-radio-button-field",
-   *   settings: "etc"
-   * }
-   *
-   *
-   */
   function bindCookiePolicyForm (formSelector, confirmationSelector, radioButtons) {
-
     if (typeof radioButtons !== 'object') {
       throw 'expected an object with radio button selectors'
     }
 
-    console.log(formSelector)
     var form = document.querySelector(formSelector)
 
     if (!form) {
@@ -240,7 +193,6 @@ function CookieBanner (document, console) {
       throw confirmationSelector + ' was not found'
     }
 
-    // Get current cookies policy
     var policy = getPolicyOrDefault()
 
     form[radioButtons.usage].value = policy.usage ? 'on' : 'off'

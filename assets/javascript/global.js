@@ -9,7 +9,7 @@ var Modal = require('./modules/modal')
 var CookiePolicy = require('./modules/cookie-policy');
 var nodeListForEach = common.nodeListForEach
 
-var cookiePolicy = new CookiePolicy(document, console);
+var cookiePolicy = new CookiePolicy();
 cookiePolicy.initBanner('.app-cookie-banner', '.js-accept-cookie', 'cookies');
 
 // accessibility feature
