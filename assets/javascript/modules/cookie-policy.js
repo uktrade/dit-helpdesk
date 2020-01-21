@@ -112,6 +112,11 @@ function CookieBanner () {
     banner.className = banner.className.replace(/app-cookie-banner--show/, '')
   }
 
+  function displayCookieBannerAcceptAll(cookieBannerClassName){
+    var banner = document.querySelector(cookieBannerClassName);
+    banner.className = banner.className + " app-cookie-banner--show__accepted-all"
+  }
+
   function displayCookieBanner (className) {
     var banner = document.querySelector(className)
 
@@ -142,7 +147,7 @@ function CookieBanner () {
 
       setPreferencesCookie()
 
-      hideCookieBanner(bannerClassName)
+      displayCookieBannerAcceptAll(bannerClassName)
       raiseGTMUsageEvent()
 
       return false

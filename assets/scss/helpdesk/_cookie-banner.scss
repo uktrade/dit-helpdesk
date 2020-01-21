@@ -25,13 +25,37 @@
   display: none; // if no js then the form wont work anyway
 }
 
+.cookie-banner__confirmation {
+  .hide-button {
+    display: block;
+    text-align: right;
+    @include govuk-media-query($from: tablet) {
+      float: right;
+    }
+  }
+}
+
 .js-enabled {
   .app-cookie-banner {
     display: none;
+
+    .cookie-banner__confirmation {
+      display: none;
+    }
   }
 
   .app-cookie-banner--show {
     display: block;
+  }
+
+  .app-cookie-banner--show__accepted-all {
+    .cookie-banner__confirmation {
+      display: block;
+    }
+
+    .cookie-banner__buttons {
+      display: none;
+    }
   }
 
   .cookie-settings__no-js {
@@ -41,6 +65,8 @@
   .cookie-settings__form-wrapper {
     display: block; // if no js then the form wont work anyway
   }
+
+
 }
 
 .cookie-preferences {
@@ -51,7 +77,7 @@
 
   .cookie-settings__confirmation {
     border: solid 5px;
-    border-color:  $govuk-brand-colour;
+    border-color: $govuk-brand-colour;
     display: none;
   }
 
