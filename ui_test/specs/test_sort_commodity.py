@@ -9,8 +9,8 @@ def test_sort_commodity_by_code_and_ranking(browser):
 
     browser.select(COMMODITY['sort'], 'ranking')
     firstCommodity = browser.find_by_css(COMMODITY['commodityCode']).first
-    assert(firstCommodity.text == '6911100010')
+    assert(firstCommodity.text == '2101129894')
 
     browser.select(COMMODITY['sort'], 'commodity_code')
     firstCommodity = browser.find_by_css(COMMODITY['commodityCode']).first
-    assert(firstCommodity.text == '0901210000')
+    assert(firstCommodity.text == '0901')
