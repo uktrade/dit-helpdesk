@@ -1,1 +1,1 @@
-BASE_URL = 'http://localhost:8000/choose-country/'
+BASE_URL = 'http://get-rules-tariffs-trade-with-uk.service.staging.uktrade.io/choose-country/'
