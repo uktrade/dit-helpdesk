@@ -345,3 +345,33 @@ DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
 HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")
+
+EU_COUNTRY_CODES = [
+    "AT",
+    "BE",
+    "BG",
+    "HR",
+    "CY",
+    "CZ",
+    "DK",
+    "EE",
+    "FI",
+    "FR",
+    "DE",
+    "GR",
+    "HU",
+    "IE",
+    "IT",
+    "LV",
+    "LT",
+    "LU",
+    "MT",
+    "NL",
+    "PL",
+    "PT",
+    "RO",
+    "SK",
+    "SI",
+    "ES",
+    "SE",
+]
