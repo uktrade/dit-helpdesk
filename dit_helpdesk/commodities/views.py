@@ -10,7 +10,6 @@ import re
 from datetime import datetime, timedelta, timezone
 from pprint import pprint
 
-from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -55,9 +54,7 @@ def commodity_detail(request, commodity_code, country_code):
         commodity, "Tariffs and charges", country.country_code
     )
     tariffs_and_charges_table_data = [
-        measure_json.get_table_row()
-        for measure_json in tariffs_and_charges_measures
-        if measure_json.vat or measure_json.excise
+        measure_json.get_table_row() for measure_json in tariffs_and_charges_measures
     ]
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)
@@ -65,7 +62,6 @@ def commodity_detail(request, commodity_code, country_code):
     quotas_measures = get_nomenclature_group_measures(
         commodity, "Quotas", country.country_code
     )
-
     quotas_table_data = [
         measure_json.get_table_row() for measure_json in quotas_measures
     ]
@@ -87,7 +83,12 @@ def commodity_detail(request, commodity_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
+    referer = reverse('search:search-commodity',  args=[country_code])
+    if 'HTTP_REFERER' in request.META:
+        referer = request.META['HTTP_REFERER']
+
     context = {
+        "back_link_url" : referer,
         "selected_origin_country": country.country_code,
         "commodity": commodity,
         "selected_origin_country_name": country.name,
@@ -107,7 +108,6 @@ def commodity_detail(request, commodity_code, country_code):
             commodity_path, country.country_code, commodity_code, commodity
         ),
         "modals": modals_dict,
-        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
     }
 
     return render(request, "commodities/commodity_detail.html", context)
