@@ -5,6 +5,7 @@ import re
 from datetime import datetime, timedelta, timezone
 
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.query import QuerySet
@@ -205,6 +206,7 @@ def section_detail(request, section_id, country_code):
         section.update_content()
 
     import_measures = section.tts_obj.get_import_measures(country.country_code)
+
     table_data = [measure_json.get_table_row() for measure_json in import_measures]
 
     section_path = section.get_path()
@@ -328,6 +330,7 @@ def heading_detail(request, heading_code, country_code):
         tariffs_and_charges_table_data = [
             measure_json.get_table_row()
             for measure_json in tariffs_and_charges_measures
+            if measure_json.vat or measure_json.excise
         ]
         for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
@@ -375,6 +378,7 @@ def heading_detail(request, heading_code, country_code):
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code, heading
         ),
+        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
     }
 
     if import_measures:
@@ -440,6 +444,7 @@ def subheading_detail(request, commodity_code, country_code):
         tariffs_and_charges_table_data = [
             measure_json.get_table_row()
             for measure_json in tariffs_and_charges_measures
+            if measure_json.vat or measure_json.excise
         ]
         for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
@@ -484,6 +489,7 @@ def subheading_detail(request, commodity_code, country_code):
         "subheading_hierarchy_context": get_hierarchy_context(
             subheading_path, country.country_code, commodity_code, subheading
         ),
+        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
     }
 
     if (
@@ -557,9 +563,11 @@ def _commodity_code_html(item):
     :param item: model instance
     :return: html
     """
+    if isinstance(item, SubHeading) and item.is_duplicate_heading():
+        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
-    if isinstance(item, str):
-        item
+    if isinstance(item, Heading) and item.is_duplicate_heading():
+        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
     leaf = False
     code = ""
@@ -573,12 +581,10 @@ def _commodity_code_html(item):
         code = item.commodity_code
 
     if (
-        hasattr(item, "get_hierarchy_children_count")
+        type(item) == Commodity
+        or hasattr(item, "get_hierarchy_children_count")
         and item.get_hierarchy_children_count() == 0
     ):
-        leaf = True
-
-    if type(item) == Commodity:
         leaf = True
 
     commodity_code_html = (

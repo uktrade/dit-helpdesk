@@ -1,6 +1,6 @@
 DEBUG=True
 DJANGO_SECRET_KEY=#add value here
-DJANGO_SETTINGS_MODULE=config.settings.development
+DJANGO_SETTINGS_MODULE=config.settings.docker_development
 DJANGO_BASE_DIR=/app
 DIT_HELPDESK_ADMIN_PASSWORD=<<CHECK_VAULT>>
 SENTRY_DSN=<<CHECK_VAULT>>
