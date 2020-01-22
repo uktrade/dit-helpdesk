@@ -358,14 +358,14 @@ class RulesOfOriginImporter:
         self.set_group_documents(
             self.data_loader(
                 settings.RULES_OF_ORIGIN_DATA_PATH.format(
-                    "reference_{0}/group_documents.csv".format(version)
+                    "reference/group_documents.csv"
                 )
             )
         )
         self.set_rules_groups(
             self.data_loader(
                 settings.RULES_OF_ORIGIN_DATA_PATH.format(
-                    "reference_{0}/country_groups_v3.csv".format(version)
+                    "reference/country_groups_v3.csv"
                 )
             )
         )
