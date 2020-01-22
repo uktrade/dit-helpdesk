@@ -711,6 +711,15 @@ class Heading(models.Model):
 
         return json.dumps(obj)
 
+    def is_duplicate_heading(self):
+        children = self.get_hierarchy_children()
+        duplicate_child = [
+            child.commodity_code
+            for child in children
+            if child.commodity_code == self.heading_code and not child.leaf
+        ]
+        return True if duplicate_child else False
+
     @property
     def ancestor_data(self):
         ancestors = self.get_ancestor_data()
@@ -824,6 +833,15 @@ class SubHeading(models.Model):
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
         return reverse("subheading-detail", kwargs=kwargs)
+
+    def is_duplicate_heading(self):
+        children = self.get_hierarchy_children()
+        duplicate_child = [
+            child.commodity_code
+            for child in children
+            if child.commodity_code == self.commodity_code and not child.leaf
+        ]
+        return True if duplicate_child else False
 
     @property
     def hierarchy_key(self):

@@ -557,9 +557,11 @@ def _commodity_code_html(item):
     :param item: model instance
     :return: html
     """
+    if isinstance(item, SubHeading) and item.is_duplicate_heading():
+        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
-    if isinstance(item, str):
-        item
+    if isinstance(item, Heading) and item.is_duplicate_heading():
+        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
     leaf = False
     code = ""
@@ -573,12 +575,10 @@ def _commodity_code_html(item):
         code = item.commodity_code
 
     if (
-        hasattr(item, "get_hierarchy_children_count")
+        type(item) == Commodity
+        or hasattr(item, "get_hierarchy_children_count")
         and item.get_hierarchy_children_count() == 0
     ):
-        leaf = True
-
-    if type(item) == Commodity:
         leaf = True
 
     commodity_code_html = (
