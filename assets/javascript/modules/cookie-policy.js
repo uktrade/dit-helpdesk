@@ -38,49 +38,19 @@ function CookieBanner () {
     return null
   }
 
-  var gtmUsageEventFired = false
-  var gtmCampaignsEventFired = false
-
-  function raiseGTMCampaignsEvent () {
-    if (gtmCampaignsEventFired) {
-      return
-    }
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({
-      event: 'dit-enable-campaigns'
-    })
-
-    gtmCampaignsEventFired = true
-
-  }
-
-  function raiseGTMUsageEvent () {
-
-    if (gtmUsageEventFired) return
-
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({
-      event: 'dit-enable-usage'
-    })
-
-    gtmUsageEventFired = true
-  }
-
   function getDefaultPolicy () {
-    var policy = {
+    return {
       essential: true,
       settings: true,
       usage: false,
       campaigns: false
     }
-
-    return policy
   }
 
   function getPolicyOrDefault () {
     var cookie = getCookie(cookiesPolicyName)
     var policy = getDefaultPolicy()
-    if (!cookie || cookie == null) return policy
+    if (!cookie) return policy
 
     try {
       var parsed = JSON.parse(cookie)
@@ -112,9 +82,21 @@ function CookieBanner () {
     banner.className = banner.className.replace(/app-cookie-banner--show/, '')
   }
 
-  function displayCookieBannerAcceptAll(cookieBannerClassName){
-    var banner = document.querySelector(cookieBannerClassName);
-    banner.className = banner.className + " app-cookie-banner--show__accepted-all"
+  function displayCookieBannerAcceptAll (cookieBannerClassName) {
+    var banner = document.querySelector(cookieBannerClassName)
+    banner.className = banner.className + ' app-cookie-banner--show__accepted-all'
+
+    var hideButton = document.querySelector('.hide-button')
+    if (hideButton.attachEvent) {
+      hideButton.attachEvent('click', function () {
+        hideCookieBanner(cookieBannerClassName)
+      })
+    } else {
+      hideButton.addEventListener('click', function () {
+        hideCookieBanner(cookieBannerClassName)
+      }, false)
+    }
+
   }
 
   function displayCookieBanner (className) {
@@ -140,29 +122,16 @@ function CookieBanner () {
   }
 
   function enableCookieBanner (bannerClassName, acceptButtonClassName) {
-    console.log('preferences have not been set - display cookie banner')
     displayCookieBanner(bannerClassName)
     bindAcceptAllCookiesButton(acceptButtonClassName, function () {
       createPoliciesCookie(true, true, true)
 
       setPreferencesCookie()
-
       displayCookieBannerAcceptAll(bannerClassName)
-      raiseGTMUsageEvent()
 
       return false
     })
-    return
-  }
 
-  function raiseGTMEvents (policy) {
-    if (policy.usage) {
-      raiseGTMUsageEvent()
-    }
-
-    if (policy.campaigns) {
-      raiseGTMCampaignsEvent()
-    }
   }
 
   function init (bannerClassName, acceptButtonClassName, cookiesPolicyUrl) {
@@ -173,13 +142,9 @@ function CookieBanner () {
     var preferenceCookie = getCookie(cookiePreferencesName)
     var isCookiesPage = document.URL.indexOf(cookiesPolicyUrl) !== -1
 
-    if ((!preferenceCookie || preferenceCookie == null) && !isCookiesPage) {
+    if ((!preferenceCookie) && !isCookiesPage) {
       enableCookieBanner(bannerClassName, acceptButtonClassName)
     }
-
-    var policy = getPolicyOrDefault()
-    raiseGTMEvents(policy)
-
   }
 
   function bindCookiePolicyForm (formSelector, confirmationSelector, radioButtons) {
@@ -207,14 +172,12 @@ function CookieBanner () {
     var attachEventMethod = form.attachEvent || form.addEventListener
     attachEventMethod('submit', function (e) {
 
-      var settings = form[radioButtons.settings].value == 'on'
-      var usage = form[radioButtons.usage].value == 'on'
-      var campaigns = form[radioButtons.campaigns].value == 'on'
+      var settings = form[radioButtons.settings].value === 'on'
+      var usage = form[radioButtons.usage].value === 'on'
+      var campaigns = form[radioButtons.campaigns].value === 'on'
 
-      var policy = createPoliciesCookie(settings, usage, campaigns)
+      createPoliciesCookie(settings, usage, campaigns)
       setPreferencesCookie()
-
-      raiseGTMEvents(policy)
 
       confirmation.style = 'display:block;'
       window.scrollTo(0, 0)
@@ -222,8 +185,6 @@ function CookieBanner () {
       e.preventDefault()
       return false
     }, false)
-
-    console.log('yeah binding that form for the win')
   }
 
   return {
