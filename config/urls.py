@@ -39,6 +39,7 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
     path("choose-country/", country_views.choose_country_view, name="choose-country"),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
+    path("help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"),
     re_path(
         r"^country/(?P<country_code>\w+)/section/(?P<section_id>\d{1,2})$",
         hierarchy_views.section_detail,

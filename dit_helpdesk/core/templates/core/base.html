@@ -1,7 +1,9 @@
 {% load static %}
+{%  load gtm %}
 <!doctype html>
 <html lang="en" class="govuk-template ">
   <head>
+    {% google_tag_manager %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -58,56 +60,14 @@
       <link rel="stylesheet" media="all" href="{% static 'css/global.min.css' %}">
     <!--<![endif]-->
     {% block extra_styles %}{% endblock extra_styles %}
-
-    <script>
-      // Sourced from https://github.com/alphagov/govuk-design-system/blob/c641c14f043ac8b84a178b4e6260c1f8129a27a8/views/partials/_tracking-head.njk
-      // Normalize doNotTrack implementations, see https://caniuse.com/#feat=do-not-track
-      var DO_NOT_TRACK_ENABLED = (
-        navigator.doNotTrack === '1' ||
-        navigator.doNotTrack === 'yes' || // Firefox 31 and below
-        navigator.msDoNotTrack === '1' || // IE 9 - 10
-        window.doNotTrack === '1' // IE 11 / Edge 16 and below
-      )
-      // If the user has enabled 'DoNotTrack', we should not load any tracking.
-      if (!DO_NOT_TRACK_ENABLED && !window.__TESTS_RUNNING) {
-        (function(w, d, s, l, i){
-          w[l] = w[l] || []
-          w[l].push({
-            'gtm.start': new Date().getTime(),
-            event: 'gtm.js'
-          })
-
-          var f = d.getElementsByTagName(s)[0];
-          var j = d.createElement(s)
-          var dl = l != 'dataLayer' ? '&l=' + l : ''
-
-          j.async = true
-          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-          f.parentNode.insertBefore(j,f)
-
-        })(window, document, 'script', 'dataLayer', '{{ HELPDESK_GA_GTM }}')
-      }
-    </script>
   </head>
   <body class="govuk-template__body">
     <script>
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled')
     </script>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ HELPDESK_GA_GTM }}"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    {% google_tag_manager_noscript %}
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
-    <div class="app-cookie-banner js--cookie-banner">
-      <div class="govuk-width-container">
-          <p class="app-cookie-banner__message">GOV.UK uses cookies which are essential for the site to work. We also use
-          non-essential cookies to help us improve government digital services. Any data collected is anonymised.
-          By continuing to use this site, you agree to our use of cookies.
-              </p>
-          <a href="#" class="govuk-button button--secondary js-accept-cookie">Accept cookies</a>
-          <a href="{% url 'cookies' %}" class="govuk-button button--secondary">Cookie settings</a>
-      </div>
-    </div>
+    {% cookie_banner %}
     <header class="govuk-header " role="banner" data-module="header">
       <div class="govuk-header__container govuk-width-container">
         <div class="govuk-header__logo">
@@ -145,6 +105,8 @@
           </div>
         {% endblock %}
       </div>
+
+
 
     {% block content %}
 
@@ -187,7 +149,7 @@
           </div>
         </div>
       </footer>
-      <script src="{% static 'js/global.min.js' %}"></script>
+      <script src="{% static 'js/global.js' %}"></script>
       {% block footer_additions %}
       {% endblock footer_additions %}
   </body>

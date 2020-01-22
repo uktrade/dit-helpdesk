@@ -192,7 +192,6 @@ STATICFILES_STORAGE = (
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
 IP_SAFELIST_XFF_INDEX = int(os.environ.get("IP_SAFELIST_XFF_INDEX", "-2"))
 
-
 RESTRICT_ADMIN = os.environ.get("RESTRICT_ADMIN", "True") == "True"
 ALLOWED_ADMIN_IPS = os.environ.get("ALLOWED_ADMIN_IPS", "127.0.0.1").split(",")
 ALLOWED_ADMIN_IP_RANGES = os.environ.get(

@@ -1,48 +1,96 @@
+//.app-cookie-banner {
+//  @include govuk-font(16);
+//  @include govuk-text-colour;
+//
+//  color: #00823b;
+//  box-sizing: border-box;
+//  width: 100%;
+//
+//  padding-top: govuk-spacing(2);
+//  padding-bottom: govuk-spacing(0);
+//  background-color: lighten(desaturate(govuk-colour("white"), 8.46), 42.55);
+//}
+//
+
+.cookie-settings__no-js {
+  display: block;
+}
+
+// don't display cookie banner when JS disabled!
 .app-cookie-banner {
-  @include govuk-font(16);
-  @include govuk-text-colour;
+  display: none;
+}
 
-  color: #00823b;
-  box-sizing: border-box;
-  width: 100%;
+.cookie-settings__form-wrapper {
+  display: none; // if no js then the form wont work anyway
+}
 
-  padding-top: govuk-spacing(2);
-  padding-bottom: govuk-spacing(0);
-  background-color: lighten(desaturate(govuk-colour("white"), 8.46), 42.55);
+.cookie-banner__confirmation {
+  .hide-button {
+    display: block;
+    text-align: right;
+    @include govuk-media-query($from: tablet) {
+      float: right;
+    }
+  }
 }
 
 .js-enabled {
   .app-cookie-banner {
     display: none;
+
+    .cookie-banner__confirmation {
+      display: none;
+    }
   }
 
   .app-cookie-banner--show {
     display: block;
   }
-}
 
-@include govuk-media-query($media-type: print) {
-  .app-cookie-banner {
-    display: none !important;
+  .app-cookie-banner--show__accepted-all {
+    .cookie-banner__confirmation {
+      display: block;
+    }
+
+    .cookie-banner__buttons {
+      display: none;
+    }
   }
+
+  .cookie-settings__no-js {
+    display: none;
+  }
+
+  .cookie-settings__form-wrapper {
+    display: block; // if no js then the form wont work anyway
+  }
+
+
 }
 
-.app-cookie-banner__message, .app-cookie-banner__wrapper {
-  font-size: 19px;
-  line-height: 1.3157894737;
+.cookie-preferences {
+  .govuk-hint {
+    color: $govuk-secondary-text-colour;
+
+  }
+
+  .cookie-settings__confirmation {
+    border: solid 5px;
+    border-color: $govuk-brand-colour;
+    display: none;
+  }
+
 }
 
-.button--secondary:link, .button--secondary:visited, .button--secondary:active, .button--secondary:focus{
-  color: #00823b;
-    background-color: #ffffff;
-    text-decoration: none;
-}
 
-.button--secondary {
-  padding: 8px 10px;
-    border-color: #00823b;
-    color: #00823b;
-    background-color: #ffffff;
-    box-shadow: none;
-    margin-bottom: 22px;
-}
+//@include govuk-media-query($media-type: print) {
+//  .app-cookie-banner {
+//    display: none !important;
+//  }
+//}
+//
+//.app-cookie-banner__message, .app-cookie-banner__wrapper {
+//  font-size: 19px;
+//  line-height: 1.3157894737;
+//}

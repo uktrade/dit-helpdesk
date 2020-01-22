@@ -101,7 +101,8 @@ const compileGovukFrontend = () => {
     entries: [
       './assets/javascript/global.js'
     ],
-    debug: true
+    debug: true,
+    standalone: 'DITGlobals'
   });
 
   return b.bundle()
@@ -111,9 +112,7 @@ const compileGovukFrontend = () => {
     // Add transformation tasks to the pipeline here.
     .pipe(uglify({ie8:true}))
     .on('error', log.error)
-    .pipe(rename({
-      extname: '.min.js'
-    }))
+    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
