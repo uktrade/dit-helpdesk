@@ -678,13 +678,13 @@ Rules of origin data generated for import get placed in the directory `rules_of_
 To import all rules of origin data files use:
 
 ```bash
-python dit_helpdesk/manage.py import_rules_or_origin --data_path import
+python dit_helpdesk/manage.py import_rules_of_origin --data_path import
 ```
 
 To import an individual rules of origin data file use:
 
 ```bash
-python dit_helpdesk/manage.py import_rules_or_origin --data_path "import/CHILE ROO V2.json"
+python dit_helpdesk/manage.py import_rules_of_origin --data_path "import/CHILE ROO V2.json"
 ```
 
 The main python class used by this command can be found in the python module `rules_of_origin/importer.py`

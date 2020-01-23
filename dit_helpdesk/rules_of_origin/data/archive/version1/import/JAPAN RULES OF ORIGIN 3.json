@@ -1,0 +1,5657 @@
+{
+  "chapters": [
+    {
+      "number": "01",
+      "rows": [
+        {
+          "id": [
+            "Chapter 1"
+          ],
+          "description": [
+            "Live animals"
+          ]
+        },
+        {
+          "id": [
+            "01.01-01.06"
+          ],
+          "description": [
+            "All animals of Chapter 1 are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "02",
+      "rows": [
+        {
+          "id": [
+            "Chapter 2"
+          ],
+          "description": [
+            "Meat and edible meat offal"
+          ]
+        },
+        {
+          "id": [
+            "02.01-02.10"
+          ],
+          "description": [
+            "Production in which all the materials of Chapters 1 and 2 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "03",
+      "rows": [
+        {
+          "id": [
+            "Chapter 3"
+          ],
+          "description": [
+            "Fish and crustaceans, molluscs and other aquatic invertebrates"
+          ]
+        },
+        {
+          "id": [
+            "\u2013  Atlantic  Bluefin  tuna (Thun\u00ad",
+            "nus thynnus):"
+          ],
+          "description": [
+            "All Atlantic Bluefin tuna (Thunnus thynnus) is wholly obtained; or",
+            "production in which Atlantic Bluefin tuna (Thunnus thynnus) is subject to caging in farms  with  subsequent  feeding  and  fattening/farming  for  a  minimum  period  of   3 months in a Party. The duration of the fattening or farming shall be established ac\u00ad cording to the date of the caging operation and the date of harvesting recorded in the electronic Bluefin tuna Catch Document (eBCD) of the International Commission for the Conservation of Atlantic Tunas (ICCAT)."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly ob\u00ad        tained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "04",
+      "rows": [
+        {
+          "id": [
+            "Chapter 4"
+          ],
+          "description": [
+            "Dairy produce; birds' eggs; natural honey; edible products of animal origin, not else\u00ad where specified or included"
+          ]
+        },
+        {
+          "id": [
+            "04.01-04.10"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 4 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "05",
+      "rows": [
+        {
+          "id": [
+            "Chapter 5"
+          ],
+          "description": [
+            "Products of animal origin, not elsewhere specified or included"
+          ]
+        },
+        {
+          "id": [
+            "05.01-05.11"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "SECTION II"
+          ],
+          "description": [
+            "VEGETABLE  PRODUCTS"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "06",
+      "rows": [
+        {
+          "id": [
+            "Chapter 6"
+          ],
+          "description": [
+            "Live trees and other plants; bulbs, roots and the like; cut flowers and ornamental foli\u00ad age"
+          ]
+        },
+        {
+          "id": [
+            "06.01-06.04"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 6 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "07",
+      "rows": [
+        {
+          "id": [
+            "Chapter 7"
+          ],
+          "description": [
+            "Edible vegetables and certain roots and tubers"
+          ]
+        },
+        {
+          "id": [
+            "07.01-07.14"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 7 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "08",
+      "rows": [
+        {
+          "id": [
+            "Chapter 8"
+          ],
+          "description": [
+            "Edible fruit and nuts; peel of citrus fruit or melons"
+          ]
+        },
+        {
+          "id": [
+            "08.01-08.14"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 8 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "09",
+      "rows": [
+        {
+          "id": [
+            "Chapter 9"
+          ],
+          "description": [
+            "Coffee, tea, mat\u00e9 and spices"
+          ]
+        },
+        {
+          "id": [
+            "09.01"
+          ],
+          "description": [
+            "CTSH; or",
+            "Blending."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "0902.10-0902.20"
+          ],
+          "description": [
+            "Production in which all the materials of subheadings 0902.10 and 0902.20 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "0902.30-0903.00"
+          ],
+          "description": [
+            "CTSH; or",
+            "Blending."
+          ]
+        },
+        {
+          "id": [
+            "09.04-09.10"
+          ],
+          "description": [
+            "CTSH; or",
+            "Blending, crushing or grinding."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "10",
+      "rows": [
+        {
+          "id": [
+            "Chapter 10"
+          ],
+          "description": [
+            "Cereals"
+          ]
+        },
+        {
+          "id": [
+            "10.01-10.08"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 10 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "11",
+      "rows": [
+        {
+          "id": [
+            "Chapter 11"
+          ],
+          "description": [
+            "Products of the milling industry; malt; starches; inulin; wheat gluten"
+          ]
+        },
+        {
+          "id": [
+            "11.01-11.09"
+          ],
+          "description": [
+            "Production in which all the materials of Chapters 10 and 11, headings 07.01, 07.13,",
+            "07.14 and 23.03, subheading 0710.10 and dried  potatoes  of  subheading  0712.90 used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "12",
+      "rows": [
+        {
+          "id": [
+            "Chapter 12"
+          ],
+          "description": [
+            "Oil seeds and oleaginous fruits; miscellaneous grains, seeds and fruit; industrial or medicinal plants; straw and fodder"
+          ]
+        },
+        {
+          "id": [
+            "12.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "12.02-12.14"
+          ],
+          "description": [
+            "CTH except from heading 12.01."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "13",
+      "rows": [
+        {
+          "id": [
+            "Chapter 13"
+          ],
+          "description": [
+            "Lac; gums, resins and other vegetable saps and extracts"
+          ]
+        },
+        {
+          "id": [
+            "1301.20-1302.19"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "1302.20"
+          ],
+          "description": [
+            "CTSH; however, non-originating pectic substances may be used."
+          ]
+        },
+        {
+          "id": [
+            "1302.31"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "1302.32"
+          ],
+          "description": [
+            "CTSH; however, non-originating mucilages and thickeners derived from locust beans may be used."
+          ]
+        },
+        {
+          "id": [
+            "1302.39"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "14",
+      "rows": [
+        {
+          "id": [
+            "Chapter 14"
+          ],
+          "description": [
+            "Vegetable plaiting materials; vegetable products not elsewhere specified or included"
+          ]
+        },
+        {
+          "id": [
+            "14.01-14.04"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 14 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "SECTION III"
+          ],
+          "description": [
+            "ANIMAL OR VEGETABLE FATS AND OILS AND THEIR CLEAVAGE PRODUCTS; PREPARED EDIBLE FATS; ANIMAL OR VEGETABLE WAXES"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "15",
+      "rows": [
+        {
+          "id": [
+            "Chapter 15"
+          ],
+          "description": [
+            "Animal or vegetable fats and oils and their cleavage products; prepared edible fats; an\u00ad imal or vegetable waxes"
+          ]
+        },
+        {
+          "id": [
+            "15.01-15.06"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "15.07"
+          ],
+          "description": [
+            "Production in which all the materials of headings 12.01 and 15.07 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "15.08"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "15.09-15.10"
+          ],
+          "description": [
+            "Production in which all the vegetable materials used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "15.11-15.13"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "15.14"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Rape or Colza oil and its fractions:"
+          ],
+          "description": [
+            "Production in which all the materials of headings 12.05 and 15.14 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "\u2013  Mustard  oil and its fractions:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "15.15"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Rice bran oil and its frac\u00ad  tions:"
+          ],
+          "description": [
+            "Production in which all the materials of headings 10.06 and 15.15 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "1516.10-1517.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "1517.90"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Mixed   vegetable\toils\tnot further processed:"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "15.18-15.22"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "SECTION IV"
+          ],
+          "description": [
+            "PREPARED FOODSTUFFS; BEVERAGES, SPIRITS AND VINEGAR; TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "16",
+      "rows": [
+        {
+          "id": [
+            "Chapter 16"
+          ],
+          "description": [
+            "Preparations of meat, of fish or of crustaceans, molluscs or other aquatic invertebrates"
+          ]
+        },
+        {
+          "id": [
+            "16.01-16.02"
+          ],
+          "description": [
+            "Production in which all the materials of Chapters 2, 3 and 16 and heading 10.06           used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "16.03"
+          ],
+          "description": [
+            "Production in which all the materials of Chapters 2, 3 and 16 used are wholly ob\u00ad      tained."
+          ]
+        },
+        {
+          "id": [
+            "16.04-16.05"
+          ],
+          "description": [
+            "Production in which all the materials of Chapters 2, 3 and 16 and heading 10.06           used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "17",
+      "rows": [
+        {
+          "id": [
+            "Chapter 17"
+          ],
+          "description": [
+            "Sugars and sugar confectionery"
+          ]
+        },
+        {
+          "id": [
+            "17.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "17.02"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the weight of non-originating materials of heading 04.04 used does not exceed       10 % of the weight of the product;",
+            "the total weight of non-originating materials of  headings 11.01 to 11.08  used        does not exceed 10 % of the weight of the product;  and",
+            "the total weight of non-originating materials of headings 17.01 and 17.03 used       does not exceed 20 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "17.03"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "17.04"
+          ],
+          "description": [
+            "CTH, provided that the total weight of the non-originating materials of headings",
+            "17.01 and 17.02 used does not exceed 40 % of the weight of the product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "18",
+      "rows": [
+        {
+          "id": [
+            "Chapter 18"
+          ],
+          "description": [
+            "Cocoa and cocoa preparations"
+          ]
+        },
+        {
+          "id": [
+            "18.01-18.05"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "18.06"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of  the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 30 % of the weight of the  product."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "19",
+      "rows": [
+        {
+          "id": [
+            "Chapter 19"
+          ],
+          "description": [
+            "Preparations of cereals, flour, starch or milk; pastrycooks' products"
+          ]
+        },
+        {
+          "id": [
+            "19.01"
+          ],
+          "description": [
+            "CC, provided that:",
+            "the weight of non-originating materials of Chapter 4 used does not exceed 10 %     of the weight of the product;",
+            "the total weight of non-originating materials  of  headings  10.01,  10.03,  10.06 and 11.01 to 11.08 used does not exceed 10 % of the weight of the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 20 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "19.02"
+          ],
+          "description": [
+            "CC, provided that:",
+            "the total weight of non-originating materials of Chapters 2, 3 and 16 used does       not exceed 10 % of the weight of the product;",
+            "the weight of non-originating materials of heading 10.01 used does not exceed       90 % of the weight of the product;  and",
+            "the  total  weight  of  non-originating   materials  of   headings  10.06  and  11.01    to 11.08 used does not exceed 10 % of the weight of the product."
+          ]
+        },
+        {
+          "id": [
+            "19.03"
+          ],
+          "description": [
+            "CC, provided that the total weight of non-originating materials of headings 10.06         and 11.01 to 11.08 used does not exceed 10 % of the weight of the product."
+          ]
+        },
+        {
+          "id": [
+            "19.04"
+          ],
+          "description": [
+            "CC, provided that:",
+            "the weight of non-originating materials of Chapter 4 used does not exceed 10 %     of the weight of the product;",
+            "the total weight of non-originating materials  of  headings  10.01,  10.03,  10.06 and 11.01 to 11.08 used does not exceed 10 % of the weight of the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 30 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "19.05"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the weight of non-originating materials of Chapter 4 used does not exceed 10 %     of the weight of the product;",
+            "the total weight of non-originating  materials of headings 10.03, 10.06 and 11.01   to 11.08 used does not exceed 10 % of the weight of the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 30 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "20",
+      "rows": [
+        {
+          "id": [
+            "Chapter 20"
+          ],
+          "description": [
+            "Preparations of vegetables, fruit, nuts or other parts of plants"
+          ]
+        },
+        {
+          "id": [
+            "20.01"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "20.02-20.03"
+          ],
+          "description": [
+            "Production in which all the materials of Chapter 7 used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "20.04-20.08"
+          ],
+          "description": [
+            "CTH, provided that beans (Vigna spp., Phaseolus spp.), peas (Pisum sativum), pineapples, oranges, potatoes and asparagus used are wholly obtained."
+          ]
+        },
+        {
+          "id": [
+            "20.09"
+          ],
+          "description": [
+            "CTH, provided that pineapples, oranges, tomatoes, apples and grapes used are wholly obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "21",
+      "rows": [
+        {
+          "id": [
+            "Chapter 21"
+          ],
+          "description": [
+            "Miscellaneous edible preparations"
+          ]
+        },
+        {
+          "id": [
+            "21.01"
+          ],
+          "description": [
+            "CC, provided that:",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of the  product;",
+            "the weight of non-originating materials of heading 10.03 used does not exceed       10 % of the weight of the product;  and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 40 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "2102.10-2103.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "2103.20"
+          ],
+          "description": [
+            "CC except from headings 07.02 and 20.02."
+          ]
+        },
+        {
+          "id": [
+            "2103.30"
+          ],
+          "description": [
+            "CTSH; however, non-originating mustard flour may be used."
+          ]
+        },
+        {
+          "id": [
+            "2103.90"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "21.04"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "21.05"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of  the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 20 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "21.06"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the materials of Konnyaku of subheading 1212.99 used are wholly obtained;",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of the  product;",
+            "the weight of non-originating materials of heading 10.01 used does not exceed       30 % of the weight of the product;",
+            "the weight of non-originating materials of heading 10.03 used does not exceed       10 % of the weight of the product;",
+            "the weight of non-originating materials of heading 10.06 used does not exceed       10 % of the weight of the product;  and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 30 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "22",
+      "rows": [
+        {
+          "id": [
+            "Chapter 22"
+          ],
+          "description": [
+            "Beverages, spirits and vinegar"
+          ]
+        },
+        {
+          "id": [
+            "22.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "22.02"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of  the product; and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 40 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "22.03-22.08"
+          ],
+          "description": [
+            "CTH except from headings 22.07 and 22.08, provided that:",
+            "all the materials of subheadings 0806.10, 2009.61 and 2009.69 used are wholly obtained;",
+            "the weight of non-originating materials of Chapter 4 used does not exceed 40 %     of the weight of the product;  and",
+            "the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 40 % of the weight of the  product."
+          ]
+        },
+        {
+          "id": [
+            "22.09"
+          ],
+          "description": [
+            "CTH except from headings 22.07 and 22.08, provided that all the materials of head\u00ad ing 10.06 and subheadings 0806.10, 2009.61 and 2009.69 used  are  wholly  ob\u00ad  tained."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "23",
+      "rows": [
+        {
+          "id": [
+            "Chapter 23"
+          ],
+          "description": [
+            "Residues and waste from the food industries; prepared animal fodder"
+          ]
+        },
+        {
+          "id": [
+            "23.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "23.02-23.03"
+          ],
+          "description": [
+            "CTH, provided that the weight of non-originating materials of Chapter 10 used does   not exceed 20 % of the weight of the product."
+          ]
+        },
+        {
+          "id": [
+            "23.04-23.08"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "23.09"
+          ],
+          "description": [
+            "CTH, provided that:",
+            "all the materials of Chapters 2 and 3 used are wholly obtained;",
+            "the total weight of non-originating materials of Chapter 4 and heading 19.01          used does not exceed 10 % of the weight of the  product;",
+            "the total weight of non-originating materials of Chapters 10 and 11 and headings",
+            "23.02 and 23.03 used does not exceed 10 % of the weight of the product; and",
+            "-   the total weight of non-originating materials of headings 17.01 and 17.02 used       does not exceed 30 % of the weight of the  product."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "24",
+      "rows": [
+        {
+          "id": [
+            "Chapter 24"
+          ],
+          "description": [
+            "Tobacco and manufactured tobacco substitutes"
+          ]
+        },
+        {
+          "id": [
+            "24.01"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "2402.10"
+          ],
+          "description": [
+            "CTH, provided that the weight of non-originating materials of Chapter 24 used does   not exceed 30 % of the weight of the product."
+          ]
+        },
+        {
+          "id": [
+            "2402.20-2403.99"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 35 % (EXW); or RVC 70 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "SECTION V"
+          ],
+          "description": [
+            "MINERAL PRODUCTS",
+            "Section note: For definitions of horizontal processing rules within this Section, see     Note 5 of Annex 3-A."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "25",
+      "rows": [
+        {
+          "id": [
+            "Chapter 25"
+          ],
+          "description": [
+            "Salt; sulphur; earths and stone; plastering materials, lime and cement"
+          ]
+        },
+        {
+          "id": [
+            "25.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "25.02-25.30"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 70 % (EXW); or RVC 35 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "26",
+      "rows": [
+        {
+          "id": [
+            "Chapter 26"
+          ],
+          "description": [
+            "Ores, slag and ash"
+          ]
+        },
+        {
+          "id": [
+            "26.01-26.21"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "27",
+      "rows": [
+        {
+          "id": [
+            "Chapter 27"
+          ],
+          "description": [
+            "Mineral fuels, mineral oils and products of their distillation; bituminous substances; mineral waxes"
+          ]
+        },
+        {
+          "id": [
+            "27.01-27.09"
+          ],
+          "description": [
+            "CTH;",
+            "A chemical reaction or mixing and blending is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "27.10"
+          ],
+          "description": [
+            "CTH except from biodiesel of subheadings 3824.99 and 3826.00;  or",
+            "Distillation or a chemical reaction is undergone, provided that biodiesel (including hy\u00ad drotreated vegetable oil) of heading 27.10 and subheadings 3824.99 and 3826.00         used is obtained by esterification, transesterification or hydrotreatment."
+          ]
+        },
+        {
+          "id": [
+            "27.11"
+          ],
+          "description": [
+            "CTSH; or",
+            "A chemical reaction is undergone."
+          ]
+        },
+        {
+          "id": [
+            "27.12-27.15"
+          ],
+          "description": [
+            "CTH;",
+            "A chemical reaction or mixing and blending is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION VI"
+          ],
+          "description": [
+            "PRODUCTS OF THE CHEMICAL OR ALLIED INDUSTRIES",
+            "Section note: For definitions of horizontal processing rules within this Section, see     Note 5 of Annex 3-A."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "28",
+      "rows": [
+        {
+          "id": [
+            "Chapter 28"
+          ],
+          "description": [
+            "Inorganic chemicals; organic or  inorganic compounds of precious metals, of rare-       earth metals, of radioactive elements or of isotopes"
+          ]
+        },
+        {
+          "id": [
+            "28.01-28.53"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, or isomer separa\u00ad tion is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "29",
+      "rows": [
+        {
+          "id": [
+            "Chapter 29"
+          ],
+          "description": [
+            "Organic chemicals"
+          ]
+        },
+        {
+          "id": [
+            "2901.10-2905.42"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2905.43-2905.44"
+          ],
+          "description": [
+            "CTH except from heading 17.02 and subheading 3824.60."
+          ]
+        },
+        {
+          "id": [
+            "2905.45"
+          ],
+          "description": [
+            "CTH; however, non-originating materials of subheading 2905.45 may be used, pro\u00ad vided that their total value does not exceed 20 % of the EXW or 15 % of the FOB of  the product;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2905.49-2905.59"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2906.11"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "2906.12-2918.13"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2918.14-2918.15"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "2918.16-2922.41"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2922.42"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "2922.43-2923.10"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2923.20"
+          ],
+          "description": [
+            "CTSH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "2923.30-2924.24"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2924.25-2924.29"
+          ],
+          "description": [
+            "CTSH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2925.11-2938.10"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "2938.90"
+          ],
+          "description": [
+            "CTSH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "29.39"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "29.40"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "29.41-29.42"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, a change in particle size, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "30",
+      "rows": [
+        {
+          "id": [
+            "Chapter 30"
+          ],
+          "description": [
+            "Pharmaceutical products"
+          ]
+        },
+        {
+          "id": [
+            "30.01-30.06"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, mixing and blending, production of standard mate\u00ad rials, a change in particle size, isomer separation or biotechnological processing is un\u00ad dergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "31",
+      "rows": [
+        {
+          "id": [
+            "Chapter 31"
+          ],
+          "description": [
+            "Fertilisers"
+          ]
+        },
+        {
+          "id": [
+            "31.01-31.04"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "31.05"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "Sodium nitrate",
+            "Calcium cyanamide",
+            "Potassium sulphate",
+            "Magnesium potassium sul\u00ad phate"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "\u2013  Others"
+          ],
+          "description": [
+            "CTH and MaxNOM 50 % (EXW); or CTH and RVC 55 % (FOB); however, non-orig\u00ad inating materials of heading 31.05 may be used, provided that their  total value does   not exceed 20 % of the EXW or 15 % of the FOB of the product;",
+            "MaxNOM 40 % (EXW); or RVC 65 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "32",
+      "rows": [
+        {
+          "id": [
+            "Chapter 32"
+          ],
+          "description": [
+            "Tanning or dyeing extracts; tannins and their derivatives; dyes, pigments and other colouring matter; paints and varnishes; putty and other mastics; inks"
+          ]
+        },
+        {
+          "id": [
+            "32.01-32.05"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, mixing and blending, a change in particle size, pro\u00ad duction of standard materials, isomer separation or biotechnological processing is un\u00ad dergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3206.11-3206.19"
+          ],
+          "description": [
+            "CTH; however, non-originating materials of heading 32.06 may be  used, provided      that their total value does not exceed 20 % of the EXW or 15 % of the FOB of the product;",
+            "MaxNOM 40 % (EXW); or RVC 65 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3206.20-3215.90"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, mixing and blending, a change in particle size, pro\u00ad duction of standard materials, isomer separation or biotechnological processing is un\u00ad dergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "33",
+      "rows": [
+        {
+          "id": [
+            "Chapter 33"
+          ],
+          "description": [
+            "Essential oils and resinoids; perfumery, cosmetic or toilet preparations"
+          ]
+        },
+        {
+          "id": [
+            "3301.12-3302.10"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3302.90-3303.00"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, mixing and blending, production of standard mate\u00ad rials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "33.04"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, mixing and blending, a change in particle size, pro\u00ad duction of standard materials, isomer separation or biotechnological processing is un\u00ad dergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)"
+          ]
+        },
+        {
+          "id": [
+            "33.05-33.07"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "34",
+      "rows": [
+        {
+          "id": [
+            "Chapter 34"
+          ],
+          "description": [
+            "Soap, organic surface-active agents, washing preparations, lubricating preparations, ar\u00ad tificial waxes, prepared waxes, polishing or scouring preparations, candles and similar articles, modelling pastes, \u2018dental waxes\u2019 and dental preparations with a basis of plas\u00ad ter"
+          ]
+        },
+        {
+          "id": [
+            "34.01-34.07"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials or isomer separa\u00ad tion is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "35",
+      "rows": [
+        {
+          "id": [
+            "Chapter 35"
+          ],
+          "description": [
+            "Albuminoidal substances; modified starches; glues; enzymes"
+          ]
+        },
+        {
+          "id": [
+            "35.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "3502.11 - 3502.19"
+          ],
+          "description": [
+            "CTH except from headings 04.07 and 04.08."
+          ]
+        },
+        {
+          "id": [
+            "3502.20 \u2013 3504.00"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "35.05"
+          ],
+          "description": [
+            "CC except from heading 11.08."
+          ]
+        },
+        {
+          "id": [
+            "35.06-35.07"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "36",
+      "rows": [
+        {
+          "id": [
+            "Chapter 36"
+          ],
+          "description": [
+            "Explosives; pyrotechnic products; matches; pyrophoric alloys; certain combustible preparations"
+          ]
+        },
+        {
+          "id": [
+            "36.01-36.06"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, production of standard materials or isomer separation is under\u00ad gone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "37",
+      "rows": [
+        {
+          "id": [
+            "Chapter 37"
+          ],
+          "description": [
+            "Photographic or cinematographic goods"
+          ]
+        },
+        {
+          "id": [
+            "37.01-37.07"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, production of standard materials or isomer separation is under\u00ad gone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "38",
+      "rows": [
+        {
+          "id": [
+            "Chapter 38"
+          ],
+          "description": [
+            "Miscellaneous chemical products"
+          ]
+        },
+        {
+          "id": [
+            "38.01-38.08"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3809.10"
+          ],
+          "description": [
+            "CTH except from headings 11.08 and 35.05."
+          ]
+        },
+        {
+          "id": [
+            "3809.91-3822.00"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "38.23"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "3824.10-3824.50"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3824.60"
+          ],
+          "description": [
+            "CTH except from heading 17.02 and subheadings 2905.43 and 2905.44."
+          ]
+        },
+        {
+          "id": [
+            "3824.71-3824.91"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "3824.99"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Biodiesel"
+          ],
+          "description": [
+            "Production in which biodiesel is obtained through transesterification, esterification or hydro-treatment."
+          ]
+        },
+        {
+          "id": [
+            "\u2013  Others"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "38.25"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction, purification, production of standard materials, isomer separation or biotechnological processing is undergone;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "38.26"
+          ],
+          "description": [
+            "Production in which biodiesel is obtained through transesterification, esterification or hydro-treatment."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "SECTION VII"
+          ],
+          "description": [
+            "PLASTICS AND ARTICLES THEREOF; RUBBER AND ARTICLES THEREOF",
+            "Section note: For definitions of horizontal processing rules within this Section, see     Note 5 of Annex 3-A."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "39",
+      "rows": [
+        {
+          "id": [
+            "Chapter 39"
+          ],
+          "description": [
+            "Plastics and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "39.01-39.03"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.04-39.06"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction or biotechnological processing is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.07-39.08"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.09-39.10"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction or biotechnological processing is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.11"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.12-39.15"
+          ],
+          "description": [
+            "CTSH;",
+            "A chemical reaction or biotechnological processing is undergone; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "39.16-39.26"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "40",
+      "rows": [
+        {
+          "id": [
+            "Chapter 40"
+          ],
+          "description": [
+            "Rubber and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "40.01 \u2013 40.11"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "4012.11-4012.19"
+          ],
+          "description": [
+            "CTSH;",
+            "Retreading of used tyres; MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "4012.20-4017.00"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION VIII"
+          ],
+          "description": [
+            "RAW HIDES AND SKINS, LEATHER, FURSKINS AND ARTICLES THEREOF; SADD\u00ad LERY AND HARNESS; TRAVEL GOODS, HANDBAGS AND SIMILAR CONTAINERS; ARTICLE OF ANIMAL GUT(OTHER THAN SILK-WORM GUT)"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "41",
+      "rows": [
+        {
+          "id": [
+            "Chapter 41"
+          ],
+          "description": [
+            "Raw hides and skins (other than furskins) and leather"
+          ]
+        },
+        {
+          "id": [
+            "41.01-41.03"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "4104.11- 4104.19"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "4104.41-4104.49"
+          ],
+          "description": [
+            "CTSH except from subheadings 4104.41 to 4104.49."
+          ]
+        },
+        {
+          "id": [
+            "4105.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "4105.30"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "4106.21"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "4106.22"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "4106.31"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "4106.32"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "4106.40"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  A product in the wet state:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "\u2013  A product in the dry state:"
+          ],
+          "description": [
+            "CTH; or",
+            "Production from non-originating materials in the wet state."
+          ]
+        },
+        {
+          "id": [
+            "4106.91"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "4106.92"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "41.07-41.13"
+          ],
+          "description": [
+            "CTH; however, non-originating materials of subheadings 4104.41, 4104.49, 4105.30, 4106.22, 4106.32 and 4106.92 may be used, provided that a re-tanning operation  of   the tanned or crust hides and skins in the dry state takes place."
+          ]
+        },
+        {
+          "id": [
+            "41.14-41.15"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "42",
+      "rows": [
+        {
+          "id": [
+            "Chapter 42"
+          ],
+          "description": [
+            "Articles of leather; saddlery and harness; travel goods, handbags and similar contain\u00ad ers; articles of animal gut (other than silk-worm gut)"
+          ]
+        },
+        {
+          "id": [
+            "42.01-42.06"
+          ],
+          "description": [
+            "CC;",
+            "CTH and MaxNOM 45 % (EXW); or CTH and RVC 60 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "43",
+      "rows": [
+        {
+          "id": [
+            "Chapter 43"
+          ],
+          "description": [
+            "Furskins and artificial fur; manufactures thereof"
+          ]
+        },
+        {
+          "id": [
+            "43.01"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "43.02-43.04"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "SECTION IX"
+          ],
+          "description": [
+            "WOOD AND ARTICLES OF WOOD; WOOD CHARCOAL; CORK AND ARTICLES   OF CORK; MANUFACTURES OF STRAW, OF ESPARTO OR OF OTHER PLAITING MATERIALS; BASKETWARE AND WICKERWORK"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "44",
+      "rows": [
+        {
+          "id": [
+            "Chapter 44"
+          ],
+          "description": [
+            "Wood and articles of wood; wood charcoal"
+          ]
+        },
+        {
+          "id": [
+            "44.01-44.21"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "45",
+      "rows": [
+        {
+          "id": [
+            "Chapter 45"
+          ],
+          "description": [
+            "Cork and articles of cork"
+          ]
+        },
+        {
+          "id": [
+            "45.01-45.04"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "46",
+      "rows": [
+        {
+          "id": [
+            "Chapter 46"
+          ],
+          "description": [
+            "Manufactures of straw, of esparto or of other plaiting materials; basketware and wick\u00ad erwork"
+          ]
+        },
+        {
+          "id": [
+            "4601.21-4601.22"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "4601.29"
+          ],
+          "description": [
+            "CC except from Chapter 14."
+          ]
+        },
+        {
+          "id": [
+            "4601.92-4601.93"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "4601.94"
+          ],
+          "description": [
+            "CC except from Chapter 14."
+          ]
+        },
+        {
+          "id": [
+            "4601.99-4602.12"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "4602.19"
+          ],
+          "description": [
+            "CC except from Chapter 14."
+          ]
+        },
+        {
+          "id": [
+            "4602.90"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION X"
+          ],
+          "description": [
+            "PULP OF WOOD OR OF OTHER FIBROUS CELLULOSIC MATERIAL; RECOVERED (WASTE AND SCRAP) PAPER OR PAPERBOARD; PAPER AND PAPERBOARD AND ARTICLES  THEREOF"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "47",
+      "rows": [
+        {
+          "id": [
+            "Chapter 47"
+          ],
+          "description": [
+            "Pulp of wood or of other fibrous cellulosic material; recovered (waste and scrap) paper or paperboard"
+          ]
+        },
+        {
+          "id": [
+            "47.01-47.07"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "48",
+      "rows": [
+        {
+          "id": [
+            "Chapter 48"
+          ],
+          "description": [
+            "Paper and paperboard; articles of paper pulp, of paper or of paperboard"
+          ]
+        },
+        {
+          "id": [
+            "48.01-48.23"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "49",
+      "rows": [
+        {
+          "id": [
+            "Chapter 49"
+          ],
+          "description": [
+            "Printed books, newspapers, pictures and other products of the printing industry; manuscripts, typescripts and plans"
+          ]
+        },
+        {
+          "id": [
+            "49.01-49.11"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XI"
+          ],
+          "description": [
+            "TEXTILES  AND  TEXTILE ARTICLES",
+            "Section note: For definitions of terms used for and tolerances applicable to certain products made of textile materials, see Notes 6, 7 and 8 of Annex 3-A."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "50",
+      "rows": [
+        {
+          "id": [
+            "Chapter 50"
+          ],
+          "description": [
+            "Silk"
+          ]
+        },
+        {
+          "id": [
+            "50.01"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "50.02"
+          ],
+          "description": [
+            "CTH except from heading 50.01."
+          ]
+        },
+        {
+          "id": [
+            "50.03"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  Carded or combed:"
+          ],
+          "description": [
+            "Carding or combing of silk waste."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "50.04-50.05"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made continuous filament combined with spinning; Extrusion of man-made continuous filament combined with twisting; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "50.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Silk yarn and yarn spun from silk waste:"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made continuous filament combined with spinning; Extrusion of man-made continuous filament combined with twisting; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Silk-worm gut:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "50.07"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving; Twisting or any mechanical operation combined with weaving; Weaving combined with dyeing;",
+            "Yarn dyeing combined with weaving; Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "51",
+      "rows": [
+        {
+          "id": [
+            "Chapter 51"
+          ],
+          "description": [
+            "Wool, fine or coarse animal hair; horsehair yarn and woven fabric"
+          ]
+        },
+        {
+          "id": [
+            "51.01-51.05"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "51.06-51.10"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "51.11-51.13"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving; Weaving combined with dyeing;",
+            "Yarn dyeing combined with weaving; Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "52",
+      "rows": [
+        {
+          "id": [
+            "Chapter 52"
+          ],
+          "description": [
+            "Cotton"
+          ]
+        },
+        {
+          "id": [
+            "52.01-52.03"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "52.04-52.07"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "52.08-52.12"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving; Twisting or any mechanical operation combined with weaving; Weaving combined with dyeing or with coating or with laminating; Yarn dyeing combined with weaving;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "53",
+      "rows": [
+        {
+          "id": [
+            "Chapter 53"
+          ],
+          "description": [
+            "Other vegetable textile fibres; paper yarn and woven fabrics of paper yarn"
+          ]
+        },
+        {
+          "id": [
+            "53.01-53.05"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "53.06-53.08"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "53.09-53.11"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving; Weaving combined with dyeing or with coating or with laminating: Yarn dyeing combined with weaving:",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "54",
+      "rows": [
+        {
+          "id": [
+            "Chapter 54"
+          ],
+          "description": [
+            "Man-made filaments; strip and the like of man-made textile materials"
+          ]
+        },
+        {
+          "id": [
+            "54.01-54.06"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "54.07-54.08"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving;",
+            "Yarn dyeing combined with weaving;",
+            "Weaving combined with dyeing or with coating or with laminating; Twisting or any mechanical operation combined with weaving; Weaving combined with printing; or",
+            "Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "55",
+      "rows": [
+        {
+          "id": [
+            "Chapter 55"
+          ],
+          "description": [
+            "Man-made staple fibres"
+          ]
+        },
+        {
+          "id": [
+            "55.01-55.07"
+          ],
+          "description": [
+            "Extrusion of man-made fibres."
+          ]
+        },
+        {
+          "id": [
+            "55.08-55.11"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "55.12-55.16"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving; Twisting or any mechanical operation combined with weaving; Weaving combined with dyeing or with coating or with laminating; Yarn dyeing combined with weaving;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "56",
+      "rows": [
+        {
+          "id": [
+            "Chapter 56"
+          ],
+          "description": [
+            "Wadding, felt and nonwovens; special yarns; twine, cordage, ropes and cables and arti\u00ad cles thereof"
+          ]
+        },
+        {
+          "id": [
+            "56.01"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; Flocking combined with dyeing or with printing; or",
+            "Coating, flocking, laminating, or metalising combined with at least two other main preparatory or finishing operations (such as calendering, shrink-resistance processes, heat setting, permanent finishing), provided that the value of non-originating mate\u00ad rials used does not exceed 50 % of the EXW or 45 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "56.02"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Needleloom felt:"
+          ],
+          "description": [
+            "Extrusion of man-made fibres combined with fabric formation; however:",
+            "non-originating polypropylene filament of heading 54.02;",
+            "non-originating polypropylene fibres of heading 55.03 or 55.06; or",
+            "non-originating polypropylene filament tow of heading 55.01;",
+            "of which the denomination in all cases of a single filament or fibre is less than 9 deci\u00ad tex, may be used, provided that their total value does not exceed 40 % of the EXW or 35 % of the FOB of the product; or",
+            "Non-woven fabric formation alone in the case of felt made from natural fibres."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Extrusion of man-made fibres combined with fabric formation; or",
+            "Non-woven fabric formation alone in the case of other felt made from natural fibres."
+          ]
+        },
+        {
+          "id": [
+            "5603.11-5603.14"
+          ],
+          "description": [
+            "Production from",
+            "directionally or randomly oriented filaments; or",
+            "substances or polymers of natural or man-made origin; followed in both cases by bonding into a nonwoven."
+          ]
+        },
+        {
+          "id": [
+            "5603.91-5603.94"
+          ],
+          "description": [
+            "Production from",
+            "directionally or randomly oriented staple fibres; or",
+            "chopped yarns, of natural or man-made origin; followed in both cases by bonding into a nonwoven."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "5604.10"
+          ],
+          "description": [
+            "Production from rubber thread or cord, not textile  covered."
+          ]
+        },
+        {
+          "id": [
+            "5604.90"
+          ],
+          "description": [
+            "Spinning of natural fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "56.05"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres;",
+            "Extrusion of man-made fibres combined with spinning; or Twisting combined with any mechanical operation."
+          ]
+        },
+        {
+          "id": [
+            "56.06"
+          ],
+          "description": [
+            "Extrusion of man-made fibres combined with spinning; Twisting combined with gimping;",
+            "Spinning of natural or man-made staple fibres; or Flocking combined with dyeing."
+          ]
+        },
+        {
+          "id": [
+            "56.07-56.09"
+          ],
+          "description": [
+            "Spinning of natural fibres; or",
+            "Extrusion of man-made fibres combined with spinning."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "57",
+      "rows": [
+        {
+          "id": [
+            "Chapter 57"
+          ],
+          "description": [
+            "Carpets and other textile floor coverings",
+            "Chapter note: For products of this Chapter jute fabric may be used as a backing."
+          ]
+        },
+        {
+          "id": [
+            "57.01-57.05"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving or  with tuft\u00ad   ing;",
+            "Extrusion of man-made filament yarn combined with weaving or with tufting;",
+            "Production from coir  yarn or sisal yarn or  jute yarn or classical ring spun viscose       yarn;",
+            "Tufting combined with dyeing or with printing; Flocking combined with dyeing or with printing; or",
+            "Extrusion of man-made fibres combined with nonwoven techniques including needle punching."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "58",
+      "rows": [
+        {
+          "id": [
+            "Chapter 58"
+          ],
+          "description": [
+            "Special woven fabrics; tufted textile fabrics; lace; tapestries; trimmings; embroidery"
+          ]
+        },
+        {
+          "id": [
+            "58.01-58.04"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving or  with tuft\u00ad   ing;",
+            "Extrusion of man-made filament yarn combined with weaving or with tufting;",
+            "Weaving combined with dyeing or with flocking or  with coating or  with laminating  or with metalising;",
+            "Tufting combined with dyeing or with printing; Flocking combined with dyeing or with printing; Yarn dyeing combined with weaving;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "58.05"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "58.06-58.09"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving or  with tuft\u00ad   ing;",
+            "Extrusion of man-made filament yarn combined with weaving or with tufting;"
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin",
+            "Weaving combined with dyeing or with flocking or  with coating or  with laminating  or with metalising;",
+            "Tufting combined with dyeing or with printing; Flocking combined with dyeing or with printing; Yarn dyeing combined with weaving;",
+            "Weaving combined with printing; or",
+            "Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "58.10"
+          ],
+          "description": [
+            "Embroidering in which the value of non-originating materials of any heading, except that of  the product, used does not exceed 50 % of  the EXW or 45 % of  the FOB of   the product."
+          ]
+        },
+        {
+          "id": [
+            "58.11"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving or  with tuft\u00ad   ing;",
+            "Extrusion of man-made filament yarn combined with weaving or with tufting;",
+            "Weaving combined with dyeing or with flocking or  with coating or  with laminating  or with metalising;",
+            "Tufting combined with dyeing or with printing; Flocking combined with dyeing or with printing; Yarn dyeing combined with weaving;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "59",
+      "rows": [
+        {
+          "id": [
+            "Chapter 59"
+          ],
+          "description": [
+            "Impregnated, coated, covered or laminated textile fabrics; textile articles of a kind suit\u00ad able for industrial use"
+          ]
+        },
+        {
+          "id": [
+            "59.01"
+          ],
+          "description": [
+            "Weaving combined with dyeing or with flocking or  with coating or  with laminating  or with metalising; or",
+            "Flocking combined with dyeing or with printing."
+          ]
+        },
+        {
+          "id": [
+            "59.02"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  Containing  not  more than 90",
+            "% by weight of textile mate\u00ad rials:"
+          ],
+          "description": [
+            "Weaving"
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Extrusion of man-made fibres combined with weaving."
+          ]
+        },
+        {
+          "id": [
+            "59.03"
+          ],
+          "description": [
+            "Weaving combined with impregnating or with coating or with covering or with lami\u00ad nating or with metalising;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "59.04"
+          ],
+          "description": [
+            "Weaving combined with dyeing or with coating or with laminating or with metalis\u00ad  ing."
+          ]
+        },
+        {
+          "id": [
+            "59.05"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Impregnated, coated, covered or laminated with rubber, plastics or other materials:"
+          ],
+          "description": [
+            "Weaving, knitting or  non-woven fabric formation combined  with impregnating  or   with coating or with covering or with laminating or  with metalising."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made filament yarn combined with weaving;",
+            "Weaving, knitting or nonwoven fabric formation combined with dyeing or with coat\u00ad ing or with laminating;",
+            "Weaving combined with printing; or Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "59.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Knitted or crocheted fabrics:"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with knitting or with cro\u00ad cheting;",
+            "Extrusion of man-made filament yarn combined with knitting or with crocheting; Knitting or crocheting combined with rubberising; or",
+            "Rubberising combined with at least two other  main preparatory or finishing opera\u00ad   tions (such as calendering, shrink-resistance processes, heat setting, permanent finish\u00ad ing) provided that the value of non-originating materials used does not exceed 50 %    of the EXW or 45 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Other fabrics made of syn\u00ad thetic filament yarn, contain\u00ad ing more than 90 %  by  weight of textile materials:"
+          ],
+          "description": [
+            "Extrusion of man-made fibres combined with weaving."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving, knitting or  nonwoven process combined with dyeing or  with coating or      with rubberising;",
+            "Yarn dyeing combined with weaving, knitting or nonwoven process; or",
+            "Rubberising combined with at least two other  main preparatory or finishing opera\u00ad   tions (such as calendering, shrink-resistance processes, heat setting, permanent finish\u00ad ing) provided that the value of non-originating materials used does not exceed 50 %    of the EXW or 45 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "59.07"
+          ],
+          "description": [
+            "Weaving, knitting or nonwoven fabric formation combined with dyeing or with print\u00ad ing or with coating or with impregnating or  with covering;",
+            "Flocking combined with dyeing or with printing; or Printing (as standalone operation)."
+          ]
+        },
+        {
+          "id": [
+            "59.08"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Incandescent gas mantles, im\u00ad pregnated:"
+          ],
+          "description": [
+            "Production from tubular knitted or crocheted gas-mantle fabric."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "59.09-59.11"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with weaving; Extrusion of man-made fibres combined with weaving;",
+            "Weaving combined with dyeing or with coating or with laminating; or",
+            "Coating, flocking, laminating or metalising combined with at least two other main preparatory or finishing operations (such as calendering, shrink-resistance processes, heat setting, permanent finishing) provided that the value of non-originating materials used does not exceed 50 % of the EXW or 45 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "60",
+      "rows": [
+        {
+          "id": [
+            "Chapter 60"
+          ],
+          "description": [
+            "Knitted or crocheted fabrics"
+          ]
+        },
+        {
+          "id": [
+            "60.01-60.06"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with knitting or with cro\u00ad cheting;",
+            "Extrusion of man-made filament yarn combined with knitting or with crocheting;",
+            "Knitting or crocheting combined with dyeing or  with flocking or  with coating or        with laminating or with printing;",
+            "Flocking combined with dyeing or with printing;",
+            "Yarn dyeing combined with knitting or with crocheting; or",
+            "Twisting or  texturing combined with knitting or  with crocheting provided that the    value of non-originating non-twisted  or  non-textured  yarns  used  does  not exceed 50 % of the EXW or 45 % of the FOB of the product."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "61",
+      "rows": [
+        {
+          "id": [
+            "Chapter 61"
+          ],
+          "description": [
+            "Articles of apparel and clothing accessories, knitted or crocheted"
+          ]
+        },
+        {
+          "id": [
+            "61.01-61.17"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Obtained by sewing together  or otherwise assembling, two or more pieces of knitted or crocheted fabric which have been either cut to form or obtained directly to form:"
+          ],
+          "description": [
+            "Knitting or crocheting combined with making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Spinning of natural or man-made staple fibres combined with knitting or with cro\u00ad cheting;",
+            "Extrusion of man-made filament yarn combined with knitting or with crocheting; or Knitting and making-up in one operation."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "62",
+      "rows": [
+        {
+          "id": [
+            "Chapter 62"
+          ],
+          "description": [
+            "Articles of apparel and clothing accessories, not knitted or crocheted"
+          ]
+        },
+        {
+          "id": [
+            "62.01"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.02"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.03"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.04"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.05"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.07-62.08"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.09"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.10"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Fire-resistant equipment of fabric covered with foil of aluminised polyester:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Coating or laminating combined with making-up including cutting of fabric, provided that the value of non-originating uncoated or  unlaminated fabric used does not ex\u00ad      ceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.11"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Women's or girls' garments, embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "62.12"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Knitted or crocheted obtained by sewing together or other\u00ad wise assembling,  two  or more pieces of knitted or cro\u00ad cheted fabric which  have  been either cut to form or obtained directly to form:"
+          ],
+          "description": [
+            "Knitting combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.13-62.14"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric;",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.15"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.16"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Fire-resistant equipment of fabric covered with foil of aluminised polyester:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Coating or laminating combined with making-up including cutting of fabric, provided that the value of non-originating uncoated or  unlaminated fabric used does not ex\u00ad      ceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric: or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "62.17"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric;",
+            "Production from unembroidered fabric, provided that the value of non-originating un\u00ad embroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product; or",
+            "Making-up including cutting of fabric preceded by printing (as standalone  operation)."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Fire-resistant equipment of fabric covered with foil of aluminised polyester:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric; or",
+            "Coating or laminating combined with making-up including cutting of fabric, provided that the value of non-originating uncoated or  unlaminated fabric used does not ex\u00ad      ceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Interlinings for collars and cuffs, cut out:"
+          ],
+          "description": [
+            "CTH, provided that the value of all the non-originating materials used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "63",
+      "rows": [
+        {
+          "id": [
+            "Chapter 63"
+          ],
+          "description": [
+            "Other made up textile articles; sets; worn clothing and worn textile articles; rags"
+          ]
+        },
+        {
+          "id": [
+            "63.01-63.04"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  Of felt, of nonwovens:"
+          ],
+          "description": [
+            "Nonwoven fabric formation combined with making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 \u2013 Embroidered:"
+          ],
+          "description": [
+            "Weaving or knitting or crocheting combined with making-up including cutting of fab\u00ad ric; or",
+            "Production from unembroidered fabric (other  than knitted or crocheted), provided       that the value of non-originating unembroidered fabric used does not exceed 40 % of the EXW or 35 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 \u2013  Others:"
+          ],
+          "description": [
+            "Weaving, knitting or crocheting combined with making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "63.05"
+          ],
+          "description": [
+            "Extrusion of man-made fibres or spinning of natural or man-made staple fibres, com\u00ad bined with weaving or with knitting and making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "63.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  Of nonwovens:"
+          ],
+          "description": [
+            "Nonwoven fabric formation combined with making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "Weaving combined with making-up including cutting of fabric."
+          ]
+        },
+        {
+          "id": [
+            "63.07"
+          ],
+          "description": [
+            "MaxNOM 40 % (EXW); or RVC 65 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "63.08"
+          ],
+          "description": [
+            "Each item in the set must satisfy the rule which would apply to it if  it were not in\u00ad   cluded  in the set; however, non-originating articles may  be incorporated, provided    that their total value does not exceed 15 % of the EXW or FOB of the set."
+          ]
+        },
+        {
+          "id": [
+            "63.09-63.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "SECTION XII"
+          ],
+          "description": [
+            "FOOTWEAR, HEADGEAR, UMBRELLAS, SUN UMBRELLAS, WALKING-STICKS, SEAT-STICKS, WHIPS, RIDING-CROPS AND PARTS  THEREOF; PREPARED FEATH\u00ad  ERS AND ARTICLES MADE THEREWITH; ARTIFICIAL FLOWERS; ARTICLES OF HU\u00ad MAN HAIR"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "64",
+      "rows": [
+        {
+          "id": [
+            "Chapter 64"
+          ],
+          "description": [
+            "Footwear, gaiters and the like; parts of such articles"
+          ]
+        },
+        {
+          "id": [
+            "64.01-64.06"
+          ],
+          "description": [
+            "CC;",
+            "CTH except from headings 64.01 to 64.05 and from assemblies of uppers affixed to  inner soles of subheading 6406.90 and MaxNOM 50 % (EXW); or",
+            "CTH except from headings 64.01 to 64.05 and from assemblies of uppers affixed to  inner soles of subheading 6406.90 and RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "65",
+      "rows": [
+        {
+          "id": [
+            "Chapter 65"
+          ],
+          "description": [
+            "Headgear and parts thereof"
+          ]
+        },
+        {
+          "id": [
+            "65.01-65.07"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "66",
+      "rows": [
+        {
+          "id": [
+            "Chapter 66"
+          ],
+          "description": [
+            "Umbrellas, sun umbrellas, walking-sticks, seat-sticks, whips, riding-crops and parts thereof"
+          ]
+        },
+        {
+          "id": [
+            "66.01-66.03"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "67",
+      "rows": [
+        {
+          "id": [
+            "Chapter 67"
+          ],
+          "description": [
+            "Prepared feathers and down and articles made of feathers or of down; artificial flow\u00ad ers; articles of human hair"
+          ]
+        },
+        {
+          "id": [
+            "67.01-67.04"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "SECTION XIII"
+          ],
+          "description": [
+            "ARTICLES OF STONE, PLASTER, CEMENT, ASBESTOS, MICA OR SIMILAR MATE\u00ad RIALS; CERAMIC PRODUCTS; GLASS AND GLASSWARE"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "68",
+      "rows": [
+        {
+          "id": [
+            "Chapter 68"
+          ],
+          "description": [
+            "Articles of stone, plaster, cement, asbestos, mica or similar materials"
+          ]
+        },
+        {
+          "id": [
+            "68.01-68.15"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 70 % (EXW); or RVC 35 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "69",
+      "rows": [
+        {
+          "id": [
+            "Chapter 69"
+          ],
+          "description": [
+            "Ceramic products"
+          ]
+        },
+        {
+          "id": [
+            "69.01-69.14"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "70",
+      "rows": [
+        {
+          "id": [
+            "Chapter 70"
+          ],
+          "description": [
+            "Glass and glassware"
+          ]
+        },
+        {
+          "id": [
+            "70.01-70.05"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "70.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Coated glass-plate substrates:"
+          ],
+          "description": [
+            "CTH; or",
+            "Production from non-coated glass-plate substrate of heading 70.06."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH except from headings 70.02 to 70.05."
+          ]
+        },
+        {
+          "id": [
+            "70.07  (<a href=\"#footnote_1\">1</a>) -70.09"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "70.10"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Glass and glassware, con\u00ad tainer made of glass:"
+          ],
+          "description": [
+            "CTH; however, non-originating materials of heading  70.10 may be  used, provided    that their total value does not exceed 15 % of the EXW or the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "70.11"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "70.13"
+          ],
+          "description": [
+            "CTH; however, non-originating materials of heading 70.13 may be used provided that their total value does not exceed 15 % of the EXW or the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "70.14-70.17"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "7018.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "7018.20"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "7018.90"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "70.19-70.20"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XIV"
+          ],
+          "description": [
+            "NATURAL OR CULTURED PEARLS, PRECIOUS OR SEMI-PRECIOUS STONES, PRE\u00ad CIOUS METALS, METALS CLAD WITH PRECIOUS METAL, AND ARTICLES THEREOF; IMITATION JEWELLERY; COIN"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "71",
+      "rows": [
+        {
+          "id": [
+            "Chapter 71"
+          ],
+          "description": [
+            "Natural or cultured pearls, precious or semi-precious stones, precious metals, metals  clad with precious metal, and articles thereof; imitation jewellery; coin"
+          ]
+        },
+        {
+          "id": [
+            "71.01"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "71.02-71.04"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "71.05"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "71.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Unwrought:"
+          ],
+          "description": [
+            "CTH except from headings 71.06, 71.08 and  71.10;",
+            "Electrolytic, thermal or chemical separation of precious metals of headings 71.06,",
+            "71.08 and 71.10; or",
+            "Fusion or alloying of precious metals of headings 71.06, 71.08 and 71.10 with each   other or with base metals or  purification."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Semi-manufactured\tor\tin powder form:"
+          ],
+          "description": [
+            "Production from unwrought precious metals."
+          ]
+        },
+        {
+          "id": [
+            "71.07"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Metals clad with precious me\u00ad tals,  semi-manufactured:"
+          ],
+          "description": [
+            "Production from metals clad with precious metals, unwrought."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "71.08"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Unwrought:"
+          ],
+          "description": [
+            "CTH except from headings 71.06, 71.08 and  71.10;",
+            "Electrolytic, thermal or chemical separation of precious metals of headings 71.06,",
+            "71.08 and 71.10; or",
+            "Fusion or alloying of precious metals of headings 71.06, 71.08 and 71.10 with each other or with base metals or  purification."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Semi-manufactured\tor\tin powder form:"
+          ],
+          "description": [
+            "Production from unwrought precious metals."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "71.09"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Metals clad with precious me\u00ad tals,  semi-manufactured:"
+          ],
+          "description": [
+            "Production from metals clad with precious metals, unwrought."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "71.10"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Unwrought:"
+          ],
+          "description": [
+            "CTH except from headings 71.06, 71.08 and  71.10;",
+            "Electrolytic, thermal or chemical separation of precious metals of headings 71.06,",
+            "71.08 and 71.10; or",
+            "Fusion or alloying of precious metals of headings 71.06, 71.08 and 71.10 with each other or with base metals or  purification."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Semi-manufactured\tor\tin powder form:"
+          ],
+          "description": [
+            "Production from unwrought precious metals."
+          ]
+        },
+        {
+          "id": [
+            "71.11"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Metals clad with precious me\u00ad tals,  semi-manufactured:"
+          ],
+          "description": [
+            "Production from metals clad with precious metals, unwrought."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "71.12"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "71.13-71.17"
+          ],
+          "description": [
+            "CTH except from headings 71.13 to 71.17; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "71.18"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "SECTION XV"
+          ],
+          "description": [
+            "BASE METALS AND ARTICLES OF BASE METAL"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "72",
+      "rows": [
+        {
+          "id": [
+            "Chapter 72"
+          ],
+          "description": [
+            "Iron and steel"
+          ]
+        },
+        {
+          "id": [
+            "72.01-72.06"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "72.07"
+          ],
+          "description": [
+            "CTH except from heading 72.06."
+          ]
+        },
+        {
+          "id": [
+            "72.08-72.17"
+          ],
+          "description": [
+            "CTH except from headings 72.08 to 72.17."
+          ]
+        },
+        {
+          "id": [
+            "7218.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "7218.91-7218.99"
+          ],
+          "description": [
+            "CTH except from heading 72.06."
+          ]
+        },
+        {
+          "id": [
+            "72.19-72.23"
+          ],
+          "description": [
+            "CTH except from headings 72.19 to 72.23."
+          ]
+        },
+        {
+          "id": [
+            "7224.10"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "7224.90"
+          ],
+          "description": [
+            "CTH except from heading 72.06."
+          ]
+        },
+        {
+          "id": [
+            "72.25-72.29"
+          ],
+          "description": [
+            "CTH except from headings 72.25 to 72.29."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "73",
+      "rows": [
+        {
+          "id": [
+            "Chapter 73"
+          ],
+          "description": [
+            "Articles of iron or steel"
+          ]
+        },
+        {
+          "id": [
+            "7301.10"
+          ],
+          "description": [
+            "CC except from headings 72.08 to 72.17."
+          ]
+        },
+        {
+          "id": [
+            "7301.20"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "73.02"
+          ],
+          "description": [
+            "CC except from headings 72.08 to 72.17."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "73.03"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "73.04-73.06"
+          ],
+          "description": [
+            "CC except from headings 72.13 to 72.17, 72.21 to 72.23 and 72.25 to 72.29."
+          ]
+        },
+        {
+          "id": [
+            "73.07"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Tube or pipe fittings of stain\u00ad less steel:"
+          ],
+          "description": [
+            "CTH except from forged blanks of heading 72.07; however, non-originating forged blanks of heading 72.07 may be used provided that their value does not exceed 50 %   of the EXW or 45 % of the FOB of the product."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "73.08"
+          ],
+          "description": [
+            "CTH except from subheading 7301.20; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "7309.00-7315.19"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "7315.20"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "7315.81-7319.90"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "7320.10"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "7320.20-7326.90"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "74",
+      "rows": [
+        {
+          "id": [
+            "Chapter 74"
+          ],
+          "description": [
+            "Copper and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "74.01-74.02"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "74.03"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "74.04-74.19"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "75",
+      "rows": [
+        {
+          "id": [
+            "Chapter 75"
+          ],
+          "description": [
+            "Nickel and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "75.01-75.04"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "75.05-75.08"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "76",
+      "rows": [
+        {
+          "id": [
+            "Chapter 76"
+          ],
+          "description": [
+            "Aluminium and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "76.01"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "76.02-76.06"
+          ],
+          "description": [
+            "CTH and MaxNOM 50 % (EXW); or CTH and RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "76.07"
+          ],
+          "description": [
+            "CTH except from heading 76.06."
+          ]
+        },
+        {
+          "id": [
+            "7608.10-7616.91"
+          ],
+          "description": [
+            "CTH and MaxNOM 50 % (EXW); or CTH and RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "7616.99"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "78",
+      "rows": [
+        {
+          "id": [
+            "Chapter 78"
+          ],
+          "description": [
+            "Lead and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "7801.10"
+          ],
+          "description": [
+            "CTSH"
+          ]
+        },
+        {
+          "id": [
+            "7801.91-7801.99"
+          ],
+          "description": [
+            "CTH except from heading 78.02."
+          ]
+        },
+        {
+          "id": [
+            "78.02-78.04"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "78.06"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "79",
+      "rows": [
+        {
+          "id": [
+            "Chapter 79"
+          ],
+          "description": [
+            "Zinc and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "79.01-79.07"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "80",
+      "rows": [
+        {
+          "id": [
+            "Chapter 80"
+          ],
+          "description": [
+            "Tin and articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "80.01-80.07"
+          ],
+          "description": [
+            "CTH"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "81",
+      "rows": [
+        {
+          "id": [
+            "Chapter 81"
+          ],
+          "description": [
+            "Other base metals; cermets; articles thereof"
+          ]
+        },
+        {
+          "id": [
+            "81.01-81.13"
+          ],
+          "description": [
+            "CTSH; or",
+            "Production from non-originating materials of any heading by the use of refining,       smelting or thermal metal forming."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "82",
+      "rows": [
+        {
+          "id": [
+            "Chapter 82"
+          ],
+          "description": [
+            "Tools, implements, cutlery, spoons and forks, of base metal; parts thereof of base met\u00ad al"
+          ]
+        },
+        {
+          "id": [
+            "8201.10-8205.70"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8205.90"
+          ],
+          "description": [
+            "CTH; however, non-originating tools of heading 82.05 may be incorporated into the   set, provided that their total value does not exceed 15 % of the EXW or  the FOB of  the set."
+          ]
+        },
+        {
+          "id": [
+            "82.06"
+          ],
+          "description": [
+            "CTH except from headings 82.02 to 82.05; however, non-originating tools of head\u00ad    ings 82.02 to 82.05 may be incorporated into the set, provided that their  total value   does not exceed 15 % of the EXW or the FOB of the set."
+          ]
+        },
+        {
+          "id": [
+            "82.07-82.15"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "83",
+      "rows": [
+        {
+          "id": [
+            "Chapter 83"
+          ],
+          "description": [
+            "Miscellaneous articles of base metal"
+          ]
+        },
+        {
+          "id": [
+            "83.01-83.11"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "SECTION XVI"
+          ],
+          "description": [
+            "MACHINERY AND MECHANICAL APPLIANCES; ELECTRICAL EQUIPMENT; PARTS THEREOF; SOUND RECORDERS AND REPRODUCERS, TELEVISION IMAGE AND SOUND RECORDERS AND REPRODUCERS, AND PARTS AND ACCESSORIES OF SUCH ARTICLES"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "84",
+      "rows": [
+        {
+          "id": [
+            "Chapter 84"
+          ],
+          "description": [
+            "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof"
+          ]
+        },
+        {
+          "id": [
+            "84.01-84.06"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.07-84.08 (<a href=\"#footnote_1\">1</a>)"
+          ],
+          "description": [
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.09-84.24"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.25-84.30"
+          ],
+          "description": [
+            "CTH except from heading 84.31; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.31-84.43"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.44-84.47"
+          ],
+          "description": [
+            "CTH except from heading 84.48; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.48-84.55"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.56-84.65"
+          ],
+          "description": [
+            "CTH except from heading 84.66; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.66-84.68"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.70-84.72"
+          ],
+          "description": [
+            "CTH except from heading 84.73; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "84.73-84.87"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "85",
+      "rows": [
+        {
+          "id": [
+            "Chapter 85"
+          ],
+          "description": [
+            "Electrical machinery and equipment and parts thereof; sound recorders and reprodu\u00ad cers, television image and sound recorders and reproducers, and parts and accessories of such articles"
+          ]
+        },
+        {
+          "id": [
+            "85.01-85.02"
+          ],
+          "description": [
+            "CTH except from heading 85.03; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.03-85.18"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.19-85.21"
+          ],
+          "description": [
+            "CTH except from heading 85.22; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.22-85.23"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.25-85.28"
+          ],
+          "description": [
+            "CTH except from heading 85.29; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.29-85.34"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.35-85.37"
+          ],
+          "description": [
+            "CTH except from heading 85.38; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.38-85.39"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8540.11-8540.12"
+          ],
+          "description": [
+            "CTSH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8540.20-8540.99"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8541.10-8541.60"
+          ],
+          "description": [
+            "CTSH;",
+            "Non-originating materials used undergo a diffusion; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8541.90"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "8542.31-8542.39"
+          ],
+          "description": [
+            "CTSH;",
+            "Non-originating materials used undergo a diffusion; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8542.90-8543.90"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8544.11-8544.60"
+          ],
+          "description": [
+            "CTH except from headings 74.08, 74.13, 76.05 and 76.14; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "8544.70"
+          ],
+          "description": [
+            "CTH except from headings 70.02 and 90.01; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "85.45-85.48"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XVII"
+          ],
+          "description": [
+            "VEHICLES, AIRCRAFT, VESSELS AND ASSOCIATED TRANSPORT EQUIPMENT"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "86",
+      "rows": [
+        {
+          "id": [
+            "Chapter 86"
+          ],
+          "description": [
+            "Railway or tramway locomotives, rolling-stock and parts thereof; railway or tramway track fixtures and fittings and parts thereof; mechanical (including electro-mechanical) traffic signalling equipment of all kinds"
+          ]
+        },
+        {
+          "id": [
+            "86.01-86.09"
+          ],
+          "description": [
+            "CTH except from heading 86.07; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "87",
+      "rows": [
+        {
+          "id": [
+            "Chapter 87"
+          ],
+          "description": [
+            "Vehicles other than railway or tramway rolling-stock, and parts and accessories thereof"
+          ]
+        },
+        {
+          "id": [
+            "87.01  -87.07 (<a href=\"#footnote_1\">1</a>)"
+          ],
+          "description": [
+            "MaxNOM 45 % (EXW); or RVC 60 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "87.08 (<a href=\"#footnote_2\">2</a>)"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "87.09-87.11"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "87.12"
+          ],
+          "description": [
+            "MaxNOM 45 % (EXW); or RVC 60 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "87.13-87.16"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "88",
+      "rows": [
+        {
+          "id": [
+            "Chapter 88"
+          ],
+          "description": [
+            "Aircraft, spacecraft, and parts thereof"
+          ]
+        },
+        {
+          "id": [
+            "88.01-88.05"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "89",
+      "rows": [
+        {
+          "id": [
+            "Chapter 89"
+          ],
+          "description": [
+            "Ships, boats and floating structures"
+          ]
+        },
+        {
+          "id": [
+            "89.01-89.08"
+          ],
+          "description": [
+            "CTH except from hull(s) of heading 89.06; MaxNOM 40 % (EXW); or",
+            "RVC 65 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XVIII"
+          ],
+          "description": [
+            "OPTICAL, PHOTOGRAPHIC, CINEMATOGRAPHIC, MEASURING, CHECKING, PRE\u00ad CISION, MEDICAL OR SURGICAL INSTRUMENTS AND APPARATUS; CLOCKS AND WATCHES; MUSICAL INSTRUMENTS; PARTS AND ACCESSORIES THEREOF"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "90",
+      "rows": [
+        {
+          "id": [
+            "Chapter 90"
+          ],
+          "description": [
+            "Optical, photographic, cinematographic, measuring, checking, precision, medical or surgical instruments and apparatus; parts and accessories thereof"
+          ]
+        },
+        {
+          "id": [
+            "9001.10-9001.40"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "9001.50"
+          ],
+          "description": [
+            "CTH;",
+            "Production in which one of the following operations is made:",
+            "surfacing of the semi-finished lens into a finished ophthalmic lens with optical corrective power meant to be mounted on a pair of spectacles; or",
+            "coating of the lens through appropriated treatments to improve vision and ensure protection of the wearer;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "9001.90-9033.00"
+          ],
+          "description": [
+            "CTH except from heading 96.20; MaxNOM 50 % (EXW); or",
+            "RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "91",
+      "rows": [
+        {
+          "id": [
+            "Chapter 91"
+          ],
+          "description": [
+            "Clocks and watches and parts thereof"
+          ]
+        },
+        {
+          "id": [
+            "9101.11-9113.20"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "9113.90"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "91.14"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "92",
+      "rows": [
+        {
+          "id": [
+            "Chapter 92"
+          ],
+          "description": [
+            "Musical instruments; parts and accessories of such articles"
+          ]
+        },
+        {
+          "id": [
+            "92.01-92.09"
+          ],
+          "description": [
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "SECTION XIX"
+          ],
+          "description": [
+            "ARMS AND AMMUNITION; PARTS  AND ACCESSORIES THEREOF"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "93",
+      "rows": [
+        {
+          "id": [
+            "Chapter 93"
+          ],
+          "description": [
+            "Arms and ammunition; parts and accessories thereof"
+          ]
+        },
+        {
+          "id": [
+            "93.01-93.07"
+          ],
+          "description": [
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XX"
+          ],
+          "description": [
+            "MISCELLANEOUS   MANUFACTURED  ARTICLES"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "94",
+      "rows": [
+        {
+          "id": [
+            "Chapter 94"
+          ],
+          "description": [
+            "Furniture; bedding, mattresses, mattress supports, cushions and similar stuffed fur\u00ad nishings; lamps and lighting fittings, not elsewhere specified or included; illuminated signs, illuminated name-plates and the like; prefabricated buildings"
+          ]
+        },
+        {
+          "id": [
+            "9401.10-9401.80"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "9401.90"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "94.02-94.06"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "95",
+      "rows": [
+        {
+          "id": [
+            "Chapter 95"
+          ],
+          "description": [
+            "Toys, games and sports requisites; parts and accessories thereof"
+          ]
+        },
+        {
+          "id": [
+            "95.03-95.05"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "95.06"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013  Golf clubs and parts  thereof:"
+          ],
+          "description": [
+            "CTH; however non-originating roughly-shaped blocks for  making golf-club heads      may be used."
+          ]
+        },
+        {
+          "id": [
+            "\u2013 Others:"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "95.07-95.08"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "96",
+      "rows": [
+        {
+          "id": [
+            "Chapter 96"
+          ],
+          "description": [
+            "Miscellaneous  manufactured articles"
+          ]
+        },
+        {
+          "id": [
+            "96.01"
+          ],
+          "description": [
+            "CC"
+          ]
+        },
+        {
+          "id": [
+            "96.02-96.04"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "96.05"
+          ],
+          "description": [
+            "Each item in the set shall satisfy the rule which would apply to it if  it were not in\u00ad   cluded in the set, provided that non-originating articles may be incorporated, pro\u00ad       vided that their  total value does not exceed 15 % of  the EXW or  the FOB of the  set."
+          ]
+        },
+        {
+          "id": [
+            "Column 1 Harmonized  System classification",
+            "(<a href=\"#footnote_2017\">2017</a>) including specific description"
+          ],
+          "description": [
+            "Column 2",
+            "Product specific rule of origin"
+          ]
+        },
+        {
+          "id": [
+            "96.06-96.20"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)."
+          ]
+        },
+        {
+          "id": [
+            "SECTION XXI"
+          ],
+          "description": [
+            "WORKS OF ART,  COLLECTORS' PIECES AND ANTIQUES"
+          ]
+        }
+      ]
+    },
+    {
+      "number": "97",
+      "rows": [
+        {
+          "id": [
+            "Chapter 97"
+          ],
+          "description": [
+            "Works of art, collectors' pieces and antiques"
+          ]
+        },
+        {
+          "id": [
+            "97.01-97.06"
+          ],
+          "description": [
+            "CTH"
+          ]
+        },
+        {
+          "id": [
+            "From the first year until the end of the third year"
+          ],
+          "description": [
+            "From the fourth year until the end of the sixth year"
+          ],
+          "workingLeft": [
+            "From the beginning of the seventh year"
+          ],
+          "workingRight": []
+        },
+        {
+          "id": [
+            "MaxNOM 55 % (EXW); or RVC 50 % (FOB)"
+          ],
+          "description": [
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)"
+          ],
+          "workingLeft": [
+            "MaxNOM 45 % (EXW); or RVC 60 % (FOB)"
+          ],
+          "workingRight": []
+        },
+        {
+          "id": [
+            "From the first year until the end of the third year"
+          ],
+          "description": [
+            "From the beginning of the fourth year"
+          ]
+        },
+        {
+          "id": [
+            "MaxNOM 60 % (EXW); or RVC 45 % (FOB)"
+          ],
+          "description": [
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)"
+          ]
+        },
+        {
+          "id": [
+            "From the first year until the end of the fifth year"
+          ],
+          "description": [
+            "From the beginning of sixth year"
+          ]
+        },
+        {
+          "id": [
+            "MaxNOM 55 % (EXW); or RVC 50 % (FOB)"
+          ],
+          "description": [
+            "MaxNOM 45 % (EXW); or RVC 60 % (FOB)"
+          ]
+        },
+        {
+          "id": [
+            "From the first year until the end of the third year"
+          ],
+          "description": [
+            "From the beginning of the fourth year"
+          ]
+        },
+        {
+          "id": [
+            "CTH;",
+            "MaxNOM 60 % (EXW); or RVC 45 % (FOB)"
+          ],
+          "description": [
+            "CTH;",
+            "MaxNOM 50 % (EXW); or RVC 55 % (FOB)"
+          ]
+        },
+        {
+          "id": [
+            "Column (i)",
+            "Harmonized System Classification (<a href=\"#footnote_2017\">2017</a>) including specific description (<a href=\"#footnote_1\">1</a>)"
+          ],
+          "description": [
+            "Column (ii)",
+            "Related production process"
+          ]
+        },
+        {
+          "id": [
+            "7007.11"
+          ],
+          "description": [
+            "Tempering of a non-originating material provided that non-originating materials of heading 70.07 are not used."
+          ]
+        },
+        {
+          "id": [
+            "7007.21"
+          ],
+          "description": [
+            "Tempering or laminating of a non-originating material provided that non-originating materials of heading 70.07 are not  used."
+          ]
+        },
+        {
+          "id": [
+            "8708.10",
+            "\u2013  Bumpers (not including parts thereof)"
+          ],
+          "description": [
+            "All non-originating polymer and flat-rolled products used shall be  moulded or stamped."
+          ]
+        },
+        {
+          "id": [
+            "Column (i)",
+            "Harmonized System Classification (<a href=\"#footnote_2017\">2017</a>) including specific description (<a href=\"#footnote_1\">1</a>)"
+          ],
+          "description": [
+            "Column (ii)",
+            "Related production process"
+          ]
+        },
+        {
+          "id": [
+            "8708.29"
+          ],
+          "description": []
+        },
+        {
+          "id": [
+            "\u2013 Body stampings (not including parts thereof)"
+          ],
+          "description": [
+            "All non-originating materials shall be moulded or stamped."
+          ]
+        },
+        {
+          "id": [
+            "\u2013  Door  assemblies  (not  including  parts"
+          ],
+          "description": [
+            "All non-originating materials used to produce door skin or insole panel"
+          ]
+        },
+        {
+          "id": [
+            "thereof)"
+          ],
+          "description": [
+            "shall be moulded or stamped; and",
+            "all non-originating door parts used shall be assembled; and",
+            "non-originating materials of heading 87.08 shall not be used."
+          ]
+        },
+        {
+          "id": [
+            "8708.50",
+            "Drive-axles with differential, whether or not provided with other transmission components",
+            "Non-driving axles (not including parts thereof)"
+          ],
+          "description": [
+            "Drive shaft and differential gears are produced from non-originating flat-rolled metal; and",
+            "non-originating materials of heading 87.08 shall not be used.",
+            "Non-driving axles are produced from non-originating flat-rolled metal;  and",
+            "non-originating materials of heading 87.08 shall not be used."
+          ]
+        }
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "anchor": "<a name=\"footnote_1\">1</a>",
+      "note": " For the products of subheadings 7007.11 and 7007.21, see also Appendix 3-B-1."
+    },
+    {
+      "anchor": "<a name=\"footnote_1\">1</a>",
+      "note": " For headings 84.07 to 84.08, see also Appendix 3-B-1."
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -249,39 +250,53 @@ class RulesOfOriginImporter:
                         )
                         related_chapter = None
 
-                    rule_instance, created = Rule.objects.get_or_create(
-                        rule_id=rule["id"],
-                        description="".join(
-                            ["<p>{0}</p>".format(text) for text in rule["description"]]
-                        )
-                        if len(rule["description"]) > 0
-                        else "",
-                        is_exclusion=rule["exclusion"],
-                        working_or_processing_one="".join(
-                            ["<p>{0}</p>".format(text) for text in rule["workingLeft"]]
-                        )
-                        if len(rule["workingLeft"]) > 0
-                        else "",
-                        working_or_processing_two="".join(
-                            ["<p>{0}</p>".format(text) for text in rule["workingRight"]]
-                        )
-                        if len(rule["workingRight"]) > 0
-                        else "",
-                        chapter=related_chapter,
-                        rules_document=rules_document,
-                    )
-                    if created:
-                        logger.debug(
-                            "{0} instance created".format(
-                                rule_instance._meta.model_name
+                    try:
+                        rule_instance, created = Rule.objects.get_or_create(
+                            rule_id=rule["id"],
+                            description="".join(
+                                [
+                                    "<p>{0}</p>".format(text)
+                                    for text in rule["description"]
+                                ]
                             )
-                        )
-                    else:
-                        logger.debug(
-                            "{0} instance already exists".format(
-                                rule_instance._meta.model_name
+                            if len(rule["description"]) > 0
+                            else "",
+                            is_exclusion=rule["exclusion"],
+                            working_or_processing_one="".join(
+                                [
+                                    "<p>{0}</p>".format(text)
+                                    for text in rule["workingLeft"]
+                                ]
                             )
+                            if len(rule["workingLeft"]) > 0
+                            else "",
+                            working_or_processing_two="".join(
+                                [
+                                    "<p>{0}</p>".format(text)
+                                    for text in rule["workingRight"]
+                                ]
+                            )
+                            if len(rule["workingRight"]) > 0
+                            else "",
+                            chapter=related_chapter,
+                            rules_document=rules_document,
                         )
+                        if created:
+                            logger.debug(
+                                "{0} instance created".format(
+                                    rule_instance._meta.model_name
+                                )
+                            )
+                        else:
+                            logger.debug(
+                                "{0} instance already exists".format(
+                                    rule_instance._meta.model_name
+                                )
+                            )
+
+                    except Exception as ex:
+                        print(ex.args)
+                        sys.exit()
 
     @staticmethod
     def normalise_commodity_code(data):
@@ -327,7 +342,7 @@ class RulesOfOriginImporter:
             new_dict[new_key] = old_dict[key]
         return new_dict
 
-    def load(self, input_file=None, output_file=None, priority=None):
+    def load(self, input_file=None, output_file=None, priority=None, version="v1"):
         """
         Starting point of the class. Takes passed documents and loads the data into memory, processes the data
         data into organised data structures then creates the model instances and commits to the database and outputs a log
@@ -341,9 +356,19 @@ class RulesOfOriginImporter:
         self.priority = priority
 
         self.set_group_documents(
-            self.data_loader(settings.RULES_OF_ORIGIN_DOCUMENTS_FILE)
+            self.data_loader(
+                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                    "reference/group_documents.csv"
+                )
+            )
         )
-        self.set_rules_groups(self.data_loader(settings.RULES_OF_ORIGIN_GROUPS_FILE))
+        self.set_rules_groups(
+            self.data_loader(
+                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                    "reference/country_groups_v3.csv"
+                )
+            )
+        )
 
         self.working_group_name = Path(input_file).stem.upper()
 
@@ -362,7 +387,7 @@ class RulesOfOriginImporter:
 
             self.process_rules(rules["chapters"])
 
-            if rules["footnotes"]:
+            if "footnotes" in rules.keys() and rules["footnotes"]:
                 self.process_footnotes(rules["footnotes"])
 
             # self.instance_builder()
