@@ -78,6 +78,7 @@
                         <input type="hidden" name="page" value="{% if form.page.value %}{{ form.page.value }}{% endif %}"/>
 
                         {% if results %}
+                            <a href="{% url 'search:search-commodity' country_code=country_code %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
                             <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ query }}</h2>
 
 
