@@ -282,7 +282,8 @@ class DocxScraper:
         file_name = Path(file_path).stem.upper()
 
         outfile = open(
-            self.data_path.format("import_v1/{0}.json".format(file_name)), "w+"
+            self.data_path.format("archive/version1/import/{0}.json".format(file_name)),
+            "w+",
         )
         json.dump(data, outfile)
 

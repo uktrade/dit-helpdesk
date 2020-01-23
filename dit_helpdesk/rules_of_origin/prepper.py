@@ -68,15 +68,16 @@ path = "/app/dit_helpdesk/rules_of_origin/data/import/"
 # filename = 'Generalised_System_of_Preferences.json'
 # filename = 'GSP_Plus.json'
 # filename = 'Specific_Measures_-_Jordan.json'
-
-# filename = 'EPA_South_African_Development_Community_SADC.json'
-# filename = 'EPA_Eastern_and_Southern_Africa.json'
+# filename = "EPA_pacific.json"
 # filename = 'FTA_Central_America.json'
-# filename = 'FTA_Colombia,_Ecuador_and_Peru.json'
-# filename = 'FTA_Deep_and_Comprehensive_Trade_Agreement.json'
-# filename = 'FTA_European_Economic_Area_EEA.json'
 # filename = 'FTA_South_Korea.json'
-# filename = 'Overseas_Countries_and_Territories.json'
+
+# -- filename = 'EPA_South_African_Development_Community_SADC.json'
+# -- filename = 'EPA_Eastern_and_Southern_Africa.json'
+# -- filename = 'FTA_Colombia,_Ecuador_and_Peru.json'
+# -- filename = 'FTA_Deep_and_Comprehensive_Trade_Agreement.json'
+# -- filename = 'FTA_European_Economic_Area_EEA.json'
+# -- filename = 'Overseas_Countries_and_Territories.json'
 filename = "Pan-Euro-Mediterranean_Convention.json"
 
 input_filepath = "{0}_{1}".format(path, filename)
