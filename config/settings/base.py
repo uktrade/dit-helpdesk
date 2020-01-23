@@ -233,12 +233,6 @@ TRADE_TARIFF_SERVICE_MODEL_ARGS = [
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
-RULES_OF_ORIGIN_DOCUMENTS_FILE = RULES_OF_ORIGIN_DATA_PATH.format(
-    "/reference/group_documents.csv"
-)
-RULES_OF_ORIGIN_GROUPS_FILE = RULES_OF_ORIGIN_DATA_PATH.format(
-    "/reference/country_groups_v3.csv"
-)
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 TRADE_TARIFF_API = {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}"}
