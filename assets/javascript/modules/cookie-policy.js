@@ -41,7 +41,7 @@ function CookieBanner () {
   function getDefaultPolicy () {
     return {
       essential: true,
-      settings: true,
+      settings: false,
       usage: false,
       campaigns: false
     }
