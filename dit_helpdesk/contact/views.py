@@ -2,7 +2,6 @@ import logging
 
 from directory_forms_api_client import helpers
 from django.conf import settings
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.loader import get_template
@@ -72,8 +71,8 @@ class ContactFormWizardView(SessionWizardView):
     def dispatch(self, request, *args, **kwargs):
 
         if "origin_country" not in request.session:
-            messages.error(request, "Enter a country")
-            return redirect(reverse("choose-country"))
+            # messages.error(request, "Enter a country")
+            return redirect(reverse("choose-country") + "?select-country")
 
         return super(ContactFormWizardView, self).dispatch(request, *args, **kwargs)
 
