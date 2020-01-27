@@ -47,25 +47,44 @@
                         </div>
                     {% endif %}
 
-                    {% if not results %}
-                        <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
-                            Search for the goods you are exporting
-                        </h2>
-                        <div class="govuk-form-group{% if form.q.errors %} govuk-form-group--error{% endif %}">
-                            <label class="govuk-hint" for="search">
-                                You can search using either:
-                                <ul>
-                                    <li>the name of what you are exporting</li>
-                                    <li>the commodity code of what you are exporting</li>
-                                </ul>
-                            </label>
 
-                            {% if form.q.errors %}
+                    {% if not request.GET.q %}
+
+                            <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+                                Search for the goods you are exporting
+                            </h2>
+                            <div class="govuk-form-group{% if form.q.errors %} govuk-form-group--error{% endif %}">
+                                <label class="govuk-hint" for="search">
+                                    You can search using either:
+                                    <ul>
+                                        <li>the name of what you are exporting</li>
+                                        <li>the commodity code of what you are exporting</li>
+                                    </ul>
+                                </label>
+                    {% endif %}
+
+                    {% if request.GET.q and not results %}
+
+                        <h2 class="govuk-heading-l govuk-!-margin-bottom-3">There are no results for {{ request.GET.q }}</h2>
+
+                            <div class="govuk-form-group{% if form.q.errors %} govuk-form-group--error{% endif %}">
+                                <label class="govuk-hint" for="search">
+                                    Search again and consider:
+                                    <ul>
+                                        <li>searching what the item is used for or made from</li>
+                                        <li>checking your spelling</li>
+                                    </ul>
+                                </label>
+                    {% endif %}
+
+                    {% if form.q.errors %}
                                 <span id="commodity-code-error" class="govuk-error-message">
                                     <span class="govuk-visually-hidden">Error:</span>
                                     {% for error in form.q.errors %}{{ error }}{% endfor %}
                                 </span>
-                            {% endif %}
+                    {% endif %}
+
+                    {% if not request.GET.q or not results %}
                             <p>
                                 <input class="govuk-input govuk-input--width-30 {% if form.q.errors %}govuk-input--error{% endif %}"
                                        id="search" name="q" type="text" {% if form.q.errors %}
@@ -78,20 +97,23 @@
                             </button>
 
                         </div>
-
-                        <h2 class="govuk-heading-m govuk-!-padding-top-4">
-                            <a name="browse"></a>Browse goods by category
-                        </h2>
-                        {{ hierarchy_html | safe }}
-
                     {% endif %}
+                        {% if not request.GET.q %}
+                            <h2 class="govuk-heading-m govuk-!-padding-top-4">
+                                <a name="browse"></a>Browse goods by category
+                            </h2>
+                            {{ hierarchy_html | safe }}
+                        {% endif %}
 
-                    {% if request.GET %}
+
+
+                    {% if request.GET.q and results %}
                         <input type="hidden" name="q" value="{% if form.q.value or request.GET.q %}{{ request.GET.q }}{% endif %}"/>
                     {% endif %}
+
                     {% for hidden_field in form.hidden_fields %}
-                        {{ hidden_field.errors }}
-                        {% if request.GET.q %}
+                        {{ hidden_field.errors}}
+                        {% if request.GET.q  and results %}
                             {% if hidden_field.name != "toggle_headings" and hidden_field.name != "sort" %}
                                {{ hidden_field }}
                             {% endif %}
