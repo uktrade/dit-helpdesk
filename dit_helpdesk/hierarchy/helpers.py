@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 
 TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
@@ -181,3 +183,10 @@ def get_nomenclature_group_measures(nomenclature_model, group_name, country_code
         if measure.type_id in group_measure_type_ids
         and country_code not in [id for id in measure.excluded_country_area_ids]
     ]
+
+
+def get_back_link_url(country_code, request):
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
+    return referer
