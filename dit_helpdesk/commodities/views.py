@@ -20,7 +20,11 @@ from countries.models import Country
 from hierarchy.views import get_hierarchy_context
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
-from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+from hierarchy.helpers import (
+    TABLE_COLUMN_TITLES,
+    get_nomenclature_group_measures,
+    get_back_link_url,
+)
 
 
 def commodity_detail(request, commodity_code, country_code):
@@ -87,12 +91,8 @@ def commodity_detail(request, commodity_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
-    referer = reverse("search:search-commodity", args=[country_code])
-    if "HTTP_REFERER" in request.META:
-        referer = request.META["HTTP_REFERER"]
-
     context = {
-        "back_link_url": referer,
+        "back_link_url": get_back_link_url(country_code, request),
         "selected_origin_country": country.country_code,
         "commodity": commodity,
         "selected_origin_country_name": country.name,
