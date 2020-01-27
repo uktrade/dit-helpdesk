@@ -87,9 +87,9 @@ def commodity_detail(request, commodity_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
-    referer = reverse('search:search-commodity', args=[country_code])
-    if 'HTTP_REFERER' in request.META:
-        referer = request.META['HTTP_REFERER']
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
 
     context = {
         "back_link_url": referer,
@@ -112,7 +112,7 @@ def commodity_detail(request, commodity_code, country_code):
             commodity_path, country.country_code, commodity_code, commodity
         ),
         "modals": modals_dict,
-        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
+        "is_eu_member": country_code.upper() == "EU",
     }
 
     return render(request, "commodities/commodity_detail.html", context)
