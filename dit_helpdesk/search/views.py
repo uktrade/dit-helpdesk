@@ -1,4 +1,5 @@
 import logging
+import re
 from urllib.parse import urlencode
 
 from rest_framework import generics
@@ -65,6 +66,7 @@ class CommoditySearchView(FormView):
 
         self.initial = self.get_initial()
         form = self.form_class(request.GET)
+
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
         if form.is_valid():
@@ -73,10 +75,14 @@ class CommoditySearchView(FormView):
 
             page = int(form_data.get("page")) if form_data.get("page") else 1
 
+            form_data = self.check_for_dotted_code_numbers(form_data)
+
             if form_data.get("q").isdigit():
                 response = helpers.search_by_code(code=form_data.get("q"))
-                if response:
-                    hit = response[0]
+                hits = [hit for hit in response.scan()]
+
+                if hits:
+                    hit = hits[0]
 
                     if hit.meta["index"] == "chapter":
                         return redirect(
@@ -84,7 +90,7 @@ class CommoditySearchView(FormView):
                                 "chapter-detail",
                                 kwargs={
                                     "chapter_code": hit.commodity_code,
-                                    "country_code": form_data.get("country_code"),
+                                    "country_code": form_data.get("country"),
                                 },
                             )
                         )
@@ -94,41 +100,39 @@ class CommoditySearchView(FormView):
                                 "commodity-detail",
                                 kwargs={
                                     "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country_code"),
+                                    "country_code": form_data.get("country"),
                                 },
                             )
                         )
                     elif hit.meta["index"] == "heading":
-                        heading = Heading.objects.filter(
-                            heading_code=hit.commodity_code
-                        ).first()
-                        if heading.leaf:
-                            return redirect(
-                                reverse(
-                                    "heading-detail",
-                                    kwargs={
-                                        "heading_code": hit.commodity_code,
-                                        "country_code": form_data.get("country_code"),
-                                    },
-                                )
+                        return redirect(
+                            reverse(
+                                "heading-detail",
+                                kwargs={
+                                    "heading_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
                             )
-                        else:
-                            return redirect(
-                                reverse(
-                                    "search:search-hierarchy",
-                                    kwargs={
-                                        "node_id": "{0}-{1}".format(
-                                            hit.meta["index"], hit.id
-                                        ),
-                                        "country_code": form_data.get("country_code"),
-                                    },
-                                )
+                        )
+
+                    elif hit.meta["index"] == "subheading":
+                        return redirect(
+                            reverse(
+                                "subheading-detail",
+                                kwargs={
+                                    "commodity_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
                             )
+                        )
+
                     else:
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
+                        context["results"] = []
                         return self.render_to_response(context)
                 else:
+                    context["results"] = []
                     return self.render_to_response(context)
             else:
 
@@ -174,6 +178,32 @@ class CommoditySearchView(FormView):
         else:
 
             return self.render_to_response(context)
+
+    def check_for_dotted_code_numbers(self, form_data):
+        """
+        entering a code number with dots makes the query a string not a digit
+        here we convert to a digit if found
+        :param form_data:
+        :return:
+        """
+        pattern_a = "(\d{4}).(\d{2}).(\d{2}).(\d{2})"
+        pattern_b = "(\d{4}).(\d{2}).(\d{2})"
+        pattern_c = "(\d{4}).(\d{2})"
+
+        match_a = re.match(pattern_a, form_data.get("q"))
+        match_b = re.match(pattern_b, form_data.get("q"))
+        match_c = re.match(pattern_c, form_data.get("q"))
+
+        if match_a:
+            match_obj = match_a
+        elif match_b:
+            match_obj = match_b
+        else:
+            match_obj = match_c
+        if match_obj:
+            form_data["q"] = match_obj.group().replace(".", "")
+
+        return form_data
 
     def get_context_data(self, **kwargs):
         context = super(CommoditySearchView, self).get_context_data(**kwargs)
