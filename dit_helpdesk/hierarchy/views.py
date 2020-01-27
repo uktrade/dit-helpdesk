@@ -217,7 +217,12 @@ def section_detail(request, section_id, country_code):
     for measure_json in import_measures:
         modals_dict.update(measure_json.measures_modals)
 
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
+
     context = {
+        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "section": section,
         "selected_origin_country_name": country.name,
@@ -272,7 +277,12 @@ def chapter_detail(request, chapter_code, country_code):
     except Exception as ex:
         logger.info("chapter notes: ", ex.args)
 
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
+
     context = {
+        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
@@ -367,7 +377,12 @@ def heading_detail(request, heading_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
+
     context = {
+        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
@@ -478,7 +493,12 @@ def subheading_detail(request, commodity_code, country_code):
     accordion_title = hierarchy_section_header(subheading_path)
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
+    referer = reverse("search:search-commodity", args=[country_code])
+    if "HTTP_REFERER" in request.META:
+        referer = request.META["HTTP_REFERER"]
+
     context = {
+        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
