@@ -566,7 +566,10 @@ class HeadingJson(object):
 
     @property
     def footnotes(self):
-        return self.di["footnotes"]
+        if not isinstance(self.di, str) and "footnotes" in self.di.keys():
+            return self.di["footnotes"]
+        else:
+            return []
 
     def get_import_measure_by_id(self, measure_id, country_code=None):
 
