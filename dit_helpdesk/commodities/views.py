@@ -54,11 +54,19 @@ def commodity_detail(request, commodity_code, country_code):
     tariffs_and_charges_measures = get_nomenclature_group_measures(
         commodity, "Tariffs and charges", country.country_code
     )
-    tariffs_and_charges_table_data = [
-        measure_json.get_table_row()
-        for measure_json in tariffs_and_charges_measures
-        if measure_json.vat or measure_json.excise
-    ]
+    tariffs_and_charges_table_data = (
+        [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+            if measure_json.vat or measure_json.excise
+        ]
+        if country_code.upper() == "EU"
+        else [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+        ]
+    )
+
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)
 
