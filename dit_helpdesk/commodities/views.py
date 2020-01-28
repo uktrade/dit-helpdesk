@@ -87,12 +87,7 @@ def commodity_detail(request, commodity_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
-    referer = reverse("search:search-commodity", args=[country_code])
-    if "HTTP_REFERER" in request.META:
-        referer = request.META["HTTP_REFERER"]
-
     context = {
-        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "commodity": commodity,
         "selected_origin_country_name": country.name,

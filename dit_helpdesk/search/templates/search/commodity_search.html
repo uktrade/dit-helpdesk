@@ -8,8 +8,7 @@
         <main id="main-content" class="govuk-main-wrapper">
 
             {% if results %}
-                <a href="{% url 'search:search-commodity' country_code=country_code %}"
-                   class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">Back</a>
+                <a href="{% url 'search:search-commodity' country_code=country_code %}"  class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">New search</a>
             {% endif %}
 
             {% if not request.GET.q %}
@@ -110,8 +109,6 @@
                             </h2>
                             {{ hierarchy_html | safe }}
                         {% endif %}
-
-
 
                         {% if request.GET.q and results %}
                             <input type="hidden" name="q"
