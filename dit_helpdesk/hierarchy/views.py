@@ -12,11 +12,7 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
 from commodities.models import Commodity
-from hierarchy.helpers import (
-    TABLE_COLUMN_TITLES,
-    get_nomenclature_group_measures,
-    get_back_link_url,
-)
+from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 
@@ -222,7 +218,6 @@ def section_detail(request, section_id, country_code):
         modals_dict.update(measure_json.measures_modals)
 
     context = {
-        "back_link_url": get_back_link_url(country_code, request),
         "selected_origin_country": country.country_code,
         "section": section,
         "selected_origin_country_name": country.name,
@@ -278,7 +273,6 @@ def chapter_detail(request, chapter_code, country_code):
         logger.info("chapter notes: ", ex.args)
 
     context = {
-        "back_link_url": get_back_link_url(country_code, request),
         "selected_origin_country": country.country_code,
         "chapter": chapter,
         "selected_origin_country_name": country.name,
@@ -374,7 +368,6 @@ def heading_detail(request, heading_code, country_code):
     section = chapter.section
 
     context = {
-        "back_link_url": get_back_link_url(country_code, request),
         "selected_origin_country": country.country_code,
         "heading": heading,
         "selected_origin_country_name": country.name,
@@ -486,7 +479,6 @@ def subheading_detail(request, commodity_code, country_code):
     rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
     context = {
-        "back_link_url": get_back_link_url(country_code, request),
         "selected_origin_country": country.country_code,
         "subheading": subheading,
         "selected_origin_country_name": country.name,
