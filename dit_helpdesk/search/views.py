@@ -1,5 +1,6 @@
 import logging
 import re
+from urllib.parse import urlencode
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -8,28 +9,19 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic.edit import FormView
-from django_elasticsearch_dsl.search import Search
 
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
-from elasticsearch import Elasticsearch
 
 from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Heading, Chapter, SubHeading
 from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
-from search.documents.chapter import ChapterDocument
+
 from search.documents.commodity import CommodityDocument
-from search.documents.heading import HeadingDocument
-from search.documents.section import SectionDocument
-from search.documents.subheading import SubHeadingDocument
 from search.forms import CommoditySearchForm
 from search.serializers import (
     CommodityDocumentSerializer,
-    SubHeadingDocumentSerializer,
-    HeadingDocumentSerializer,
-    ChapterDocumentSerializer,
-    SectionDocumentSerializer,
     CommoditySearchSerializer,
     HierarchySearchSerializer,
 )
@@ -65,151 +57,153 @@ class CommoditySearchView(FormView):
     form_class = CommoditySearchForm
     template_name = "search/commodity_search.html"
 
-    def get_success_url(self, *args, **kwargs):
-        success_url = super(CommoditySearchView, self).get_success_url()
-        return "{0}?q={1}&country=".format(
-            success_url, self.form.cleaned_data["search"]
-        )
+    def get_initial(self):
+        initial = super(CommoditySearchView, self).get_initial()
+        initial["country"] = self.request.session.get("origin_country")
+        return initial
 
     def get(self, request, *args, **kwargs):
 
+        self.initial = self.get_initial()
+        form = self.form_class(request.GET)
+
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
 
-        if request.GET:
-            form = CommoditySearchForm(request.GET)
-            if form.is_valid() and "q" in self.request.GET:
+        if form.is_valid():
 
-                query = request.GET.get("q")
-                context["query"] = query
-                sort_order = "asc"
-                sort_by = request.GET.get("sort")
+            form_data = form.cleaned_data
 
-                page = int(request.GET.get("page")) if request.GET.get("page") else 1
+            page = int(form_data.get("page")) if form_data.get("page") else 1
 
-                if "toggle_headings" not in request.GET.keys():
-                    if not request.GET._mutable:
-                        request.GET._mutable = True
-                        request.GET["toggle_headings"] = "1"
+            form_data = self.check_for_dotted_code_numbers(form_data)
 
-                filter_on_leaf = (
-                    True if request.GET.get("toggle_headings") == "1" else False
-                )
+            if form_data.get("q").isdigit():
+                response = helpers.search_by_code(code=form_data.get("q"))
+                hits = [hit for hit in response.scan()]
 
-                if query.isdigit():
-                    response = helpers.search_by_code(code=query)
-                    if response:
-                        hit = response[0]
-                        if hit.meta["index"] == "commodity":
-                            return redirect(
-                                reverse(
-                                    "commodity-detail",
-                                    kwargs={
-                                        "commodity_code": hit.commodity_code,
-                                        "country_code": context["country_code"],
-                                    },
-                                )
+                if hits:
+                    hit = hits[0]
+
+                    if hit.meta["index"] == "chapter":
+                        return redirect(
+                            reverse(
+                                "chapter-detail",
+                                kwargs={
+                                    "chapter_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
                             )
-                        elif hit.meta["index"] == "heading":
-                            heading = Heading.objects.filter(
-                                heading_code=hit.commodity_code
-                            ).first()
-                            if heading.leaf:
-                                return redirect(
-                                    reverse(
-                                        "heading-detail",
-                                        kwargs={
-                                            "heading_code": hit.commodity_code,
-                                            "country_code": context["country_code"],
-                                        },
-                                    )
-                                )
-                            else:
-                                return redirect(
-                                    reverse(
-                                        "search:search-hierarchy",
-                                        kwargs={
-                                            "node_id": "{0}-{1}".format(
-                                                hit.meta["index"], hit.id
-                                            ),
-                                            "country_code": context["country_code"],
-                                        },
-                                    )
-                                )
-                        else:
-                            context["message"] = "nothing found for that number"
-                            return self.render_to_response(context)
+                        )
+                    elif hit.meta["index"] == "commodity":
+                        return redirect(
+                            reverse(
+                                "commodity-detail",
+                                kwargs={
+                                    "commodity_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
+                            )
+                        )
+                    elif hit.meta["index"] == "heading":
+                        return redirect(
+                            reverse(
+                                "heading-detail",
+                                kwargs={
+                                    "heading_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
+                            )
+                        )
+
+                    elif hit.meta["index"] == "subheading":
+                        return redirect(
+                            reverse(
+                                "subheading-detail",
+                                kwargs={
+                                    "commodity_code": hit.commodity_code,
+                                    "country_code": form_data.get("country"),
+                                },
+                            )
+                        )
+
                     else:
+                        # response for no results found for commodity code
+                        context["message"] = "nothing found for that number"
+                        context["results"] = []
                         return self.render_to_response(context)
                 else:
-                    sort_by = "ranking" if not sort_by else sort_by
-                    sort_order = "desc" if not sort_order else sort_order
-
-                    context.update(
-                        helpers.search_by_term(
-                            query=query,
-                            page=page,
-                            sort_by=sort_by,
-                            sort_order=sort_order,
-                            filter_on_leaf=filter_on_leaf,
-                        )
-                    )
-                    context[
-                        "next_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
-                        request.GET.get("country"),
-                        request.GET.get("q"),
-                        request.GET.get("country"),
-                        page + 1,
-                        request.GET.get("toggle_headings"),
-                        request.GET.get("sort"),
-                    )
-                    context[
-                        "previous_url"
-                    ] = "/search/country/{0}/?q={1}&country={2}&page={3}&toggle_headings={4}&sort={5}".format(
-                        request.GET.get("country"),
-                        request.GET.get("q"),
-                        request.GET.get("country"),
-                        page - 1,
-                        request.GET.get("toggle_headings"),
-                        request.GET.get("sort"),
-                    )
-                    context["current_page"] = page
-                    context["results_per_page"] = settings.RESULTS_PER_PAGE
-                    context["page_total"] = len(context["results"])
-
-                    for hit in context["results"]:
-                        if isinstance(hit["commodity_code"], str):
-                            if hit.meta["index"] == "chapter":
-                                item = Chapter.objects.get(
-                                    chapter_code=hit["commodity_code"]
-                                )
-                            elif hit.meta["index"] == "heading":
-                                item = Heading.objects.get(
-                                    heading_code=hit["commodity_code"]
-                                )
-                            elif hit.meta["index"] == "subheading":
-                                res = SubHeading.objects.filter(
-                                    commodity_code=hit["commodity_code"]
-                                )
-
-                                item = res.first()
-                            else:
-                                item = Commodity.objects.get(
-                                    commodity_code=hit["commodity_code"]
-                                )
-
-                            hit["commodity_code_html"] = _commodity_code_html(item)
-
+                    context["results"] = []
                     return self.render_to_response(context)
-
             else:
+
+                context.update(helpers.search_by_term(form_data=form_data))
+
+                curr_url_items = dict((x, y) for x, y in request.GET.items())
+
+                next_urls_items = curr_url_items.copy()
+                next_urls_items["page"] = str(int(next_urls_items["page"]) + 1)
+
+                prev_url_items = curr_url_items.copy()
+                prev_url_items["page"] = str(int(prev_url_items["page"]) - 1)
+
+                context["next_url"] = "?{0}".format(urlencode(next_urls_items))
+                context["previous_url"] = "?{0}".format(urlencode(prev_url_items))
+                context["current_page"] = page
+                context["results_per_page"] = settings.RESULTS_PER_PAGE
+                context["page_total"] = len(context["results"])
+
+                for hit in context["results"]:
+                    if isinstance(hit["commodity_code"], str):
+                        if hit.meta["index"] == "chapter":
+                            item = Chapter.objects.get(
+                                chapter_code=hit["commodity_code"]
+                            )
+                        elif hit.meta["index"] == "heading":
+                            item = Heading.objects.get(
+                                heading_code=hit["commodity_code"]
+                            )
+                        elif hit.meta["index"] == "subheading":
+                            res = SubHeading.objects.filter(
+                                commodity_code=hit["commodity_code"]
+                            )
+                            item = res.first()
+                        else:
+                            item = Commodity.objects.get(
+                                commodity_code=hit["commodity_code"]
+                            )
+                        hit["commodity_code_html"] = _commodity_code_html(item)
+
                 return self.render_to_response(context)
+
         else:
+
             return self.render_to_response(context)
 
-    def get_form(self, form_class=None):
-        form = CommoditySearchForm(self.request.GET or form_class)
-        return form
+    def check_for_dotted_code_numbers(self, form_data):
+        """
+        entering a code number with dots makes the query a string not a digit
+        here we convert to a digit if found
+        :param form_data:
+        :return:
+        """
+        pattern_a = "(\d{4}).(\d{2}).(\d{2}).(\d{2})"
+        pattern_b = "(\d{4}).(\d{2}).(\d{2})"
+        pattern_c = "(\d{4}).(\d{2})"
+
+        match_a = re.match(pattern_a, form_data.get("q"))
+        match_b = re.match(pattern_b, form_data.get("q"))
+        match_c = re.match(pattern_c, form_data.get("q"))
+
+        if match_a:
+            match_obj = match_a
+        elif match_b:
+            match_obj = match_b
+        else:
+            match_obj = match_c
+        if match_obj:
+            form_data["q"] = match_obj.group().replace(".", "")
+
+        return form_data
 
     def get_context_data(self, **kwargs):
         context = super(CommoditySearchView, self).get_context_data(**kwargs)

@@ -21,7 +21,7 @@
         <div id="app-commodity-overview">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">Back</a>
+                    <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">New search</a>
 
                     <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Export
                         {% for heading_code_segment in heading.heading_code_split %}{{ heading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
@@ -79,6 +79,7 @@
     </div>
 </div>
 
+{% if heading.leaf %}
 <div class="govuk-width-container">
     <main id="main-content" class="govuk-main-wrapper">
 
@@ -144,5 +145,6 @@
     {% endif %}
 
 </div>
+{% endif %}
 
 {% endblock %}

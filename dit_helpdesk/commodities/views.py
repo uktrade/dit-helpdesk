@@ -54,11 +54,19 @@ def commodity_detail(request, commodity_code, country_code):
     tariffs_and_charges_measures = get_nomenclature_group_measures(
         commodity, "Tariffs and charges", country.country_code
     )
-    tariffs_and_charges_table_data = [
-        measure_json.get_table_row()
-        for measure_json in tariffs_and_charges_measures
-        if measure_json.vat or measure_json.excise
-    ]
+    tariffs_and_charges_table_data = (
+        [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+            if measure_json.vat or measure_json.excise
+        ]
+        if country_code.upper() == "EU"
+        else [
+            measure_json.get_table_row()
+            for measure_json in tariffs_and_charges_measures
+        ]
+    )
+
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)
 
@@ -87,12 +95,7 @@ def commodity_detail(request, commodity_code, country_code):
     chapter = heading.chapter
     section = chapter.section
 
-    referer = reverse('search:search-commodity', args=[country_code])
-    if 'HTTP_REFERER' in request.META:
-        referer = request.META['HTTP_REFERER']
-
     context = {
-        "back_link_url": referer,
         "selected_origin_country": country.country_code,
         "commodity": commodity,
         "selected_origin_country_name": country.name,
@@ -112,7 +115,7 @@ def commodity_detail(request, commodity_code, country_code):
             commodity_path, country.country_code, commodity_code, commodity
         ),
         "modals": modals_dict,
-        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
+        "is_eu_member": country_code.upper() == "EU",
     }
 
     return render(request, "commodities/commodity_detail.html", context)

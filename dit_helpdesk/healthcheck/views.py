@@ -1,6 +1,6 @@
 import time
 from django.views.generic import TemplateView
-from raven.contrib.django.raven_compat.models import client
+from sentry_sdk import capture_exception
 from healthcheck.models import HealthCheck
 
 
@@ -16,8 +16,8 @@ class HealthCheckView(TemplateView):
             HealthCheck.objects.get(health_check_field=True)
             return True
 
-        except Exception:
-            client.captureException()
+        except Exception as e:
+            capture_exception(e)
             return False
 
     def get_context_data(self, **kwargs):

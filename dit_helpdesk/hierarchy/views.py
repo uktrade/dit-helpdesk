@@ -327,11 +327,19 @@ def heading_detail(request, heading_code, country_code):
         tariffs_and_charges_measures = get_nomenclature_group_measures(
             heading, "Tariffs and charges", country.country_code
         )
-        tariffs_and_charges_table_data = [
-            measure_json.get_table_row()
-            for measure_json in tariffs_and_charges_measures
-            if measure_json.vat or measure_json.excise
-        ]
+        tariffs_and_charges_table_data = (
+            [
+                measure_json.get_table_row()
+                for measure_json in tariffs_and_charges_measures
+                if measure_json.vat or measure_json.excise
+            ]
+            if country_code.upper() == "EU"
+            else [
+                measure_json.get_table_row()
+                for measure_json in tariffs_and_charges_measures
+            ]
+        )
+
         for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
 
@@ -378,7 +386,7 @@ def heading_detail(request, heading_code, country_code):
         "heading_hierarchy_context": get_hierarchy_context(
             heading_path, country.country_code, heading_code, heading
         ),
-        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
+        "is_eu_member": country_code.upper() == "EU",
     }
 
     if import_measures:
@@ -441,11 +449,19 @@ def subheading_detail(request, commodity_code, country_code):
         tariffs_and_charges_measures = get_nomenclature_group_measures(
             subheading, "Tariffs and charges", country.country_code
         )
-        tariffs_and_charges_table_data = [
-            measure_json.get_table_row()
-            for measure_json in tariffs_and_charges_measures
-            if measure_json.vat or measure_json.excise
-        ]
+        tariffs_and_charges_table_data = (
+            [
+                measure_json.get_table_row()
+                for measure_json in tariffs_and_charges_measures
+                if measure_json.vat or measure_json.excise
+            ]
+            if country_code.upper() == "EU"
+            else [
+                measure_json.get_table_row()
+                for measure_json in tariffs_and_charges_measures
+            ]
+        )
+
         for measure_json in tariffs_and_charges_measures:
             modals_dict.update(measure_json.measures_modals)
 
@@ -489,7 +505,7 @@ def subheading_detail(request, commodity_code, country_code):
         "subheading_hierarchy_context": get_hierarchy_context(
             subheading_path, country.country_code, commodity_code, subheading
         ),
-        "is_eu_member": country_code.upper() in settings.EU_COUNTRY_CODES,
+        "is_eu_member": country_code.upper() == "EU",
     }
 
     if (

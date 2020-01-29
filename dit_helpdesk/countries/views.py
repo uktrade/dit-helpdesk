@@ -1,4 +1,3 @@
-from django.contrib.messages.context_processors import get_messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -40,9 +39,9 @@ def choose_country_view(request):
 
     context = {"country_options": [(c.country_code, c.name) for c in countries]}
 
-    errorSummaryMessage = "Enter a country"
-    if errorSummaryMessage in [message.message for message in get_messages(request)]:
+    if 'select-country' in request.GET:
         context["isError"] = True
+        errorSummaryMessage = "Enter a country"
         context["errorSummaryMessage"] = errorSummaryMessage
         context["errorInputMessage"] = errorSummaryMessage
 

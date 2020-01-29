@@ -180,7 +180,14 @@ class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
 
 class SearchFormTestCase(TestCase):
     def test_form_is_valid_with_a_query(self):
-        form_data = {"q": "Paper", "country": "AU"}
+        form_data = {
+            "q": "Paper",
+            "country": "AU",
+            "page": "1",
+            "toggle_headings": 0,
+            "sort_order": "asc",
+            "sort": "ranking",
+        }
         form = CommoditySearchForm(data=form_data)
         self.assertTrue(form.is_valid())
 
