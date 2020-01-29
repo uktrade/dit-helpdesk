@@ -91,6 +91,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "chapter_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -101,6 +102,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "commodity_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -111,6 +113,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "heading_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -122,6 +125,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "commodity_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
