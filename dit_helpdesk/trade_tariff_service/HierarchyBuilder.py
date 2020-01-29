@@ -1,3 +1,4 @@
+import csv
 import json
 import logging
 import os
@@ -675,6 +676,60 @@ class HierarchyBuilder:
                 except ObjectDoesNotExist as exception:
                     logger.debug("{0} lookup parent:{1} ".format(item, exception.args))
                     return None
+
+    def build_search_data(self):
+        file_list = [
+            hierarchy_model_map[item]["file_name"]
+            for item in hierarchy_model_map.keys()
+            if item != "Section"
+        ]
+        data = []
+        for item in file_list:
+            data.extend(self.load_json_file(settings.IMPORT_DATA_PATH.format(item)))
+            # self.convert_json_to_csv(file_name=item[0], json_file=item[1])
+        data = sorted(data, key=lambda i: i["goods_nomenclature_item_id"])
+
+        self.convert_json_to_csv(data=data)
+
+    def convert_json_to_csv(self, data=None):
+        # get filename from filepath
+
+        csv_file_path = settings.SEARCH_DATA_PATH.format(
+            "commodities/hierarchy_subheading_all.csv"
+        )
+        csv_data = csv.writer(open(csv_file_path, "a", newline=""))
+        col_headings = [
+            "Code",
+            "Col1",
+            "Col2",
+            "Col3",
+            "Col4",
+            "Col5",
+            "Col6",
+            "Col7",
+            "Col8",
+        ]
+        csv_data.writerow(col_headings)
+
+        for item in data:
+            csv_data.writerow(
+                [
+                    item["goods_nomenclature_item_id"],
+                    item["goods_nomenclature_sid"],
+                    item["productline_suffix"],
+                    item["leaf"],
+                    item["parent_goods_nomenclature_item_id"],
+                    item["parent_goods_nomenclature_sid"],
+                    item["parent_productline_suffix"],
+                    item["description"],
+                    item["number_indents"],
+                ]
+            )
+
+    def load_json_file(self, file_path):
+        with open(file_path) as f:
+            json_data = json.load(f)
+        return json_data
 
     @staticmethod
     def process_orphaned_subheadings():
