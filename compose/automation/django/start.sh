@@ -24,11 +24,11 @@ python manage.py collectstatic --noinput
 python manage.py migrate
 python manage.py loaddata countries_data
 python manage.py use_static_api_data
-python manage.py prepare_import_data
+python manage.py prepare_static_import_data
 python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
-python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
+python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage_subset.csv
 python manage.py search_index --populate
 # -------------------------------------------
 
