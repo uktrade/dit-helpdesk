@@ -23,7 +23,7 @@ from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 
 
-def commodity_detail(request, commodity_code, country_code):
+def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
     """
     View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
     display and the two character country code to provide the exporter geographical context which is
@@ -41,7 +41,9 @@ def commodity_detail(request, commodity_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    commodity = get_object_or_404(Commodity, commodity_code=commodity_code)
+    commodity = Commodity.objects.get(
+        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+    )
 
     if (
         commodity.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
