@@ -86,6 +86,7 @@ class Commodity(models.Model):
         kwargs = {"commodity_code": self.commodity_code}
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
+            kwargs["nomenclature_sid"] = self.goods_nomenclature_sid
         return reverse("commodity-detail", kwargs=kwargs)
 
     @property

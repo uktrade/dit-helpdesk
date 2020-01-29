@@ -132,7 +132,7 @@
 
                         {% if results %}
                             {% if results %}
-                                <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ query }}</h2>
+                                <h2 class="govuk-heading-l">Showing {{ total_results }} results for {{ request.GET.q }}</h2>
                             {% endif %}
                             <div class="govuk-form-group {% if not results %}govuk-visually-hidden{% endif %}">
                                 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
@@ -186,19 +186,19 @@
 
                                                 <h1 class="govuk-heading-m govuk-!-margin-bottom-3">
                                                     {% if result.meta.index == 'commodity' %}
-                                                        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code %}"
+                                                        <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'chapter' %}
-                                                        <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code %}"
+                                                        <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'section' %}
                                                         <a href="{% url 'section-detail' country_code=country_code section_id=result.commodity_code %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'heading' %}
-                                                        <a href="{% url 'heading-detail' country_code=country_code heading_code=result.commodity_code %}"
+                                                        <a href="{% url 'heading-detail' country_code=country_code heading_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'subheading' %}
-                                                        <a href="{% url 'subheading-detail' country_code=country_code commodity_code=result.commodity_code %}"
+                                                        <a href="{% url 'subheading-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% endif %}
                                                 </h1>
