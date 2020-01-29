@@ -193,7 +193,7 @@ abbr {
     ul {
       position: relative;
       list-style: none;
-      padding-left: 0;
+      padding-left: 5px;
 
       @include govuk-media-query($from: tablet) {
         padding-left: 15px;
@@ -213,9 +213,7 @@ abbr {
 
 .helpdesk-breadcrumbs nav ul li::before {
 
-  @include govuk-media-query($from: tablet) {
-    border-top: 1px solid #000;
-  }
+  border-top: 1px solid #000;
 
   top: 10px;
   width: 10px;
@@ -225,9 +223,7 @@ abbr {
 .helpdesk-breadcrumbs nav ul li::after {
 
 
-  @include govuk-media-query($from: tablet) {
-    border-left: 1px solid #000;
-  }
+  border-left: 1px solid #000;
 
   height: 100%;
   width: 0px;
