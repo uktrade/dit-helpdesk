@@ -190,7 +190,11 @@ abbr {
      ul {
         position: relative;
         list-style: none;
-        padding-left: 15px;
+        padding-left: 5px;
+
+        @include govuk-media-query($from: tablet) {
+          padding-left: 15px;
+        }
 
       li {
         position: relative;
