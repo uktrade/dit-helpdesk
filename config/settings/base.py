@@ -240,8 +240,6 @@ SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
-LOGGING_CONFIG = None
-
 LOG_LEVEL = os.environ.get("LOGLEVEL", "info").upper()
 
 LOGGING = {
