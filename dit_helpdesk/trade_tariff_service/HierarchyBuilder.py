@@ -715,7 +715,7 @@ class HierarchyBuilder:
         return count
 
     @staticmethod
-    def process_orphaned_commodities():
+    def process_orphaned_commodities(skip_commodity=False):
         """
         this method is to be run after data scanner has created all hierarchy items in the database
         the method finds parents for all commodty items and updates the database accordingly
@@ -731,7 +731,6 @@ class HierarchyBuilder:
             parent_sid = commodity.parent_goods_nomenclature_sid
 
             try:
-
                 if parent_sid is None:
                     subheading = SubHeading.objects.get(
                         commodity_code=commodity.parent_goods_nomenclature_item_id
@@ -742,6 +741,8 @@ class HierarchyBuilder:
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
+                if skip_commodity:
+                    continue
                 logger.debug(
                     "Commodity {0} has no subheading parent parant {1}".format(
                         commodity, exception.args
