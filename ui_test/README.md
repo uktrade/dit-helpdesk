@@ -1,9 +1,5 @@
 # Ui Testing
 
-Note that the assertions were set from a given data snapshot which will most likely change.
-In order to make these tests repteable at all times, we should commit and not change the "prepared"
-folder content under "testing_prepared" and ensure that when docker is started we skip the tests that pottentially overwrite these files. Following this strategy we can ensure commodity codes are consistent across run.
-
 ## Setup
 
 1) Ensure you download the latest chromedriver from the URL below:
@@ -18,4 +14,12 @@ It's advised to run the command above on an isolated environment, like for examp
 
 ## Run the tests
 
-Execute the following command to run the tests: `pytest ui_test/specs`
+1) Start the application by using the automation compose by running the following command
+in root of project:
+
+`$ docker-compose -f test-automation.yml build`
+`$ docker-compose -f test-automation.yml up`
+
+2) Execute the following command to run the tests: 
+
+`$ pytest ui_test/specs`
