@@ -46,6 +46,7 @@ class CommodityTestCase(TestCase):
             commodity_code="0101210000",
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading,
+            goods_nomenclature_sid=12345,
         )
 
     def test_str(self):
@@ -61,7 +62,7 @@ class CommodityTestCase(TestCase):
     def test_get_absolute_url_with_lowercase_country_code(self):
         self.assertEquals(
             self.commodity.get_absolute_url(country_code="au"),
-            "/country/au/commodity/0101210000",
+            "/country/au/commodity/0101210000/12345",
         )
 
     def test_get_absolute_url_without_country_code(self):
@@ -70,7 +71,7 @@ class CommodityTestCase(TestCase):
     def test_get_absolute_url_with_uppercased_country_code(self):
         self.assertEquals(
             self.commodity.get_absolute_url(country_code="AU"),
-            "/country/au/commodity/{0}".format(self.commodity.commodity_code),
+            "/country/au/commodity/{0}/12345".format(self.commodity.commodity_code),
         )
 
     def test_commodity_code_split(self):
@@ -112,11 +113,26 @@ class CommodityTestCase(TestCase):
     def test_get_path_returns_list_with_no_parent_subheading(self):
         section = mixer.blend(Section, section_id=10)
 
-        chapter = mixer.blend(Chapter, chapter_code="4700000000", section=section)
+        chapter = mixer.blend(
+            Chapter,
+            chapter_code="4700000000",
+            section=section,
+            goods_nomenclature_sid=12345,
+        )
 
-        heading = mixer.blend(Heading, heading_code="4702000000", chapter=chapter)
+        heading = mixer.blend(
+            Heading,
+            heading_code="4702000000",
+            chapter=chapter,
+            goods_nomenclature_sid=12345,
+        )
 
-        commodity = mixer.blend(Commodity, commodity_code="4702000000", heading=heading)
+        commodity = mixer.blend(
+            Commodity,
+            commodity_code="4702000000",
+            heading=heading,
+            goods_nomenclature_sid=12345,
+        )
 
         self.assertTrue(
             "subheading"
@@ -131,15 +147,29 @@ class CommodityTestCase(TestCase):
 
         chapter = mixer.blend(Chapter, chapter_code="4700000000", section=section)
 
-        heading = mixer.blend(Heading, heading_code="4704000000", chapter=chapter)
+        heading = mixer.blend(
+            Heading,
+            heading_code="4704000000",
+            chapter=chapter,
+            goods_nomenclature_sid=12345,
+        )
         subheading = mixer.blend(
-            SubHeading, commodity_code="4704000000", heading=heading
+            SubHeading,
+            commodity_code="4704000000",
+            heading=heading,
+            goods_nomenclature_sid=12345,
         )
         sub_subheading = mixer.blend(
-            SubHeading, commodity_code="4704110000", parent_subheading=subheading
+            SubHeading,
+            commodity_code="4704110000",
+            parent_subheading=subheading,
+            goods_nomenclature_sid=12345,
         )
         commodity = mixer.blend(
-            Commodity, commodity_code="4702000000", parent_subheading=sub_subheading
+            Commodity,
+            commodity_code="4702000000",
+            parent_subheading=sub_subheading,
+            goods_nomenclature_sid=12345,
         )
         self.assertTrue(
             "4704110000"

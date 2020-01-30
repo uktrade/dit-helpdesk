@@ -653,7 +653,9 @@ def _commodity_code_html(item):
     return commodity_code_html
 
 
-def measure_condition_detail(request, heading_code, country_code, measure_id):
+def measure_condition_detail(
+    request, heading_code, country_code, measure_id, nomenclature_sid
+):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
@@ -671,7 +673,9 @@ def measure_condition_detail(request, heading_code, country_code, measure_id):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    heading = Heading.objects.get(heading_code=heading_code)
+    heading = Heading.objects.get(
+        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -689,7 +693,9 @@ def measure_condition_detail(request, heading_code, country_code, measure_id):
     return render(request, "hierarchy/measure_condition_detail.html", context)
 
 
-def measure_quota_detail(request, heading_code, country_code, measure_id, order_number):
+def measure_quota_detail(
+    request, heading_code, country_code, measure_id, order_number, nomenclature_sid
+):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
@@ -707,7 +713,9 @@ def measure_quota_detail(request, heading_code, country_code, measure_id, order_
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    heading = Heading.objects.get(heading_code=heading_code)
+    heading = Heading.objects.get(
+        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
