@@ -178,7 +178,12 @@
   &:before {
     color: #005fa2;
     display: inline-block;
-    margin-left: -1.25em;
+    margin-left: 0;
+
+    @include govuk-media-query($from: tablet) {
+      margin-left: -1.25em;
+    }
+
     padding-right: 0.5em;
     text-decoration: underline;
   }
