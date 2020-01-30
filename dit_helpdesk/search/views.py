@@ -158,6 +158,7 @@ class CommoditySearchView(FormView):
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
+                        logger.info("{0}".format(hit.meta["index"]))
                         if hit.meta["index"] == "chapter":
                             item = Chapter.objects.get(
                                 chapter_code=hit["commodity_code"],
@@ -180,7 +181,7 @@ class CommoditySearchView(FormView):
                             )
                         else:
                             item = None
-
+                        logger.info("item is {0} of tpye {1}".format(item, type(item))
                         hit["commodity_code_html"] = _commodity_code_html(item)
 
                 return self.render_to_response(context)
