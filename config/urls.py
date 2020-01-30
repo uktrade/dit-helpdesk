@@ -117,6 +117,7 @@ urlpatterns = [
     ),
     re_path(r"^check/$", HealthCheckView.as_view(), name="healthcheck"),
     re_path("search/", include("search.urls", namespace="search")),
+    path("accessibility/", include("accessibility.urls", namespace="accessibility")),
 ]
 
 
