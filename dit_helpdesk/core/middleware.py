@@ -2,8 +2,18 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.urls import resolve
 
-
 from .ip_filter import is_valid_admin_ip, get_client_ip
+
+
+def NoIndexMiddleware(get_response):
+    def middleware(request):
+        response = get_response(request)
+
+        response['X-Robots-Tag'] = 'noindex, nofollow'
+
+        return response
+
+    return middleware
 
 
 def AdminIpRestrictionMiddleware(get_response):
