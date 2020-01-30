@@ -1,9 +1,12 @@
 import logging
 import re
 from datetime import datetime
+
+from django.db import connection
 from django.template import loader, Context
 from dateutil.parser import parse as parse_dt
 from django.conf import settings
+from django.urls import reverse
 
 from countries.models import Country
 
@@ -103,6 +106,33 @@ class ImportMeasureJson(object):
         self.commodity_title = commodity_title
         self.measures_modals = {}
         self.country_code = country_code
+
+    def get_commodity_sid(self):
+        """
+        get nomenclature sid direct from db. used by vue__conditions_html and vue__quota_html to build the correct url
+        for modal fallback page
+        :return:
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT goods_nomenclature_sid "
+                "FROM commodities_commodity "
+                "WHERE commodity_code = %s "
+                "AND description = %s",
+                [self.commodity_code, self.commodity_title.replace("|", "")],
+            )
+            row = cursor.fetchone()
+        if not row:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT goods_nomenclature_sid, description "
+                    "FROM commodities_commodity "
+                    "WHERE commodity_code = %s",
+                    [self.commodity_code],
+                )
+                row = cursor.fetchone()
+        return row
 
     @classmethod
     def get_date(cls, di, key):
@@ -227,18 +257,21 @@ class ImportMeasureJson(object):
 
     @property
     def vue__conditions_html(self):
+
         if not self.num_conditions:
-            return "-"
-        url = "{0}/import-measure/{1}/conditions".format(
-            self.commodity_code, self.measure_id
-        )
-        modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
-        html = """<a  data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
-            modal_id, url
-        )
-        self.measures_modals[modal_id] = self.get_modal(
-            modal_id, self.get_conditions_table
-        )
+            html = "-"
+        else:
+            commodity_sid = self.get_commodity_sid()
+            url = "{0}/import-measure/{1}/conditions".format(
+                commodity_sid[0], self.measure_id
+            )
+            modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
+            html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
+                modal_id, url
+            )
+            self.measures_modals[modal_id] = self.get_modal(
+                modal_id, self.get_conditions_table
+            )
 
         return html
 
@@ -364,15 +397,20 @@ class ImportMeasureJson(object):
         also generates the matching modal html and appends it to a class dictionary variable
         :return: the html of the link
         """
+        commodity_sid = self.get_commodity_sid()[0]
+        html = ""
         order_number = self.di["order_number"]["number"]
-        url = "{0}/import-measure/{1}/quota/{2}".format(
-            self.commodity_code, self.measure_id, order_number
-        )
-        modal_id = "{0}-{1}".format(self.measure_id, order_number)
-        html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
-            modal_id, url, order_number
-        )
-        self.measures_modals[modal_id] = self.get_modal(modal_id, self.get_quota_table)
+        if commodity_sid:
+            url = "{0}/import-measure/{1}/quota/{2}".format(
+                commodity_sid, self.measure_id, order_number
+            )
+            modal_id = "{0}-{1}".format(self.measure_id, order_number)
+            html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
+                modal_id, url, order_number
+            )
+            self.measures_modals[modal_id] = self.get_modal(
+                modal_id, self.get_quota_table
+            )
         return html
 
     def get_table_row(self):
