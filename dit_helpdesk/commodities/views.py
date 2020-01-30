@@ -209,6 +209,7 @@ def measure_quota_detail(
     geographical_area = import_measure.get_geographical_area()
 
     context = {
+        "nomenclature_sid": nomenclature_sid,
         "selected_origin_country": country.country_code,
         "commodity_description": commodity.description,
         "commodity_code": commodity.commodity_code,
