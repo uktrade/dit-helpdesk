@@ -5,11 +5,26 @@ aliases:
   - &postgres_version           circleci/postgres:10
   - &elasticsearch_version      docker.elastic.co/elasticsearch/elasticsearch:6.4.3
   - &python_version             circleci/python:3.6
+  - &kibana_version             docker.elastic.co/kibana/kibana:6.4.3
 
-  - &build_base_envs
+  - &unit_base_envs
     DEBUG: True
     DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
     DJANGO_SETTINGS_MODULE: config.settings.test
+    DJANGO_BASE_DIR: /app
+    DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
+    DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
+    DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
+    DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
+    DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
+    DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
+
+  - &ui_test_base_envs
+    ADMIN_ENABLED: True
+    DEBUG: True
+    DISABLE_COLLECTSTATIC: 1
+    DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
+    DJANGO_SETTINGS_MODULE: config.settings.docker_development
     DJANGO_BASE_DIR: /app
     DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
     DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
@@ -38,15 +53,26 @@ aliases:
     environment:
       ES_URL: http://es:9200
 
+  # Kibana container
+  - &docker_kibana
+    image: *kibana_version
+    environment:
+      ELASTICSEARCH_URL: http://es:9200
+    ports: "5601:5601"
+
   # Python container
   - &docker_python
     image: *python_version
 
+  # Helpdesk test container
+  - &docker_helpdesk_test
+    image: ukti/dit-helpdesk-test:1.0.0
+
 jobs:
-  build:
+  unit_tests:
     docker:
       - <<: *docker_python
-        environment: *build_base_envs
+        environment: *unit_base_envs
       - *docker_postgres
       - *docker_elasticsearch
       - *docker_redis
@@ -76,3 +102,42 @@ jobs:
       - store_artifacts:
           path: test-reports/
           destination: python_app
+
+  ui_tests:
+    docker:
+      - <<: *docker_helpdesk_test
+        environment: *ui_test_base_envs
+      - *docker_postgres
+      - *docker_elasticsearch
+      - *docker_redis
+      - *docker_kibana
+    working_directory: ~/app
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+            - v1-dependencies-{{ .Branch }}-
+            - v1-dependencies-
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements/development.txt
+      - save_cache:
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+          paths:
+            - "venv"
+      - run:
+          name: Start app
+          command: | 
+            . venv/bin/activate
+            ./compose/automation/django/start.sh
+
+# CircleCI workflows
+workflows:
+  version: 2
+  helpdesk:
+    jobs:
+      - unit_tests
+      - ui_tests
