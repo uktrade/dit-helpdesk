@@ -22,7 +22,7 @@ aliases:
   - &docker_redis
     image: *redis_version
     environment:
-      - REDIS_URL: "redis://localhost:6379/"
+      REDIS_URL: "redis://localhost:6379/"
 
   # Postgres container
   - &docker_postgres
@@ -45,7 +45,7 @@ aliases:
 jobs:
   build:
     docker:
-      - *docker_python
+      - <<: *docker_python
         environment: *build_base_envs
       - *docker_postgres
       - *docker_elasticsearch
