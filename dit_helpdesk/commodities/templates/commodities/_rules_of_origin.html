@@ -51,24 +51,7 @@
 
                         <p>If there are 2 columns that describe how non-originating materials must be worked or
                           processed (if columns 3 and 4 are present), you can apply either rule.</p>
-                        {% if roo_footnotes %}
-                        <details class="govuk-details">
-                        {% for group in roo_footnotes.items %}
-                          <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text govuk-!-font-size-16">
-                              {{ group.0 }} Footnotes
-                            </span>
-                          </summary>
-                          <div class="govuk-details__text">
-                            <ul class="govuk-list govuk-body-s app-footnotes govuk-!-font-size-16">
-                              {% for footnote in group.1.footnotes %}
-                              <li>[{{ footnote.link_html | safe }}] {{ footnote.note | safe }}</li>
-                              {% endfor %}
-                            </ul>
-                          </div>
-                        {% endfor %}
-                        </details>
-                        {% endif %}
+
                       </div>
                     </details>
                     <div class="govuk-!-margin-bottom-4">

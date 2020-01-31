@@ -100,7 +100,6 @@ def commodity_detail(request, commodity_code, country_code):
         "commodity": commodity,
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
-        "roo_footnotes": rules_of_origin,
         "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
