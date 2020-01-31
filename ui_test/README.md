@@ -23,3 +23,20 @@ in root of project:
 2) Execute the following command to run the tests: 
 
 `$ pytest ui_test/specs`
+
+## Creating Docker container for CircleCI
+
+```bash
+export VERSION=1.0.0 # Increment this version each time when you edit Dockerfile.
+
+docker login # Ask webops for Docker Hub access to the ukti group.
+docker build -f ui_test/Dockerfile -t dit-helpdesk-test .
+
+docker tag data-hub-frontend-test:latest ukti/dit-helpdesk-test:${VERSION}
+docker tag data-hub-frontend-test:latest ukti/dit-helpdesk-test:latest
+
+docker push ukti/dit-helpdesk-test:${VERSION}
+docker push ukti/dit-helpdesk-test:latest
+```
+
+You image should be now listed at [Docker Hub](https://cloud.docker.com/u/ukti/repository/docker/ukti/dit-helpdesk-test/tags).
