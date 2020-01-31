@@ -398,7 +398,6 @@ def heading_detail(request, heading_code, country_code):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "roo_footnotes": rules_of_origin,
                 "regulations": heading.get_regulations(),
             }
         )
@@ -522,7 +521,6 @@ def subheading_detail(request, commodity_code, country_code):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "roo_footnotes": rules_of_origin,
                 "regulations": subheading.get_regulations(),
             }
         )
