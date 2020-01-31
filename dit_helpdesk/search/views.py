@@ -91,6 +91,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "chapter_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -101,6 +102,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "commodity_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -111,6 +113,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "heading_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -122,6 +125,7 @@ class CommoditySearchView(FormView):
                                 kwargs={
                                     "commodity_code": hit.commodity_code,
                                     "country_code": form_data.get("country"),
+                                    "nomenclature_sid": hit.id,
                                 },
                             )
                         )
@@ -156,21 +160,27 @@ class CommoditySearchView(FormView):
                     if isinstance(hit["commodity_code"], str):
                         if hit.meta["index"] == "chapter":
                             item = Chapter.objects.get(
-                                chapter_code=hit["commodity_code"]
+                                chapter_code=hit["commodity_code"],
+                                goods_nomenclature_sid=hit.id,
                             )
                         elif hit.meta["index"] == "heading":
                             item = Heading.objects.get(
-                                heading_code=hit["commodity_code"]
+                                heading_code=hit["commodity_code"],
+                                goods_nomenclature_sid=hit.id,
                             )
                         elif hit.meta["index"] == "subheading":
-                            res = SubHeading.objects.filter(
-                                commodity_code=hit["commodity_code"]
+                            item = SubHeading.objects.get(
+                                commodity_code=hit["commodity_code"],
+                                goods_nomenclature_sid=hit.id,
                             )
-                            item = res.first()
-                        else:
+                        elif hit.meta["index"] == "commodity":
                             item = Commodity.objects.get(
-                                commodity_code=hit["commodity_code"]
+                                commodity_code=hit["commodity_code"],
+                                goods_nomenclature_sid=hit.id,
                             )
+                        else:
+                            item = None
+
                         hit["commodity_code_html"] = _commodity_code_html(item)
 
                 return self.render_to_response(context)

@@ -134,6 +134,7 @@ class TestCommodityModel(TestCase):
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading,
             description=settings.TEST_COMMODITY_DESCRIPTION,
+            goods_nomenclature_sid=12345,
         )
 
     def test_self_commodity_is_and_instance_of_Commodity(self):
@@ -147,7 +148,9 @@ class TestCommodityModel(TestCase):
     def test_commodity_get_absolute_url(self):
         self.assertEqual(
             self.commodity.get_absolute_url(settings.TEST_COUNTRY_CODE),
-            "/country/au/commodity/{0}".format(settings.TEST_COMMODITY_CODE),
+            "/country/au/commodity/{0}/{1}".format(
+                settings.TEST_COMMODITY_CODE, "12345"
+            ),
         )
 
     def test_commodity_in_db_and_self_commodity_are_the_same(self):

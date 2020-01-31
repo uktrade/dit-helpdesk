@@ -83,9 +83,13 @@ class Commodity(models.Model):
         :param country_code: string
         :return: url
         """
-        kwargs = {"commodity_code": self.commodity_code}
+        kwargs = {
+            "commodity_code": self.commodity_code,
+            "nomenclature_sid": self.goods_nomenclature_sid,
+        }
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
+            kwargs["nomenclature_sid"] = self.goods_nomenclature_sid
         return reverse("commodity-detail", kwargs=kwargs)
 
     @property
