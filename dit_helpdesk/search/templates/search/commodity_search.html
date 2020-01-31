@@ -115,20 +115,28 @@
                                    value="{% if form.q.value or request.GET.q %}{{ request.GET.q }}{% endif %}"/>
                         {% endif %}
 
-                        {% for hidden_field in form.hidden_fields %}
-                            {{ hidden_field.errors }}
-                            {% if request.GET.q  and results %}
-                                {% if hidden_field.name != "toggle_headings" and hidden_field.name != "sort" %}
-                                    {{ hidden_field }}
-                                {% endif %}
-                            {% else %}
-                                {% if hidden_field.name == "country" %}
-                                    <input type="hidden" name="country" value="{{ country_code }}"/>
+                        {% if not form %}
+                            <input type="hidden" name="toggle_headings" value="0">
+                            <input type="hidden" name="sort" value="ranking">
+                            <input type="hidden" name="sort_order" value="desc">
+                            <input type="hidden" name="page" value="1">
+                            <input type="hidden" name="country" value="in">
+                        {% else %}
+                            {% for hidden_field in form.hidden_fields %}
+                                {{ hidden_field.errors }}
+                                {% if request.GET.q  and results %}
+                                    {% if hidden_field.name != "toggle_headings" and hidden_field.name != "sort" %}
+                                        {{ hidden_field }}
+                                    {% endif %}
                                 {% else %}
-                                    {{ hidden_field }}
+                                    {% if hidden_field.name == "country" %}
+                                        <input type="hidden" name="country" value="{{ country_code }}"/>
+                                    {% else %}
+                                        {{ hidden_field }}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
 
                         {% if results %}
                             {% if results %}
