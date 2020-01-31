@@ -1,60 +1,73 @@
 # ~/.circleci/config.yml
-
 version: 2
+aliases:
+  - &redis_version              redis:3.2.10
+  - &postgres_version           circleci/postgres:10
+  - &elasticsearch_version      docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+  - &python_version             circleci/python:3.6
+
+  - &build_base_envs
+    DEBUG: True
+    DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
+    DJANGO_SETTINGS_MODULE: config.settings.test
+    DJANGO_BASE_DIR: /app
+    DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
+    DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
+    DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
+    DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
+    DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
+    DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
+
+  # Redis container
+  - &docker_redis
+    image: *redis_version
+    environment:
+      - REDIS_URL: "redis://localhost:6379/"
+
+  # Postgres container
+  - &docker_postgres
+    image: *postgres_version
+    name: postgres
+    environment:
+      POSTGRES_DB: helpdesk
+
+  # Elasticsearch container
+  - &docker_elasticsearch
+    image: *elasticsearch_version
+    name: es
+    environment:
+      ES_URL: http://es:9200
+
+  # Python container
+  - &docker_python
+    image: *python_version
 
 jobs:
   build:
-
     docker:
-      - image: circleci/python:3.6
-        environment:
-          DEBUG: True
-          DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
-          DJANGO_SETTINGS_MODULE: config.settings.test
-          DJANGO_BASE_DIR: /app
-          DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
-          DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
-          DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
-          DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
-          DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
-          DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
-          #SENTRY_DSN: https://ad61c1d8e7e7426d820e56381fb09f98@sentry.ci.uktrade.io/150
-      - image: circleci/postgres:10
-        name: postgres
-        environment:
-          POSTGRES_DB: DJANGO_POSTGRES_DATABASE
-      - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
-        name: es
-        environment:
-          ES_URL: http://es:9200
-      - image: circleci/redis:3.2
-        environment:
-          - REDIS_URL: "redis://localhost:6379/"
-
+      - *docker_python
+        environment: *build_base_envs
+      - *docker_postgres
+      - *docker_elasticsearch
+      - *docker_redis
     working_directory: ~/app
-
     steps:
       - checkout
-
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
             - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
             - v1-dependencies-{{ .Branch }}-
             - v1-dependencies-
-
       - run:
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/test.txt
-
       - save_cache:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
           paths:
             - "venv"
-
-
       - run:
           name: Running tests
           command: |
