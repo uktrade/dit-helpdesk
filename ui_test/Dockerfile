@@ -19,9 +19,9 @@ RUN apt-get install -y xvfb xdg-utils libgtk-3-0 lsb-release libappindicator3-1 
 RUN apt-get install -y zip unzip
 
 # Install chromedriver
-RUN cd $HOME/Downloads \
-  && wget https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip \
+RUN wget https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip \
   && unzip chromedriver_linux64.zip \
   && mkdir -p $HOME/bin \
-  && mv chromedriver $HOME/bin \
-  && export PATH=$PATH:$HOME/bin
+  && mv chromedriver $HOME/bin
+
+RUN export PATH=$PATH:$HOME/bin
