@@ -68,6 +68,12 @@ aliases:
   - &docker_helpdesk_test
     image: ukti/dit-helpdesk-test:1.0.0
 
+  # Step for ui test* jobs
+  - &wait_for_backend
+    run:
+      name: Wait for backend
+      command: dockerize -wait http://localhost:8000/choose-country/ -timeout 300s
+
 jobs:
   unit_tests:
     docker:
@@ -133,6 +139,14 @@ jobs:
           command: | 
             . venv/bin/activate
             ./compose/automation/django/start.sh
+          background: true
+      - *wait_for_backend
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            pytest ui_test/specs
+
 
 # CircleCI workflows
 workflows:
