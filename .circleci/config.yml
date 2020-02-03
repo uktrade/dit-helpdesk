@@ -145,6 +145,7 @@ jobs:
           name: Run tests
           command: |
             . venv/bin/activate
+            export PATH=$PATH:$HOME/bin
             pytest ui_test/specs
 
 
