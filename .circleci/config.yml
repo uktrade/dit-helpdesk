@@ -147,6 +147,8 @@ jobs:
             . venv/bin/activate
             export PATH=$PATH:$HOME/bin
             pytest ui_test/specs
+      - store_artifacts:
+        path: screenshots
 
 
 # CircleCI workflows
