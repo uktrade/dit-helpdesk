@@ -64,6 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
+    "core.middleware.CheckCountryUrlMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
