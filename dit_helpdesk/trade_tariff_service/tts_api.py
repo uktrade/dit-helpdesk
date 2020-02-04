@@ -411,13 +411,13 @@ class ImportMeasureJson(object):
 
             if self.di["order_number"]["definition"] is None:
                 modal_body = """<table class="govuk-table app-flexible-table">
-                                <caption class="govuk-table__caption govuk-heading-m">Quota number : 094003</caption>
+                                <caption class="govuk-table__caption govuk-heading-m">Quota number : {0}</caption>
                                 <tbody class="govuk-table__body app-flexible-table__body">
                                 <tr class="govuk-table__row app-flexible-table__row">
                                 <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
-                                            scope="row"><p>{0}</p>
+                                            scope="row"><p>{1}</p>
                                 </td></tr></tbody></table>""".format(
-                    settings.QUOTA_DEFAULT_MESSAGE
+                    order_number, settings.QUOTA_DEFAULT_MESSAGE
                 )
             else:
                 modal_body = self.get_quota_table
