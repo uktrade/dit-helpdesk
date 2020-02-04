@@ -408,9 +408,21 @@ class ImportMeasureJson(object):
             html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
                 modal_id, url, order_number
             )
-            self.measures_modals[modal_id] = self.get_modal(
-                modal_id, self.get_quota_table
-            )
+
+            if self.di["order_number"]["definition"] is None:
+                modal_body = """<table class="govuk-table app-flexible-table">
+                                <caption class="govuk-table__caption govuk-heading-m">Quota number : 094003</caption>
+                                <tbody class="govuk-table__body app-flexible-table__body">
+                                <tr class="govuk-table__row app-flexible-table__row">
+                                <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
+                                            scope="row"><p>{0}</p>
+                                </td></tr></tbody></table>""".format(
+                    settings.QUOTA_DEFAULT_MESSAGE
+                )
+            else:
+                modal_body = self.get_quota_table
+
+            self.measures_modals[modal_id] = self.get_modal(modal_id, modal_body)
         return html
 
     def get_table_row(self):
