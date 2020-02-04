@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+from .utils import createDir
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -299,6 +300,8 @@ class HierarchyBuilder:
         generate import json files for section, chapters, headings, subheadings and commodities with correct
         parent child relationships and removing duplication
         """
+        
+        createDir(settings.IMPORT_DATA_PATH.format('prepared'))
 
         # read serialized api data from the filesystem
         sections = self.read_api_from_file(
@@ -612,11 +615,9 @@ class HierarchyBuilder:
         )
         download_dir = settings.IMPORT_DATA_PATH.format("downloaded")
         previous_dir = "{0}/previous".format(download_dir)
-
-        # try:
-        #     os.mkdir(previous_dir, 777)
-        # except FileExistsError as exception:
-        #     logger.info("{0}".format(exception.args))
+        
+        createDir(download_dir)
+        createDir(previous_dir)
 
         previous_files = [
             f
