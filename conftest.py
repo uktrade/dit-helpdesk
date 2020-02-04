@@ -8,7 +8,7 @@ from splinter import Browser
 chrome_options = ChromeOptions()
 chrome_options.add_argument('--no-sandbox')
 dir_path = os.path.dirname(os.path.realpath(__file__))
-os.mkdir('{path}/screenshots'.format(path=dir_path))
+os.mkdir('{path}/screenshots'.format(path=dir_path), exist_ok=True)
 
 @pytest.fixture(scope='module')
 def browser():
