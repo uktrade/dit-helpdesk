@@ -59,7 +59,7 @@ class CommoditySearchView(FormView):
 
     def get_initial(self):
         initial = super(CommoditySearchView, self).get_initial()
-        initial["country"] = self.request.session.get("origin_country")
+        initial["country"] = self.request.session.get("origin_country").lower()
         return initial
 
     def get(self, request, *args, **kwargs):
@@ -187,7 +187,11 @@ class CommoditySearchView(FormView):
 
         else:
 
-            context["form"] = form
+            if "q" in request.GET.keys() and form.has_error("q"):
+                context["form_q_error"] = True
+                error_data = form.errors.as_data()
+                context["form_q_validation_message"] = error_data["q"][0]
+
             return self.render_to_response(context)
 
     def check_for_dotted_code_numbers(self, form_data):
