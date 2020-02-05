@@ -98,14 +98,13 @@ class HierarchyBuilderTestCase(TestCase):
         model = apps.get_model(
             app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
-
         builder = HierarchyBuilder()
         instance_data = [
-            item for item in data if item["goods_nomenclature_item_id"] == "2934999049"
+            item for item in data if item["goods_nomenclature_item_id"] == "0304473000"
         ]
         instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.commodity_code, "2934999049")
+        self.assertEqual(instance.commodity_code, "0304473000")
 
     def test_load_data_for_section(self):
         model_name = "Section"
