@@ -2,7 +2,7 @@ To {{ recipient_fullname }}
 
 I am located in {{ location }}
 
-I would you like to know more about {{ category }} regarding {{ topic }}
+I would like to know more about {{ category }} regarding {{ topic }}
 
 {{ message }}
 
