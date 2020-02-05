@@ -14,7 +14,7 @@ class CommoditySearchForm(forms.Form):
 
         self.fields["q"].error_messages[
             "required"
-        ] = "required: please enter a commodity code or search term"
+        ] = "Enter the name or commodity code of your goods"
 
         self.fields["q"].error_messages[
             "invalid"

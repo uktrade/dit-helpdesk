@@ -187,6 +187,7 @@ class CommoditySearchView(FormView):
 
         else:
 
+            context["form"] = form
             return self.render_to_response(context)
 
     def check_for_dotted_code_numbers(self, form_data):
