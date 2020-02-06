@@ -106,6 +106,7 @@ jobs:
       - run:
           name: Generate coverage
           command: |
+            . venv/bin/activate
             coverage report
             coverage xml -o test-reports/coverage.xml
             coverage html -d test-reports/coverage_html
