@@ -107,7 +107,7 @@ class CommodityTestCase(TestCase):
         ]
         level = 2
         parent = self.heading
-        logger.debug(self.commodity.get_path(parent=parent, tree=tree, level=level))
+        logger.info(self.commodity.get_path(parent=parent, tree=tree, level=level))
         self.assertTrue(self.commodity.get_path(parent=parent, tree=tree, level=level))
 
     def test_get_path_returns_list_with_no_parent_subheading(self):

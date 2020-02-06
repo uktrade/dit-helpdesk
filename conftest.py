@@ -8,7 +8,10 @@ from splinter import Browser
 chrome_options = ChromeOptions()
 chrome_options.add_argument('--no-sandbox')
 dir_path = os.path.dirname(os.path.realpath(__file__))
-os.mkdir('{path}/screenshots'.format(path=dir_path))
+screenshot_path = '{path}/screenshots'.format(path=dir_path)
+
+if not os.path.exists(screenshot_path):
+    os.mkdir(screenshot_path)
 
 @pytest.fixture(scope='module')
 def browser():
@@ -21,6 +24,7 @@ def browser():
 @pytest.fixture(autouse=True)
 def fixture_func(browser):
     browser.visit(config.BASE_URL)
+
 
 @pytest.fixture(autouse=True, scope='function')
 def teardown(request, browser):

@@ -2,6 +2,7 @@ import logging
 
 from django.apps import apps
 from django.test import TestCase
+from unittest.mock import patch
 
 from hierarchy.models import SubHeading, Heading
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder, hierarchy_model_map
@@ -10,7 +11,15 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
+mock_hierarchy_model_map = {
+    "Commodity": {"file_name": "test_prepared/commodities.json", "app_name": "commodities"},
+    "Chapter": {"file_name": "test_prepared/chapters.json", "app_name": "hierarchy"},
+    "Heading": {"file_name": "test_prepared/headings.json", "app_name": "hierarchy"},
+    "SubHeading": {"file_name": "test_prepared/sub_headings.json", "app_name": "hierarchy"},
+    "Section": {"file_name": "test_prepared/sections.json", "app_name": "hierarchy"},
+}
 
+@patch('trade_tariff_service.HierarchyBuilder.hierarchy_model_map', mock_hierarchy_model_map) 
 class HierarchyBuilderTestCase(TestCase):
     """
     Test Hierarchy Importer
@@ -98,14 +107,13 @@ class HierarchyBuilderTestCase(TestCase):
         model = apps.get_model(
             app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
-
         builder = HierarchyBuilder()
         instance_data = [
-            item for item in data if item["goods_nomenclature_item_id"] == "2934999049"
+            item for item in data if item["goods_nomenclature_item_id"] == "0304473000"
         ]
         instance = builder.instance_builder(model, instance_data[0])
         self.assertTrue(isinstance(instance, model))
-        self.assertEqual(instance.commodity_code, "2934999049")
+        self.assertEqual(instance.commodity_code, "0304473000")
 
     def test_load_data_for_section(self):
         model_name = "Section"

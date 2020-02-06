@@ -147,11 +147,17 @@ class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
         self.assertEqual(len(Commodity.objects.all()), 3)
 
     def test_commodity_search_is_using_the_correct_template(self):
+        session = self.client.session
+        session["origin_country"] = "AU"
+        session.save()
         url = reverse("search:search-commodity", kwargs={"country_code": "au"})
         response = self.client.get(url)
         self.assertTemplateUsed(response, "search/commodity_search.html")
 
     def test_search_view_returns_http_200(self):
+        session = self.client.session
+        session["origin_country"] = "AU"
+        session.save()
         resp = self.client.get(
             reverse("search:search-commodity", kwargs={"country_code": "au"})
         )
@@ -208,10 +214,15 @@ class CommodityKeywordSearchViewTestCase(TestCase):
     fixtures = [settings.COUNTRIES_DATA]
 
     def test_commodity_keyword_search_query_is_empty(self):
+        session = self.client.session
+        session["origin_country"] = "AU"
+        session.save()
+
         resp = self.client.get(
             reverse("search:search-commodity", kwargs={"country_code": "au"}),
             data={"q": "", "country": "au"},
         )
+
         self.assertEqual(resp.context["form"].is_valid(), False)
 
 
