@@ -2,6 +2,7 @@ import logging
 
 from django.apps import apps
 from django.test import TestCase
+from unittest.mock import patch
 
 from hierarchy.models import SubHeading, Heading
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder, hierarchy_model_map
@@ -10,7 +11,15 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
+mock_hierarchy_model_map = {
+    "Commodity": {"file_name": "test_prepared/commodities.json", "app_name": "commodities"},
+    "Chapter": {"file_name": "test_prepared/chapters.json", "app_name": "hierarchy"},
+    "Heading": {"file_name": "test_prepared/headings.json", "app_name": "hierarchy"},
+    "SubHeading": {"file_name": "test_prepared/sub_headings.json", "app_name": "hierarchy"},
+    "Section": {"file_name": "test_prepared/sections.json", "app_name": "hierarchy"},
+}
 
+@patch('trade_tariff_service.HierarchyBuilder.hierarchy_model_map', mock_hierarchy_model_map) 
 class HierarchyBuilderTestCase(TestCase):
     """
     Test Hierarchy Importer

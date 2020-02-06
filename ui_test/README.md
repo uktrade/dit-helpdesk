@@ -4,7 +4,9 @@
 
 1) Ensure you download the latest chromedriver from the URL below:
 
-https://chromedriver.chromium.org/downloads
+https://chromedriver.storage.googleapis.com/index.html?path=79.0.3945.36/
+
+Note that you should try to match the chromedriver with your chrome version I.E if you have chrome version 79, ensure to download the chromedriver version binary 79 as well.
 
 Then move the binary to /usr/bin which is on your PATH already or create a folder and add it to the PATH environment variable I.E export PATH=$PATH:~/webdriver
 
