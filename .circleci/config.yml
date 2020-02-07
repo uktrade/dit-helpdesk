@@ -103,9 +103,17 @@ jobs:
           command: |
             . venv/bin/activate
             coverage run manage.py test dit_helpdesk --settings=config.settings.test
+      - run:
+          name: Generate coverage
+          command: |
+            . venv/bin/activate
+            coverage report
+            coverage xml -o test-reports/coverage.xml
+            coverage html -d test-reports/coverage_html
+      - store_test_results:
+          path: test-reports
       - store_artifacts:
-          path: test-reports/
-          destination: python_app
+          path: test-reports
 
   ui_tests:
     docker:
