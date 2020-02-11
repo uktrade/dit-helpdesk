@@ -4,7 +4,7 @@ from django.forms import fields
 
 CATEGORY_CHOICES = (
     (1, "Exporting to the UK"),
-    (2, "Brexit enquiries"),
+    (2, "Transition period enquiries"),
     (3, "Technical help"),
 )
 

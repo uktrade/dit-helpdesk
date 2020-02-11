@@ -39,57 +39,54 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
     path("choose-country/", country_views.choose_country_view, name="choose-country"),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
-    path("help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"),
+    path(
+        "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
+    ),
     re_path(
         r"^country/(?P<country_code>\w+)/section/(?P<section_id>\d{1,2})$",
         hierarchy_views.section_detail,
         name="section-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})$",
+        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.chapter_detail,
         name="chapter-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.subheading_detail,
         name="subheading-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})$",
+        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.heading_detail,
         name="heading-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})$",
-        hierarchy_views.subheading_detail,
-        name="subheading-detail",
-    ),
-    re_path(
-        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})$",
+        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         commodity_views.commodity_detail,
         name="commodity-detail",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
+        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         commodity_views.measure_condition_detail,
         name="commodity-measure-conditions",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})"
+        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         hierarchy_views.measure_condition_detail,
         name="heading-measure-conditions",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})"
+        r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
         commodity_views.measure_quota_detail,
         name="commodity-measure-quota",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})"
+        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
         hierarchy_views.measure_quota_detail,
         name="heading-measure-quota",
@@ -117,6 +114,7 @@ urlpatterns = [
     ),
     re_path(r"^check/$", HealthCheckView.as_view(), name="healthcheck"),
     re_path("search/", include("search.urls", namespace="search")),
+    path("accessibility/", include("accessibility.urls", namespace="accessibility")),
 ]
 
 

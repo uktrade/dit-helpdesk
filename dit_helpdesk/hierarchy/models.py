@@ -640,6 +640,7 @@ class Heading(models.Model):
         kwargs = {"heading_code": self.heading_code}
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
+            kwargs["nomenclature_sid"] = self.goods_nomenclature_sid
         return reverse("heading-detail", kwargs=kwargs)
 
     def get_hierarchy_children(self):
@@ -832,6 +833,7 @@ class SubHeading(models.Model):
         kwargs = {"commodity_code": self.commodity_code}
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
+            kwargs["nomenclature_sid"] = self.goods_nomenclature_sid
         return reverse("subheading-detail", kwargs=kwargs)
 
     def is_duplicate_heading(self):

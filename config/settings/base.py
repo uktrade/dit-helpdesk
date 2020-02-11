@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
+    "accessibility",
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
+    "core.middleware.NoIndexMiddleware",
+    "core.middleware.CheckCountryUrlMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -89,9 +92,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": dj_database_url.config()
-}
+DATABASES = {"default": dj_database_url.config()}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
@@ -240,30 +241,18 @@ SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
-LOGGING_CONFIG = None
-
 LOG_LEVEL = os.environ.get("LOGLEVEL", "info").upper()
 
 LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-        }
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': LOG_LEVEL,
-    },
+    "version": 1,
+    "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
+    "root": {"handlers": ["console"], "level": LOG_LEVEL},
 }
 
 sentry_sdk.init(
     os.environ.get("SENTRY_DSN"),
-    environment=os.environ.get('SENTRY_ENVIRONMENT'),
-    integrations=[
-        DjangoIntegration(),
-    ]
+    environment=os.environ.get("SENTRY_ENVIRONMENT"),
+    integrations=[DjangoIntegration()],
 )
 
 RESULTS_PER_PAGE = 20
@@ -295,13 +284,15 @@ DIT_CONTACT = "DIT EU Exit Team"
 CONTACT_SUBJECT = "New UK Trade Helpdesk enquiry"
 FEEDBACK_SUBJECT = "UK Trade Helpdesk feedback"
 SUPPORT_SUBJECT = "UK Trade Helpdesk support request"
-SERVICE_NAME = "eu_exit"
+SERVICE_NAME = "twuk"
 DIT_SUBDOMAIN = "dit"
 DIT_SUBJECT_SUFFIX = " - DIT EU Exit Enquiries"
 DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
 HMRC_TAX_FORM_URL = os.environ.get("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = os.environ.get("HELPDESK_GA_GTM")
+
+QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
 
 EU_COUNTRY_CODES = [
     "AT",

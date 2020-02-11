@@ -236,7 +236,7 @@ def section_detail(request, section_id, country_code):
     return render(request, "hierarchy/section_detail.html", context)
 
 
-def chapter_detail(request, chapter_code, country_code):
+def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     """
     View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
     display and the two character country code to provide the exporter geographical context which is
@@ -253,7 +253,9 @@ def chapter_detail(request, chapter_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    chapter = get_object_or_404(Chapter, chapter_code=chapter_code)
+    chapter = Chapter.objects.get(
+        chapter_code=chapter_code, goods_nomenclature_sid=nomenclature_sid
+    )
 
     chapter_path = chapter.get_path()
     chapter_path.insert(0, [chapter])
@@ -287,7 +289,7 @@ def chapter_detail(request, chapter_code, country_code):
     return render(request, "hierarchy/chapter_detail.html", context)
 
 
-def heading_detail(request, heading_code, country_code):
+def heading_detail(request, heading_code, country_code, nomenclature_sid):
     """
     View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
     display and the two character country code to provide the exporter geographical context which is
@@ -305,7 +307,9 @@ def heading_detail(request, heading_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    heading = get_object_or_404(Heading, heading_code=heading_code)
+    heading = Heading.objects.get(
+        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+    )
 
     import_measures = []
     tariffs_and_charges_table_data = []
@@ -398,7 +402,6 @@ def heading_detail(request, heading_code, country_code):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "roo_footnotes": rules_of_origin,
                 "regulations": heading.get_regulations(),
             }
         )
@@ -406,7 +409,7 @@ def heading_detail(request, heading_code, country_code):
     return render(request, "hierarchy/heading_detail.html", context)
 
 
-def subheading_detail(request, commodity_code, country_code):
+def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
     """
     View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
     display and the two character country code to provide the exporter geographical context which is
@@ -424,10 +427,11 @@ def subheading_detail(request, commodity_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    subheading = SubHeading.objects.filter(commodity_code=commodity_code).first()
+    subheading = SubHeading.objects.get(
+        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+    )
 
     import_measures = []
-    # table_data = []
 
     tariffs_and_charges_table_data = []
     quotas_table_data = []
@@ -522,7 +526,6 @@ def subheading_detail(request, commodity_code, country_code):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "roo_footnotes": rules_of_origin,
                 "regulations": subheading.get_regulations(),
             }
         )
@@ -648,7 +651,9 @@ def _commodity_code_html(item):
     return commodity_code_html
 
 
-def measure_condition_detail(request, heading_code, country_code, measure_id):
+def measure_condition_detail(
+    request, heading_code, country_code, measure_id, nomenclature_sid
+):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
@@ -666,7 +671,9 @@ def measure_condition_detail(request, heading_code, country_code, measure_id):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    heading = Heading.objects.get(heading_code=heading_code)
+    heading = Heading.objects.get(
+        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -684,7 +691,9 @@ def measure_condition_detail(request, heading_code, country_code, measure_id):
     return render(request, "hierarchy/measure_condition_detail.html", context)
 
 
-def measure_quota_detail(request, heading_code, country_code, measure_id, order_number):
+def measure_quota_detail(
+    request, heading_code, country_code, measure_id, order_number, nomenclature_sid
+):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
@@ -702,7 +711,9 @@ def measure_quota_detail(request, heading_code, country_code, measure_id, order_
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    heading = Heading.objects.get(heading_code=heading_code)
+    heading = Heading.objects.get(
+        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -752,15 +763,19 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                 if type(item) is Chapter:
                     item_commodity_code = item.chapter_code
                     commodity_type = "chapter"
+                    nomenclature_sid = item.goods_nomenclature_sid
                 elif type(item) is Heading:
                     item_commodity_code = item.heading_code
                     commodity_type = "heading"
+                    nomenclature_sid = item.goods_nomenclature_sid
                 elif type(item) is SubHeading:
                     item_commodity_code = item.commodity_code
                     commodity_type = "subheading"
+                    nomenclature_sid = item.goods_nomenclature_sid
                 else:
                     item_commodity_code = item.commodity_code
                     commodity_type = "commodity"
+                    nomenclature_sid = item.goods_nomenclature_sid
 
                 expand = "open"
                 if index is listSize:
@@ -770,7 +785,51 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                     html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
 
-                    html += f"""<li><a href="/country/{country_code}/{commodity_type}/{item_commodity_code}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
+                    if commodity_type == "chapter":
+
+                        nomenclature_link = reverse(
+                            "chapter-detail",
+                            kwargs={
+                                "country_code": country_code,
+                                "chapter_code": item_commodity_code,
+                                "nomenclature_sid": nomenclature_sid,
+                            },
+                        )
+
+                    elif commodity_type == "heading":
+
+                        nomenclature_link = reverse(
+                            "heading-detail",
+                            kwargs={
+                                "country_code": country_code,
+                                "heading_code": item_commodity_code,
+                                "nomenclature_sid": nomenclature_sid,
+                            },
+                        )
+
+                    elif commodity_type == "subheading":
+
+                        nomenclature_link = reverse(
+                            "subheading-detail",
+                            kwargs={
+                                "country_code": country_code,
+                                "commodity_code": item_commodity_code,
+                                "nomenclature_sid": nomenclature_sid,
+                            },
+                        )
+
+                    else:
+
+                        nomenclature_link = reverse(
+                            "commodity-detail",
+                            kwargs={
+                                "country_code": country_code,
+                                "commodity_code": item_commodity_code,
+                                "nomenclature_sid": nomenclature_sid,
+                            },
+                        )
+
+                    html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
 
                 if index is listSize:
                     html += "</li>"

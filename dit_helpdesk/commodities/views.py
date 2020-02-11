@@ -23,7 +23,7 @@ from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 
 
-def commodity_detail(request, commodity_code, country_code):
+def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
     """
     View for the commodity detail page template which takes two arguments; the 10 digit code for the commodity to
     display and the two character country code to provide the exporter geographical context which is
@@ -41,7 +41,9 @@ def commodity_detail(request, commodity_code, country_code):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    commodity = get_object_or_404(Commodity, commodity_code=commodity_code)
+    commodity = Commodity.objects.get(
+        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+    )
 
     if (
         commodity.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
@@ -100,7 +102,6 @@ def commodity_detail(request, commodity_code, country_code):
         "commodity": commodity,
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
-        "roo_footnotes": rules_of_origin,
         "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
@@ -121,11 +122,14 @@ def commodity_detail(request, commodity_code, country_code):
     return render(request, "commodities/commodity_detail.html", context)
 
 
-def measure_condition_detail(request, commodity_code, country_code, measure_id):
+def measure_condition_detail(
+    request, commodity_code, country_code, measure_id, nomenclature_sid
+):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
     provide the exporter geographical context
+    :param nomenclature_sid:
     :param request: django http request object
     :param commodity_code: string
     :param country_code: string
@@ -139,13 +143,16 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    commodity = Commodity.objects.get(commodity_code=commodity_code)
+    commodity = Commodity.objects.get(
+        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = commodity.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
     conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
 
     context = {
+        "nomenclature_sid": nomenclature_sid,
         "selected_origin_country": country.country_code,
         "commodity_code": commodity.commodity_code,
         "commodity_description": commodity.description,
@@ -167,12 +174,13 @@ def measure_condition_detail(request, commodity_code, country_code, measure_id):
 
 
 def measure_quota_detail(
-    request, commodity_code, country_code, measure_id, order_number
+    request, commodity_code, country_code, measure_id, order_number, nomenclature_sid
 ):
     """
     View for an individual measure condition detail page template which takes three arguments, the commodity code that
     the measure belongs to, the measure id of the individual measure being presented and the country code to
     provide the exporter geographical context
+    :param nomenclature_sid:
     :param request: django http request object
     :param commodity_code: string
     :param country_code: string
@@ -187,7 +195,9 @@ def measure_quota_detail(
         messages.error(request, "Invalid originCountry")
         return redirect(reverse("choose-country"))
 
-    commodity = Commodity.objects.get(commodity_code=commodity_code)
+    commodity = Commodity.objects.get(
+        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+    )
     import_measure = commodity.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -198,6 +208,7 @@ def measure_quota_detail(
     geographical_area = import_measure.get_geographical_area()
 
     context = {
+        "nomenclature_sid": nomenclature_sid,
         "selected_origin_country": country.country_code,
         "commodity_description": commodity.description,
         "commodity_code": commodity.commodity_code,

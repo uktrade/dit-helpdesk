@@ -7,13 +7,8 @@ from countries.models import Country
 def choose_country_view(request):
 
     countries = Country.objects.all()
-    country_not_selected_summary_error_message = "Enter a country"
-    country_not_selected_input_error_message = "Enter a country"
-
-    try:
-        del request.session["origin_country"]
-    except KeyError:
-        pass
+    country_not_selected_summary_error_message = "Enter a country or territory"
+    country_not_selected_input_error_message = "Enter a country or territory"
 
     if request.method == "POST":
         origin_country = request.POST.get("origin_country", "").strip().upper()
@@ -37,11 +32,15 @@ def choose_country_view(request):
             }
             return render(request, "countries/choose_country.html", context)
 
+    else:
+        if "origin_country" in request.session:
+            del request.session["origin_country"]
+
     context = {"country_options": [(c.country_code, c.name) for c in countries]}
 
-    if 'select-country' in request.GET:
+    if "select-country" in request.GET:
         context["isError"] = True
-        errorSummaryMessage = "Enter a country"
+        errorSummaryMessage = "Enter a country or territory"
         context["errorSummaryMessage"] = errorSummaryMessage
         context["errorInputMessage"] = errorSummaryMessage
 

@@ -17,4 +17,4 @@ django-nose==1.4.6
 pinocchio==0.4.2
 pre-commit
 pytest==5.3.2
-splinter==0.13.0
+splinter==0.12.0

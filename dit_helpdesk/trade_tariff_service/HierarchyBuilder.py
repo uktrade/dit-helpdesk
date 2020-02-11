@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+from .utils import createDir
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -299,6 +300,8 @@ class HierarchyBuilder:
         generate import json files for section, chapters, headings, subheadings and commodities with correct
         parent child relationships and removing duplication
         """
+        
+        createDir(settings.IMPORT_DATA_PATH.format('prepared'))
 
         # read serialized api data from the filesystem
         sections = self.read_api_from_file(
@@ -612,11 +615,9 @@ class HierarchyBuilder:
         )
         download_dir = settings.IMPORT_DATA_PATH.format("downloaded")
         previous_dir = "{0}/previous".format(download_dir)
-
-        # try:
-        #     os.mkdir(previous_dir, 777)
-        # except FileExistsError as exception:
-        #     logger.info("{0}".format(exception.args))
+        
+        createDir(download_dir)
+        createDir(previous_dir)
 
         previous_files = [
             f
@@ -770,7 +771,7 @@ class HierarchyBuilder:
         return count
 
     @staticmethod
-    def process_orphaned_commodities():
+    def process_orphaned_commodities(skip_commodity=False):
         """
         this method is to be run after data scanner has created all hierarchy items in the database
         the method finds parents for all commodty items and updates the database accordingly
@@ -786,7 +787,6 @@ class HierarchyBuilder:
             parent_sid = commodity.parent_goods_nomenclature_sid
 
             try:
-
                 if parent_sid is None:
                     subheading = SubHeading.objects.get(
                         commodity_code=commodity.parent_goods_nomenclature_item_id
@@ -797,6 +797,8 @@ class HierarchyBuilder:
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
+                if skip_commodity:
+                    continue
                 logger.debug(
                     "Commodity {0} has no subheading parent parant {1}".format(
                         commodity, exception.args

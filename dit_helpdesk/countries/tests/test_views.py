@@ -55,7 +55,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
         self.assertFalse(resp.context["country_options"])
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country")
+        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
     def test_post_without_values_and_with_session_attribute_gives_correct_error_and_renders_form(
@@ -70,7 +70,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
         self.assertFalse(resp.context["country_options"])
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country")
+        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
     def test_post_with_country_selected_and_country_exists_and_country_code_not_in_session(
@@ -96,6 +96,6 @@ class CountriesViewsTestCase(TestCase):
             reverse("choose-country"), data={"origin_country": "au"}
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country")
+        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
         self.assertTrue("origin_country" not in self.client.session)

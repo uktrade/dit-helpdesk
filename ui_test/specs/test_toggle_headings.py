@@ -8,7 +8,7 @@ def test_toggle_between_headings(browser):
     search_commodity(browser, 'Coffee')
 
     browser.find_by_css(COMMODITY['hideHeadings']).click()
-    assert(browser.is_text_present('Showing 63 results for Coffee', 10))
+    assert(browser.is_text_present('Showing 2 results for Coffee', 10))
 
     browser.find_by_css(COMMODITY['showHeadings']).click()
-    assert(browser.is_text_present('Showing 147 results for Coffee', 10))
+    assert(browser.is_text_present('Showing 3 results for Coffee', 10))

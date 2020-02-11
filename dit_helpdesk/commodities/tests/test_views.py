@@ -68,6 +68,7 @@ class CommodityViewTestCase(TestCase):
             get_data(settings.COMMODITY_STRUCTURE), "commodities", "Commodity"
         )
         self.commodity.parent_subheading_id = self.subheading.id
+        self.commodity.goods_nomenclature_sid = 12345
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
 
         self.commodity.save()
@@ -78,6 +79,7 @@ class CommodityViewTestCase(TestCase):
             kwargs={
                 "commodity_code": settings.TEST_COMMODITY_CODE,
                 "country_code": settings.TEST_COUNTRY_CODE,
+                "nomenclature_sid": 12345,
             },
         )
 
@@ -154,7 +156,10 @@ class CommodityViewTestCase(TestCase):
             NoReverseMatch,
             lambda: self.client.get(
                 reverse("commodity-detail"),
-                kwargs={"country_code": settings.TEST_COUNTRY_CODE},
+                kwargs={
+                    "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
+                },
             ),
         )
 
@@ -165,6 +170,7 @@ class CommodityViewTestCase(TestCase):
                 kwargs={
                     "commodity_code": settings.TEST_COMMODITY_CODE,
                     "country_code": "XY",
+                    "nomenclature_sid": 12345,
                 },
             )
         )
@@ -181,6 +187,7 @@ class CommodityViewTestCase(TestCase):
                 kwargs={
                     "commodity_code": settings.TEST_COMMODITY_CODE,
                     "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
                 },
             )
         )
@@ -207,6 +214,7 @@ class CommodityViewTestCase(TestCase):
                 kwargs={
                     "commodity_code": settings.TEST_COMMODITY_CODE,
                     "country_code": "AF",
+                    "nomenclature_sid": 12345,
                 },
             )
         )
@@ -246,6 +254,7 @@ class MeasureConditionDetailTestCase(TestCase):
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
             tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            goods_nomenclature_sid=12345,
         )
 
     fixtures = ["../../countries/fixtures/countries_data.json"]
@@ -263,6 +272,7 @@ class MeasureConditionDetailTestCase(TestCase):
                 kwargs={
                     "commodity_code": settings.TEST_COMMODITY_CODE,
                     "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
                     "measure_id": 1,
                 },
             )
@@ -276,6 +286,7 @@ class MeasureConditionDetailTestCase(TestCase):
                 kwargs={
                     "commodity_code": settings.TEST_COMMODITY_CODE,
                     "country_code": "XY",
+                    "nomenclature_sid": 12345,
                     "measure_id": 1,
                 },
             )
