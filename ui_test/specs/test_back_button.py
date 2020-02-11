@@ -18,8 +18,8 @@ def test_country_form_errors_when_resubmitting_after_hitting_back_button_from_se
     assert browser.is_text_present("Brazil United Kingdom")
 
     browser.execute_script("window.history.go(-1)")
-    assert browser.is_text_present("What country are you exporting from?")
+    assert browser.is_text_present("What country or territory are you exporting from?")
 
     search_country(browser, "")
     assert browser.is_text_present("There is a problem")
-    assert browser.is_text_present("Enter a country")
+    assert browser.is_text_present("Enter a country or territory")
