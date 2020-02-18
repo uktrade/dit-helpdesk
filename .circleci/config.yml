@@ -45,6 +45,7 @@ aliases:
     name: postgres
     environment:
       POSTGRES_DB: helpdesk
+      POSTGRES_HOST_AUTH_METHOD: trust
 
   # Elasticsearch container
   - &docker_elasticsearch
