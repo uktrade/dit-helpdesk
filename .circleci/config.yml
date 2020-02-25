@@ -43,6 +43,7 @@ aliases:
   - &docker_postgres
     image: *postgres_version
     name: postgres
+    password: test_db_psswd
     environment:
       POSTGRES_DB: helpdesk
       POSTGRES_HOST_AUTH_METHOD: trust
@@ -67,7 +68,7 @@ aliases:
 
   # Helpdesk test container
   - &docker_helpdesk_test
-    image: ukti/dit-helpdesk-test:1.0.0
+    image: ukti/dit-helpdesk-test:latest
 
   # Step for ui test* jobs
   - &wait_for_backend
@@ -141,7 +142,7 @@ jobs:
             - "venv"
       - run:
           name: Start app
-          command: | 
+          command: |
             . venv/bin/activate
             ./compose/automation/django/start.sh
           background: true

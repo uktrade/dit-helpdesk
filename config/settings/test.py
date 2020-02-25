@@ -12,16 +12,13 @@ from django.utils.log import DEFAULT_LOGGING
 
 from .base import *
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    default="0GU5hi1N7kOZ3jcKZbVrk1CXX9MAnLOiuDyEyqIvAej2Tj7KlrA3Ey7jGgeW3NVd",
-)
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 # TEST_RUNNER = "django.test.runner.DiscoverRunner"
 #
@@ -54,17 +51,18 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
 DATABASES = {
     "default": {
         "ENGINE": "psqlextra.backend",  # 'django.db.backends.postgresql_psycopg2',
-        "NAME": os.environ.get("DJANGO_POSTGRES_DATABASE"),
-        "USER": os.environ.get("DJANGO_POSTGRES_USER"),
-        "PASSWORD": os.environ.get("DJANGO_POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("DJANGO_POSTGRES_HOST"),
-        "PORT": os.environ.get("DJANGO_POSTGRES_PORT"),
+        "NAME": env.str("DJANGO_POSTGRES_DATABASE"),
+        "USER": env.str("DJANGO_POSTGRES_USER"),
+        "PASSWORD": env.str("DJANGO_POSTGRES_PASSWORD"),
+        "HOST": env.str("DJANGO_POSTGRES_HOST"),
+        "PORT": env.str("DJANGO_POSTGRES_PORT"),
     }
 }
 
 INSTALLED_APPS.append("django_nose")
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-TEST_OUTPUT_DIR = os.environ.get("TEST_OUTPUT_DIR", ".")
+
+TEST_OUTPUT_DIR = env.str("TEST_OUTPUT_DIR")
 NOSE_ARGS = [
     "--verbosity=3",
     "--nologcapture",
@@ -77,7 +75,7 @@ NOSE_ARGS = [
 # Disable Django's logging setup
 LOGGING_CONFIG = None
 
-LOGLEVEL = os.environ.get("LOGLEVEL", "info").upper()
+LOGLEVEL = env.str("LOGLEVEL")
 
 # Test Data
 TEST_COMMODITY_CODE = "0101210000"
@@ -126,7 +124,6 @@ COMMODITYHEADINGJSON_DATA = (
 IMPORTMEASUREJSON_DATA = (
     APPS_DIR + "/trade_tariff_service/import_data/ImportMeasureJson.json"
 )
-
 
 ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.section": "test_sections",
