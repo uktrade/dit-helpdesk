@@ -75,6 +75,7 @@ NOSE_ARGS = [
 # Disable Django's logging setup
 LOGGING_CONFIG = None
 
+
 LOG_LEVEL = env("LOG_LEVEL")
 
 # Test Data
