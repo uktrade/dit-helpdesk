@@ -51,6 +51,7 @@ aliases:
     TEST_OUTPUT_DIR: .
     FEEDBACK_DESTINATION_EMAIL: going@to.com
 
+
   - &ui_test_base_envs
     ADMIN_ENABLED: True
     DEBUG: True
