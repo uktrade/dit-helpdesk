@@ -1,5 +1,7 @@
 from .base import *
 
+print("docker ENV: ", env)
+
 DEBUG = True
 RESTRICT_ADMIN = False
 DATABASES = {
