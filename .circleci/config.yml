@@ -97,6 +97,7 @@ aliases:
     TEST_OUTPUT_DIR: "/app/reports"
     FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
+
   # Redis container
   - &docker_redis
     image: *redis_version
