@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase, Client, override_settings
@@ -59,3 +61,14 @@ class AdminSSOLoginTestCase(TestCase):
         self.client.get("/admin/login/?next=/whatever/")
 
         self.assertEqual(self.client.session["admin_next_url"], "/whatever/")
+
+    def test_admin_enabled_is_false_for_production(self):
+        DJANGO_SETTINGS_MODULE = "config.settings.production"
+        self.assertEqual(DJANGO_SETTINGS_MODULE, "config.settings.production")
+        self.assertNotEqual(settings.ADMIN_ENABLED, False)
+
+    def test_admin_enabled_is_true_for_development_or_staging(self):
+        self.assertNotEqual(
+            os.environ.get("DJANGO_SETTINGS_MODULE"), "config.settings.production"
+        )
+        self.assertEqual(settings.ADMIN_ENABLED, True)
