@@ -12,7 +12,7 @@ APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
 env = environ.Env(DEBUG=(bool, False))
 env.read_env()
 
-print("BASE ENV: ", env)
+print("BASE ENV: ", dir(env))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
