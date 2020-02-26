@@ -1,6 +1,8 @@
 from .base import *
 import json
 
+print("STAGING ENV: ", env)
+
 VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES", {}))
 
 ES_URL = VCAP_SERVICES["elasticsearch"][0]["credentials"]["uri"]
