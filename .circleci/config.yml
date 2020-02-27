@@ -48,6 +48,7 @@ aliases:
     HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
+    TEST_OUTPUT_DIR: "/app/reports"
 
   - &ui_test_base_envs
     ADMIN_ENABLED: True
@@ -92,6 +93,7 @@ aliases:
     HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
+    TEST_OUTPUT_DIR: "/app/reports"
 
   # Redis container
   - &docker_redis
