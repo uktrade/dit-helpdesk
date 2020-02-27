@@ -107,7 +107,7 @@ aliases:
   - &docker_postgres
     image: *postgres_version
     name: postgres
-    password: test_db_psswd
+#    password: test_db_psswd
     environment:
       POSTGRES_DB: helpdesk
       POSTGRES_HOST_AUTH_METHOD: trust
