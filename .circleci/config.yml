@@ -163,23 +163,18 @@ jobs:
             # when lock file changes, use increasingly general patterns to restore cache
             - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
       - run:
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/test.txt
+          command: pipenv install --system --dev --deploy
       - save_cache:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
           paths:
-            - "venv"
+            - "."
       - run:
           name: Running tests
-          command: |
-            . venv/bin/activate
+          command:
             coverage run manage.py test dit_helpdesk --settings=config.settings.test
       - run:
           name: Generate coverage
           command: |
-            . venv/bin/activate
             coverage report
             coverage xml -o test-reports/coverage.xml
             coverage html -d test-reports/coverage_html
@@ -203,25 +198,20 @@ jobs:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
       - run:
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/development.txt
+          command: pipenv install --system --dev --deploy
       - save_cache:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
           paths:
-            - "venv"
+            - "."
       - run:
           name: Start app
-          command: |
-            . venv/bin/activate
+          command:
             ./compose/automation/django/start.sh
           background: true
       - *wait_for_backend
       - run:
           name: Run tests
           command: |
-            . venv/bin/activate
             export PATH=$PATH:$HOME/bin
             pytest ui_test/specs
       - store_artifacts:
