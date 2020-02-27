@@ -244,7 +244,9 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
 
+
 LOG_LEVEL = env("LOG_LEVEL")
+
 
 LOGGING = {
     "version": 1,
