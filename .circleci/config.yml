@@ -32,7 +32,22 @@ aliases:
     SENTRY_ENVIRONMENT: SENTRY_ENVIRONMENT
     SENTRY_DSN: SENTRY_DSN
     FEEDBACK_EMAIL: FEEDBACK_EMAIL
-
+    FEEDBACK_CONTACT: FEEDBACK_CONTACT
+    DEFRA_EMAIL: DEFRA_EMAIL
+    DEFRA_CONTACT: DEFRA_CONTACT
+    BEIS_EMAIL: BEIS_EMAIL
+    BEIS_CONTACT: BEIS_CONTACT
+    DDAT_CONTACT: "DDAT Support Team"
+    DIT_CONTACT: "DIT EU Exit Team"
+    CONTACT_SUBJECT: "New UK Trade Helpdesk enquiry"
+    FEEDBACK_SUBJECT: "UK Trade Helpdesk feedback"
+    SERVICE_NAME: "twuk"
+    DIT_SUBDOMAIN: "dit"
+    DIT_SUBJECT_SUFFIX: " - DIT EU Exit Enquiries"
+    DDAT_SUBJECT_SUFFIX: " - DDAT Support Team"
+    HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
+    HELPDESK_GA_GTM: HELPDESK_GA_GTM
+    QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
 
   - &ui_test_base_envs
     ADMIN_ENABLED: True
@@ -61,6 +76,22 @@ aliases:
     SENTRY_ENVIRONMENT: SENTRY_ENVIRONMENT
     SENTRY_DSN: SENTRY_DSN
     FEEDBACK_EMAIL: FEEDBACK_EMAIL
+    FEEDBACK_CONTACT: FEEDBACK_CONTACT
+    DEFRA_EMAIL: DEFRA_EMAIL
+    DEFRA_CONTACT: DEFRA_CONTACT
+    BEIS_EMAIL: BEIS_EMAIL
+    BEIS_CONTACT: BEIS_CONTACT
+    DDAT_CONTACT: "DDAT Support Team"
+    DIT_CONTACT: "DIT EU Exit Team"
+    CONTACT_SUBJECT: "New UK Trade Helpdesk enquiry"
+    FEEDBACK_SUBJECT: "UK Trade Helpdesk feedback"
+    SERVICE_NAME: "twuk"
+    DIT_SUBDOMAIN: "dit"
+    DIT_SUBJECT_SUFFIX: " - DIT EU Exit Enquiries"
+    DDAT_SUBJECT_SUFFIX: " - DDAT Support Team"
+    HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
+    HELPDESK_GA_GTM: HELPDESK_GA_GTM
+    QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
 
   # Redis container
   - &docker_redis
