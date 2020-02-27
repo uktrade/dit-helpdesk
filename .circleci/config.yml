@@ -48,7 +48,7 @@ aliases:
     HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
-    TEST_OUTPUT_DIR: "/app/reports"
+    TEST_OUTPUT_DIR: "."
     FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
   - &ui_test_base_envs
