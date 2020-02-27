@@ -3,10 +3,10 @@ import json
 
 assert (
     not ADMIN_ENABLED
-    and os.environ.get("DJANGO_SETTINGS_MODULE") == "config.settings.production"
+    and env.str("DJANGO_SETTINGS_MODULE") == "config.settings.production"
 )
 
-VCAP_SERVICES = json.loads(os.environ.get("VCAP_SERVICES", {}))
+VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES", {}))
 
 ES_URL = VCAP_SERVICES["elasticsearch"][0]["credentials"]["uri"]
 

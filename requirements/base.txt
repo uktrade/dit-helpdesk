@@ -46,3 +46,4 @@ textblob==0.15.3
 xlrd==1.2.0
 directory-forms-api-client==5.0
 django-formtools==2.1
+django-environ==0.4.5
