@@ -54,6 +54,7 @@ aliases:
 
 
 
+
   - &ui_test_base_envs
     ADMIN_ENABLED: True
     DEBUG: True
