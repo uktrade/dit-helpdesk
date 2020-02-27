@@ -18,6 +18,38 @@ aliases:
     DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
     DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
     DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
+    ALLOWED_HOSTS: 127.0.0.1,localhost
+    RESTRICT_ADMIN: True
+    ALLOWED_ADMIN_IPS: 127.0.0.1,
+    ALLOWED_ADMIN_IP_RANGES: 127.0.0.1/32,
+    LOGIN_URL: LOGIN_URL
+    LOGIN_REDIRECT_URL: LOGIN_REDIRECT_URL
+    IP_SAFELIST_XFF_INDEX: IP_SAFELIST_XFF_INDEX
+    APP_START_DOMAIN: /choose-country/
+    LOG_LEVEL: INFO
+    DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS: 0
+    DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS: 0
+    SENTRY_ENVIRONMENT: docker-development
+    SENTRY_DSN: SENTRY_DSN
+    FEEDBACK_EMAIL: FEEDBACK_EMAIL
+    FEEDBACK_CONTACT: FEEDBACK_CONTACT
+    DEFRA_EMAIL: DEFRA_EMAIL
+    DEFRA_CONTACT: DEFRA_CONTACT
+    BEIS_EMAIL: BEIS_EMAIL
+    BEIS_CONTACT: BEIS_CONTACT
+    DDAT_CONTACT: "DDAT Support Team"
+    DIT_CONTACT: "DIT EU Exit Team"
+    CONTACT_SUBJECT: "New UK Trade Helpdesk enquiry"
+    FEEDBACK_SUBJECT: "UK Trade Helpdesk feedback"
+    SERVICE_NAME: "twuk"
+    DIT_SUBDOMAIN: "dit"
+    DIT_SUBJECT_SUFFIX: " - DIT EU Exit Enquiries"
+    DDAT_SUBJECT_SUFFIX: " - DDAT Support Team"
+    HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
+    HELPDESK_GA_GTM: HELPDESK_GA_GTM
+    QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
+    TEST_OUTPUT_DIR: .
+    FEEDBACK_DESTINATION_EMAIL: going@to.com
 
   - &ui_test_base_envs
     ADMIN_ENABLED: True
@@ -32,6 +64,38 @@ aliases:
     DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
     DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
     DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
+    ALLOWED_HOSTS: 127.0.0.1,localhost
+    RESTRICT_ADMIN: RESTRICT_ADMIN
+    ALLOWED_ADMIN_IPS: ALLOWED_ADMIN_IPS
+    ALLOWED_ADMIN_IP_RANGES: ALLOWED_ADMIN_IP_RANGES
+    LOGIN_URL: LOGIN_URL
+    LOGIN_REDIRECT_URL: LOGIN_REDIRECT_URL
+    IP_SAFELIST_XFF_INDEX: IP_SAFELIST_XFF_INDEX
+    APP_START_DOMAIN: APP_START_DOMAIN
+    LOG_LEVEL: INFO
+    DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS: DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS
+    DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS: DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS
+    SENTRY_ENVIRONMENT: SENTRY_ENVIRONMENT
+    SENTRY_DSN: SENTRY_DSN
+    FEEDBACK_EMAIL: FEEDBACK_EMAIL
+    FEEDBACK_CONTACT: FEEDBACK_CONTACT
+    DEFRA_EMAIL: DEFRA_EMAIL
+    DEFRA_CONTACT: DEFRA_CONTACT
+    BEIS_EMAIL: BEIS_EMAIL
+    BEIS_CONTACT: BEIS_CONTACT
+    DDAT_CONTACT: "DDAT Support Team"
+    DIT_CONTACT: "DIT EU Exit Team"
+    CONTACT_SUBJECT: "New UK Trade Helpdesk enquiry"
+    FEEDBACK_SUBJECT: "UK Trade Helpdesk feedback"
+    SERVICE_NAME: "twuk"
+    DIT_SUBDOMAIN: "dit"
+    DIT_SUBJECT_SUFFIX: " - DIT EU Exit Enquiries"
+    DDAT_SUBJECT_SUFFIX: " - DDAT Support Team"
+    HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
+    HELPDESK_GA_GTM: HELPDESK_GA_GTM
+    QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
+    TEST_OUTPUT_DIR: "/app/reports"
+    FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
   # Redis container
   - &docker_redis
@@ -43,6 +107,7 @@ aliases:
   - &docker_postgres
     image: *postgres_version
     name: postgres
+    password: test_db_psswd
     environment:
       POSTGRES_DB: helpdesk
       POSTGRES_HOST_AUTH_METHOD: trust
@@ -67,7 +132,7 @@ aliases:
 
   # Helpdesk test container
   - &docker_helpdesk_test
-    image: ukti/dit-helpdesk-test:1.0.0
+    image: ukti/dit-helpdesk-test:latest
 
   # Step for ui test* jobs
   - &wait_for_backend
@@ -141,7 +206,7 @@ jobs:
             - "venv"
       - run:
           name: Start app
-          command: | 
+          command: |
             . venv/bin/activate
             ./compose/automation/django/start.sh
           background: true

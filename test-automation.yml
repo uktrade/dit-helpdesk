@@ -12,8 +12,8 @@ services:
       - ~/.bash_history:/root/.bash_history
     entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
     env_file:
-      - ./.envs/.development/.django
-      - ./.envs/.development/.postgres
+      - ./.envs/.test/.django
+      - ./.envs/.test/.postgres
     depends_on:
       - postgres
       - es
