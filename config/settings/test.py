@@ -78,7 +78,6 @@ NOSE_ARGS = [
 LOGGING_CONFIG = None
 
 
-
 LOG_LEVEL = env("LOG_LEVEL")
 
 
