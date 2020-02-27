@@ -181,8 +181,7 @@ STATICFILES_STORAGE = (
 
 # The correct index of the client IP in the X-Forwarded-For header.  It should be set to
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
-IP_SAFELIST_XFF_INDEX = env.int("IP_SAFELIST_XFF_INDEX")
-
+IP_SAFELIST_XFF_INDEX = env("IP_SAFELIST_XFF_INDEX")
 RESTRICT_ADMIN = env.bool("RESTRICT_ADMIN")
 ALLOWED_ADMIN_IPS = env.list("ALLOWED_ADMIN_IPS")
 ALLOWED_ADMIN_IP_RANGES = env.list("ALLOWED_ADMIN_IP_RANGES")
