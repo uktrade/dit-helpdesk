@@ -49,6 +49,7 @@ aliases:
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: "/app/reports"
+    FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
   - &ui_test_base_envs
     ADMIN_ENABLED: True
@@ -94,6 +95,7 @@ aliases:
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: "/app/reports"
+    FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
   # Redis container
   - &docker_redis
