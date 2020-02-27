@@ -77,7 +77,7 @@ NOSE_ARGS = [
 # Disable Django's logging setup
 LOGGING_CONFIG = None
 
-LOGLEVEL = env.str("LOGLEVEL")
+LOGLEVEL = env("LOGLEVEL")
 
 # Test Data
 TEST_COMMODITY_CODE = "0101210000"
