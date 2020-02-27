@@ -1,7 +1,5 @@
 from .base import *
 
-print("LOCAL ENV: ", env)
-
 DATABASES = {
     "default": {
         "ENGINE": "psqlextra.backend",  # 'django.db.backends.postgresql_psycopg2',

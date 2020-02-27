@@ -12,8 +12,6 @@ from django.utils.log import DEFAULT_LOGGING
 
 from .base import *
 
-print("TEST ENV: ", env.ENVIRON)
-
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 # GENERAL
 # ------------------------------------------------------------------------------
