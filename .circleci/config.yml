@@ -161,11 +161,11 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --system --dev --deploy
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - "."
       - run:
@@ -196,11 +196,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --system --dev --deploy
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - "."
       - run:
