@@ -211,7 +211,9 @@ jobs:
       - *wait_for_backend
       - run:
           name: Run tests
-          command: pytest ui_test/specs
+          command: |
+            export PATH=$PATH:$HOME/bin
+            pytest ui_test/specs
       - store_artifacts:
           path: screenshots
 
