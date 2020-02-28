@@ -19,6 +19,6 @@ VOLUME /reports
 ADD . /app/
 
 RUN pip install pipenv
-RUN pipenv install --system --dev
+RUN pipenv install --system --dev --deploy
 
 CMD /app/compose/development/django/start.sh
