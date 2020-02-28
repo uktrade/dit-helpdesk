@@ -20,6 +20,6 @@ ADD . /app/
 
 RUN pip install pipenv
 RUN pipenv lock
-RUN pipenv install --system --dev --deploy
+RUN pipenv install --system --dev
 
 CMD /app/compose/test/django/start.sh
