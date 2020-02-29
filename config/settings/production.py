@@ -6,7 +6,7 @@ assert (
     and env.str("DJANGO_SETTINGS_MODULE") == "config.settings.production"
 )
 
-VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES", {}))
+VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES"))
 
 ES_URL = VCAP_SERVICES["elasticsearch"][0]["credentials"]["uri"]
 
