@@ -39,10 +39,12 @@ var commodityTree = {
     if (window.location.pathname.indexOf('hierarchy') === -1) {
       return false
     }
+
     var element = document.getElementById(this.getFragmentFromUrl(url))
-    element.scrollIntoView()
+    // element.scrollIntoView() - UH-313 this causes jarring browser movement after navigate
     // focus on the link
     element.childNodes[0].focus({ preventScroll: false })
+
   },
   getFragmentFromUrl: function(url){
     if (url.indexOf('#') === -1) {
