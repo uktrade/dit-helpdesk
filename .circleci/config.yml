@@ -51,6 +51,10 @@ aliases:
     TEST_OUTPUT_DIR: .
     FEEDBACK_DESTINATION_EMAIL: going@to.com
 
+
+
+
+
   - &ui_test_base_envs
     ADMIN_ENABLED: True
     DEBUG: True
@@ -96,6 +100,9 @@ aliases:
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: "/app/reports"
     FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
+
+
+
 
   # Redis container
   - &docker_redis
@@ -154,25 +161,20 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/test.txt
+          command: pipenv install --system --dev
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/test.txt" }}
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
-            - "venv"
+            - "."
       - run:
           name: Running tests
-          command: |
-            . venv/bin/activate
+          command:
             coverage run manage.py test dit_helpdesk --settings=config.settings.test
       - run:
           name: Generate coverage
           command: |
-            . venv/bin/activate
             coverage report
             coverage xml -o test-reports/coverage.xml
             coverage html -d test-reports/coverage_html
@@ -194,27 +196,22 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/development.txt
+          command: pipenv install --system --dev
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "requirements/development.txt" }}
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
-            - "venv"
+            - "."
       - run:
           name: Start app
-          command: |
-            . venv/bin/activate
+          command:
             ./compose/automation/django/start.sh
           background: true
       - *wait_for_backend
       - run:
           name: Run tests
           command: |
-            . venv/bin/activate
             export PATH=$PATH:$HOME/bin
             pytest ui_test/specs
       - store_artifacts:

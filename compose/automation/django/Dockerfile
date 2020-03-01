@@ -15,9 +15,10 @@ WORKDIR /app
 
 VOLUME /reports
 
-ADD requirements/ ./requirements/
-RUN pip install --no-cache-dir -r requirements/development.txt
-
 ADD . /app/
+
+RUN pip install pipenv
+RUN pipenv lock
+RUN pipenv install --system --dev --deploy
 
 CMD /app/compose/automation/django/start.sh
