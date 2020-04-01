@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def search_by_term(form_data=None, page=None, query=None):
+def search_by_term(form_data=None):
 
     client = Elasticsearch(hosts=[settings.ES_URL])
 
