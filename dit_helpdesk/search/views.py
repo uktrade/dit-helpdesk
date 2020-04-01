@@ -245,9 +245,13 @@ class CommodityTermSearchAPIView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        context = helpers.search_by_term(
-            query=serializer.validated_data["q"], page=serializer.validated_data["page"]
-        )
+        data = {
+            'q': serializer.validated_data["q"],
+            'page': serializer.validated_data["page"],
+            'sort': 'ranking',
+            'sort_order': 'desc', 
+        }
+        context = helpers.search_by_term(form_data=data)
         context["results"] = [hit.to_dict() for hit in context["results"]]
         return Response(context)
 

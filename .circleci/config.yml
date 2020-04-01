@@ -167,7 +167,7 @@ jobs:
       - save_cache:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
-            - "."
+            - ~/.local/share/virtualenvs/venv
       - run:
           name: Running tests
           command:
