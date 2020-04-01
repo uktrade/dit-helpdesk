@@ -175,8 +175,7 @@ class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
 
     def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
         url = reverse("search:commodity-term-api-search")
-        data = {"q": "Scissors"}
-        resp = self.client.get(url, data=data)
+        resp = self.client.get(url, data={"q": "Scissors"})
         self.assertEqual(resp.status_code, 200)
 
 
