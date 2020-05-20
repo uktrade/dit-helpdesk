@@ -224,4 +224,4 @@ workflows:
   helpdesk:
     jobs:
       - unit_tests
-      - ui_tests
+#      - ui_tests
