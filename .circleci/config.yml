@@ -155,11 +155,9 @@ jobs:
       - *docker_postgres
       - *docker_elasticsearch
       - *docker_redis
-    working_directory: ~/app
+    working_directory: /tmp/app
     steps:
       - checkout
-      - run:
-          command: chmod -R 777 /root/app
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -193,11 +191,9 @@ jobs:
       - *docker_elasticsearch
       - *docker_redis
       - *docker_kibana
-    working_directory: ~/app
+    working_directory: /tmp/app
     steps:
       - checkout
-      - run:
-          command: chmod -R 777 /root/app
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
