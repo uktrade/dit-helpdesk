@@ -159,7 +159,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: chmod -R 777 ~/app
+          command: chmod -R 777 /root/app
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -197,7 +197,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: chmod -R 777 ~/app
+          command: chmod -R 777 /root/app
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
