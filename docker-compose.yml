@@ -1,0 +1,57 @@
+version: '2'
+services:
+
+  helpdesk:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - inside-network
+      - directory-forms-api_outside-network
+    volumes:
+      - .:/app
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - es
+      - redis
+    command: ./start.sh
+  postgres:
+    image: postgres:10
+    env_file:
+      - .env
+    networks:
+      - inside-network
+    ports:
+      - "5432:5432"
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+    networks:
+      - inside-network
+    ports:
+      - "9200:9200"
+  redis:
+    image: redis:3.2
+    networks:
+      - inside-network
+    ports:
+      - "6379:6379"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.3
+    networks:
+      - inside-network
+    environment:
+      ELASTICSEARCH_URL: http://es:9200
+    ports:
+      - "5601:5601"
+
+networks:
+  inside-network:
+    driver: bridge
+  directory-forms-api_outside-network:
+    external: true
+

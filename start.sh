@@ -13,19 +13,19 @@
 # These commands only need running once, unless you destroy the containers and need to build the environment
 # from scratch again
 # ----------------- commands ----------------
-# sleep infinity
-# python manage.py collectstatic --noinput
-# python manage.py migrate
-# python manage.py loaddata countries_data
-# python manage.py pull_api_update
-# python manage.py prepare_import_data
-# python manage.py prepare_search_data
-# python manage.py scrape_section_hierarchy
-# python manage.py import_rules_of_origin --data_path "import"
-# python manage.py import_regulations
-# python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
-# python manage.py search_index --populate
-# -------------------------------------------
+#sleep infinity
+pipenv run /app/manage.py collectstatic --noinput
+pipenv run /app/manage.py migrate
+pipenv run /app/manage.py loaddata countries_data
+pipenv run /app/manage.py pull_api_update
+pipenv run /app/manage.py prepare_import_data
+pipenv run /app/manage.py prepare_search_data
+pipenv run /app/manage.py scrape_section_hierarchy
+pipenv run /app/manage.py import_rules_of_origin --data_path "import"
+pipenv run /app/manage.py import_regulations
+pipenv run /app/manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
+pipenv run /app/manage.py search_index --populate
+## -------------------------------------------
 
 # ----------------- ONGOING DEVELOPMENT -----
 # ----------------- instruction -------------
@@ -33,7 +33,8 @@
 # so that the django server starts when running django-compose up.
 # Also do not forget to comment out the command in the INITIALISE SECTION
 # ----------------- commands ----------------
-python manage.py runserver_plus 0.0.0.0:8000
+#pipenv run /app/manage.py runserver_plus 0.0.0.0:8000
+pipenv run /app/manage.py runserver 0.0.0.0:8000
 # --------------------------------------------
 
 # ----------------- instruction -------------
