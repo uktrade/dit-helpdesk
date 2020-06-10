@@ -40,3 +40,11 @@ class CommoditySearchForm(forms.Form):
     sort_order = forms.ChoiceField(choices=SORT_ORDER, widget=forms.HiddenInput)
     page = forms.CharField(widget=forms.HiddenInput())
     country = forms.CharField(widget=forms.HiddenInput())
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data["sort"] == "commodity_code":
+            cleaned_data["sort_order"] = "asc"
+        
+        return cleaned_data
