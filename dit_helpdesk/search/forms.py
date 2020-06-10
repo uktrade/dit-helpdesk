@@ -44,7 +44,7 @@ class CommoditySearchForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data["sort"] == "commodity_code":
+        if cleaned_data.get("sort") == "commodity_code":
             cleaned_data["sort_order"] = "asc"
         
         return cleaned_data
