@@ -15,7 +15,10 @@ def search_by_term(form_data=None):
 
     client = Elasticsearch(hosts=[settings.ES_URL])
 
-    sort_object = {form_data.get("sort"): {"order": form_data.get("sort_order")}}
+    if form_data.get("sort") == "ranking":
+        sort_object = {"_score": "desc"}
+    else:
+        sort_object = {form_data.get("sort"): {"order": form_data.get("sort_order")}}
 
     query_object = {
         "multi_match": {

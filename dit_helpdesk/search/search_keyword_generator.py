@@ -14,6 +14,8 @@ nltk.download("wordnet")
 
 warnings.filterwarnings("ignore")
 
+SYNONYM_LIMIT = 3
+
 
 class SearchKeywordGenerator:
     def __init__(
@@ -186,6 +188,8 @@ class SearchKeywordGenerator:
         for w in new_sent:
             for s in wordnet.synsets(w):
                 for lemma in s.lemmas():
+                    if len(syn) == SYNONYM_LIMIT:
+                        break
                     syn.append(lemma.name())
         syn = list(dict.fromkeys(syn))  #
         syn = " ".join(syn)
