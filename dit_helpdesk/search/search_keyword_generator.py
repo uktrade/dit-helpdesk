@@ -1,6 +1,8 @@
 import re
 import warnings
 
+import logging
+
 import nltk
 import numpy as np
 import pandas as pd
@@ -13,6 +15,11 @@ nltk.download("stopwords")
 nltk.download("wordnet")
 
 warnings.filterwarnings("ignore")
+
+SYNONYM_LIMIT = 3
+
+
+logger = logging.getLogger(__name__)
 
 
 class SearchKeywordGenerator:
@@ -186,6 +193,8 @@ class SearchKeywordGenerator:
         for w in new_sent:
             for s in wordnet.synsets(w):
                 for lemma in s.lemmas():
+                    if len(syn) == SYNONYM_LIMIT:
+                        break
                     syn.append(lemma.name())
         syn = list(dict.fromkeys(syn))  #
         syn = " ".join(syn)
@@ -246,10 +255,12 @@ class SearchKeywordGenerator:
     def process(self):
         self.create_clean_content()
 
+        logger.info("Setting subhead searched words..")
         self.set_subhead_searched_words()
 
         self.set_subhead_final_category()
 
+        logger.info("Setting ranking..")
         self.set_subhead_ranking()
 
         self.subhead["New_Code"] = self.subhead.Code.apply(self.change_code)
@@ -257,6 +268,7 @@ class SearchKeywordGenerator:
         # get first 4 digits of the Code
         self.subhead["Code_First4Digits"] = self.get_four_digit_code()
 
+        logger.info("Processing green page columns..")
         green_page = self.process_green_page_columns()
 
         # merge subhead dataframe and green page
@@ -272,7 +284,9 @@ class SearchKeywordGenerator:
         )
         self.subhead["final_category"] = self.subhead["final_category"].str.lower()
 
+        logger.info("Saving output to CSV..")
         self.subhead.to_csv(self.output_file, index=False)
+        logger.info("Done!")
 
     def process_green_page_columns(self):
         """
@@ -324,6 +338,12 @@ class SearchKeywordGenerator:
         assign a ranking score to final_category based on the hierarchy, higher score for higher hierarchy and
         lower score for lower hierarchy, maximum score is subhead['Col8'].max()
         """
+        # remove dirty rows
+        # TODO: determine why the "Col8" values appear in rows in the first place
+        self.subhead = self.subhead[self.subhead.Col8 != "Col8"]
+        # cast all to int so that we can take `.max`
+        self.subhead["Col8"] = self.subhead["Col8"].astype('int32')
+
         self.subhead["ranking_score"] = (
             self.subhead["Col8"].max() - self.subhead["Col8"]
         )

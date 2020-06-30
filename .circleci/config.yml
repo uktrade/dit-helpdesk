@@ -155,17 +155,17 @@ jobs:
       - *docker_postgres
       - *docker_elasticsearch
       - *docker_redis
-    working_directory: ~/app
+    working_directory: /tmp/app
     steps:
       - checkout
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --system --dev
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - ~/.local/share/virtualenvs/venv
       - run:
@@ -191,16 +191,16 @@ jobs:
       - *docker_elasticsearch
       - *docker_redis
       - *docker_kibana
-    working_directory: ~/app
+    working_directory: /tmp/app
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --system --dev
       - save_cache:
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - "."
       - run:
