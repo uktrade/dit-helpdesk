@@ -45,6 +45,10 @@ class CommoditySearchForm(forms.Form):
         cleaned_data = super().clean()
 
         if cleaned_data.get("sort") == "commodity_code":
+            cleaned_data["sort"] = "commodity_code.keyword"
             cleaned_data["sort_order"] = "asc"
+        elif cleaned_data.get("sort") == "ranking":
+            cleaned_data["sort"] = "_score"
+            cleaned_data["sort_order"] = "desc"
         
         return cleaned_data
