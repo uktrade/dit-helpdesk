@@ -144,6 +144,12 @@ The initial run (this section) only needs to be done when building a new or fres
 has been done and as long as the docker images are not destroyed, the only line that needs to be uncommented
 when running`docker-compose -f development.yml up` will be.
 
+NOTE: On first setup if you don't have the [Directory Forms API](https://github.com/uktrade/directory-forms-api/blob/develop/README.md) docker environment running you may receive the error:
+
+    ERROR: Network directory-forms-api_outside-network declared as external, but could not be found. Please create the network manually using `docker network create directory-forms-api_outside-network` and try again.
+
+You can either run the docker environment for, which will create this network for you or create it manually using the command it gives.
+
 This section details manually running each command in turn to fuly import all content.
 
 NB: Alternatively, you can comment out `sleep infinity` and uncomment those that are commented, below, and the entire
