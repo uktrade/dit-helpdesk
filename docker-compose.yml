@@ -28,6 +28,8 @@ services:
       - inside-network
     ports:
       - "5432:5432"
+    volumes:
+      - db-volume:/var/lib/postgresql/data
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
     networks:
@@ -55,3 +57,5 @@ networks:
   directory-forms-api_outside-network:
     external: true
 
+volumes:
+  db-volume:
