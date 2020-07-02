@@ -5,6 +5,6 @@ python manage.py prepare_search_data
 python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
-python manage.py generate_search_keywords
+python manage.py generate_search_keywords --data_path "search/data"
 python manage.py import_search_keywords -f output/keywords_and_synonyms_merged.csv
 python manage.py search_index --populate
