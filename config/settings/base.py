@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "elasticapm.contrib.django",
     "formtools",
     "core",
     "commodities",
@@ -249,6 +250,15 @@ LOGGING = {
     "version": 1,
     "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
     "root": {"handlers": ["console"], "level": LOG_LEVEL},
+}
+
+ELASTIC_APM = {
+  'SERVICE_NAME': env.str('APM_SERVICE_NAME'),
+  'SECRET_TOKEN': env.str('APM_SECRET_TOKEN'),
+  'SERVER_URL': env.str('APM_SERVER_URL'),
+  'ENVIRONMENT': env.str("APM_ENVIRONMENT"),
+  'SERVER_TIMEOUT': env.str("APM_TIMEOUT"),
+  'DEBUG': env.str('APM_DEBUG')
 }
 
 sentry_sdk.init(
