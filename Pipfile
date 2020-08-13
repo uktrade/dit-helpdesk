@@ -24,6 +24,10 @@ factory-boy = "==2.11.1"
 argon2-cffi = "==19.1.0"
 Werkzeug = "==0.15.3"
 pluggy = "==0.13.1"
+django-extensions = "*"
+graphviz = "*"
+pygraphviz = "*"
+
 
 [packages]
 beautifulsoup4 = "==4.7.0"
