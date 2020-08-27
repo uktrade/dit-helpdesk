@@ -148,7 +148,7 @@ NOTE: On first setup if you don't have the [Directory Forms API](https://github.
 
     ERROR: Network directory-forms-api_outside-network declared as external, but could not be found. Please create the network manually using `docker network create directory-forms-api_outside-network` and try again.
 
-You can either run the docker environment for, which will create this network for you or create it manually using the command it gives.
+You can either run the docker environment for Directory Forms API, which will create this network for you or create it manually using the command it gives.
 
 This section details manually running each command in turn to fuly import all content.
 
