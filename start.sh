@@ -14,17 +14,17 @@
 # from scratch again
 # ----------------- commands ----------------
 #sleep infinity
-pipenv run /app/manage.py collectstatic --noinput
-pipenv run /app/manage.py migrate
-pipenv run /app/manage.py loaddata countries_data
-pipenv run /app/manage.py pull_api_update
-pipenv run /app/manage.py prepare_import_data
-pipenv run /app/manage.py prepare_search_data
-pipenv run /app/manage.py scrape_section_hierarchy
-pipenv run /app/manage.py import_rules_of_origin --data_path "import"
-pipenv run /app/manage.py import_regulations
-pipenv run /app/manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
-pipenv run /app/manage.py search_index --populate
+# pipenv run /app/manage.py collectstatic --noinput
+# pipenv run /app/manage.py migrate
+# pipenv run /app/manage.py loaddata countries_data
+# pipenv run /app/manage.py pull_api_update
+# pipenv run /app/manage.py prepare_import_data
+# pipenv run /app/manage.py prepare_search_data
+# pipenv run /app/manage.py scrape_section_hierarchy
+# pipenv run /app/manage.py import_rules_of_origin --data_path "import"
+# pipenv run /app/manage.py import_regulations
+# pipenv run /app/manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
+# pipenv run /app/manage.py search_index --populate
 ## -------------------------------------------
 
 # ----------------- ONGOING DEVELOPMENT -----
