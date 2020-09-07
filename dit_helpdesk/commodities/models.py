@@ -13,7 +13,7 @@ from django.urls import reverse
 
 from countries.models import Country
 from hierarchy.helpers import IMPORT_MEASURE_GROUPS
-from hierarchy.models import Heading, SubHeading, Chapter
+from hierarchy.models import Heading, SubHeading, Chapter, NomenclatureTree
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ class Commodity(models.Model):
     """
     Commodity model
     """
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     commodity_code = models.CharField(max_length=10, unique=True)
     goods_nomenclature_sid = models.CharField(max_length=10)

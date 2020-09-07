@@ -3,14 +3,16 @@ import json
 import logging
 import os
 import sys
+import datetime as dt
 
 import requests
 from django.apps import apps
 from django.conf import settings
+from django.db.models import Model
 from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
-from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
 from .utils import createDir
 
 logger = logging.getLogger(__name__)
@@ -71,7 +73,7 @@ class HierarchyBuilder:
             new_dict[new_key] = old_dict[key]
         return new_dict
 
-    def instance_builder(self, model, data):
+    def instance_builder(self, model, data) -> Optional[Model]:
         """
         build an instance of a model provided the model type and data supplied and return the new instance
         :param model:
@@ -163,6 +165,25 @@ class HierarchyBuilder:
                 parent = self.lookup_parent(SubHeading, data["goods_nomenclature_sid"])
         return parent
 
+    def _create_nomenclature_tree(self, region='EU'):
+        """Create new nomenclature tree and mark the previous most recent
+        one as ended.
+
+        """
+        new_start_date = dt.datetime.today()
+
+        prev_tree = NomenclatureTree.objects.filter(
+            region=region
+        ).order_by('-start_date').first()
+        prev_tree.end_date = new_start_date - dt.timedelta(days=1)
+        tree = NomenclatureTree.objects.create(
+            region=region,
+            start_date=new_start_date,
+            end_date=None
+        )
+
+        return tree
+
     def data_scanner(self, model_names=None):
         """
         loop through models, loading json import data, build model instances from json data and commit instances
@@ -173,6 +194,8 @@ class HierarchyBuilder:
 
         if model_names is None:
             model_names = []
+
+        new_tree = self._create_nomenclature_tree(region='EU')
 
         for model_name in model_names:
             logger.info("creating {0} instances".format(model_name))
@@ -185,6 +208,7 @@ class HierarchyBuilder:
             )
 
             for data in json_data:
+                data["nomenclature_tree_id"] = new_tree.pk
                 instance = self.instance_builder(model, data)
                 if isinstance(instance, model):
                     logger.info("CODE: storing instance {0}".format(str(instance)))
