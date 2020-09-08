@@ -64,7 +64,12 @@ const countriesToRemove = [
   'SK',
   'SI',
   'ES',
-  'SE'
+  'SE',
+  'XC',
+  'XK',
+  'MK',
+  'XL',
+  'XS',
 ]
 
 const countriesData = require('./countries-data.json')
