@@ -31,7 +31,14 @@ hierarchy_model_map = {
 
 
 class HierarchyBuilder:
+
     def __init__(self, new_tree=None):
+        """Provide `new_tree` parameter if there is already a NomenclatureTree created which
+        should be assigned to all of the items in the hierarchy being built.
+        If empty, a new NomenclatureTree will be created and previous one (if exists) marked
+        as ended.
+
+        """
         self.data = {
             "Commodity": {"data": {}, "objects": []},
             "Section": {"data": {}, "objects": []},
