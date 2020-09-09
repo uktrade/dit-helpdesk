@@ -373,10 +373,10 @@ class RulesOfOriginImporter:
         self.working_group_name = Path(input_file).stem.upper()
 
         if self.working_group_name not in self.rules_groups.keys():
-            logger.debug(
-                "{0} is not part of the Priority {1} group so there will no data to import".format(
-                    Path(input_file).name, priority
-                )
+            logger.warning(
+                "%s is not part of the Priority %s group so there will no data to import",
+                Path(input_file).name,
+                priority,
             )
             return
 
