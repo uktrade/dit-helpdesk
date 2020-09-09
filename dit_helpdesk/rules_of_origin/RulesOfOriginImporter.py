@@ -424,6 +424,7 @@ class RulesOfOriginImporter:
         :param idx: current idx used to lookup coutry codes
         """
         group = group.replace(" ", "_").upper()
+        group = re.sub(r"[()]", "", group)
         if group in self.rules_groups.keys() and isinstance(
             self.rules_groups[group], list
         ):
