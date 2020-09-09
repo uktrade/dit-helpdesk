@@ -11,8 +11,7 @@ services:
       - .:/app
     entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
     env_file:
-      - ./.envs/.test/.django
-      - ./.envs/.test/.postgres
+      - .env.test
     depends_on:
       - postgres
       - es
@@ -25,8 +24,8 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB=helpdesk
+    env_file:
+      - .env.test
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3

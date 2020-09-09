@@ -5,11 +5,11 @@ RESTRICT_ADMIN = False
 DATABASES = {
     "default": {
         "ENGINE": "psqlextra.backend",  # 'django.db.backends.postgresql_psycopg2',
-        "NAME": os.environ.get("POSTGRES_DB"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOST"),
-        "PORT": os.environ.get("POSTGRES_PORT"),
+        "NAME": env.str("POSTGRES_DB"),
+        "USER": env.str("POSTGRES_USER"),
+        "PASSWORD": env.str("POSTGRES_PASSWORD"),
+        "HOST": env.str("POSTGRES_HOST"),
+        "PORT": env.str("POSTGRES_PORT"),
     }
 }
 
