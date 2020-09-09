@@ -414,12 +414,7 @@ class RulesOfOriginImporter:
 
         for idx, group in enumerate(groups):
             if group is not nan:
-
-                if " and " in group:
-                    for grp in group.split(" and "):
-                        self.build_rules_groups(country_codes, grp, idx)
-                else:
-                    self.build_rules_groups(country_codes, group, idx)
+                self.build_rules_groups(country_codes, group, idx)
 
     def build_rules_groups(self, country_codes, group, idx):
         """

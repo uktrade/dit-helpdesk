@@ -112,9 +112,9 @@ class ImporterTestCase(TestCase):
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
-        self.assertEqual(len(Rule.objects.all()), 0)
+        self.assertEqual(len(Rule.objects.all()), 271)
         self.assertEqual(len(RulesGroup.objects.all()), 1)
-        self.assertEqual(len(RulesGroupMember.objects.all()), 0)
+        self.assertEqual(len(RulesGroupMember.objects.all()), 4)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_EPA_Market_Access_Regulation(self):
@@ -204,9 +204,9 @@ class ImporterTestCase(TestCase):
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
-        self.assertEqual(len(Rule.objects.all()), 0)
+        self.assertEqual(len(Rule.objects.all()), 425)
         self.assertEqual(len(RulesGroup.objects.all()), 1)
-        self.assertEqual(len(RulesGroupMember.objects.all()), 0)
+        self.assertEqual(len(RulesGroupMember.objects.all()), 3)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_FTA_Deep_and_Comprehensive_Trade_Agreement(self):
@@ -216,9 +216,9 @@ class ImporterTestCase(TestCase):
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
-        self.assertEqual(len(Rule.objects.all()), 0)
+        self.assertEqual(len(Rule.objects.all()), 271)
         self.assertEqual(len(RulesGroup.objects.all()), 1)
-        self.assertEqual(len(RulesGroupMember.objects.all()), 0)
+        self.assertEqual(len(RulesGroupMember.objects.all()), 3)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_FTA_European_Economic_Area_EEA(self):
@@ -292,9 +292,9 @@ class ImporterTestCase(TestCase):
         importer = RulesOfOriginImporter()
         importer.load(input_file=path, priority=1)
         importer.instance_builder()
-        self.assertEqual(len(Rule.objects.all()), 0)
+        self.assertEqual(len(Rule.objects.all()), 205)
         self.assertEqual(len(RulesGroup.objects.all()), 1)
-        self.assertEqual(len(RulesGroupMember.objects.all()), 0)
+        self.assertEqual(len(RulesGroupMember.objects.all()), 22)
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_Pan_Euro_Mediterranean_Convention(self):
