@@ -1,3 +1,7 @@
+import datetime as dt
+
+from .models import NomenclatureTree
+
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
 
 TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
@@ -181,3 +185,36 @@ def get_nomenclature_group_measures(nomenclature_model, group_name, country_code
         if measure.type_id in group_measure_type_ids
         and country_code not in [id for id in measure.excluded_country_area_ids]
     ]
+
+
+def create_nomenclature_tree(region='EU'):
+    """Create new nomenclature tree and mark the previous most recent
+    one as ended.
+
+    """
+    new_start_date = dt.datetime.today()
+
+    try:
+        prev_tree = NomenclatureTree.objects.filter(
+            region=region
+        ).latest('start_date')
+
+        prev_tree.end_date = new_start_date - dt.timedelta(days=1)
+        prev_tree.save()
+    except NomenclatureTree.DoesNotExist:
+        pass
+
+    tree = NomenclatureTree.objects.create(
+        region=region,
+        start_date=new_start_date,
+        end_date=None
+    )
+
+    return tree
+
+
+def fill_tree_in_json_data(json_data, tree):
+    for data in json_data:
+        data["nomenclature_tree_id"] = tree.pk
+
+    return json_data

@@ -15,11 +15,23 @@ logger = logging.getLogger(__name__)
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
+class NomenclatureTree(models.Model):
+    """
+    Model to identify which tree does a nomenclature object belong to, differentiated
+    by region (e.g. `EU`, `UK`) and date range.
+
+    """
+    region = models.CharField(max_length=2)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True)
+
+
 class Section(models.Model):
     """
     Model representing the top level section of the hierarchy
     """
 
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
     section_id = models.IntegerField(unique=True)
     tts_json = models.TextField(blank=True)
     roman_numeral = models.CharField(max_length=5)
@@ -182,6 +194,8 @@ class Chapter(models.Model):
     """
     Model representing the second level chapters of the hierarchy
     """
+
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
@@ -393,11 +407,10 @@ class Chapter(models.Model):
             if code_match_obj.group(i) != "00"
         ]
 
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+        # gets the Commodity content from the trade tariff service url as json response and stores
+        # it in the commodity's tts_json field
+        # TODO: unreachable code below, audit if OK to delete
 
-        """
         url = settings.HEADING_URL % self.heading_code[:4]
 
         resp = requests.get(url, timeout=10)
@@ -485,6 +498,8 @@ class Chapter(models.Model):
 
 
 class Heading(models.Model):
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
+
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -784,6 +799,8 @@ class Heading(models.Model):
 
 
 class SubHeading(models.Model):
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
+
     productline_suffix = models.CharField(max_length=2)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10)
     parent_goods_nomenclature_sid = models.CharField(max_length=10)

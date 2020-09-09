@@ -8,6 +8,7 @@ from django.test import TestCase, Client
 from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.helpers import create_nomenclature_tree
 from hierarchy.views import _get_expanded_context
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,17 @@ logger.setLevel(logging.INFO)
 
 TEST_COMMODITY_CODE = "0101210000"
 TEST_SUBHEADING_CODE = "0101210000"
+
+tree = create_nomenclature_tree(region='EU')
+
+
+def get_data(file_path):
+    with open(file_path) as f:
+        json_data = json.load(f)
+
+    json_data["nomenclature_tree_id"] = tree.pk
+
+    return json_data
 
 
 def create_instance(data, app_name, model_name):
@@ -181,10 +193,3 @@ class HierarchyViewTestCase(TestCase):
         node_id = "#sub_heading-{0}".format(subheading_id)
         logger.debug(_get_expanded_context(node_id))
         self.assertFalse(_get_expanded_context(node_id))
-
-
-def get_data(file_path):
-
-    with open(file_path) as f:
-        json_data = json.load(f)
-    return json_data

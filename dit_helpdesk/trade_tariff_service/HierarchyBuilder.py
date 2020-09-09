@@ -3,14 +3,18 @@ import json
 import logging
 import os
 import sys
+import datetime as dt
+from typing import Optional
 
 import requests
 from django.apps import apps
 from django.conf import settings
+from django.db.models import Model
 from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
-from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
+from hierarchy.helpers import create_nomenclature_tree, fill_tree_in_json_data
 from .utils import createDir
 
 logger = logging.getLogger(__name__)
@@ -27,7 +31,14 @@ hierarchy_model_map = {
 
 
 class HierarchyBuilder:
-    def __init__(self):
+
+    def __init__(self, new_tree=None):
+        """Provide `new_tree` parameter if there is already a NomenclatureTree created which
+        should be assigned to all of the items in the hierarchy being built.
+        If empty, a new NomenclatureTree will be created and previous one (if exists) marked
+        as ended.
+
+        """
         self.data = {
             "Commodity": {"data": {}, "objects": []},
             "Section": {"data": {}, "objects": []},
@@ -41,8 +52,13 @@ class HierarchyBuilder:
         self.commodities = []
         self.heading_codes = []
 
+        if new_tree:
+            self.new_tree = new_tree
+        else:
+            self.new_tree = create_nomenclature_tree(region='EU')
+
     @staticmethod
-    def file_loader(model_name):
+    def file_loader(model_name, tree: Optional[NomenclatureTree] = None) -> dict:
         """
         given a model name load json data from the file system to import
         :param model_name:
@@ -54,6 +70,10 @@ class HierarchyBuilder:
 
         with open(file_path) as f:
             json_data = json.load(f)
+
+        if tree:
+            json_data = fill_tree_in_json_data(json_data, tree)
+
         return json_data
 
     @staticmethod
@@ -71,7 +91,7 @@ class HierarchyBuilder:
             new_dict[new_key] = old_dict[key]
         return new_dict
 
-    def instance_builder(self, model, data):
+    def instance_builder(self, model, data) -> Optional[Model]:
         """
         build an instance of a model provided the model type and data supplied and return the new instance
         :param model:
@@ -206,7 +226,7 @@ class HierarchyBuilder:
                 sys.exit()
 
     def load_data(self, model_name):
-        json_data = self.file_loader(model_name)
+        json_data = self.file_loader(model_name, self.new_tree)
         self.data[model_name]["data"] = json_data
         return json_data
 
