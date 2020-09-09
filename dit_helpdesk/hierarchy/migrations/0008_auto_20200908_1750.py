@@ -47,4 +47,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(fill_nomenclature_tree, unfill_nomenclature_tree)
     ]
