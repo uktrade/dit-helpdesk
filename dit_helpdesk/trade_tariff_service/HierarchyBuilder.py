@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import datetime as dt
+from typing import Optional
 
 import requests
 from django.apps import apps
@@ -13,6 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
+from hierarchy.helpers import create_nomenclature_tree, fill_tree_in_json_data
 from .utils import createDir
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,7 @@ hierarchy_model_map = {
 
 
 class HierarchyBuilder:
-    def __init__(self):
+    def __init__(self, new_tree=None):
         self.data = {
             "Commodity": {"data": {}, "objects": []},
             "Section": {"data": {}, "objects": []},
@@ -43,8 +45,13 @@ class HierarchyBuilder:
         self.commodities = []
         self.heading_codes = []
 
+        if new_tree:
+            self.new_tree = new_tree
+        else:
+            self.new_tree = create_nomenclature_tree(region='EU')
+
     @staticmethod
-    def file_loader(model_name):
+    def file_loader(model_name, tree: Optional[NomenclatureTree] = None) -> dict:
         """
         given a model name load json data from the file system to import
         :param model_name:
@@ -56,6 +63,10 @@ class HierarchyBuilder:
 
         with open(file_path) as f:
             json_data = json.load(f)
+
+        if tree:
+            json_data = fill_tree_in_json_data(json_data, tree)
+
         return json_data
 
     @staticmethod
@@ -165,25 +176,6 @@ class HierarchyBuilder:
                 parent = self.lookup_parent(SubHeading, data["goods_nomenclature_sid"])
         return parent
 
-    def _create_nomenclature_tree(self, region='EU'):
-        """Create new nomenclature tree and mark the previous most recent
-        one as ended.
-
-        """
-        new_start_date = dt.datetime.today()
-
-        prev_tree = NomenclatureTree.objects.filter(
-            region=region
-        ).order_by('-start_date').first()
-        prev_tree.end_date = new_start_date - dt.timedelta(days=1)
-        tree = NomenclatureTree.objects.create(
-            region=region,
-            start_date=new_start_date,
-            end_date=None
-        )
-
-        return tree
-
     def data_scanner(self, model_names=None):
         """
         loop through models, loading json import data, build model instances from json data and commit instances
@@ -194,8 +186,6 @@ class HierarchyBuilder:
 
         if model_names is None:
             model_names = []
-
-        new_tree = self._create_nomenclature_tree(region='EU')
 
         for model_name in model_names:
             logger.info("creating {0} instances".format(model_name))
@@ -208,7 +198,6 @@ class HierarchyBuilder:
             )
 
             for data in json_data:
-                data["nomenclature_tree_id"] = new_tree.pk
                 instance = self.instance_builder(model, data)
                 if isinstance(instance, model):
                     logger.info("CODE: storing instance {0}".format(str(instance)))
@@ -230,7 +219,7 @@ class HierarchyBuilder:
                 sys.exit()
 
     def load_data(self, model_name):
-        json_data = self.file_loader(model_name)
+        json_data = self.file_loader(model_name, self.new_tree)
         self.data[model_name]["data"] = json_data
         return json_data
 

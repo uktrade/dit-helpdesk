@@ -12,14 +12,22 @@ from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _commodity_code_html
+from hierarchy.helpers import create_nomenclature_tree
 from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocument
 
 logger = logging.getLogger(__name__)
 
 
+tree = create_nomenclature_tree(region='EU')
+
+
 def get_data(file_path):
+    """This retrieves JSON data for only a single nomenclature object"""
     with open(file_path) as f:
         json_data = json.load(f)
+
+    json_data["nomenclature_tree_id"] = tree.pk
+
     return json_data
 
 

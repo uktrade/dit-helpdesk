@@ -23,7 +23,7 @@ class NomenclatureTree(models.Model):
     """
     region = models.CharField(max_length=2)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True)
 
 
 class Section(models.Model):

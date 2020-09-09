@@ -4,10 +4,14 @@ from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
 from hierarchy.models import SubHeading, Heading, Section, Chapter
+from hierarchy.helpers import create_nomenclature_tree
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
+
+
+tree = create_nomenclature_tree(region='EU')
 
 
 def create_instance(data, app_name, model_name):
@@ -19,9 +23,11 @@ def create_instance(data, app_name, model_name):
 
 
 def get_data(file_path):
-
     with open(file_path) as f:
         json_data = json.load(f)
+
+    json_data["nomenclature_tree_id"] = tree.pk
+
     return json_data
 
 
