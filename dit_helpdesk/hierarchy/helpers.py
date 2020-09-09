@@ -194,12 +194,15 @@ def create_nomenclature_tree(region='EU'):
     """
     new_start_date = dt.datetime.today()
 
-    prev_tree = NomenclatureTree.objects.filter(
-        region=region
-    ).order_by('-start_date').first()
-    if prev_tree:
+    try:
+        prev_tree = NomenclatureTree.objects.filter(
+            region=region
+        ).latest('start_date')
+
         prev_tree.end_date = new_start_date - dt.timedelta(days=1)
         prev_tree.save()
+    except NomenclatureTree.DoesNotExist:
+        pass
 
     tree = NomenclatureTree.objects.create(
         region=region,
