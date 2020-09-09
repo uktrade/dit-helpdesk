@@ -1,2 +1,14 @@
+from hierarchy.models import Heading
+
+
 def promote_regulations(commodity_object):
-    pass
+    regulations_to_promote = None
+    for child in commodity_object.get_hierarchy_children():
+        promote_regulations(child)
+        if not regulations_to_promote:
+            regulations_to_promote = child.regulation_set.all()
+
+    if not regulations_to_promote:
+        return
+
+    commodity_object.regulation_set.add(*regulations_to_promote)

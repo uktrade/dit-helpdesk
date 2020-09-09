@@ -350,3 +350,6 @@ class Commodity(models.Model):
 
         self.tts_json = resp_content
         self.save()
+
+    def get_hierarchy_children(self):
+        return []
