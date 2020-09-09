@@ -373,10 +373,10 @@ class RulesOfOriginImporter:
         self.working_group_name = Path(input_file).stem.upper()
 
         if self.working_group_name not in self.rules_groups.keys():
-            logger.debug(
-                "{0} is not part of the Priority {1} group so there will no data to import".format(
-                    Path(input_file).name, priority
-                )
+            logger.warning(
+                "%s is not part of the Priority %s group so there will no data to import",
+                Path(input_file).name,
+                priority,
             )
             return
 
@@ -414,12 +414,7 @@ class RulesOfOriginImporter:
 
         for idx, group in enumerate(groups):
             if group is not nan:
-
-                if " and " in group:
-                    for grp in group.split(" and "):
-                        self.build_rules_groups(country_codes, grp, idx)
-                else:
-                    self.build_rules_groups(country_codes, group, idx)
+                self.build_rules_groups(country_codes, group, idx)
 
     def build_rules_groups(self, country_codes, group, idx):
         """
@@ -429,6 +424,7 @@ class RulesOfOriginImporter:
         :param idx: current idx used to lookup coutry codes
         """
         group = group.replace(" ", "_").upper()
+        group = re.sub(r"[()]", "", group)
         if group in self.rules_groups.keys() and isinstance(
             self.rules_groups[group], list
         ):
