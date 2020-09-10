@@ -31,11 +31,11 @@ def promote_regulations(commodity_object):
     for child in commodity_object.get_hierarchy_children():
         promote_regulations(child)
 
-        child_regulations = set(child.regulation_set.all())
+        child_regulations = child.regulation_set.all()
         if regulations_to_promote is None:
             regulations_to_promote = child_regulations
         else:
-            regulations_to_promote = regulations_to_promote & child_regulations
+            regulations_to_promote = regulations_to_promote.intersection(child_regulations)
 
     if not regulations_to_promote:
         return
