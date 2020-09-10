@@ -44,37 +44,3 @@ def promote_regulations(commodity_object):
 
     for child in commodity_object.get_hierarchy_children():
         child.regulation_set.remove(*regulations_to_promote)
-
-
-def get_regulations(commodity_object) -> QuerySet:
-    """ Gets the regulation objects for the passed in object respecting inheritance.
-
-    The commodity object will get all of its ancestor regulations returned as
-    well as its own regulations.
-
-    Example:
-                        Heading A - <Regulation: A>
-                                    |
-                    ------------------------------
-                    |                              |
-        Commodity A - <Regulation: B>    Commodity B - No regulation
-
-        > get_regulation(<Heading A>)
-        <Queryset: [Regulation A]>
-
-        > get_regulation(<Commodity A>)
-        <Queryset: [Regulation A, Regulation B]>
-
-        > get_regulation(<Commodity B>)
-        <Queryset: [Regulation A]>
-    """
-    regulations = commodity_object.regulation_set.all()
-
-    parent = commodity_object.get_parent()
-    if not parent:
-        return regulations
-
-    parent_regulations = get_regulations(commodity_object.get_parent())
-    regulations = regulations.union(parent_regulations)
-
-    return regulations

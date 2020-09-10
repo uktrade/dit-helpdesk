@@ -1,10 +1,14 @@
 from django.db import models
 
+from .managers import RegulationManager
+
 
 class Regulation(models.Model):
     """
     Regulation model
     """
+
+    objects = RegulationManager()
 
     title = models.TextField()
     sections = models.ManyToManyField("hierarchy.Section")
