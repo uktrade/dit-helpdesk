@@ -1,3 +1,5 @@
+from django.db.models import QuerySet
+
 from hierarchy.models import Heading
 
 
@@ -46,7 +48,7 @@ def promote_regulations(commodity_object):
         child.regulation_set.remove(*regulations_to_promote)
 
 
-def get_regulations(commodity_object):
+def get_regulations(commodity_object) -> QuerySet:
     """ Gets the regulation objects for the passed in object respecting inheritance.
 
     The commodity object will get all of its ancestor regulations returned as
@@ -60,20 +62,21 @@ def get_regulations(commodity_object):
         Commodity A - <Regulation: B>    Commodity B - No regulation
 
         > get_regulation(<Heading A>)
-        {Regulation A}
+        <Queryset: [Regulation A]>
 
         > get_regulation(<Commodity A>)
-        {Regulation A, Regulation B}
+        <Queryset: [Regulation A, Regulation B]>
 
         > get_regulation(<Commodity B>)
-        {Regulation A}
+        <Queryset: [Regulation A]>
     """
-    regulations = set(commodity_object.regulation_set.all())
+    regulations = commodity_object.regulation_set.all()
 
     parent = commodity_object.get_parent()
     if not parent:
         return regulations
 
-    regulations |= get_regulations(commodity_object.get_parent())
+    parent_regulations = get_regulations(commodity_object.get_parent())
+    regulations = regulations.union(parent_regulations)
 
     return regulations

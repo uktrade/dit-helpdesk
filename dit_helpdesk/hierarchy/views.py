@@ -3,7 +3,6 @@ import os
 import json
 import re
 from datetime import datetime, timedelta, timezone
-from operator import attrgetter
 
 import requests
 from django.conf import settings
@@ -228,7 +227,7 @@ def section_detail(request, section_id, country_code):
         "roo_footnotes": rules_of_origin,
         "table_data": table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": sorted(get_regulations(section), key=attrgetter('title')),
+        "regulations": get_regulations(section).order_by('title'),
         "accordion_title": accordion_title,
         "section_hierarchy_context": get_hierarchy_context(
             section_path, country.country_code, section_id
@@ -405,7 +404,7 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "regulations": sorted(get_regulations(heading), key=attrgetter('title')),
+                "regulations": get_regulations(heading).order_by('title'),
             }
         )
 
@@ -529,7 +528,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "regulations": sorted(get_regulations(subheading), key=attrgetter('title')),
+                "regulations": get_regulations(subheading).order_by('title'),
             }
         )
 

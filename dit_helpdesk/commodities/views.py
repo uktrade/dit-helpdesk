@@ -9,7 +9,6 @@
 import re
 from datetime import datetime, timedelta, timezone
 from pprint import pprint
-from operator import attrgetter
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
@@ -108,7 +107,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": sorted(get_regulations(commodity), key=attrgetter('title')),
+        "regulations": get_regulations(commodity).order_by('title'),
         "accordion_title": accordion_title,
         "commodity_notes": commodity.tts_obj.footnotes,
         "chapter_notes": chapter.chapter_notes,
