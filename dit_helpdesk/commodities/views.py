@@ -9,18 +9,20 @@
 import re
 from datetime import datetime, timedelta, timezone
 from pprint import pprint
+from operator import attrgetter
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from commodities.models import Commodity
 from countries.models import Country
-from hierarchy.views import get_hierarchy_context
 from hierarchy.models import Section, Chapter, Heading, SubHeading
-
 from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+from hierarchy.views import get_hierarchy_context
+from regulations.hierarchy import get_regulations
+
+from .models import Commodity
 
 
 def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
@@ -106,7 +108,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": commodity.get_regulations(),
+        "regulations": sorted(get_regulations(commodity), key=attrgetter('title')),
         "accordion_title": accordion_title,
         "commodity_notes": commodity.tts_obj.footnotes,
         "chapter_notes": chapter.chapter_notes,

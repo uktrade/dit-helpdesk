@@ -19,3 +19,15 @@ def promote_regulations(commodity_object):
 
     for child in commodity_object.get_hierarchy_children():
         child.regulation_set.remove(*regulations_to_promote)
+
+
+def get_regulations(commodity_object):
+    regulations = set(commodity_object.regulation_set.all())
+
+    parent = commodity_object.get_parent()
+    if not parent:
+        return regulations
+
+    regulations |= get_regulations(commodity_object.get_parent())
+
+    return regulations
