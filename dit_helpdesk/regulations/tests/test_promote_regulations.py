@@ -67,7 +67,7 @@ class PromoteRegulationsTestCase(TestCase):
         After:
         Heading    - <Regulation: A>
            |
-        Commodity  - <Regulation: A>
+        Commodity  - No regulation
         """
         heading = mixer.blend(Heading)
         commodity = mixer.blend(Commodity, heading=heading)
@@ -80,8 +80,7 @@ class PromoteRegulationsTestCase(TestCase):
 
         self.assertEqual(heading.regulation_set.count(), 1)
         self.assertEqual(heading.regulation_set.first(), regulation)
-        self.assertTrue(commodity.regulation_set.count(), 1)
-        self.assertEqual(commodity.regulation_set.first(), regulation)
+        self.assertFalse(commodity.regulation_set.exists())
 
     def test_models_in_multi_level_hierarchy_gets_promoted(self):
         """
@@ -101,13 +100,13 @@ class PromoteRegulationsTestCase(TestCase):
         After:
         Chapter      - <Regulation: A>
            |
-        Section      - <Regulation: A>
+        Section      - No Regulation
            |
-        Heading      - <Regulation: A>
+        Heading      - No Regulation
            |
-        SubHeading   - <Regulation: A>
+        SubHeading   - No Regulation
            |
-        Commodity    - <Regulation: A>
+        Commodity    - No Regulation
         """
         section = mixer.blend(Section)
         chapter = mixer.blend(Chapter, section=section)
@@ -126,11 +125,7 @@ class PromoteRegulationsTestCase(TestCase):
 
         self.assertEqual(section.regulation_set.count(), 1)
         self.assertEqual(section.regulation_set.first(), regulation)
-        self.assertEqual(chapter.regulation_set.count(), 1)
-        self.assertEqual(chapter.regulation_set.first(), regulation)
-        self.assertEqual(heading.regulation_set.count(), 1)
-        self.assertEqual(heading.regulation_set.first(), regulation)
-        self.assertEqual(sub_heading.regulation_set.count(), 1)
-        self.assertEqual(sub_heading.regulation_set.first(), regulation)
-        self.assertEqual(commodity.regulation_set.count(), 1)
-        self.assertEqual(commodity.regulation_set.first(), regulation)
+        self.assertFalse(chapter.regulation_set.exists())
+        self.assertFalse(heading.regulation_set.exists())
+        self.assertFalse(sub_heading.regulation_set.exists())
+        self.assertFalse(commodity.regulation_set.exists())
