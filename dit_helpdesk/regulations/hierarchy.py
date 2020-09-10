@@ -1,6 +1,3 @@
-from django.db.models import QuerySet
-
-
 def promote_regulations(commodity_object):
     """Descends down a commodity tree from the passed in object and promotes regulation objects back up the tree.
 
