@@ -2,6 +2,31 @@ from hierarchy.models import Heading
 
 
 def promote_regulations(commodity_object):
+    """Descends down a commodity tree from the passed in object and promotes regulation objects back up the tree.
+
+    The end result should be that any regulation objects that could be picked up
+    via inheritance are promoted.
+
+    This means that a commodity object with all of its children having the same
+    regulation attached will have that regulation promoted to itself and
+    then removed from that child object itself.
+
+    Example:
+        Before:
+                       Heading - No regulation
+                                 |
+                   ------------------------------
+                  |                              |
+        Commodity - <Regulation: A>    Commodity - <Regulation: A>
+                    <Regulation: B>
+
+        After:
+                       Heading - <Regulation: A>
+                                 |
+                   ------------------------------
+                  |                              |
+        Commodity - <Regulation: B>    Commodity - No regulation
+    """
     regulations_to_promote = None
     for child in commodity_object.get_hierarchy_children():
         promote_regulations(child)
@@ -22,6 +47,27 @@ def promote_regulations(commodity_object):
 
 
 def get_regulations(commodity_object):
+    """ Gets the regulation objects for the passed in object respecting inheritance.
+
+    The commodity object will get all of its ancestor regulations returned as
+    well as its own regulations.
+
+    Example:
+                        Heading A - <Regulation: A>
+                                    |
+                    ------------------------------
+                    |                              |
+        Commodity A - <Regulation: B>    Commodity B - No regulation
+
+        > get_regulation(<Heading A>)
+        {Regulation A}
+
+        > get_regulation(<Commodity A>)
+        {Regulation A, Regulation B}
+
+        > get_regulation(<Commodity B>)
+        {Regulation A}
+    """
     regulations = set(commodity_object.regulation_set.all())
 
     parent = commodity_object.get_parent()
