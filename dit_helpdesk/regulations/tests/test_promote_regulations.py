@@ -376,3 +376,77 @@ class PromoteRegulationsTestCase(TestCase):
         self.assertEqual(a_a_a_a_commodity.regulation_set.first(), e_regulation)
         for commodity in commodities[1:]:
             self.assertFalse(commodity.regulation_set.exists())
+
+    def test_models_in_simple_sub_heading_hierarchy_gets_promoted(self):
+        """
+        Test simple sub heading hierarchy
+
+        Before:
+        Sub Heading    - No regulation
+           |
+        Sub Heading    - No regulation
+           |
+        Commodity      - <Regulation: A>
+
+        After:
+        Sub Heading    - <Regulation: A>
+           |
+        Sub Heading    - No regulation
+           |
+        Commodity  - No regulation
+        """
+        a_sub_heading = mixer.blend(SubHeading)
+        b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
+        commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
+        regulation = mixer.blend(Regulation, commodities=commodity)
+
+        self.assertFalse(a_sub_heading.regulation_set.exists())
+        self.assertFalse(b_sub_heading.regulation_set.exists())
+        self.assertEqual(commodity.regulation_set.count(), 1)
+
+        promote_regulations(a_sub_heading)
+
+        self.assertEqual(a_sub_heading.regulation_set.count(), 1)
+        self.assertEqual(a_sub_heading.regulation_set.first(), regulation)
+        self.assertFalse(b_sub_heading.regulation_set.exists())
+        self.assertFalse(commodity.regulation_set.exists())
+
+    def test_models_in_simple_sub_heading_and_heading_hierarchy_gets_promoted(self):
+        """
+        Test simple sub heading hierarchy
+
+        Before:
+        Heading        - No regulation
+           |
+        Sub Heading    - No regulation
+           |
+        Sub Heading    - No regulation
+           |
+        Commodity      - <Regulation: A>
+
+        After:
+        Heading        - <Regulation: A>
+           |
+        Sub Heading    - No regulation
+           |
+        Sub Heading    - No regulation
+           |
+        Commodity  - No regulation
+        """
+        heading = mixer.blend(Heading)
+        a_sub_heading = mixer.blend(SubHeading, heading=heading)
+        b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
+        commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
+        regulation = mixer.blend(Regulation, commodities=commodity)
+
+        self.assertFalse(a_sub_heading.regulation_set.exists())
+        self.assertFalse(b_sub_heading.regulation_set.exists())
+        self.assertEqual(commodity.regulation_set.count(), 1)
+
+        promote_regulations(heading)
+
+        self.assertEqual(heading.regulation_set.count(), 1)
+        self.assertEqual(heading.regulation_set.first(), regulation)
+        self.assertFalse(a_sub_heading.regulation_set.exists())
+        self.assertFalse(b_sub_heading.regulation_set.exists())
+        self.assertFalse(commodity.regulation_set.exists())
