@@ -124,20 +124,6 @@ class Commodity(models.Model):
             obj = obj.get_parent()
         return obj
 
-    def get_regulations(self):
-        """
-        Returns a list of regulations instances either related to the commodity or it's parent subheading
-        :return: queryset
-        """
-        regulations = []
-        path = self.get_path()
-        for item in path:
-            if item and hasattr(item[0], "regulation_set"):
-                item_regulations = item[0].regulation_set.all()
-                if item_regulations:
-                    regulations.extend(list(item_regulations))
-        return regulations
-
     def get_rules_of_origin(self, country_code):
         """
         Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
@@ -350,3 +336,9 @@ class Commodity(models.Model):
 
         self.tts_json = resp_content
         self.save()
+
+    def get_hierarchy_children(self):
+        return []
+
+    def get_parent(self):
+        return self.heading or self.parent_subheading

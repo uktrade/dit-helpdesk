@@ -12,9 +12,11 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
 from commodities.models import Commodity
-from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from countries.models import Country
-from hierarchy.models import Section, Chapter, Heading, SubHeading
+from regulations.models import Regulation
+
+from .helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+from .models import Section, Chapter, Heading, SubHeading
 
 code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
 HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
@@ -225,7 +227,7 @@ def section_detail(request, section_id, country_code):
         "roo_footnotes": rules_of_origin,
         "table_data": table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": section.get_regulations(),
+        "regulations": Regulation.objects.inherited(section).order_by('title'),
         "accordion_title": accordion_title,
         "section_hierarchy_context": get_hierarchy_context(
             section_path, country.country_code, section_id
@@ -402,7 +404,7 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "regulations": heading.get_regulations(),
+                "regulations": Regulation.objects.inherited(heading).order_by('title'),
             }
         )
 
@@ -526,7 +528,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
                 "column_titles": TABLE_COLUMN_TITLES,
                 "modals": modals_dict,
                 "rules_of_origin": rules_of_origin,
-                "regulations": subheading.get_regulations(),
+                "regulations": Regulation.objects.inherited(subheading).order_by('title'),
             }
         )
 

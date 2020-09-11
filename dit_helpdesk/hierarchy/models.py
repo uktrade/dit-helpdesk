@@ -189,6 +189,9 @@ class Section(models.Model):
 
         return tree
 
+    def get_parent(self):
+        return None
+
 
 class Chapter(models.Model):
     """
@@ -496,6 +499,9 @@ class Chapter(models.Model):
 
         return chapter_notes
 
+    def get_parent(self):
+        return self.section
+
 
 class Heading(models.Model):
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -591,18 +597,6 @@ class Heading(models.Model):
         if not self.tts_json:
             return {}
         return self.tts_obj.footnotes
-
-    def get_regulations(self):
-        """
-        Returns a list of regulations instances either related to the commodity or it's parent subheading
-        :return: queryset
-        """
-        regulations = list(self.regulation_set.all())
-
-        # if self.parent_subheading:
-        #     regulations + list(self.parent_subheading.regulation_set.all())
-
-        return regulations
 
     def get_rules_of_origin(self, country_code):
         """
@@ -796,6 +790,9 @@ class Heading(models.Model):
             return code[:1]
         else:
             return code
+
+    def get_parent(self):
+        return self.chapter
 
 
 class SubHeading(models.Model):
@@ -1121,18 +1118,6 @@ class SubHeading(models.Model):
             groups[group_name] = rules_of_origin
 
         return groups
-
-    def get_regulations(self):
-        """
-        Returns a list of regulations instances either related to the commodity or it's parent subheading
-        :return: queryset
-        """
-        regulations = list(self.regulation_set.all())
-
-        # if self.parent_subheading:
-        #     regulations + list(self.parent_subheading.regulation_set.all())
-
-        return regulations
 
     @property
     def subheading_code_split(self):
