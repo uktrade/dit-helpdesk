@@ -30,15 +30,21 @@ hierarchy_model_map = {
 }
 
 
+DEFAULT_REGION = 'EU'
+
+
 class HierarchyBuilder:
 
-    def __init__(self, new_tree=None):
+    def __init__(self, region=None, new_tree=None):
         """Provide `new_tree` parameter if there is already a NomenclatureTree created which
         should be assigned to all of the items in the hierarchy being built.
-        If empty, a new NomenclatureTree will be created and previous one (if exists) marked
-        as ended.
+        If empty, a new NomenclatureTree will be created for region specified in `region` argument
+        and previous one (if exists) marked as ended.
 
         """
+        if region and new_tree:
+            raise ValueError("Provider either `region` or `new_tree` argument, not both")
+
         self.data = {
             "Commodity": {"data": {}, "objects": []},
             "Section": {"data": {}, "objects": []},
@@ -51,11 +57,20 @@ class HierarchyBuilder:
         self.headings = []
         self.commodities = []
         self.heading_codes = []
+        self.region = region
 
-        if new_tree:
-            self.new_tree = new_tree
-        else:
-            self.new_tree = create_nomenclature_tree(region='EU')
+        self._new_tree = new_tree
+
+    @property
+    def new_tree(self):
+        """Sometimes HierarchyBuilder is used without having to create new objects, so the
+        tree is only created when it's actually needed"""
+
+        if not self._new_tree:
+            self.region = self.region or DEFAULT_REGION
+            self._new_tree = create_nomenclature_tree(region=self.region)
+
+        return self._new_tree
 
     @staticmethod
     def file_loader(model_name, tree: Optional[NomenclatureTree] = None) -> dict:
@@ -221,7 +236,7 @@ class HierarchyBuilder:
                 self.data[model_name]["objects"]
             ):
                 logger.info("CODE: creating instances")
-                model.objects.bulk_create(self.data[model_name]["objects"])
+                model.all_objects.bulk_create(self.data[model_name]["objects"])
             else:
                 sys.exit()
 
@@ -688,10 +703,11 @@ class HierarchyBuilder:
         for item in self.data[parent_model.__name__]["data"]:
             if parent_model is Section:
                 if int(child_parent_code) in item["child_goods_nomenclature_sids"]:
-                    return Section.objects.get(section_id=int(item["section_id"]))
+                    return Section.get_active_objects(region=self.region).get(
+                        section_id=int(item["section_id"]))
             else:
                 try:
-                    return parent_model.objects.get(
+                    return parent_model.get_active_objects(region=self.region).get(
                         goods_nomenclature_sid=child_parent_code
                     )
                 except ObjectDoesNotExist as exception:
@@ -752,15 +768,14 @@ class HierarchyBuilder:
             json_data = json.load(f)
         return json_data
 
-    @staticmethod
-    def process_orphaned_subheadings():
+    def process_orphaned_subheadings(self):
         """
         this method is to be run after data scanner has created all hierarchy items in the database
         the method finds parents for all subheading items and updates the database accordingly
         """
 
         logger.info("Processing orphaned subheading parents")
-        subheadings = SubHeading.objects.filter(
+        subheadings = SubHeading.get_active_objects(region=self.region).filter(
             heading_id=None, parent_subheading_id=None
         )
 
@@ -768,7 +783,8 @@ class HierarchyBuilder:
         for subheading in subheadings:
             parent_sid = subheading.parent_goods_nomenclature_sid
             try:
-                parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
+                parent = SubHeading.get_active_objects(region=self.region).get(
+                    goods_nomenclature_sid=parent_sid)
                 subheading.parent_subheading_id = parent.pk
                 subheading.save()
             except ObjectDoesNotExist as exception:
@@ -778,7 +794,8 @@ class HierarchyBuilder:
                     )
                 )
                 try:
-                    parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
+                    parent = Heading.get_active_objects(region=self.region).get(
+                        goods_nomenclature_sid=parent_sid)
                     subheading.heading_id = parent.pk
                     subheading.save()
                 except ObjectDoesNotExist as exception:
@@ -790,8 +807,7 @@ class HierarchyBuilder:
             count = count + 1
         return count
 
-    @staticmethod
-    def process_orphaned_commodities(skip_commodity=False):
+    def process_orphaned_commodities(self, skip_commodity=False):
         """
         this method is to be run after data scanner has created all hierarchy items in the database
         the method finds parents for all commodty items and updates the database accordingly
@@ -799,7 +815,7 @@ class HierarchyBuilder:
         """
 
         logger.info("Processing orphaned commodity parents")
-        commodities = Commodity.objects.filter(
+        commodities = Commodity.get_active_objects(region=self.region).filter(
             heading_id=None, parent_subheading_id=None
         )
 
@@ -808,12 +824,12 @@ class HierarchyBuilder:
 
             try:
                 if parent_sid is None:
-                    subheading = SubHeading.objects.get(
+                    subheading = SubHeading.get_active_objects(region=self.region).get(
                         commodity_code=commodity.parent_goods_nomenclature_item_id
                     )
                     parent_sid = subheading.goods_nomenclature_sid
 
-                parent = SubHeading.objects.get(goods_nomenclature_sid=parent_sid)
+                parent = SubHeading.get_active_objects(region=self.region).get(goods_nomenclature_sid=parent_sid)
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
@@ -826,12 +842,13 @@ class HierarchyBuilder:
                 )
 
                 if parent_sid is None:
-                    heading = Heading.objects.get(
+                    heading = Heading.get_active_objects(region=self.region).get(
                         heading_code=commodity.parent_goods_nomenclature_item_id
                     )
                     parent_sid = heading.goods_nomenclature_sid
 
-                parent = Heading.objects.get(goods_nomenclature_sid=parent_sid)
+                parent = Heading.get_active_objects(region=self.region).get(
+                    goods_nomenclature_sid=parent_sid)
                 commodity.heading_id = parent.pk
 
             commodity.save()
