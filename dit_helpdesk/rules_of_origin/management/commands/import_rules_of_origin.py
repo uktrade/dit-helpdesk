@@ -57,19 +57,21 @@ class Command(BaseCommand):
                         if not filename.endswith(".csv") and not filename.startswith(
                             "."
                         ):
-                            importer.load(
+                            imported = importer.load(
                                 input_file=os.path.join(path, filename),
                                 output_file=os.path.join(
                                     path, filename.replace(".json", ".out.json")
                                 ),
                                 priority=options["priority"],
                             )
-                            importer.instance_builder()
+                            if imported:
+                                importer.instance_builder()
 
             else:
-                importer.load(
+                imported = importer.load(
                     input_file=path,
                     output_file=path.replace(".json", ".out.json"),
                     priority=options["priority"],
                 )
-                importer.instance_builder()
+                if imported:
+                    importer.instance_builder()
