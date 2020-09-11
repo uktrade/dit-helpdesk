@@ -42,7 +42,6 @@ class Command(BaseCommand):
             for cls in Rule, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember:
                 cls.objects.all().delete()
 
-        importer = RulesOfOriginImporter()
         if os.path.isdir(path):
             for root, dirs, files in os.walk(path):
                 if not all(
@@ -62,6 +61,7 @@ class Command(BaseCommand):
                     if not filename.endswith(".csv") and not filename.startswith(
                         "."
                     ):
+                        importer = RulesOfOriginImporter()
                         imported = importer.load(
                             input_file=os.path.join(path, filename),
                             output_file=os.path.join(
@@ -73,6 +73,7 @@ class Command(BaseCommand):
                             importer.instance_builder()
 
         else:
+            importer = RulesOfOriginImporter()
             imported = importer.load(
                 input_file=path,
                 output_file=path.replace(".json", ".out.json"),
