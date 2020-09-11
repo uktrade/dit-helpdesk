@@ -426,11 +426,11 @@ class RulesOfOriginImporter:
         group = group.replace(" ", "_").upper()
         group = re.sub(r"[()]", "", group)
         if group in self.rules_groups.keys() and isinstance(
-            self.rules_groups[group], list
+            self.rules_groups[group], set
         ):
-            self.rules_groups[group].append(country_codes[idx])
+            self.rules_groups[group].add(country_codes[idx])
         else:
-            self.rules_groups[group] = [country_codes[idx]]
+            self.rules_groups[group] = set([country_codes[idx]])
 
     def set_group_documents(self, documents_data):
         """
