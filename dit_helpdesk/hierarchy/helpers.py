@@ -1,5 +1,7 @@
 import datetime as dt
 
+from django.utils import timezone
+
 from .models import NomenclatureTree
 
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
@@ -192,11 +194,11 @@ def create_nomenclature_tree(region='EU'):
     one as ended.
 
     """
-    new_start_date = dt.datetime.today()
-
+    new_start_date = timezone.now()
     try:
         prev_tree = NomenclatureTree.objects.filter(
-            region=region
+            region=region,
+            end_date__isnull=True,
         ).latest('start_date')
 
         prev_tree.end_date = new_start_date - dt.timedelta(days=1)
