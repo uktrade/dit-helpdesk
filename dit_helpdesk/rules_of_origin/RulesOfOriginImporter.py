@@ -349,6 +349,7 @@ class RulesOfOriginImporter:
         of the data structure for review
         :param input_file: rules from rules document to be processed
         :param output_file: location of output log
+        :return: bool whether the data was imported for the file
         """
         logger.debug("importing file:{0}".format(input_file))
         logger.debug("priority:{0}".format(priority))
@@ -378,7 +379,7 @@ class RulesOfOriginImporter:
                 Path(input_file).name,
                 priority,
             )
-            return
+            return False
 
         if input_file:
             rules_of_origin_file = input_file
@@ -393,6 +394,10 @@ class RulesOfOriginImporter:
             # self.instance_builder()
 
             # self.data_writer(data_path.format("{0}/{1}".format(data_path, output_file)), self.data)
+
+            return True
+
+        return False
 
     def process_footnotes(self, footnotes):
 
@@ -426,11 +431,11 @@ class RulesOfOriginImporter:
         group = group.replace(" ", "_").upper()
         group = re.sub(r"[()]", "", group)
         if group in self.rules_groups.keys() and isinstance(
-            self.rules_groups[group], list
+            self.rules_groups[group], set
         ):
-            self.rules_groups[group].append(country_codes[idx])
+            self.rules_groups[group].add(country_codes[idx])
         else:
-            self.rules_groups[group] = [country_codes[idx]]
+            self.rules_groups[group] = set([country_codes[idx]])
 
     def set_group_documents(self, documents_data):
         """
