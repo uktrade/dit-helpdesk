@@ -38,10 +38,6 @@ def load_data():
     return data
 
 
-def _extend(a, b):
-    return a.extend(b)
-
-
 def _prepare_subsets(data, subsets, entities_left, parents):
     if not entities_left:
         return
@@ -50,7 +46,6 @@ def _prepare_subsets(data, subsets, entities_left, parents):
     limit = limits.get(entity)
     logger.info("Preparing subsets for %s", entity)
 
-    children_by_parent = defaultdict(list)
     children = []
     children_counts = Counter()
 
@@ -59,7 +54,6 @@ def _prepare_subsets(data, subsets, entities_left, parents):
         if parent_sid not in parents or children_counts[parent_sid] >= limit:
             continue
 
-        children_by_parent[parent_sid].append(item["goods_nomenclature_sid"])
         children.append(item["goods_nomenclature_sid"])
         children_counts[parent_sid] += 1
         subsets[entity].append(item)
@@ -82,7 +76,7 @@ def prepare_subsets(data):
     sections = data["sections"]
 
     children = set()
-    #import ipdb; ipdb.set_trace()
+
     for section in sections[:limits.get("sections")]:
         subsets["sections"].append(section)
         children = children | (
@@ -90,13 +84,13 @@ def prepare_subsets(data):
                 section["child_goods_nomenclature_sids"][:limits.get("chapters")]
             )
         )
-    #import ipdb; ipdb.set_trace()
+
     for chapter in data["chapters"]:
         chapter_sid = chapter["goods_nomenclature_sid"]
         if chapter_sid not in children:
             continue
         subsets["chapters"].append(chapter)
-    #import ipdb; ipdb.set_trace()
+
     _prepare_subsets(data, subsets, entities[2:], children)
 
     return subsets
