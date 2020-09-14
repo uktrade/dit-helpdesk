@@ -28,7 +28,6 @@ django-extensions = "*"
 graphviz = "*"
 pygraphviz = "*"
 
-
 [packages]
 beautifulsoup4 = "==4.7.0"
 certifi = "==2018.11.29"
@@ -81,6 +80,7 @@ django-environ = "*"
 Django = "==2.2.13"
 gevent = "==1.4.0"
 elastic-apm = "*"
+parameterized = "*"
 
 [requires]
 python_version = "3.6"

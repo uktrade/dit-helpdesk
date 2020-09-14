@@ -753,7 +753,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
     reversedList = reversed(commodity_path)
 
     for index, lista in enumerate(reversedList):
-        if index is 0:
+        if index == 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += "<nav>"
         else:

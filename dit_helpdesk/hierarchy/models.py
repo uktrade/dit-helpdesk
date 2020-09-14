@@ -35,6 +35,12 @@ class TreeSelectorMixin:
             nomenclature_tree__end_date__isnull=True,
         )
 
+    def save(self):
+        if not self.nomenclature_tree:
+            self.nomenclature_tree = NomenclatureTree.get_active_tree('EU')
+
+        super().save()
+
 
 class NomenclatureTree(models.Model):
     """
@@ -43,8 +49,24 @@ class NomenclatureTree(models.Model):
 
     """
     region = models.CharField(max_length=2)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True)
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True)
+
+    @classmethod
+    def get_active_tree(cls, region='EU'):
+
+        try:
+            prev_tree = NomenclatureTree.objects.filter(
+                region=region,
+                end_date__isnull=True,
+            ).latest('start_date')
+        except NomenclatureTree.DoesNotExist:
+            prev_tree = None
+
+        return prev_tree
+
+    def __str__(self):
+        return f"{self.region} {self.start_date} - {self.end_date}"
 
 
 class Section(models.Model, TreeSelectorMixin):

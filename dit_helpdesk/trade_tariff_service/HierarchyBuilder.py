@@ -57,7 +57,11 @@ class HierarchyBuilder:
         self.headings = []
         self.commodities = []
         self.heading_codes = []
-        self.region = region
+
+        if new_tree:
+            self.region = new_tree.region
+        else:
+            self.region = region
 
         self._new_tree = new_tree
 
@@ -163,7 +167,7 @@ class HierarchyBuilder:
         elif model is Commodity:
 
             if parent is not None:
-                if parent.__class__.__name__ is "Heading":
+                if parent.__class__.__name__ == "Heading":
                     data["heading_id"] = parent.pk
                 else:
                     data["parent_subheading_id"] = parent.pk

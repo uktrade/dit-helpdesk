@@ -193,18 +193,16 @@ def create_nomenclature_tree(region='EU'):
     """Create new nomenclature tree and mark the previous most recent
     one as ended.
 
+    Recommended to run inside transaction, especially if deleting the old tree,
+    as when this function returns there are no nomenclature objects attached to the new tree.
+
     """
     new_start_date = timezone.now()
-    try:
-        prev_tree = NomenclatureTree.objects.filter(
-            region=region,
-            end_date__isnull=True,
-        ).latest('start_date')
 
+    prev_tree = NomenclatureTree.get_active_tree(region)
+    if prev_tree:
         prev_tree.end_date = new_start_date - dt.timedelta(days=1)
         prev_tree.save()
-    except NomenclatureTree.DoesNotExist:
-        pass
 
     tree = NomenclatureTree.objects.create(
         region=region,
@@ -213,6 +211,15 @@ def create_nomenclature_tree(region='EU'):
     )
 
     return tree
+
+
+def delete_all_inactive_trees(region):
+    inactive_trees = NomenclatureTree.objects.filter(
+        region=region,
+        end_date__isnull=False,
+    ).all()
+
+    inactive_trees.delete()
 
 
 def fill_tree_in_json_data(json_data, tree):
