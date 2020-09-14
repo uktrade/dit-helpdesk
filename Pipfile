@@ -27,6 +27,7 @@ pluggy = "==0.13.1"
 django-extensions = "*"
 graphviz = "*"
 pygraphviz = "*"
+parameterized = "*"
 
 [packages]
 beautifulsoup4 = "==4.7.0"
@@ -80,7 +81,6 @@ django-environ = "*"
 Django = "==2.2.13"
 gevent = "==1.4.0"
 elastic-apm = "*"
-parameterized = "*"
 
 [requires]
 python_version = "3.6"
