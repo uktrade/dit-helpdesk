@@ -15,6 +15,33 @@ logger = logging.getLogger(__name__)
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
+class EUHierarchyManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            nomenclature_tree__region='EU',
+            nomenclature_tree__end_date__isnull=True
+        )
+
+
+class TreeSelectorMixin:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def get_active_objects(cls, region):
+        return cls.all_objects.filter(
+            nomenclature_tree__region=region,
+            nomenclature_tree__end_date__isnull=True,
+        )
+
+    def save(self):
+        if not self.nomenclature_tree:
+            self.nomenclature_tree = NomenclatureTree.get_active_tree('EU')
+
+        super().save()
+
+
 class NomenclatureTree(models.Model):
     """
     Model to identify which tree does a nomenclature object belong to, differentiated
@@ -22,23 +49,49 @@ class NomenclatureTree(models.Model):
 
     """
     region = models.CharField(max_length=2)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True)
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True)
+
+    @classmethod
+    def get_active_tree(cls, region='EU'):
+
+        try:
+            prev_tree = NomenclatureTree.objects.filter(
+                region=region,
+                end_date__isnull=True,
+            ).latest('start_date')
+        except NomenclatureTree.DoesNotExist:
+            prev_tree = None
+
+        return prev_tree
+
+    def __str__(self):
+        return f"{self.region} {self.start_date} - {self.end_date}"
 
 
-class Section(models.Model):
+class Section(models.Model, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
+    objects = EUHierarchyManager()
+    all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-    section_id = models.IntegerField(unique=True)
+    section_id = models.IntegerField()
     tts_json = models.TextField(blank=True)
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
     position = models.IntegerField()
     keywords = models.TextField(null=True)
     ranking = models.SmallIntegerField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['section_id', 'nomenclature_tree'],
+                name='unique section'
+            )
+        ]
 
     def __str__(self):
         return "Section {0}".format(self.roman_numeral)
@@ -193,10 +246,12 @@ class Section(models.Model):
         return None
 
 
-class Chapter(models.Model):
+class Chapter(models.Model, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
+    objects = EUHierarchyManager()
+    all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
@@ -503,7 +558,10 @@ class Chapter(models.Model):
         return self.section
 
 
-class Heading(models.Model):
+class Heading(models.Model, TreeSelectorMixin):
+    objects = EUHierarchyManager()
+    all_objects = models.Manager()
+
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     goods_nomenclature_sid = models.CharField(max_length=10)
@@ -795,7 +853,10 @@ class Heading(models.Model):
         return self.chapter
 
 
-class SubHeading(models.Model):
+class SubHeading(models.Model, TreeSelectorMixin):
+    objects = EUHierarchyManager()
+    all_objects = models.Manager()
+
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     productline_suffix = models.CharField(max_length=2)
@@ -834,7 +895,7 @@ class SubHeading(models.Model):
     )
 
     class Meta:
-        unique_together = ("commodity_code", "description")
+        unique_together = ("commodity_code", "description", "nomenclature_tree")
 
     def __str__(self):
         return "Sub Heading {0}".format(self.commodity_code)

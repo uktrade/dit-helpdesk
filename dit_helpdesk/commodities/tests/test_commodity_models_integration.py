@@ -8,6 +8,7 @@ from mixer.backend.django import mixer
 
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter
+from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,11 @@ class TestHeadingModel(TestCase):
         relationships between the three model instances
         :return:
         """
+        self.tree = create_nomenclature_tree('EU')
+
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            mixer.register(model, nomenclature_tree=self.tree)
+
         self.section = mixer.blend(Section, section_id=1)
         self.chapter = mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
@@ -69,6 +75,11 @@ class TestSubHeadingModel(TestCase):
         relationships between the three model instances
         :return:
         """
+        self.tree = create_nomenclature_tree('EU')
+
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            mixer.register(model, nomenclature_tree=self.tree)
+
         self.section = mixer.blend(Section, section_id=1)
         self.chapter = mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
@@ -109,6 +120,11 @@ class TestCommodityModel(TestCase):
         relationships between the three model instances
         :return:
         """
+        self.tree = create_nomenclature_tree('EU')
+
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            mixer.register(model, nomenclature_tree=self.tree)
+
         self.section = mixer.blend(Section, section_id=1)
         self.chapter = mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
