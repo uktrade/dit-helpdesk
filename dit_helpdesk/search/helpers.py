@@ -2,9 +2,12 @@ import logging
 import json
 
 from django_elasticsearch_dsl.search import Search
+from elasticsearch_dsl.response.hit import Hit
 from elasticsearch import Elasticsearch
 
 from django.conf import settings
+
+from hierarchy.models import NomenclatureTree
 
 
 logger = logging.getLogger(__name__)
@@ -12,6 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def search_by_term(form_data=None):
+    tree = NomenclatureTree.get_active_tree('EU')
 
     client = Elasticsearch(hosts=[settings.ES_URL])
 
@@ -24,19 +28,22 @@ def search_by_term(form_data=None):
             "operator": "and" if "," not in form_data.get("q") else "or",
         }
     }
+    filter_object ={
+        "term": {"nomenclature_tree_id": tree.pk}
+    }
+
+    request = (
+        Search()
+        .using(client)
+        .query(query_object)
+        .filter(filter_object)
+        .sort(sort_object)
+    )
 
     filter_on_leaf = True if form_data.get("toggle_headings") == "1" else False
 
     if filter_on_leaf:
-        request = (
-            Search()
-            .using(client)
-            .query(query_object)
-            .sort(sort_object)
-            .filter("term", leaf=filter_on_leaf)
-        )
-    else:
-        request = Search().using(client).query(query_object).sort(sort_object)
+        request = request.filter("term", leaf=filter_on_leaf)
 
     start = (int(form_data.get("page")) - 1) * settings.RESULTS_PER_PAGE
     end = start + settings.RESULTS_PER_PAGE
@@ -71,10 +78,15 @@ def search_by_term(form_data=None):
 
 
 def search_by_code(code):
+    tree = NomenclatureTree.get_active_tree('EU')
+
     processed_query = process_commodity_code(code)
     query_object = {"term": {"commodity_code": processed_query}}
+    filter_object = {
+        "term": {"nomenclature_tree_id": tree.pk}
+    }
     client = Elasticsearch(hosts=[settings.ES_URL])
-    hits = Search().using(client).query(query_object)
+    hits = Search().using(client).query(query_object).filter(filter_object)
     for hit in hits:
         try:
             hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
@@ -125,3 +137,11 @@ def process_commodity_code(code):
     else:
         result = code
         return result
+
+
+def get_alias_from_hit(hit: Hit) -> str:
+    """The indexes are named (by our convention) in the form of {alias}-{datetime}.
+    Given an ElasticSearch hit return the alias of index"""
+
+    alias = hit.meta["index"].split("-")[0]
+    return alias
