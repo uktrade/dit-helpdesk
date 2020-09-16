@@ -253,31 +253,10 @@ class RulesOfOriginImporter:
                     try:
                         rule_instance, created = Rule.objects.get_or_create(
                             rule_id=rule["id"],
-                            description="".join(
-                                [
-                                    "<p>{0}</p>".format(text)
-                                    for text in rule["description"]
-                                ]
-                            )
-                            if len(rule["description"]) > 0
-                            else "",
+                            description=self.format_rule_text(rule["description"]),
                             is_exclusion=rule["exclusion"],
-                            working_or_processing_one="".join(
-                                [
-                                    "<p>{0}</p>".format(text)
-                                    for text in rule["workingLeft"]
-                                ]
-                            )
-                            if len(rule["workingLeft"]) > 0
-                            else "",
-                            working_or_processing_two="".join(
-                                [
-                                    "<p>{0}</p>".format(text)
-                                    for text in rule["workingRight"]
-                                ]
-                            )
-                            if len(rule["workingRight"]) > 0
-                            else "",
+                            working_or_processing_one=self.format_rule_text(rule["workingLeft"]),
+                            working_or_processing_two=self.format_rule_text(rule["workingRight"]),
                             chapter=related_chapter,
                             rules_document=rules_document,
                         )
@@ -763,3 +742,6 @@ class RulesOfOriginImporter:
             logger.debug("no level")
 
         return related_objects
+
+    def format_rule_text(self, text):
+        return "".join(f"<p>{line}</p>" for line in text)
