@@ -8,6 +8,7 @@ from mixer.backend.django import mixer
 
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.helpers import create_nomenclature_tree
 from hierarchy.views import _get_hierarchy_level_html, _commodity_code_html
 from search.forms import CommoditySearchForm
 from search.views import search_hierarchy
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class CommoditySetupMixin:
     def setUp(self):
+        self.tree = create_nomenclature_tree('EU')
         self.section = mixer.blend(
             Section,
             section_id=10,
@@ -26,6 +28,7 @@ class CommoditySetupMixin:
             roman_numeral="X",
             tts_json="{}",
             commodity_code=10,
+            nomenclature_tree=self.tree,
         )
         """create three chapters starting at 47 and attach to section 10"""
         self.chapters = mixer.cycle(3).blend(
@@ -34,6 +37,7 @@ class CommoditySetupMixin:
             section=self.section,
             chapter_code=(x for x in [4700000000, 4800000000, 4900000000]),
             goods_nomenclature_sid=(x for x in [4700000000, 4800000000, 4900000000]),
+            nomenclature_tree=self.tree,
         )
         """create 11 headings starting at 4901 and attached to chapter 49"""
         self.headings = mixer.cycle(11).blend(
@@ -71,6 +75,7 @@ class CommoditySetupMixin:
                     4911000000,
                 ]
             ),
+            nomenclature_tree=self.tree,
         )
         """create 6 subheadings starting at 4901 attached to heading 4901"""
         self.parent_subheadings = mixer.cycle(6).blend(
@@ -98,6 +103,7 @@ class CommoditySetupMixin:
                     4911000000,
                 ]
             ),
+            nomenclature_tree=self.tree,
         )
         """create 2 subheadings attached to subheading 4911"""
         self.subheadings = mixer.cycle(2).blend(
@@ -105,6 +111,7 @@ class CommoditySetupMixin:
             parent_subheading=self.parent_subheadings[5],
             commodity_code=(x for x in [4911100000, 4911910000]),
             goods_nomenclature_sid=(x for x in [4911100000, 4911910000]),
+            nomenclature_tree=self.tree,
         )
         """create 1 subheading attached to subheading 491191"""
         self.sub_subheadings = mixer.cycle(1).blend(
@@ -112,6 +119,7 @@ class CommoditySetupMixin:
             parent_subheading=self.subheadings[1],
             commodity_code=4911910000,
             goods_nomenclature_sid=4911910000,
+            nomenclature_tree=self.tree,
         )
         """create 3 commodites attached to """
         self.commodities = mixer.cycle(3).blend(
@@ -120,6 +128,7 @@ class CommoditySetupMixin:
             commodity_code=(x for x in [4911910010, 4911910090, 4911990000]),
             goods_nomenclature_sid=(x for x in [4911910010, 4911910090, 4911990000]),
             description=(x for x in ["Paper", "Scissors", "Rock"]),
+            nomenclature_tree=self.tree,
         )
         self.client = Client()
 

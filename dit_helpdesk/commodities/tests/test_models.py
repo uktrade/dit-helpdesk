@@ -8,6 +8,7 @@ from django.urls import NoReverseMatch
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Chapter, Section
+from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
@@ -28,17 +29,19 @@ class CommodityTestCase(TestCase):
     """
 
     def setUp(self):
-        self.section = mixer.blend(Section, section_id=1)
+        self.tree = create_nomenclature_tree('EU')
+        self.section = mixer.blend(Section, section_id=1, nomenclature_tree=self.tree)
         self.chapter = mixer.blend(
-            Chapter, chapter_code="0100000000", section=self.section
+            Chapter, chapter_code="0100000000", section=self.section, nomenclature_tree=self.tree
         )
 
         self.heading = mixer.blend(
-            Heading, heading_code="0101000000", chapter=self.chapter
+            Heading, heading_code="0101000000", chapter=self.chapter, nomenclature_tree=self.tree
         )
 
         self.subheading = mixer.blend(
-            SubHeading, commodity_code="0101210000", heading=self.heading
+            SubHeading, commodity_code="0101210000", heading=self.heading,
+            nomenclature_tree=self.tree
         )
 
         self.commodity = mixer.blend(
@@ -47,6 +50,7 @@ class CommodityTestCase(TestCase):
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
 
     def test_str(self):
@@ -111,13 +115,14 @@ class CommodityTestCase(TestCase):
         self.assertTrue(self.commodity.get_path(parent=parent, tree=tree, level=level))
 
     def test_get_path_returns_list_with_no_parent_subheading(self):
-        section = mixer.blend(Section, section_id=10)
+        section = mixer.blend(Section, section_id=10, nomenclature_tree=self.tree)
 
         chapter = mixer.blend(
             Chapter,
             chapter_code="4700000000",
             section=section,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
 
         heading = mixer.blend(
@@ -125,6 +130,7 @@ class CommodityTestCase(TestCase):
             heading_code="4702000000",
             chapter=chapter,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
 
         commodity = mixer.blend(
@@ -132,6 +138,7 @@ class CommodityTestCase(TestCase):
             commodity_code="4702000000",
             heading=heading,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
 
         self.assertTrue(
@@ -143,33 +150,38 @@ class CommodityTestCase(TestCase):
         )
 
     def test_get_path_returns_list_with_multiple_parent_subheadings(self):
-        section = mixer.blend(Section, section_id=10)
+        section = mixer.blend(Section, section_id=10, nomenclature_tree=self.tree)
 
-        chapter = mixer.blend(Chapter, chapter_code="4700000000", section=section)
+        chapter = mixer.blend(
+            Chapter, chapter_code="4700000000", section=section, nomenclature_tree=self.tree)
 
         heading = mixer.blend(
             Heading,
             heading_code="4704000000",
             chapter=chapter,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
         subheading = mixer.blend(
             SubHeading,
             commodity_code="4704000000",
             heading=heading,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
         sub_subheading = mixer.blend(
             SubHeading,
             commodity_code="4704110000",
             parent_subheading=subheading,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
         commodity = mixer.blend(
             Commodity,
             commodity_code="4702000000",
             parent_subheading=sub_subheading,
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
         self.assertTrue(
             "4704110000"
@@ -245,7 +257,7 @@ class CommodityTestCase(TestCase):
         )
 
     def test_heading_leaf_update_content(self):
-        commodity = mixer.blend(Commodity, commodity_code="0510000000")
+        commodity = mixer.blend(Commodity, commodity_code="0510000000", nomenclature_tree=self.tree)
 
         commodity.update_content()
         content = json.loads(commodity.tts_json)

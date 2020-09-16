@@ -9,6 +9,7 @@ from mixer.backend.django import mixer
 
 from commodities.models import Commodity
 from hierarchy.models import Heading, SubHeading
+from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.tts_api import ImportMeasureJson
 
 logger = logging.getLogger(__name__)
@@ -28,22 +29,27 @@ class CommodityJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        self.tree = create_nomenclature_tree('EU')
+
         self.heading = mixer.blend(
             Heading,
             heading_code=settings.TEST_HEADING_CODE,
             description=settings.TEST_HEADING_DESCRIPTION,
+            nomenclature_tree=self.tree,
         )
         self.subheading = mixer.blend(
             SubHeading,
             commodity_code="0101210000",
             description="Horses",
             heading=self.heading,
+            nomenclature_tree=self.tree,
         )
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
             tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
             parent_subheading=self.subheading,
+            nomenclature_tree=self.tree,
         )
 
     def test_commodity_json_repr(self):
