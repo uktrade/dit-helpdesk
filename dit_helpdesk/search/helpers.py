@@ -9,13 +9,22 @@ from django.conf import settings
 
 from hierarchy.models import NomenclatureTree
 
+from search.documents.section import INDEX as section_index
+from search.documents.chapter import INDEX as chapter_index
+from search.documents.heading import INDEX as heading_index
+from search.documents.subheading import INDEX as sub_heading_index
+from search.documents.commodity import INDEX as commodity_index
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
+alias_names = [idx._name for idx in indices]
+
+
 def search_by_term(form_data=None):
-    tree = NomenclatureTree.get_active_tree('EU')
 
     client = Elasticsearch(hosts=[settings.ES_URL])
 
@@ -28,15 +37,12 @@ def search_by_term(form_data=None):
             "operator": "and" if "," not in form_data.get("q") else "or",
         }
     }
-    filter_object ={
-        "term": {"nomenclature_tree_id": tree.pk}
-    }
 
     request = (
         Search()
+        .index(*alias_names)    # these are really alias names which is what we want to use
         .using(client)
         .query(query_object)
-        .filter(filter_object)
         .sort(sort_object)
     )
 
@@ -86,7 +92,13 @@ def search_by_code(code):
         "term": {"nomenclature_tree_id": tree.pk}
     }
     client = Elasticsearch(hosts=[settings.ES_URL])
-    hits = Search().using(client).query(query_object).filter(filter_object)
+    hits = (
+        Search()
+        .index(*alias_names)
+        .using(client)
+        .query(query_object)
+        .filter(filter_object)
+    )
     for hit in hits:
         try:
             hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
