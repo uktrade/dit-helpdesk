@@ -124,6 +124,9 @@ class Section(models.Model):
                 if not item:
                     continue
 
+                # 2.A.
+                # Matches:
+                #   1: 2.A.
                 match = re.search(r"^(\d\.[A-Z]\.)$", item)
                 if match:
                     section_notes.append(
@@ -133,6 +136,17 @@ class Section(models.Model):
                     )
                     continue
 
+                # '* 1\\. This is some text'
+                # Matches:
+                #   1: * 
+                #   2: 1
+                #   3: This is some text
+                #
+                # '2. This is some text'
+                # Matches:
+                #   1: ''
+                #   2: 1
+                #   3: This is some text
                 match = re.search(r"^(\* )?([\dA-Z])\\*\. (.+)", item)
                 if match:
                     section_notes.append(
@@ -142,6 +156,11 @@ class Section(models.Model):
                     )
                     continue
 
+                # 12.This is some text
+                # Matches:
+                #   1: 
+                #   2: 12
+                #   3: This is some text
                 match = re.search(r"^(\* )?([\d]+)\\*\.(.+)$", item)
                 if match:
                     section_notes.append(
@@ -151,6 +170,10 @@ class Section(models.Model):
                     )
                     continue
 
+                # * (B) This is some text
+                # Matches:
+                #   1: B
+                #   2: This is some text
                 match = re.search(r"^ *\* *\((\w+)\) (.+)", item)
                 if match:
                     section_notes.append(
@@ -160,6 +183,9 @@ class Section(models.Model):
                     )
                     continue
 
+                # - This is some text
+                # Matches:
+                #   1: This is some text
                 match = re.search(r"^— (.+)", item)
                 if match:
                     section_notes.append(
@@ -169,6 +195,9 @@ class Section(models.Model):
                     )
                     continue
 
+                # * This is some text
+                # Matches:
+                #   1: This is some text
                 match = re.search(r"^\* ([^\d.]+)", item)
                 if match:
                     section_notes.append(
@@ -178,6 +207,9 @@ class Section(models.Model):
                     )
                     continue
 
+                # ###Note###
+                # Matches:
+                #   1: Note
                 match = re.search(r"^#{2,3} ?([\w ]+)#{2,3} ?", item)
                 if match:
                     section_notes.append(
