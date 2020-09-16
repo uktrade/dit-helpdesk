@@ -9,6 +9,7 @@ from hierarchy.models import (
     Heading,
     SubHeading,
 )
+from hierarchy.helpers import create_nomenclature_tree
 
 from ..models import Regulation
 
@@ -18,8 +19,10 @@ class InheritedRegulationsTestCase(TestCase):
     Test regulations manager inherited
     """
 
-    def test_models_without_regulations(self):
-        model_classes = [
+    def setUp(self):
+        self.tree = create_nomenclature_tree('EU')
+
+        self.model_classes = [
             Chapter,
             Section,
             Heading,
@@ -27,7 +30,12 @@ class InheritedRegulationsTestCase(TestCase):
             Commodity,
         ]
 
-        for model_class in model_classes:
+        for model_class in self.model_classes:
+            mixer.register(model_class, nomenclature_tree=self.tree)
+
+    def test_models_without_regulations(self):
+
+        for model_class in self.model_classes:
             obj = mixer.blend(model_class)
             self.assertFalse(obj.regulation_set.exists())
             regulations = Regulation.objects.inherited(obj)
