@@ -6,6 +6,7 @@ from django.test import TestCase
 from mixer.backend.django import mixer
 
 from hierarchy.models import Chapter, Heading, Section
+from hierarchy.helpers import create_nomenclature_tree
 from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
 from rules_of_origin.models import (
     Rule,
@@ -75,13 +76,14 @@ class ImporterTestCase(TestCase):
         self.assertEqual(len(RulesDocumentFootnote.objects.all()), 0)
 
     def test_instance_builder_for_existing_items_with_hierarchy(self):
+        tree = create_nomenclature_tree('EU')
 
-        section = mixer.blend(Section, section_id=1)
+        section = mixer.blend(Section, section_id=1, nomenclature_tree=tree)
 
         chapters = mixer.cycle(3).blend(
             Chapter,
             chapter_code=(x for x in ["0100000000", "0200000000", "0300000000"]),
-            section=section,
+            section=section, nomenclature_tree=tree
         )
 
         headings = mixer.cycle(4).blend(
@@ -90,6 +92,7 @@ class ImporterTestCase(TestCase):
                 x for x in ["0304000000", "0305000000", "0306000000", "0307000000"]
             ),
             chapter=chapters[2],
+            nomenclature_tree=tree,
         )
 
         # model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]

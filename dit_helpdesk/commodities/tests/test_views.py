@@ -18,15 +18,10 @@ from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocu
 logger = logging.getLogger(__name__)
 
 
-tree = create_nomenclature_tree(region='EU')
-
-
 def get_data(file_path):
     """This retrieves JSON data for only a single nomenclature object"""
     with open(file_path) as f:
         json_data = json.load(f)
-
-    json_data["nomenclature_tree_id"] = tree.pk
 
     return json_data
 
@@ -39,7 +34,7 @@ class CommodityViewTestCase(TestCase):
 
     def create_instance(self, data, app_name, model_name):
         model = apps.get_model(app_label=app_name, model_name=model_name)
-        instance = model(**data)
+        instance = model(**data, nomenclature_tree=self.tree)
         instance.save()
         return instance
 
@@ -49,6 +44,7 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
+        self.tree = create_nomenclature_tree(region='EU')
 
         self.section = self.create_instance(
             get_data(settings.SECTION_STRUCTURE), "hierarchy", "Section"
@@ -258,11 +254,14 @@ class MeasureConditionDetailTestCase(TestCase):
     """
 
     def setUp(self):
+        self.tree = create_nomenclature_tree(region='EU')
+
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
             tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
             goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
         )
 
     fixtures = ["../../countries/fixtures/countries_data.json"]

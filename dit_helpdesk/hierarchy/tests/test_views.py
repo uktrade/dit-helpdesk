@@ -18,10 +18,8 @@ logger.setLevel(logging.INFO)
 TEST_COMMODITY_CODE = "0101210000"
 TEST_SUBHEADING_CODE = "0101210000"
 
-tree = create_nomenclature_tree(region='EU')
 
-
-def get_data(file_path):
+def get_data(file_path, tree):
     with open(file_path) as f:
         json_data = json.load(f)
 
@@ -49,33 +47,35 @@ class HierarchyViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
+        self.tree = create_nomenclature_tree(region='EU')
+
         self.section = create_instance(
-            get_data(settings.SECTION_STRUCTURE), "hierarchy", "Section"
+            get_data(settings.SECTION_STRUCTURE, self.tree), "hierarchy", "Section"
         )
 
         self.chapter = create_instance(
-            get_data(settings.CHAPTER_STRUCTURE), "hierarchy", "Chapter"
+            get_data(settings.CHAPTER_STRUCTURE, self.tree), "hierarchy", "Chapter"
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
         self.heading = create_instance(
-            get_data(settings.HEADING_STRUCTURE), "hierarchy", "Heading"
+            get_data(settings.HEADING_STRUCTURE, self.tree), "hierarchy", "Heading"
         )
         self.heading.chapter_id = self.chapter.pk
         self.heading.save()
 
         self.subheading = create_instance(
-            get_data(settings.SUBHEADING_STRUCTURE), "hierarchy", "SubHeading"
+            get_data(settings.SUBHEADING_STRUCTURE, self.tree), "hierarchy", "SubHeading"
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
         self.commodity = create_instance(
-            get_data(settings.COMMODITY_STRUCTURE), "commodities", "Commodity"
+            get_data(settings.COMMODITY_STRUCTURE, self.tree), "commodities", "Commodity"
         )
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
 
         self.commodity.save()
 
