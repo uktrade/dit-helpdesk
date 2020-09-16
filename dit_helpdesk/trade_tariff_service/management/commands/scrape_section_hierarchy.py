@@ -3,8 +3,10 @@ import sys
 from time import sleep
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from hierarchy.models import Section
+from hierarchy.helpers import delete_all_inactive_trees
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
@@ -16,15 +18,26 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("section_id", type=int, nargs="?", default=None)
         parser.add_argument("--skip_commodity", type=bool, default=False)
+        parser.add_argument("--delete-old", type=bool, default=False)
 
     def handle(self, *args, **options):
-        sections = Section.objects.all()
-        if len(sections) > 0:
-            logger.info("It looks like the hierarchy already exists.")
-            return
 
-        builder = HierarchyBuilder()
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder.data_scanner(model_names)
-        builder.process_orphaned_subheadings()
-        builder.process_orphaned_commodities(options['skip_commodity'])
+
+        with transaction.atomic():
+
+            with transaction.atomic():
+                builder = HierarchyBuilder(region='EU')
+                builder.data_scanner(model_names)
+                builder.process_orphaned_subheadings()
+                builder.process_orphaned_commodities(options['skip_commodity'])
+
+            with transaction.atomic():
+                builder = HierarchyBuilder(region='UK')
+                builder.data_scanner(model_names)
+                builder.process_orphaned_subheadings()
+                builder.process_orphaned_commodities(options['skip_commodity'])
+
+            if options['delete_old']:
+                delete_all_inactive_trees('EU')
+                delete_all_inactive_trees('UK')

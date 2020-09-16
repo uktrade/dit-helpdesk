@@ -28,7 +28,8 @@ class HierarchyBuilderTestCase(TestCase):
     Test Hierarchy Importer
     """
 
-    tree = create_nomenclature_tree(region='EU')
+    def setUp(self):
+        self.tree = create_nomenclature_tree(region='EU')
 
     def test_file_loader(self):
         sections = HierarchyBuilder().file_loader(model_name="Section", tree=self.tree)
@@ -171,12 +172,14 @@ class HierarchyBuilderTestCase(TestCase):
             app_label=hierarchy_model_map[parent_model_name]["app_name"],
             model_name=parent_model_name,
         )
+
         for parent in builder.data[parent_model_name]["data"]:
             if child_model_code in parent["child_goods_nomenclature_sids"]:
                 parent_instance_data = builder.rename_key(
                     parent, "child_goods_nomenclature_sids", "tts_json"
                 )
-                parent_model.objects.create(**parent_instance_data)
+                parent_model.objects.create(**parent_instance_data, nomenclature_tree=self.tree)
+
         self.assertEqual(builder.lookup_parent(parent_model, "27623").section_id, 1)
 
     def test_lookup_parent_for_heading(self):
@@ -197,10 +200,14 @@ class HierarchyBuilderTestCase(TestCase):
                 parent_instance_data = builder.rename_key(
                     parent, "goods_nomenclature_item_id", "chapter_code"
                 )
-                parent_model.objects.create(**parent_instance_data)
+                parent_model.objects.create(**parent_instance_data, nomenclature_tree=self.tree)
         self.assertEqual(
             builder.lookup_parent(parent_model, "27623").description, "LIVE ANIMALS"
         )
+
+    def test_incorrect_instantiation(self):
+        with self.assertRaises(ValueError):
+            HierarchyBuilder(region='EU', new_tree='some fake tree')
 
     # def test_processed_orphan_subheadings(self):
     #

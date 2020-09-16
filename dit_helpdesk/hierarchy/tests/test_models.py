@@ -5,6 +5,7 @@ from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter
+from hierarchy.helpers import create_nomenclature_tree
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -19,8 +20,10 @@ class SectionTestCase(TestCase):
 
     def setUp(self):
 
+        self.tree = create_nomenclature_tree('EU')
+
         self.section = mixer.blend(
-            Section, section_id=1, roman_numeral="I", tts_json="[]"
+            Section, section_id=1, roman_numeral="I", tts_json="[]", nomenclature_tree=self.tree
         )
 
     def test_str(self):
@@ -42,7 +45,7 @@ class SectionTestCase(TestCase):
 
     def test_has_hierarchy_children(self):
         self.chapters = mixer.cycle(5).blend(
-            Chapter, section=self.section, chapter_code=seq(0)
+            Chapter, section=self.section, chapter_code=seq(0), nomenclature_tree=self.tree
         )
 
         children = self.section.get_hierarchy_children()
@@ -75,13 +78,13 @@ class SectionTestCase(TestCase):
 
     def test_chapter_range_str_with_one_child_chapter_with_chapter_id_1(self):
         self.chapters = mixer.cycle(1).blend(
-            Chapter, section=self.section, chapter_code=seq(0)
+            Chapter, section=self.section, chapter_code=seq(0), nomenclature_tree=self.tree
         )
         self.assertEquals(self.section.chapter_range_str, "1")
 
     def test_chapter_range_str_with_5_chapters_returns_1_to_5_as_str(self):
         self.chapters = mixer.cycle(5).blend(
-            Chapter, section=self.section, chapter_code=seq(0)
+            Chapter, section=self.section, chapter_code=seq(0), nomenclature_tree=self.tree
         )
         self.assertEquals(self.section.chapter_range_str, "1 to 5")
 
@@ -93,8 +96,9 @@ class ChapterTestCase(TestCase):
     """
 
     def setUp(self):
+        self.tree = create_nomenclature_tree('EU')
 
-        self.chapter = mixer.blend(Chapter, tts_json="{}")
+        self.chapter = mixer.blend(Chapter, tts_json="{}", nomenclature_tree=self.tree)
 
     def test_str(self):
         self.assertEquals(
@@ -135,19 +139,24 @@ class ChapterTestCase(TestCase):
         )
 
     def test_chapter_has_5_child_headings(self):
-        self.headings = mixer.cycle(5).blend(Heading, chapter=self.chapter)
+        self.headings = mixer.cycle(5).blend(
+            Heading, chapter=self.chapter, nomenclature_tree=self.tree)
         self.assertTrue(len(self.chapter.headings.all()) == 5)
 
     def test_chapter_has_child_headings(self):
-        self.headings = mixer.cycle(5).blend(Heading, chapter=self.chapter)
+        self.headings = mixer.cycle(5).blend(
+            Heading, chapter=self.chapter, nomenclature_tree=self.tree)
         self.assertTrue(self.chapter.headings.all())
 
     def test_get_hierarchy_children_returns_list_of_child_items(self):
         """build a subsection of the structure"""
-        section = mixer.blend(Section, section_id=10, roman_numeral="X", tts_json="{}")
+        section = mixer.blend(
+            Section, section_id=10, roman_numeral="X", tts_json="{}",
+            nomenclature_tree=self.tree)
         """create three chapters starting at 47 and attach to section 10"""
         chapters = mixer.cycle(3).blend(
-            Chapter, tts_json="{}", section=section, chapter_code=seq(46)
+            Chapter, tts_json="{}", section=section, chapter_code=seq(46),
+            nomenclature_tree=self.tree
         )
         """create 11 headings starting at 4901 and attached to chapter 49"""
         headings = mixer.cycle(11).blend(
@@ -169,6 +178,7 @@ class ChapterTestCase(TestCase):
                     4911000000,
                 ]
             ),
+            nomenclature_tree=self.tree,
         )
         """create 6 subheadings starting at 4901 attached to heading 4901"""
         parent_subheadings = mixer.cycle(6).blend(
@@ -185,22 +195,26 @@ class ChapterTestCase(TestCase):
                     4911000000,
                 ]
             ),
+            nomenclature_tree=self.tree,
         )
         """create 2 subheadings attached to subheading 4911"""
         subheadings = mixer.cycle(2).blend(
             SubHeading,
             parent_subheading=parent_subheadings[5],
             commodity_code=(x for x in [4911100000, 4911910000]),
+            nomenclature_tree=self.tree,
         )
         """create 1 subheading attached to subheading 491191"""
         sub_subheadings = mixer.cycle(1).blend(
-            SubHeading, parent_subheading=subheadings[1], commodity_code=4911910000
+            SubHeading, parent_subheading=subheadings[1], commodity_code=4911910000,
+            nomenclature_tree=self.tree,
         )
         """create 3 commodites attached to """
         commodities = mixer.cycle(3).blend(
             Commodity,
             parent_subheading=sub_subheadings[0],
             commodity_code=(x for x in [4911910010, 4911910090, 4911990000]),
+            nomenclature_tree=self.tree,
         )
         self.assertTrue(chapters[2].get_hierarchy_children())
 
@@ -228,11 +242,14 @@ class HeadingTestCase(TestCase):
     """
 
     def setUp(self):
-        self.heading = mixer.blend(Heading, tts_json="{}")
+        self.tree = create_nomenclature_tree('EU')
+        self.heading = mixer.blend(Heading, tts_json="{}", nomenclature_tree=self.tree)
 
-        self.parent_subheadings = mixer.cycle(5).blend(SubHeading, heading=self.heading)
+        self.parent_subheadings = mixer.cycle(5).blend(
+            SubHeading, heading=self.heading, nomenclature_tree=self.tree)
 
-        self.heading_commodities = mixer.cycle(5).blend(Commodity, heading=self.heading)
+        self.heading_commodities = mixer.cycle(5).blend(
+            Commodity, heading=self.heading, nomenclature_tree=self.tree)
 
     def test_str(self):
         self.assertEquals(
@@ -289,17 +306,19 @@ class SubHeadingTestCase(TestCase):
     """
 
     def setUp(self):
+        self.tree = create_nomenclature_tree('EU')
 
-        self.heading = mixer.blend(Heading, tts_json="{}")
+        self.heading = mixer.blend(Heading, tts_json="{}", nomenclature_tree=self.tree)
 
-        self.subheading = mixer.blend(SubHeading, heading=self.heading)
+        self.subheading = mixer.blend(
+            SubHeading, heading=self.heading, nomenclature_tree=self.tree)
 
         self.child_subheadings = mixer.cycle(5).blend(
-            SubHeading, parent_subheading=self.subheading
+            SubHeading, parent_subheading=self.subheading, nomenclature_tree=self.tree
         )
 
         self.commodities = mixer.cycle(5).blend(
-            Commodity, parent_subheading=self.subheading
+            Commodity, parent_subheading=self.subheading, nomenclature_tree=self.tree
         )
 
     def test_str(self):
