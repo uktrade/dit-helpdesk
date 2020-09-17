@@ -53,6 +53,7 @@ def search_by_term(form_data=None):
 
     start = (int(form_data.get("page")) - 1) * settings.RESULTS_PER_PAGE
     end = start + settings.RESULTS_PER_PAGE
+
     total_results = len(list(request.scan()))
     total_full_pages = int(total_results / settings.RESULTS_PER_PAGE)
     orphan_results = total_results % settings.RESULTS_PER_PAGE
