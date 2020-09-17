@@ -201,7 +201,7 @@ def create_nomenclature_tree(region='EU'):
 
     prev_tree = NomenclatureTree.get_active_tree(region)
     if prev_tree:
-        prev_tree.end_date = new_start_date - dt.timedelta(days=1)
+        prev_tree.end_date = new_start_date
         prev_tree.save()
 
     tree = NomenclatureTree.objects.create(
