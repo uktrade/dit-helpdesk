@@ -3,6 +3,7 @@ import logging
 import re
 import sys
 from datetime import datetime
+from itertools import zip_longest
 from pathlib import Path
 
 import pandas
@@ -15,6 +16,7 @@ from countries.models import Country
 from hierarchy.models import Chapter, Heading, SubHeading
 from rules_of_origin.models import (
     Rule,
+    RuleItem,
     RulesDocument,
     RulesGroup,
     RulesGroupMember,
@@ -253,10 +255,7 @@ class RulesOfOriginImporter:
                     try:
                         rule_instance, created = Rule.objects.get_or_create(
                             rule_id=rule["id"],
-                            description=self.format_rule_text(rule["description"]),
                             is_exclusion=rule["exclusion"],
-                            working_or_processing_one=self.format_rule_text(rule["workingLeft"]),
-                            working_or_processing_two=self.format_rule_text(rule["workingRight"]),
                             chapter=related_chapter,
                             rules_document=rules_document,
                         )
@@ -271,6 +270,21 @@ class RulesOfOriginImporter:
                                 "{0} instance already exists".format(
                                     rule_instance._meta.model_name
                                 )
+                            )
+                        rule_details = zip_longest(rule["description"], rule["workingLeft"])
+                        for description, working_or_processing in rule_details:
+                            highest_ordered_rule = rule_instance.ruleitem_set.order_by('-order').first()
+                            if highest_ordered_rule:
+                                order = highest_ordered_rule.order + 1
+                            else:
+                                order = 1
+
+                            rule_instance.ruleitem_set.get_or_create(
+                                description=description,
+                                working_or_processing=working_or_processing,
+                                defaults={
+                                    "order": order,
+                                },
                             )
 
                     except Exception as ex:
@@ -742,6 +756,3 @@ class RulesOfOriginImporter:
             logger.debug("no level")
 
         return related_objects
-
-    def format_rule_text(self, text):
-        return "".join(f"<p>{line}</p>" for line in text)

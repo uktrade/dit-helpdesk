@@ -60,9 +60,6 @@ class Rule(models.Model):
     """
 
     rule_id = models.CharField(max_length=255)
-    description = models.TextField()
-    working_or_processing_one = models.TextField(null=True, blank=True)
-    working_or_processing_two = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
@@ -74,6 +71,17 @@ class Rule(models.Model):
         blank=True,
         related_name="rules_of_origin",
     )
+
+    @property
+    def description(self):
+        return self.get_formatted_rule('description')
+
+    @property
+    def working_or_processing_one(self):
+        return self.get_formatted_rule('working_or_processing')
+
+    def get_formatted_rule(self, attribute):
+        return "\n".join(f"<p>{v}</p>" for v in self.ruleitem_set.order_by('order').values_list(attribute, flat=True))
 
     class Meta:
         verbose_name_plural = "rules of origin"
@@ -91,6 +99,13 @@ class Rule(models.Model):
             for rule in self.chapter.rules_of_origin.all()
             if self.chapter is not None
         ]
+
+
+class RuleItem(models.Model):
+    rule = models.ForeignKey("Rule", on_delete=models.CASCADE)
+    order = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    working_or_processing = models.TextField(null=True, blank=True)
 
 
 class RulesDocumentFootnote(models.Model):
