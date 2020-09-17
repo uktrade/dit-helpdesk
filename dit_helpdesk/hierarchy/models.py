@@ -174,30 +174,83 @@ class Section(models.Model, TreeSelectorMixin):
             section_note_items = resp_content["content"].split("\r\n")
 
             for item in section_note_items:
-                match = re.search(r"^\* (\d)\\. (.*)", item)
+                if not item:
+                    continue
+
+                # 2.A.
+                # Matches:
+                #   1: 2.A.
+                match = re.search(r"^(\d\.[A-Z]\.)$", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}</span><span></span></div>'.format(
+                            match.group(1)
+                        )
+                    )
+                    continue
+
+                # '* 1\\. This is some text'
+                # Matches:
+                #   1: * 
+                #   2: 1
+                #   3: This is some text
+                #
+                # '2. This is some text'
+                # Matches:
+                #   1: ''
+                #   2: 1
+                #   3: This is some text
+                match = re.search(r"^(\* )?([\dA-Z])\\*\. (.+)", item)
                 if match:
                     section_notes.append(
                         '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
-                            match.group(1), match.group(2)
+                            match.group(2), match.group(3)
                         )
                     )
+                    continue
 
-                match = re.search(r"^  \* \((\w)\) (.*)", item)
+                # 12.This is some text
+                # Matches:
+                #   1: 
+                #   2: 12
+                #   3: This is some text
+                match = re.search(r"^(\* )?([\d]+)\\*\.(.+)$", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                            match.group(2), match.group(3)
+                        )
+                    )
+                    continue
+
+                # * (B) This is some text
+                # Matches:
+                #   1: B
+                #   2: This is some text
+                match = re.search(r"^ *\* *\((\w+)\) (.+)", item)
                 if match:
                     section_notes.append(
                         '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
                             match.group(1), match.group(2)
                         )
                     )
+                    continue
 
-                match = re.search(r"^    ([\s*\\-]*)(.*)", item)
+                # - This is some text
+                # Matches:
+                #   1: This is some text
+                match = re.search(r"^— (.+)", item)
                 if match:
                     section_notes.append(
                         '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
-                            "-", match.group(2)
+                            "-", match.group(1)
                         )
                     )
+                    continue
 
+                # * This is some text
+                # Matches:
+                #   1: This is some text
                 match = re.search(r"^\* ([^\d.]+)", item)
                 if match:
                     section_notes.append(
@@ -205,14 +258,34 @@ class Section(models.Model, TreeSelectorMixin):
                             match.group(1)
                         )
                     )
+                    continue
 
-                match = re.search(r"^##(.+)##", item)
+                # ###Note###
+                # Matches:
+                #   1: Note
+                match = re.search(r"^#{2,3} ?([\w ]+)#{2,3} ?", item)
                 if match:
                     section_notes.append(
                         '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
                             match.group(1)
                         )
                     )
+                    continue
+
+                match = re.search(r"^(Subheading note|Additional notes)", item)
+                if match:
+                    section_notes.append(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                            match.group(1)
+                        )
+                    )
+                    continue
+
+                section_notes.append(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span></span><span>{0}</span></div>'.format(
+                        item
+                    )
+                )
 
         return section_notes
 
