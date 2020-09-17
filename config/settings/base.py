@@ -261,10 +261,24 @@ ELASTIC_APM = {
   'DEBUG': env.str('APM_DEBUG')
 }
 
+SENTRY_DSN = env.str("SENTRY_DSN")
+SENTRY_ENVIRONMENT = env.str("SENTRY_ENVIRONMENT")
+
+SENTRY_SKIP_ENVIRONMENTS = [
+    "docker-development",
+]
+
+def skip_sentry_logging(event, hint):
+    if SENTRY_ENVIRONMENT in SENTRY_SKIP_ENVIRONMENTS:
+        return
+
+    return event
+
 sentry_sdk.init(
-    env.str("SENTRY_DSN"),
-    environment=env.str("SENTRY_ENVIRONMENT"),
+    SENTRY_DSN,
+    environment=SENTRY_ENVIRONMENT,
     integrations=[DjangoIntegration()],
+    before_send=skip_sentry_logging,
 )
 
 RESULTS_PER_PAGE = 20
