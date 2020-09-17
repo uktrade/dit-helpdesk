@@ -84,20 +84,16 @@ def search_by_term(form_data=None):
 
 
 def search_by_code(code):
-    tree = NomenclatureTree.get_active_tree('EU')
 
     processed_query = process_commodity_code(code)
     query_object = {"term": {"commodity_code": processed_query}}
-    filter_object = {
-        "term": {"nomenclature_tree_id": tree.pk}
-    }
+
     client = Elasticsearch(hosts=[settings.ES_URL])
     hits = (
         Search()
         .index(*alias_names)
         .using(client)
         .query(query_object)
-        .filter(filter_object)
     )
     for hit in hits:
         try:
