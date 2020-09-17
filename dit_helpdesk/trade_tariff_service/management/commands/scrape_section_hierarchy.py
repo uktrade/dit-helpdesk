@@ -17,8 +17,8 @@ logger.setLevel(logging.INFO)
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("section_id", type=int, nargs="?", default=None)
-        parser.add_argument("--skip_commodity", type=bool, default=False)
-        parser.add_argument("--delete-old", type=bool, default=False)
+        parser.add_argument("--skip_commodity", action="store_true", type=bool, default=False)
+        parser.add_argument("--keep-old", type=bool, action="store_true", default=False)
 
     def handle(self, *args, **options):
 
@@ -38,6 +38,6 @@ class Command(BaseCommand):
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])
 
-            if options['delete_old']:
+            if not options['keep_old']:
                 delete_all_inactive_trees('EU')
                 delete_all_inactive_trees('UK')
