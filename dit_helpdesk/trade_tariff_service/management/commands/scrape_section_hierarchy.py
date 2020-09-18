@@ -19,6 +19,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("section_id", type=int, nargs="?", default=None)
         parser.add_argument("--skip_commodity", action="store_true", default=False)
+        parser.add_argument("--activate_new_tree", action="store_true", default=False)
 
     def handle(self, *args, **options):
 
@@ -36,14 +37,15 @@ class Command(BaseCommand):
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])
 
-                # switch back active tree to previous since we only want to properly activate
-                # the new one after we reindex ElasticSearch results
-                if prev_eu_tree:
-                    prev_eu_tree.end_date = None
-                    prev_eu_tree.save()
+                if not options["activate_new_tree"]:
+                    # switch back active tree to previous since we only want to properly activate
+                    # the new one after we reindex ElasticSearch results
+                    if prev_eu_tree:
+                        prev_eu_tree.end_date = None
+                        prev_eu_tree.save()
 
-                new_eu_tree.end_date = timezone.now()
-                new_eu_tree.save()
+                    new_eu_tree.end_date = timezone.now()
+                    new_eu_tree.save()
 
             with transaction.atomic():
                 # we are not indexing UK documents in ElasticSearch (at least yet) so we can

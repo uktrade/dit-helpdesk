@@ -39,7 +39,7 @@ class ScrapeSectionHierarchyTest(TestCase):
         with patch(
                 'trade_tariff_service.HierarchyBuilder.hierarchy_model_map',
                 test_hierarchy_model_map):
-            call_command('scrape_section_hierarchy', stdout=sys.stdout)
+            call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
 
         for region in ('EU', 'UK'):
             self.assertTrue(Section.get_active_objects(region).exists())
@@ -86,12 +86,12 @@ class ScrapeSectionHierarchyTest(TestCase):
         with patch(
                 'trade_tariff_service.HierarchyBuilder.hierarchy_model_map',
                 test_hierarchy_model_map):
-            call_command('scrape_section_hierarchy', stdout=sys.stdout)
+            call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
 
         with patch(
                 'trade_tariff_service.HierarchyBuilder.hierarchy_model_map',
                 test_hierarchy_model_map_modified):
-            call_command('scrape_section_hierarchy', stdout=sys.stdout)
+            call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
 
         for region in ('EU', 'UK'):
     
