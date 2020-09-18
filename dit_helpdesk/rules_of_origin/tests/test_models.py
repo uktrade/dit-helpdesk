@@ -60,7 +60,7 @@ class RuleTestCase(TestCase):
         self.rule = mommy.make("Rule")
 
     def test_str(self):
-        self.assertEquals(str(self.rule), self.rule.description)
+        self.assertEquals(str(self.rule), self.rule.rule_id)
 
 
 class RulesDocumentFootnoteTestCase(TestCase):

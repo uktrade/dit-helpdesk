@@ -72,22 +72,11 @@ class Rule(models.Model):
         related_name="rules_of_origin",
     )
 
-    @property
-    def description(self):
-        return self.get_formatted_rule('description')
-
-    @property
-    def working_or_processing_one(self):
-        return self.get_formatted_rule('working_or_processing')
-
-    def get_formatted_rule(self, attribute):
-        return "\n".join(f"<p>{v}</p>" for v in self.ruleitem_set.order_by('order').values_list(attribute, flat=True))
-
     class Meta:
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
-        return self.description
+        return self.rule_id
 
     def get_child_rules(self):
         """
