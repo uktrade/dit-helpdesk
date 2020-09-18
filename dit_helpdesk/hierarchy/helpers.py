@@ -1,6 +1,7 @@
-import datetime as dt
+import contextlib
 
 from django.utils import timezone
+from django.db import transaction
 
 from .models import NomenclatureTree
 
@@ -227,3 +228,36 @@ def fill_tree_in_json_data(json_data, tree):
         data["nomenclature_tree_id"] = tree.pk
 
     return json_data
+
+
+@contextlib.contextmanager
+def process_swapped_tree():
+    """This enables to populate data to a tree that is active only within transaction,
+    and not visible from within the app. Thanks to this we can add data and make the tree
+    visibly active only as a very last step.
+    This is like making the tree write-active but not read-active which is what we want to ensure
+    consistency.
+
+    """
+    with transaction.atomic():
+        # get latest tree - not yet active because we want to activate it only immediately after
+        # finishing reindexing (and swapping index aliases)
+        new_tree = NomenclatureTree.objects.filter(region='EU').latest('start_date')
+        # get active (but not latest) tree
+        prev_tree = NomenclatureTree.get_active_tree('EU')
+        if prev_tree:
+            prev_tree.end_date = timezone.now()
+            prev_tree.save()
+
+        # activate the latest tree so that ES indexes objects from that tree (but it's not
+        # yet visible in the app since the transaction didn't finish)
+        new_tree.end_date = None
+        new_tree.save()
+
+        yield
+
+        new_tree.end_date = timezone.now()
+        new_tree.save()
+
+        prev_tree.end_date = None
+        prev_tree.save()

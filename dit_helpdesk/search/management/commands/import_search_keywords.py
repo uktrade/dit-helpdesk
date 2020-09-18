@@ -1,6 +1,7 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from search.importer import SearchKeywordsImporter
+
+from hierarchy.helpers import process_swapped_tree
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        importer = SearchKeywordsImporter()
-        importer.load(options["data_path"])
-        importer.process()
+        with process_swapped_tree():
+            importer = SearchKeywordsImporter()
+            importer.load(options["data_path"])
+            importer.process()

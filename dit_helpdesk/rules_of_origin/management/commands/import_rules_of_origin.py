@@ -8,6 +8,9 @@ from django.core.management.base import BaseCommand, CommandError
 from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
 from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
 
+from hierarchy.models import NomenclatureTree
+from hierarchy.helpers import process_swapped_tree
+
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -17,6 +20,10 @@ class Command(BaseCommand):
         parser.add_argument("--reset", action="store_true")
 
     def handle(self, *args, **options):
+        with process_swapped_tree():
+            self._handle(*args, **options)
+
+    def _handle(self, *args, **options):
 
         if options["data_path"] is None:
             raise CommandError(
