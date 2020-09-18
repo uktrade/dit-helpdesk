@@ -107,6 +107,9 @@ class RuleItem(models.Model):
     description = models.TextField(null=True, blank=True)
     working_or_processing = models.TextField(null=True, blank=True)
 
+    class Meta:
+        ordering = ["order"]
+
 
 class RulesDocumentFootnote(models.Model):
     """
