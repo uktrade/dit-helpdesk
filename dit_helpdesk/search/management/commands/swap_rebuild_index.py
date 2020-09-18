@@ -95,6 +95,12 @@ def rebuild():
                 indices_to_remove_before_creating_alias.append(old_index_or_alias)
             new_aliases.append((new_index_name, alias))
 
+    # the only time frame during which results could be slightly inconsistent (i.e. new results
+    # in search, old in detail) - is between this point and the point when the transaction
+    # exits (which is when the DB is updated with the transaction state and the detail view is
+    # updated) - probably this time frame is in the order of milliseconds
+    timer.start()
+
     if update_aliases_actions:
         logger.info("Updating aliases: %s", update_aliases_actions)
         es.indices.update_aliases(
@@ -109,11 +115,6 @@ def rebuild():
         logger.info("Removing index %s", index)
         index.delete()
 
-    # the only time frame during which results could be slightly inconsistent (i.e. new results
-    # in search, old in detail - is between this point and the point when the transaction
-    # exits (which is when the DB is updated with the transaction state and the detail view is
-    # updated) - probably this time frame is on the order of milliseconds
-    timer.start()
     for index, alias in new_aliases:
         logger.info("Adding alias for %s -> %s", index, alias)
         es.indices.put_alias(index=index, name=alias)
@@ -148,7 +149,7 @@ class Command(BaseCommand):
             indices_names_to_remove_conditionally = rebuild()
         timer.stop()
 
-        logger.info("Time spent in inconsistent state: %ss", timer.elapsed())
+        logger.info("Time spent in inconsistent state: %sms", timer.elapsed() * 1000)
 
         # once transaction finishes both ES index and DB objects should point to the new objects
 
