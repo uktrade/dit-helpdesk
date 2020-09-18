@@ -14,11 +14,19 @@ from search.forms import CommoditySearchForm
 from search.views import search_hierarchy
 from search.helpers import process_commodity_code
 
+from search.documents.section import INDEX as section_index
+from search.documents.chapter import INDEX as chapter_index
+from search.documents.heading import INDEX as heading_index
+from search.documents.subheading import INDEX as sub_heading_index
+from search.documents.commodity import INDEX as commodity_index
+
+indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
+
 
 logger = logging.getLogger(__name__)
 
 
-class CommoditySetupMixin:
+class CommoditySetupTestCase(TestCase):
     def setUp(self):
         self.tree = create_nomenclature_tree('EU')
         self.section = mixer.blend(
@@ -134,8 +142,15 @@ class CommoditySetupMixin:
 
     fixtures = [settings.COUNTRIES_DATA]
 
+    @classmethod
+    def setUpClass(cls):
+        super(CommoditySetupTestCase, cls).setUpClass()
+        for index in indices:
+            if not index.exists():
+                index.save()
 
-class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
+
+class CommoditySearchViewTestCase(CommoditySetupTestCase):
     """
     Test Commodity code Search view
     """
@@ -173,7 +188,7 @@ class CommoditySearchViewTestCase(CommoditySetupMixin, TestCase):
         self.assertEqual(resp.status_code, 200)
 
 
-class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
+class CommodityTermSearchAPIViewTestCase(CommoditySetupTestCase):
     """
     Test Commodity name search Search view
     """
@@ -188,7 +203,7 @@ class CommodityTermSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
         self.assertEqual(resp.status_code, 200)
 
 
-class CommodityCodeSearchAPIViewTestCase(CommoditySetupMixin, TestCase):
+class CommodityCodeSearchAPIViewTestCase(CommoditySetupTestCase):
     """
     Test Commodity code search Search view
     """
@@ -364,7 +379,7 @@ class TestSearchHierarchyTestCase(TestCase):
         self.assertEqual(resp.status_code, 302)
 
 
-class TestSearchHierarchyAPITestCase(CommoditySetupMixin, TestCase):
+class TestSearchHierarchyAPITestCase(CommoditySetupTestCase):
     """
     Test search hierarchy view
     """
