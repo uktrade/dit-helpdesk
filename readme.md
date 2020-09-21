@@ -256,11 +256,11 @@ run the following command to import search keywords into the the hierarchy items
 python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
 ```
 
-run the following command to create the elasticsearch indexes
+run the following command to create the elasticsearch indexes - it's a custom
+ command which guarantees consistency between DB and ES results.
 
 ```
-python manage.py search_index --create
-python manage.py search_index --populate
+python manage.py swap_rebuild_index
 ```
 
 Note: See below for more details including generating data to import files and clearing the database

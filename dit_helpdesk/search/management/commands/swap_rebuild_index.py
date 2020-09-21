@@ -2,6 +2,7 @@ import datetime as dt
 import logging
 
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
@@ -130,7 +131,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # initiate the default connection to elasticsearch
-        connections.create_connection()
+        connections.create_connection(hosts=settings.ES_URL)
 
         with transaction.atomic():
             # get latest tree - not yet active because we want to activate it only immediately after
