@@ -38,6 +38,7 @@ urlpatterns = [
     path("", index.IndexRedirect.as_view(), name="index"),
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
     path("choose-country/", country_views.choose_country_view, name="choose-country"),
+    path("cms/", include("cms.urls", namespace="cms")),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
