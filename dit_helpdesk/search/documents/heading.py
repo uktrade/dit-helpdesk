@@ -4,7 +4,8 @@ from django_elasticsearch_dsl import DocType, Index, fields
 from hierarchy.models import Heading
 from search.documents.util import html_strip
 
-INDEX = Index(settings.ELASTICSEARCH_INDEX_NAMES[__name__])
+alias = settings.ELASTICSEARCH_INDEX_NAMES[__name__]
+INDEX = Index(alias)
 
 # See Elasticsearch Indices API reference for available settings
 INDEX.settings(number_of_shards=1, number_of_replicas=0)
@@ -17,6 +18,8 @@ class HeadingDocument(DocType):
     """
 
     id = fields.IntegerField(attr="goods_nomenclature_sid")
+
+    nomenclature_tree_id = fields.IntegerField(attr="nomenclature_tree_id")
 
     commodity_code = fields.KeywordField(attr="heading_code")
 

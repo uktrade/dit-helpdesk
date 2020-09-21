@@ -83,8 +83,10 @@ class CommoditySearchView(FormView):
 
                 if hits:
                     hit = hits[0]
+                    index = helpers.get_alias_from_hit(hit)
+                    hit.meta["index"] = index
 
-                    if hit.meta["index"] == "chapter":
+                    if index == "chapter":
                         return redirect(
                             reverse(
                                 "chapter-detail",
@@ -95,7 +97,7 @@ class CommoditySearchView(FormView):
                                 },
                             )
                         )
-                    elif hit.meta["index"] == "commodity":
+                    elif index == "commodity":
                         return redirect(
                             reverse(
                                 "commodity-detail",
@@ -106,7 +108,7 @@ class CommoditySearchView(FormView):
                                 },
                             )
                         )
-                    elif hit.meta["index"] == "heading":
+                    elif index == "heading":
                         return redirect(
                             reverse(
                                 "heading-detail",
@@ -118,7 +120,7 @@ class CommoditySearchView(FormView):
                             )
                         )
 
-                    elif hit.meta["index"] == "subheading":
+                    elif index == "subheading":
                         return redirect(
                             reverse(
                                 "subheading-detail",
@@ -158,22 +160,25 @@ class CommoditySearchView(FormView):
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
-                        if hit.meta["index"] == "chapter":
+                        index = helpers.get_alias_from_hit(hit)
+                        hit.meta["index"] = index
+
+                        if index == "chapter":
                             item = Chapter.objects.get(
                                 chapter_code=hit["commodity_code"],
                                 goods_nomenclature_sid=hit.id,
                             )
-                        elif hit.meta["index"] == "heading":
+                        elif index == "heading":
                             item = Heading.objects.get(
                                 heading_code=hit["commodity_code"],
                                 goods_nomenclature_sid=hit.id,
                             )
-                        elif hit.meta["index"] == "subheading":
+                        elif index == "subheading":
                             item = SubHeading.objects.get(
                                 commodity_code=hit["commodity_code"],
                                 goods_nomenclature_sid=hit.id,
                             )
-                        elif hit.meta["index"] == "commodity":
+                        elif index == "commodity":
                             item = Commodity.objects.get(
                                 commodity_code=hit["commodity_code"],
                                 goods_nomenclature_sid=hit.id,
