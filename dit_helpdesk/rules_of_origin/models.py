@@ -60,9 +60,6 @@ class Rule(models.Model):
     """
 
     rule_id = models.CharField(max_length=255)
-    description = models.TextField()
-    working_or_processing_one = models.TextField(null=True, blank=True)
-    working_or_processing_two = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
@@ -79,7 +76,7 @@ class Rule(models.Model):
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
-        return self.description
+        return self.rule_id
 
     def get_child_rules(self):
         """
@@ -91,6 +88,16 @@ class Rule(models.Model):
             for rule in self.chapter.rules_of_origin.all()
             if self.chapter is not None
         ]
+
+
+class RuleItem(models.Model):
+    rule = models.ForeignKey("Rule", on_delete=models.CASCADE)
+    order = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    working_or_processing = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["order"]
 
 
 class RulesDocumentFootnote(models.Model):

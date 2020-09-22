@@ -4,6 +4,7 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 
 from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
 from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
@@ -45,46 +46,47 @@ class Command(BaseCommand):
                 "\n\n\t{1}\n\n".format(path, settings.RULES_OF_ORIGIN_DATA_PATH[:-3])
             )
 
-        if options["reset"]:
-            for cls in Rule, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember:
-                cls.objects.all().delete()
+        with transaction.atomic():
+            if options["reset"]:
+                for cls in Rule, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember:
+                    cls.objects.all().delete()
 
-        if os.path.isdir(path):
-            for root, dirs, files in os.walk(path):
-                if not all(
-                    [
-                        True if file.endswith(".json") else False
-                        for file in files
-                        if not file.endswith(".csv") and not file.startswith(".")
-                    ]
-                ):
-                    raise CommandError(
-                        "\nThis command only works with .json and .csv files."
-                        "\nPlease remove any non .json or .csv files from the following location"
-                        "and run the command again\n\n\t{0}\n\n".format(path)
-                    )
-                for filename in files:
-
-                    if not filename.endswith(".csv") and not filename.startswith(
-                        "."
+            if os.path.isdir(path):
+                for root, dirs, files in os.walk(path):
+                    if not all(
+                        [
+                            True if file.endswith(".json") else False
+                            for file in files
+                            if not file.endswith(".csv") and not file.startswith(".")
+                        ]
                     ):
-                        importer = RulesOfOriginImporter()
-                        imported = importer.load(
-                            input_file=os.path.join(path, filename),
-                            output_file=os.path.join(
-                                path, filename.replace(".json", ".out.json")
-                            ),
-                            priority=options["priority"],
+                        raise CommandError(
+                            "\nThis command only works with .json and .csv files."
+                            "\nPlease remove any non .json or .csv files from the following location"
+                            "and run the command again\n\n\t{0}\n\n".format(path)
                         )
-                        if imported:
-                            importer.instance_builder()
+                    for filename in files:
 
-        else:
-            importer = RulesOfOriginImporter()
-            imported = importer.load(
-                input_file=path,
-                output_file=path.replace(".json", ".out.json"),
-                priority=options["priority"],
-            )
-            if imported:
-                importer.instance_builder()
+                        if not filename.endswith(".csv") and not filename.startswith(
+                            "."
+                        ):
+                            importer = RulesOfOriginImporter()
+                            imported = importer.load(
+                                input_file=os.path.join(path, filename),
+                                output_file=os.path.join(
+                                    path, filename.replace(".json", ".out.json")
+                                ),
+                                priority=options["priority"],
+                            )
+                            if imported:
+                                importer.instance_builder()
+
+            else:
+                importer = RulesOfOriginImporter()
+                imported = importer.load(
+                    input_file=path,
+                    output_file=path.replace(".json", ".out.json"),
+                    priority=options["priority"],
+                )
+                if imported:
+                    importer.instance_builder()

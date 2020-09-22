@@ -320,33 +320,31 @@
                     scope="col"><abbr title="Harmonised System">HS</abbr> heading</th>
                 <th class="govuk-table__header app-flexible-table__header"
                     scope="col">Description of product</th>
-                <th class="govuk-table__header govuk-!-width-one-half app-flexible-table__header"
-                    scope="col"
-                    colspan="2">How non-originating materials must be worked or processed to get country of origin status
-                </th>
               </tr>
             </thead>
             <tbody class="govuk-table__body app-flexible-table__body">
               {% spaceless %}
                 {% for rule in group.1.rules %}
-                  <tr class="govuk-table__row app-flexible-table__row">
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="Harmonised System heading">
-                      <p>{{ rule.rule_id }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="Description of product">
-                      <p>{{ rule.description | safe }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                      <p>{{ rule.working_or_processing_one | safe }}</p>
-                    </td>
-                    <td class="govuk-table__cell app-flexible-table__cell"
-                        data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                      {% if rule.working_or_processing_two %}<p>{{ rule.working_or_processing_two | safe }}</p>{% endif %}
-                    </td>
-                  </tr>
+                  {% for rule_item in rule.ruleitem_set.all %}
+                    <tr class="govuk-table__row app-flexible-table__row">
+                      {% if forloop.first %}
+                        <td class="govuk-table__cell app-flexible-table__cell"
+                            data-column-heading="Harmonised System heading"
+                            rowspan="{{ rule.ruleitem_set.count }}"
+                          >
+                          <p>{{ rule.rule_id }}</p>
+                        </td>
+                      {% endif %}
+                      <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}"
+                          data-column-heading="Description of product">
+                        <p>{{ rule_item.description|safe }}</p>
+                      </td>
+                      <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}"
+                          data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
+                        <p>{{ rule_item.working_or_processing|safe }}</p>
+                      </td>
+                    </tr>
+                  {% endfor %}
                 {% endfor %}
               {% endspaceless %}
             </tbody>
