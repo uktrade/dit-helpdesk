@@ -8,4 +8,4 @@ python manage.py scrape_section_hierarchy
 python manage.py import_rules_of_origin --data_path "import"
 python manage.py import_regulations
 python manage.py import_search_keywords -f output/keywords_and_synonyms_merged.csv
-python manage.py swap_rebuild_index
+python manage.py swap_rebuild_index --keep-old-trees
