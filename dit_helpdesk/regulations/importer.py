@@ -77,18 +77,18 @@ class RegulationsImporter:
 
         parent_subheadings = self.get_subheading_parents(parent_commodities, data_map)
 
-        regulation_field_data = {"title": data_map["title"]}
+        regulation_group_field_data = {"title": data_map["title"]}
 
-        regulation = self._create_instance("Regulation", regulation_field_data)
-        regulation.headings.add(*list(parent_headings))
-        regulation.commodities.add(*list(parent_commodities))
-        regulation.subheadings.add(*list(parent_subheadings))
+        regulation_group = self._create_instance("RegulationGroup", regulation_group_field_data)
+        regulation_group.headings.add(*list(parent_headings))
+        regulation_group.commodities.add(*list(parent_commodities))
+        regulation_group.subheadings.add(*list(parent_subheadings))
 
         if data_map["document"]["url"] is None:
             data_map["document"]["url"] = ""
-        document = self._create_instance("Document", data_map["document"])
-        document.regulations.add(regulation)
-        document.save()
+        regulation = self._create_instance("Regulation", data_map["document"])
+        regulation.regulation_groups.add(regulation_group)
+        regulation.save()
 
     @staticmethod
     def get_subheading_parents(commodities, data_map):

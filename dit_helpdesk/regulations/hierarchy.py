@@ -1,43 +1,43 @@
-def promote_regulations(commodity_object):
-    """Descends down a commodity tree from the passed in object and promotes regulation objects back up the tree.
+def promote_regulation_groups(commodity_object):
+    """Descends down a commodity tree from the passed in object and promotes regulation groups back up the tree.
 
-    The end result should be that any regulation objects that could be picked up
+    The end result should be that any regulation group objects that could be picked up
     via inheritance are promoted.
 
     This means that a commodity object with all of its children having the same
-    regulation attached will have that regulation promoted to itself and
-    then removed from that child object itself.
+    regulation group attached will have that regulation group promoted to itself and
+    then removed from those children.
 
     Example:
         Before:
-                       Heading - No regulation
+                       Heading - No regulation group
                                  |
                    ------------------------------
                   |                              |
-        Commodity - <Regulation: A>    Commodity - <Regulation: A>
-                    <Regulation: B>
+        Commodity - <RegulationGroup: A>    Commodity - <RegulationGroup: A>
+                    <RegulationGroup: B>
 
         After:
-                       Heading - <Regulation: A>
+                       Heading - <RegulationGroup: A>
                                  |
                    ------------------------------
                   |                              |
-        Commodity - <Regulation: B>    Commodity - No regulation
+        Commodity - <RegulationGroup: B>    Commodity - No regulation group
     """
-    regulations_to_promote = None
+    regulation_groups_to_promote = None
     for child in commodity_object.get_hierarchy_children():
-        promote_regulations(child)
+        promote_regulation_groups(child)
 
-        child_regulations = child.regulation_set.all()
-        if regulations_to_promote is None:
-            regulations_to_promote = child_regulations
+        child_regulations = child.regulationgroup_set.all()
+        if regulation_groups_to_promote is None:
+            regulation_groups_to_promote = child_regulations
         else:
-            regulations_to_promote = regulations_to_promote.intersection(child_regulations)
+            regulation_groups_to_promote = regulation_groups_to_promote.intersection(child_regulations)
 
-    if not regulations_to_promote:
+    if not regulation_groups_to_promote:
         return
 
-    commodity_object.regulation_set.add(*regulations_to_promote)
+    commodity_object.regulationgroup_set.add(*regulation_groups_to_promote)
 
     for child in commodity_object.get_hierarchy_children():
-        child.regulation_set.remove(*regulations_to_promote)
+        child.regulationgroup_set.remove(*regulation_groups_to_promote)

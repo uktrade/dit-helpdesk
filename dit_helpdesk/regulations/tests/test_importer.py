@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import override_settings, TestCase
 from pandas import DataFrame
 
 from commodities.models import Commodity
@@ -18,73 +18,42 @@ class RegulationsImporterTestCase(TestCase):
     Test regulations importer
     """
 
-    # def test_for_missing_regulations(self):
-    #     model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-    #     builder = HierarchyBuilder()
-    #     builder.data_scanner(model_names)
-    #
-    #     data_path = settings.REGULATIONS_DATA_PATH
-    #
-    #     importer = RegulationsImporter()
-    #     importer.load(data_path)
-    #     importer.process()
-    #
-    #     commodity_code_list = ["2621100000", "2621900000", "2703000000"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #
-    #     regulation_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
-    #
-    #     commodity_code_list = ["9401300000", "9401590000"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #
-    #     regulation_title = "Voluntary - Eco-label for furniture"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
-    #
-    #     commodity_code_list = ["9619007100"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #
-    #     regulation_title = "Voluntary - Eco-label for absorbent hygiene products"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
-    #
-    #     commodity_code_list = ["3922100000", "4001100000", "4002410000", "4407229900", "4407913100"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #     regulation_title = "Voluntary - Eco-label for sanitary tapware"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         # self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
-    #
-    #     commodity_code_list = ["7102310000"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #     regulation_title = "Import restrictions for rough diamonds (Kimberley Scheme)"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
-    #
-    #     commodity_code_list = ["3602000000", "3603004000", "8486100000"]
-    #     commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-    #     regulation_title = "Import requirements for firearms and warlike material"
-    #
-    #     for item in commodities:
-    #         logger.debug(regulation_title)
-    #         logger.debug([regulation.title for regulation in item.get_regulations()])
-    #         self.assertIn(regulation_title, [regulation.title for regulation in item.get_regulations()])
+    @override_settings(
+        HIERARCHY_MODEL_MAP={
+            "Commodity": {"file_name": "test_subsets/commodities.json", "app_name": "commodities"},
+            "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
+            "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
+            "SubHeading": {"file_name": "test_subsets/sub_headings.json", "app_name": "hierarchy"},
+            "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
+        },
+    )
+    def test_for_missing_regulations(self):
+        model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
+        builder = HierarchyBuilder()
+        builder.data_scanner(model_names)
+        data_path = settings.APPS_DIR + "/regulations/tests/data/{0}"
+
+        importer = RegulationsImporter()
+        importer.load(data_path)
+        importer.process()
+
+        commodity_code_list = ["2928001000", "2902500000", "2823000010"]
+        commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
+        regulation_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
+        for item in commodities:
+            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
+
+        commodity_code_list = ["2901100000", "7102100000"]
+        commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
+        regulation_title = "Voluntary - Eco-label for furniture"
+        for item in commodities:
+            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
+
+        commodity_code_list = ["2850009000"]
+        commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
+        regulation_title = "Voluntary - Eco-label for absorbent hygiene products"
+        for item in commodities:
+            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
 
     def test_data_loader_with_csv(self):
         file_path = settings.REGULATIONS_DATA_PATH.format(
