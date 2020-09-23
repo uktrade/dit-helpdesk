@@ -1,13 +1,11 @@
 import logging
-import sys
-from time import sleep
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
 from hierarchy.models import NomenclatureTree
-from hierarchy.helpers import delete_all_inactive_trees, create_nomenclature_tree
+from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
@@ -16,10 +14,23 @@ logger.setLevel(logging.INFO)
 
 
 class Command(BaseCommand):
+    help = """
+        Process output files created from `pull_api_update` and `prepare_import_data` commands.
+        Creates model instances and binds them to a new NomenclatureTree.
+        The new NomenclatureTree is left inactive (so that it can be switched on after 
+        ElasticSearch indexing is completed), unless specifically 
+    """
+
     def add_arguments(self, parser):
-        parser.add_argument("section_id", type=int, nargs="?", default=None)
-        parser.add_argument("--skip_commodity", action="store_true", default=False)
-        parser.add_argument("--activate_new_tree", action="store_true", default=False)
+        parser.add_argument(
+            "--skip_commodity", action="store_true", default=False,
+            help="Skip processing orphaned commodities"
+        )
+        parser.add_argument(
+            "--activate_new_tree", action="store_true", default=False,
+            help="Activate new NomenclatureTree with newly populated data right away. "
+                 "May lead to inconsistent state if there is other data to be loaded/updated."
+        )
 
     def handle(self, *args, **options):
 
@@ -29,6 +40,7 @@ class Command(BaseCommand):
 
             with transaction.atomic():
                 prev_eu_tree = NomenclatureTree.get_active_tree('EU')
+
                 # creating new tree automatically activates it (at least within transaction)
                 new_eu_tree = create_nomenclature_tree('EU')
 
