@@ -33,12 +33,13 @@ class TestBaseCMSMixin(TestCase):
         self.assertRedirects(response, f"{settings.LOGIN_URL}?next={self.url}", fetch_redirect_response=False)
 
     def test_login_required_logged_in(self):
+        username = "testuser"
         email = "test@example.com"
         password = "test"
-        user = User.objects.create(email=email)
+        user = User.objects.create(username=username, email=email)
         user.set_password(password)
         user.save()
-        self.client.login(username=user.email, password=password)
+        self.client.login(username=user.username, password=password)
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
