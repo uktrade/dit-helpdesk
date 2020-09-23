@@ -18,7 +18,7 @@ class Command(BaseCommand):
         Process output files created from `pull_api_update` and `prepare_import_data` commands.
         Creates model instances and binds them to a new NomenclatureTree.
         The new NomenclatureTree is left inactive (so that it can be switched on after 
-        ElasticSearch indexing is completed), unless specifically 
+        ElasticSearch indexing is completed), unless specifically enabled by a flag.
     """
 
     def add_arguments(self, parser):
