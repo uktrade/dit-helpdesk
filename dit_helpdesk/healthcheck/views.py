@@ -1,7 +1,13 @@
 import time
-from django.views.generic import TemplateView
+import datetime as dt
+
+from django.views.generic import View, TemplateView
+from django.http import HttpResponse
+
 from sentry_sdk import capture_exception
+
 from healthcheck.models import HealthCheck
+from healthcheck.tree_refresh import check_tree_freshness
 
 
 class HealthCheckView(TemplateView):
@@ -27,3 +33,21 @@ class HealthCheckView(TemplateView):
         # nearest approximation of a response time
         context["response_time"] = time.time() - self.request.start_time
         return context
+
+
+class TreeRefreshCheckView(View):
+
+    MAX_DELTA = dt.timedelta(days=7)
+
+    CHECK_SUCCEEDED_STATUS = 200
+    CHECK_FAILED_STATUS = 503
+
+    def get(self, *args, **kwargs):
+        is_fresh = check_tree_freshness(self.MAX_DELTA)
+
+        if is_fresh:
+            resp = HttpResponse('OK', status=self.CHECK_SUCCEEDED_STATUS)
+        else:
+            resp = HttpResponse('Failed', status=self.CHECK_FAILED_STATUS)
+
+        return resp
