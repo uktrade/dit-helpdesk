@@ -124,6 +124,13 @@ if settings.ADMIN_ENABLED:
         path("admin/", admin.site.urls),
     ]
 
+
+if settings.CMS_ENABLED:
+    urlpatterns += [
+        path("cms/", include("cms.urls", namespace="cms")),
+    ]
+
+
 if settings.DEBUG:
     import debug_toolbar
 

@@ -1,5 +1,7 @@
-from django.test import TestCase
 from mixer.backend.django import mixer
+
+from django.db.utils import IntegrityError
+from django.test import TestCase
 
 from user.models import User
 
@@ -9,8 +11,7 @@ class UserModelsTestCase(TestCase):
     Test User model
     """
 
-    def setUp(self):
-        self.user = mixer.blend(User, email="test@user.com")
-
-    def test_username_returns_email(self):
-        self.assertEqual(self.user.username, "test@user.com")
+    def test_unique_email(self):
+        mixer.blend(User, email="test@user.com")
+        with self.assertRaises(IntegrityError):
+            mixer.blend(User, email="test@user.com")
