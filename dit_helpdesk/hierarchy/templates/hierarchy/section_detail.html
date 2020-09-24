@@ -354,20 +354,20 @@
       </div>
 
     {% endif %}
-    {% if regulations %}
+    {% if regulation_groups %}
       <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">Product-specific regulations</h3>
         <p class="govuk-body">These regulations apply to this product. </P>
         <div class="govuk-accordion"
             data-module="accordion"
             id="accordion-default">
-          {% for regulation in regulations %}
+          {% for regulation_group in regulation_groups %}
             <div class="govuk-accordion__section ">
               <div class="govuk-accordion__section-header">
                 <h4 class="govuk-accordion__section-heading govuk-heading-s">
                   <span class="govuk-accordion__section-button"
                         id="accordion-default-heading-{{ forloop.counter }}">
-                    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3">{{ regulation.title  }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3">{{ regulation_group.title }}</p>
                   </span>
                 </h4>
               </div>
@@ -375,13 +375,13 @@
                   class="govuk-accordion__section-content"
                   aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-3">
-                  {% for document in regulation.document_set.all %}
-                    <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ document.url }}"
+                  {% for regulation in regulation_group.regulation_set.all %}
+                    <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ regulation.url }}"
                         class="govuk-link ">
-                        {% if 'none' not in document.title|lower %}
-                          {{ document.title }}
+                        {% if 'none' not in regulation.title|lower %}
+                          {{ regulation.title }}
                         {% else %}
-                          {{ document.url }}
+                          {{ regulation.url }}
                         {% endif %}
                       </a>
                     </li>

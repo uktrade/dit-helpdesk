@@ -21,14 +21,6 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-hierarchy_model_map = {
-    "Commodity": {"file_name": "prepared/commodities.json", "app_name": "commodities"},
-    "Chapter": {"file_name": "prepared/chapters.json", "app_name": "hierarchy"},
-    "Heading": {"file_name": "prepared/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {"file_name": "prepared/sub_headings.json", "app_name": "hierarchy"},
-    "Section": {"file_name": "prepared/sections.json", "app_name": "hierarchy"},
-}
-
 
 DEFAULT_REGION = 'EU'
 
@@ -84,7 +76,7 @@ class HierarchyBuilder:
         :return:
         """
 
-        file_name = hierarchy_model_map[model_name]["file_name"]
+        file_name = settings.HIERARCHY_MODEL_MAP[model_name]["file_name"]
         file_path = settings.IMPORT_DATA_PATH.format(file_name)
 
         with open(file_path) as f:
@@ -219,7 +211,7 @@ class HierarchyBuilder:
             json_data = self.load_data(model_name)
 
             model = apps.get_model(
-                app_label=hierarchy_model_map[model_name]["app_name"],
+                app_label=settings.HIERARCHY_MODEL_MAP[model_name]["app_name"],
                 model_name=model_name,
             )
 
@@ -719,6 +711,7 @@ class HierarchyBuilder:
                     return None
 
     def build_search_data(self):
+        hierarchy_model_map = settings.HIERARCHY_MODEL_MAP
         file_list = [
             hierarchy_model_map[item]["file_name"]
             for item in hierarchy_model_map.keys()

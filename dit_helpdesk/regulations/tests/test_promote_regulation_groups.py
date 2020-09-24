@@ -11,13 +11,13 @@ from hierarchy.models import (
 )
 from hierarchy.helpers import create_nomenclature_tree
 
-from ..hierarchy import promote_regulations
-from ..models import Regulation
+from ..hierarchy import promote_regulation_groups
+from ..models import RegulationGroup
 
 
-class PromoteRegulationsTestCase(TestCase):
+class PromoteRegulationGroupsTestCase(TestCase):
     """
-    Test promote_regulations
+    Test promote_regulation_groups
     """
 
     def setUp(self):
@@ -38,9 +38,9 @@ class PromoteRegulationsTestCase(TestCase):
 
         for model_class in self.model_classes:
             obj = mixer.blend(model_class)
-            self.assertFalse(obj.regulation_set.exists())
-            promote_regulations(obj)
-            self.assertFalse(obj.regulation_set.exists())
+            self.assertFalse(obj.regulationgroup_set.exists())
+            promote_regulation_groups(obj)
+            self.assertFalse(obj.regulationgroup_set.exists())
             obj.delete()
 
     def test_models_with_regulations(self):
@@ -54,11 +54,11 @@ class PromoteRegulationsTestCase(TestCase):
 
         for model_class, relation_attr in model_classes:
             obj = mixer.blend(model_class)
-            regulation = mixer.blend(Regulation, **{relation_attr: obj})
+            regulation = mixer.blend(RegulationGroup, **{relation_attr: obj})
 
-            promote_regulations(obj)
-            self.assertEqual(obj.regulation_set.count(), 1)
-            self.assertEqual(obj.regulation_set.first(), regulation)
+            promote_regulation_groups(obj)
+            self.assertEqual(obj.regulationgroup_set.count(), 1)
+            self.assertEqual(obj.regulationgroup_set.first(), regulation)
 
             regulation.delete()
             obj.delete()
@@ -70,25 +70,25 @@ class PromoteRegulationsTestCase(TestCase):
         Before:
         Heading    - No regulation
            |
-        Commodity  - <Regulation: A>
+        Commodity  - <RegulationGroup: A>
 
         After:
-        Heading    - <Regulation: A>
+        Heading    - <RegulationGroup: A>
            |
         Commodity  - No regulation
         """
         heading = mixer.blend(Heading)
         commodity = mixer.blend(Commodity, heading=heading)
-        regulation = mixer.blend(Regulation, commodities=commodity)
+        regulation = mixer.blend(RegulationGroup, commodities=commodity)
 
-        self.assertFalse(heading.regulation_set.exists())
-        self.assertEqual(commodity.regulation_set.count(), 1)
+        self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertEqual(commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(heading)
+        promote_regulation_groups(heading)
 
-        self.assertEqual(heading.regulation_set.count(), 1)
-        self.assertEqual(heading.regulation_set.first(), regulation)
-        self.assertFalse(commodity.regulation_set.exists())
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(commodity.regulationgroup_set.exists())
 
     def test_models_multi_children_in_one_level_hierarchy_gets_promoted(self):
         """
@@ -99,10 +99,10 @@ class PromoteRegulationsTestCase(TestCase):
                                  |
                    ______________________________
                   |                              |
-        Commodity - <Regulation: A>    Commodity - <Regulation: A>
+        Commodity - <RegulationGroup: A>    Commodity - <RegulationGroup: A>
 
         After:
-                       Heading - <Regulation: A>
+                       Heading - <RegulationGroup: A>
                                  |
                    ______________________________
                   |                              |
@@ -111,18 +111,18 @@ class PromoteRegulationsTestCase(TestCase):
         heading = mixer.blend(Heading)
         a_commodity = mixer.blend(Commodity, heading=heading)
         b_commodity = mixer.blend(Commodity, heading=heading)
-        regulation = mixer.blend(Regulation, commodities=[a_commodity, b_commodity])
+        regulation = mixer.blend(RegulationGroup, commodities=[a_commodity, b_commodity])
 
-        self.assertFalse(heading.regulation_set.exists())
-        self.assertEqual(a_commodity.regulation_set.count(), 1)
-        self.assertEqual(b_commodity.regulation_set.count(), 1)
+        self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertEqual(a_commodity.regulationgroup_set.count(), 1)
+        self.assertEqual(b_commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(heading)
+        promote_regulation_groups(heading)
 
-        self.assertEqual(heading.regulation_set.count(), 1)
-        self.assertEqual(heading.regulation_set.first(), regulation)
-        self.assertFalse(a_commodity.regulation_set.exists())
-        self.assertFalse(b_commodity.regulation_set.exists())
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(a_commodity.regulationgroup_set.exists())
+        self.assertFalse(b_commodity.regulationgroup_set.exists())
 
     def test_models_multi_children_multi_regulations_in_one_level_hierarchy_gets_promoted(self):
         """
@@ -133,81 +133,81 @@ class PromoteRegulationsTestCase(TestCase):
                                  |
                    ------------------------------
                   |                              |
-        Commodity - <Regulation: A>    Commodity - <Regulation: A>
-                    <Regulation: B>
+        Commodity - <RegulationGroup: A>    Commodity - <RegulationGroup: A>
+                    <RegulationGroup: B>
 
         After:
-                       Heading - <Regulation: A>
+                       Heading - <RegulationGroup: A>
                                  |
                    ------------------------------
                   |                              |
-        Commodity - <Regulation: B>    Commodity - No regulation
+        Commodity - <RegulationGroup: B>    Commodity - No regulation
         """
         heading = mixer.blend(Heading)
         a_commodity = mixer.blend(Commodity, heading=heading)
         b_commodity = mixer.blend(Commodity, heading=heading)
-        a_regulation = mixer.blend(Regulation, commodities=[a_commodity, b_commodity])
-        b_regulation = mixer.blend(Regulation, commodities=[a_commodity])
+        a_regulation = mixer.blend(RegulationGroup, commodities=[a_commodity, b_commodity])
+        b_regulation = mixer.blend(RegulationGroup, commodities=[a_commodity])
 
-        self.assertFalse(heading.regulation_set.exists())
-        self.assertEqual(a_commodity.regulation_set.count(), 2)
-        self.assertEqual(b_commodity.regulation_set.count(), 1)
+        self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertEqual(a_commodity.regulationgroup_set.count(), 2)
+        self.assertEqual(b_commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(heading)
+        promote_regulation_groups(heading)
 
-        self.assertEqual(heading.regulation_set.count(), 1)
-        self.assertEqual(heading.regulation_set.first(), a_regulation)
-        self.assertTrue(a_commodity.regulation_set.count(), 1)
-        self.assertEqual(a_commodity.regulation_set.first(), b_regulation)
-        self.assertFalse(b_commodity.regulation_set.exists())
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), a_regulation)
+        self.assertTrue(a_commodity.regulationgroup_set.count(), 1)
+        self.assertEqual(a_commodity.regulationgroup_set.first(), b_regulation)
+        self.assertFalse(b_commodity.regulationgroup_set.exists())
 
     def test_models_in_multi_level_hierarchy_gets_promoted(self):
         """
         Test multi level hierarchy
 
         Before:
-        Chapter      - No Regulation
+        Chapter      - No RegulationGroup
            |
-        Section      - No Regulation
+        Section      - No RegulationGroup
            |
-        Heading      - No Regulation
+        Heading      - No RegulationGroup
            |
-        SubHeading   - No Regulation
+        SubHeading   - No RegulationGroup
            |
-        Commodity    - <Regulation: A>
+        Commodity    - <RegulationGroup: A>
 
         After:
-        Chapter      - <Regulation: A>
+        Chapter      - <RegulationGroup: A>
            |
-        Section      - No Regulation
+        Section      - No RegulationGroup
            |
-        Heading      - No Regulation
+        Heading      - No RegulationGroup
            |
-        SubHeading   - No Regulation
+        SubHeading   - No RegulationGroup
            |
-        Commodity    - No Regulation
+        Commodity    - No RegulationGroup
         """
         section = mixer.blend(Section)
         chapter = mixer.blend(Chapter, section=section)
         heading = mixer.blend(Heading, chapter=chapter)
         sub_heading = mixer.blend(SubHeading, heading=heading)
         commodity = mixer.blend(Commodity, parent_subheading=sub_heading)
-        regulation = mixer.blend(Regulation, commodities=commodity)
+        regulation = mixer.blend(RegulationGroup, commodities=commodity)
 
-        self.assertFalse(section.regulation_set.exists())
-        self.assertFalse(chapter.regulation_set.exists())
-        self.assertFalse(heading.regulation_set.exists())
-        self.assertFalse(sub_heading.regulation_set.exists())
-        self.assertEqual(commodity.regulation_set.count(), 1)
+        self.assertFalse(section.regulationgroup_set.exists())
+        self.assertFalse(chapter.regulationgroup_set.exists())
+        self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertFalse(sub_heading.regulationgroup_set.exists())
+        self.assertEqual(commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(section)
+        promote_regulation_groups(section)
 
-        self.assertEqual(section.regulation_set.count(), 1)
-        self.assertEqual(section.regulation_set.first(), regulation)
-        self.assertFalse(chapter.regulation_set.exists())
-        self.assertFalse(heading.regulation_set.exists())
-        self.assertFalse(sub_heading.regulation_set.exists())
-        self.assertFalse(commodity.regulation_set.exists())
+        self.assertEqual(section.regulationgroup_set.count(), 1)
+        self.assertEqual(section.regulationgroup_set.first(), regulation)
+        self.assertFalse(chapter.regulationgroup_set.exists())
+        self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertFalse(sub_heading.regulationgroup_set.exists())
+        self.assertFalse(commodity.regulationgroup_set.exists())
 
     def test_models_multi_children_in_multi_level_hierarchy_gets_promoted(self):
         """
@@ -267,30 +267,30 @@ class PromoteRegulationsTestCase(TestCase):
             b_b_b_a_commodity, b_b_b_b_commodity,
         ]
 
-        regulation = mixer.blend(Regulation, commodities=[c.pk for c in commodities])
+        regulation = mixer.blend(RegulationGroup, commodities=[c.pk for c in commodities])
 
-        self.assertFalse(section.regulation_set.exists())
+        self.assertFalse(section.regulationgroup_set.exists())
         for chapter in chapters:
-            self.assertFalse(chapter.regulation_set.exists())
+            self.assertFalse(chapter.regulationgroup_set.exists())
         for heading in headings:
-            self.assertFalse(heading.regulation_set.exists())
+            self.assertFalse(heading.regulationgroup_set.exists())
         for sub_heading in sub_headings:
-            self.assertFalse(sub_heading.regulation_set.exists())
+            self.assertFalse(sub_heading.regulationgroup_set.exists())
         for commodity in commodities:
-            self.assertEqual(commodity.regulation_set.count(), 1)
+            self.assertEqual(commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(section)
+        promote_regulation_groups(section)
 
-        self.assertEqual(section.regulation_set.count(), 1)
-        self.assertEqual(section.regulation_set.first(), regulation)
+        self.assertEqual(section.regulationgroup_set.count(), 1)
+        self.assertEqual(section.regulationgroup_set.first(), regulation)
         for chapter in chapters:
-            self.assertFalse(chapter.regulation_set.exists())
+            self.assertFalse(chapter.regulationgroup_set.exists())
         for heading in headings:
-            self.assertFalse(heading.regulation_set.exists())
+            self.assertFalse(heading.regulationgroup_set.exists())
         for sub_heading in sub_headings:
-            self.assertFalse(sub_heading.regulation_set.exists())
+            self.assertFalse(sub_heading.regulationgroup_set.exists())
         for commodity in commodities:
-            self.assertFalse(commodity.regulation_set.exists())
+            self.assertFalse(commodity.regulationgroup_set.exists())
 
     def test_models_multi_regulations_multi_children_in_multi_level_hierarchy_gets_promoted(self):
         """
@@ -351,39 +351,39 @@ class PromoteRegulationsTestCase(TestCase):
         ]
 
         a_regulation_commodities = commodities
-        a_regulation = mixer.blend(Regulation, title="a_regulation", commodities=[c.pk for c in a_regulation_commodities])
+        a_regulation = mixer.blend(RegulationGroup, title="a_regulation", commodities=[c.pk for c in a_regulation_commodities])
         b_regulation_commodities = commodities[:8]
-        b_regulation = mixer.blend(Regulation, title="b_regulation", commodities=[c.pk for c in b_regulation_commodities])
+        b_regulation = mixer.blend(RegulationGroup, title="b_regulation", commodities=[c.pk for c in b_regulation_commodities])
         c_regulation_commodities = commodities[:4]
-        c_regulation = mixer.blend(Regulation, title="c_regulation", commodities=[c.pk for c in c_regulation_commodities])
+        c_regulation = mixer.blend(RegulationGroup, title="c_regulation", commodities=[c.pk for c in c_regulation_commodities])
         d_regulation_commodities = commodities[:2]
-        d_regulation = mixer.blend(Regulation, title="d_regulation", commodities=[c.pk for c in d_regulation_commodities])
+        d_regulation = mixer.blend(RegulationGroup, title="d_regulation", commodities=[c.pk for c in d_regulation_commodities])
         e_regulation_commodities = commodities[:1]
-        e_regulation = mixer.blend(Regulation, title="e_regulation", commodities=[c.pk for c in e_regulation_commodities])
+        e_regulation = mixer.blend(RegulationGroup, title="e_regulation", commodities=[c.pk for c in e_regulation_commodities])
 
-        promote_regulations(section)
+        promote_regulation_groups(section)
 
-        self.assertEqual(section.regulation_set.count(), 1)
-        self.assertEqual(section.regulation_set.first(), a_regulation)
+        self.assertEqual(section.regulationgroup_set.count(), 1)
+        self.assertEqual(section.regulationgroup_set.first(), a_regulation)
 
-        self.assertEqual(a_chapter.regulation_set.count(), 1)
-        self.assertEqual(a_chapter.regulation_set.first(), b_regulation)
-        self.assertFalse(b_chapter.regulation_set.exists())
+        self.assertEqual(a_chapter.regulationgroup_set.count(), 1)
+        self.assertEqual(a_chapter.regulationgroup_set.first(), b_regulation)
+        self.assertFalse(b_chapter.regulationgroup_set.exists())
 
-        self.assertEqual(a_a_heading.regulation_set.count(), 1)
-        self.assertEqual(a_a_heading.regulation_set.first(), c_regulation)
+        self.assertEqual(a_a_heading.regulationgroup_set.count(), 1)
+        self.assertEqual(a_a_heading.regulationgroup_set.first(), c_regulation)
         for heading in headings[1:]:
-            self.assertFalse(heading.regulation_set.exists())
+            self.assertFalse(heading.regulationgroup_set.exists())
 
-        self.assertEqual(a_a_a_sub_heading.regulation_set.count(), 1)
-        self.assertEqual(a_a_a_sub_heading.regulation_set.first(), d_regulation)
+        self.assertEqual(a_a_a_sub_heading.regulationgroup_set.count(), 1)
+        self.assertEqual(a_a_a_sub_heading.regulationgroup_set.first(), d_regulation)
         for sub_heading in sub_headings[1:]:
-            self.assertFalse(sub_heading.regulation_set.exists())
+            self.assertFalse(sub_heading.regulationgroup_set.exists())
 
-        self.assertEqual(a_a_a_a_commodity.regulation_set.count(), 1)
-        self.assertEqual(a_a_a_a_commodity.regulation_set.first(), e_regulation)
+        self.assertEqual(a_a_a_a_commodity.regulationgroup_set.count(), 1)
+        self.assertEqual(a_a_a_a_commodity.regulationgroup_set.first(), e_regulation)
         for commodity in commodities[1:]:
-            self.assertFalse(commodity.regulation_set.exists())
+            self.assertFalse(commodity.regulationgroup_set.exists())
 
     def test_models_in_simple_sub_heading_hierarchy_gets_promoted(self):
         """
@@ -394,10 +394,10 @@ class PromoteRegulationsTestCase(TestCase):
            |
         Sub Heading    - No regulation
            |
-        Commodity      - <Regulation: A>
+        Commodity      - <RegulationGroup: A>
 
         After:
-        Sub Heading    - <Regulation: A>
+        Sub Heading    - <RegulationGroup: A>
            |
         Sub Heading    - No regulation
            |
@@ -406,18 +406,18 @@ class PromoteRegulationsTestCase(TestCase):
         a_sub_heading = mixer.blend(SubHeading)
         b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
         commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
-        regulation = mixer.blend(Regulation, commodities=commodity)
+        regulation = mixer.blend(RegulationGroup, commodities=commodity)
 
-        self.assertFalse(a_sub_heading.regulation_set.exists())
-        self.assertFalse(b_sub_heading.regulation_set.exists())
-        self.assertEqual(commodity.regulation_set.count(), 1)
+        self.assertFalse(a_sub_heading.regulationgroup_set.exists())
+        self.assertFalse(b_sub_heading.regulationgroup_set.exists())
+        self.assertEqual(commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(a_sub_heading)
+        promote_regulation_groups(a_sub_heading)
 
-        self.assertEqual(a_sub_heading.regulation_set.count(), 1)
-        self.assertEqual(a_sub_heading.regulation_set.first(), regulation)
-        self.assertFalse(b_sub_heading.regulation_set.exists())
-        self.assertFalse(commodity.regulation_set.exists())
+        self.assertEqual(a_sub_heading.regulationgroup_set.count(), 1)
+        self.assertEqual(a_sub_heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(b_sub_heading.regulationgroup_set.exists())
+        self.assertFalse(commodity.regulationgroup_set.exists())
 
     def test_models_in_simple_sub_heading_and_heading_hierarchy_gets_promoted(self):
         """
@@ -430,10 +430,10 @@ class PromoteRegulationsTestCase(TestCase):
            |
         Sub Heading    - No regulation
            |
-        Commodity      - <Regulation: A>
+        Commodity      - <RegulationGroup: A>
 
         After:
-        Heading        - <Regulation: A>
+        Heading        - <RegulationGroup: A>
            |
         Sub Heading    - No regulation
            |
@@ -445,16 +445,16 @@ class PromoteRegulationsTestCase(TestCase):
         a_sub_heading = mixer.blend(SubHeading, heading=heading)
         b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
         commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
-        regulation = mixer.blend(Regulation, commodities=commodity)
+        regulation = mixer.blend(RegulationGroup, commodities=commodity)
 
-        self.assertFalse(a_sub_heading.regulation_set.exists())
-        self.assertFalse(b_sub_heading.regulation_set.exists())
-        self.assertEqual(commodity.regulation_set.count(), 1)
+        self.assertFalse(a_sub_heading.regulationgroup_set.exists())
+        self.assertFalse(b_sub_heading.regulationgroup_set.exists())
+        self.assertEqual(commodity.regulationgroup_set.count(), 1)
 
-        promote_regulations(heading)
+        promote_regulation_groups(heading)
 
-        self.assertEqual(heading.regulation_set.count(), 1)
-        self.assertEqual(heading.regulation_set.first(), regulation)
-        self.assertFalse(a_sub_heading.regulation_set.exists())
-        self.assertFalse(b_sub_heading.regulation_set.exists())
-        self.assertFalse(commodity.regulation_set.exists())
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(a_sub_heading.regulationgroup_set.exists())
+        self.assertFalse(b_sub_heading.regulationgroup_set.exists())
+        self.assertFalse(commodity.regulationgroup_set.exists())
