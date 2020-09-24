@@ -1,14 +1,14 @@
 from django.db import models
 
-from .managers import RegulationManager
+from .managers import RegulationGroupManager
 
 
-class Regulation(models.Model):
+class RegulationGroup(models.Model):
     """
-    Regulation model
+    Regulation group model
     """
 
-    objects = RegulationManager()
+    objects = RegulationGroupManager()
 
     title = models.TextField()
     sections = models.ManyToManyField("hierarchy.Section")
@@ -17,27 +17,20 @@ class Regulation(models.Model):
     subheadings = models.ManyToManyField("hierarchy.SubHeading")
     commodities = models.ManyToManyField("commodities.Commodity")
 
-    class Meta:
-        verbose_name_plural = "regulations"
-
     def __str__(self):
         return self.title
 
 
-class Document(models.Model):
+class Regulation(models.Model):
     """
-    Regulation Document model
+    Regulation model
     """
 
     title = models.TextField()
-    regulations = models.ManyToManyField(Regulation)
+    regulation_groups = models.ManyToManyField(RegulationGroup)
     type = models.CharField(max_length=255)
     celex = models.CharField(max_length=20)
     url = models.URLField()
-
-    class Meta:
-        verbose_name = "regulation document"
-        verbose_name_plural = "regulations documents"
 
     def __str__(self):
         return self.url

@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from hierarchy.models import Section
 from hierarchy.helpers import process_swapped_tree
 
-from regulations.hierarchy import promote_regulations
+from regulations.hierarchy import promote_regulation_groups
 from regulations.importer import RegulationsImporter
 
 
@@ -25,4 +25,4 @@ class Command(BaseCommand):
             self.stdout.write("Promoting and de-duping regulations")
             for section in Section.objects.all():
                 self.stdout.write(f"Promoting and de-duping for {section}")
-                promote_regulations(section)
+                promote_regulation_groups(section)
