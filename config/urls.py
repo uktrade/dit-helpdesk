@@ -112,7 +112,7 @@ urlpatterns = [
         privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(),
         name="privacy_terms_and_conditions_views",
     ),
-    re_path(r"^check/$", HealthCheckView.as_view(), name="healthcheck"),
+    path("check/", include("healthcheck.urls", namespace="healthcheck")),
     re_path("search/", include("search.urls", namespace="search")),
     path("accessibility/", include("accessibility.urls", namespace="accessibility")),
 ]
