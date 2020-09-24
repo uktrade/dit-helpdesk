@@ -75,6 +75,7 @@ def rebuild():
         new_index.save()
 
         logger.info("Populating index %s", new_index_name)
+
         # `doc` is e.g. `SectionDocument`
         doc_inst = doc()
         doc_inst._doc_type.index = new_index_name
@@ -125,9 +126,15 @@ def rebuild():
 
 class Command(BaseCommand):
 
+    help = "Populate ElasticSearch index with data from the most recently created NomenclatureTree"
+
     def add_arguments(self, parser):
-        parser.add_argument("--keep-old-trees", action="store_true", default=False)
-        parser.add_argument("--keep-old-indices", action="store_true", default=False)
+        parser.add_argument(
+            "--keep-old-trees", action="store_true", default=False,
+            help="Keep previous NomenclatureTrees, even if they are not marked as active")
+        parser.add_argument(
+            "--keep-old-indices", action="store_true", default=False,
+            help="Keep previous ElasticSearch indices, even if no alias points to them anymore")
 
     def handle(self, *args, **options):
         # initiate the default connection to elasticsearch
@@ -137,8 +144,10 @@ class Command(BaseCommand):
             # get latest tree - not yet active because we want to activate it only immediately after
             # finishing reindexing (and swapping index aliases)
             new_tree = NomenclatureTree.objects.filter(region='EU').latest('start_date')
+
             # get active (but not latest) tree
             prev_tree = NomenclatureTree.get_active_tree('EU')
+
             if prev_tree:
                 prev_tree.end_date = timezone.now()
                 prev_tree.save()
