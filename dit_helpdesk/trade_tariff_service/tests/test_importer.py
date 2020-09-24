@@ -2,16 +2,18 @@ import logging
 import datetime as dt
 
 from django.apps import apps
-from django.test import TestCase
-from unittest.mock import patch
+from django.conf import settings
+from django.test import override_settings, TestCase
 
 from hierarchy.models import SubHeading, Heading
 from hierarchy.helpers import create_nomenclature_tree
-from trade_tariff_service.HierarchyBuilder import HierarchyBuilder, hierarchy_model_map
+from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
+
+original_hierarchy_model_map = settings.HIERARCHY_MODEL_MAP
 
 mock_hierarchy_model_map = {
     "Commodity": {"file_name": "test_prepared/commodities.json", "app_name": "commodities"},
@@ -22,7 +24,7 @@ mock_hierarchy_model_map = {
 }
 
 
-@patch('trade_tariff_service.HierarchyBuilder.hierarchy_model_map', mock_hierarchy_model_map) 
+@override_settings(HIERARCHY_MODEL_MAP=mock_hierarchy_model_map) 
 class HierarchyBuilderTestCase(TestCase):
     """
     Test Hierarchy Importer
@@ -40,7 +42,7 @@ class HierarchyBuilderTestCase(TestCase):
         model_name = "Section"
         data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
-            app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -91,7 +93,7 @@ class HierarchyBuilderTestCase(TestCase):
         model_name = "Heading"
         data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
-            app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -114,7 +116,7 @@ class HierarchyBuilderTestCase(TestCase):
         data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
 
         model = apps.get_model(
-            app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -135,7 +137,7 @@ class HierarchyBuilderTestCase(TestCase):
         model_name = "Commodity"
         data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
-            app_label=hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
         builder = HierarchyBuilder(new_tree=self.tree)
         instance_data = [
@@ -169,7 +171,7 @@ class HierarchyBuilderTestCase(TestCase):
         parent_model_name = "Section"
         child_model_code = 27623
         parent_model = apps.get_model(
-            app_label=hierarchy_model_map[parent_model_name]["app_name"],
+            app_label=original_hierarchy_model_map[parent_model_name]["app_name"],
             model_name=parent_model_name,
         )
 
@@ -192,7 +194,7 @@ class HierarchyBuilderTestCase(TestCase):
         parent_model_name = "Chapter"
         child_model_code = "0100000000"
         parent_model = apps.get_model(
-            app_label=hierarchy_model_map[parent_model_name]["app_name"],
+            app_label=original_hierarchy_model_map[parent_model_name]["app_name"],
             model_name=parent_model_name,
         )
         for parent in builder.data[parent_model_name]["data"]:

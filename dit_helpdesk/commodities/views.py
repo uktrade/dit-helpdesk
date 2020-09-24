@@ -19,7 +19,7 @@ from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from hierarchy.views import get_hierarchy_context
-from regulations.models import Regulation
+from regulations.models import RegulationGroup
 
 from .models import Commodity
 
@@ -107,7 +107,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulations": Regulation.objects.inherited(commodity).order_by('title'),
+        "regulation_groups": RegulationGroup.objects.inherited(commodity).order_by('title'),
         "accordion_title": accordion_title,
         "commodity_notes": commodity.tts_obj.footnotes,
         "chapter_notes": chapter.chapter_notes,

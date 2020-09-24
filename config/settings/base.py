@@ -349,3 +349,11 @@ EU_COUNTRY_CODES = [
     "ES",
     "SE",
 ]
+
+HIERARCHY_MODEL_MAP = {
+    "Commodity": {"file_name": "prepared/commodities.json", "app_name": "commodities"},
+    "Chapter": {"file_name": "prepared/chapters.json", "app_name": "hierarchy"},
+    "Heading": {"file_name": "prepared/headings.json", "app_name": "hierarchy"},
+    "SubHeading": {"file_name": "prepared/sub_headings.json", "app_name": "hierarchy"},
+    "Section": {"file_name": "prepared/sections.json", "app_name": "hierarchy"},
+}
