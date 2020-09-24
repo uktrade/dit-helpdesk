@@ -21,6 +21,8 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 ADMIN_ENABLED = env.bool("ADMIN_ENABLED")
 
+CMS_ENABLED = env.bool("CMS_ENABLED", False)
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.auth",

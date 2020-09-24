@@ -38,7 +38,6 @@ urlpatterns = [
     path("", index.IndexRedirect.as_view(), name="index"),
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
     path("choose-country/", country_views.choose_country_view, name="choose-country"),
-    path("cms/", include("cms.urls", namespace="cms")),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
@@ -124,6 +123,13 @@ if settings.ADMIN_ENABLED:
         path("admin/login/", admin_login_view),
         path("admin/", admin.site.urls),
     ]
+
+
+if settings.CMS_ENABLED:
+    urlpatterns += [
+        path("cms/", include("cms.urls", namespace="cms")),
+    ]
+
 
 if settings.DEBUG:
     import debug_toolbar
