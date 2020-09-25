@@ -21,5 +21,5 @@ class CMSView(BaseCMSMixin, View):
 
 
 class RegulationGroupsListView(BaseCMSMixin, ListView):
-    model = RegulationGroup
+    queryset = RegulationGroup.objects.all()[:10]
     template_name = "cms/regulations/regulationgroup_list.html"
