@@ -23,6 +23,8 @@ class CMSView(BaseCMSMixin, View):
 
 
 class RegulationGroupsListView(BaseCMSMixin, ListView):
+    model = RegulationGroup
+    paginate_by = 10
     template_name = "cms/regulations/regulationgroup_list.html"
 
     def get_context_data(self, **kwargs):
@@ -43,13 +45,11 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
         return RegulationSearchForm(self.request.GET)
 
     def get_queryset(self):
-        queryset = RegulationGroup.objects.all()
+        queryset = super().get_queryset().order_by("title")
 
         search_form = self.get_search_form()
         if search_form.is_valid():
             search_query = search_form.cleaned_data.get("q")
             queryset = queryset.filter(title__search=search_query)
-
-        queryset = queryset[:10]
 
         return queryset
