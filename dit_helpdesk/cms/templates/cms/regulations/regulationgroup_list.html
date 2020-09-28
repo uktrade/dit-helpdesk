@@ -1,0 +1,38 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Regulation {{ block.super }}{% endblock %}
+
+{% block header %}Regulation {{ block.super }}{% endblock %}
+
+{% block sub_header %}
+    <h2 class="govuk-heading-xl">View regulations</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">Regulation group</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">Number of regulations</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                            <span class="govuk-visually-hidden">
+                                Actions
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for regulation_group in regulationgroup_list %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">{{ regulation_group.title }}</th>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">{{ regulation_group.regulation_set.count }}</td>
+                            <td class="govuk-table__cell app-table__cell--actions"><a class="govuk-link" href="#">View</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+{% endblock %}

@@ -30,8 +30,9 @@ sass.compiler = require('node-sass')
 const paths = {
   styles: {
     watch: './assets/scss/**/*.scss',
-    source: './assets/scss/global.scss',
+    helpdesk: './assets/scss/global.scss',
     oldie: './assets/scss/oldie.scss',
+    cms: './assets/scss/cms.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
@@ -47,8 +48,8 @@ const paths = {
   manifest: './manifest'
 }
 
-const buildStylesForModernBrowsers = () => {
-  return gulp.src(paths.styles.source)
+const buildStylesForModernBrowsers = source => {
+  return gulp.src(source)
     .pipe(sourcemaps.init())
     .pipe(sass({
       includePaths: 'node_modules'
@@ -65,6 +66,10 @@ const buildStylesForModernBrowsers = () => {
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.styles.destination))
 }
+
+const buildStylesForHelpdesk = () => buildStylesForModernBrowsers(paths.styles.helpdesk)
+
+const buildStylesForCMS = () => buildStylesForModernBrowsers(paths.styles.cms)
 
 const buildStylesForOldIE = () => {
   return gulp.src(paths.styles.oldie)
@@ -134,7 +139,7 @@ const watchJavascripts = () => {
   return gulp.watch(paths.javascripts.watch, buildJavascripts)
 }
 
-const buildStyles = gulp.parallel(buildStylesForModernBrowsers, buildStylesForOldIE)
+const buildStyles = gulp.parallel(buildStylesForHelpdesk, buildStylesForCMS, buildStylesForOldIE)
 
 const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
 const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend)
