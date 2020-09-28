@@ -20,6 +20,8 @@ services:
       - es
       - redis
     command: ./start.sh
+    stdin_open: true
+    tty: true
   postgres:
     image: postgres:10
     env_file:
