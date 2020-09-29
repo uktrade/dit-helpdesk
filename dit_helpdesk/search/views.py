@@ -59,7 +59,8 @@ class CommoditySearchView(FormView):
 
     def get_initial(self):
         initial = super(CommoditySearchView, self).get_initial()
-        initial["country"] = self.request.session.get("origin_country").lower()
+        country_code = self.kwargs.get("country_code")
+        initial["country"] = country_code.lower()
         return initial
 
     def get(self, request, *args, **kwargs):
