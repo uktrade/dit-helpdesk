@@ -155,6 +155,10 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
     Test Commodity code Search view
     """
 
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("search:search-commodity", kwargs={"country_code": "au"})
+
     def test_section_1_exists(self):
         self.assertTrue(Section.objects.filter(section_id=10).exists())
 
@@ -171,21 +175,12 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
         self.assertEqual(len(Commodity.objects.all()), 3)
 
     def test_commodity_search_is_using_the_correct_template(self):
-        session = self.client.session
-        session["origin_country"] = "AU"
-        session.save()
-        url = reverse("search:search-commodity", kwargs={"country_code": "au"})
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertTemplateUsed(response, "search/commodity_search.html")
 
     def test_search_view_returns_http_200(self):
-        session = self.client.session
-        session["origin_country"] = "AU"
-        session.save()
-        resp = self.client.get(
-            reverse("search:search-commodity", kwargs={"country_code": "au"})
-        )
-        self.assertEqual(resp.status_code, 200)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
 
 
 class CommodityTermSearchAPIViewTestCase(CommoditySetupTestCase):
