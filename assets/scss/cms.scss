@@ -3,12 +3,12 @@
 .app-sub-header {
     background-color: #f8f8f8;
     padding: 2rem 0;
-
-    .govuk-heading-xl {
-        margin-bottom: 0;
-    }
 }
 
 .app-table__cell--actions {
+    text-align: center;
+}
+
+.app-table__cell--no-results {
     text-align: center;
 }

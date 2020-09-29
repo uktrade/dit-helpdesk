@@ -5,12 +5,22 @@
 {% block header %}Regulation {{ block.super }}{% endblock %}
 
 {% block sub_header %}
-    <h2 class="govuk-heading-xl">View regulations</h2>
+    <h2 class="govuk-heading-xl govuk-!-margin-bottom-2">View regulations</h2>
+    <form>
+        <div class="govuk-form-group govuk-!-margin-bottom-2">
+            <label class="govuk-visuallyhidden" for="{{ search_form.q.id_for_label }}">
+                {{ form.q.label }}
+            </label>
+            <input class="govuk-input" id="{{ search_form.q.id_for_label }}" name="{{ search_form.q.name }}" type="text" value="{{ search_form.q.value|default:"" }}" />
+        </div>
+        <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Search</button>
+    </form>
 {% endblock %}
 
 {% block content %}
     <div class="govuk-width-container">
         <main id="main-content" class="govuk-main-wrapper">
+            <p class="govuk-body">{{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} regulation groups</p>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -30,6 +40,19 @@
                             <td class="govuk-table__cell govuk-table__cell--numeric">{{ regulation_group.regulation_set.count }}</td>
                             <td class="govuk-table__cell app-table__cell--actions"><a class="govuk-link" href="#">View</a></td>
                         </tr>
+                    {% empty %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
+                                <em>
+                                    {% if searching %}
+                                        No results for `{{ search_query }}` found.
+                                    {% else %}
+                                        No regulations groups.
+                                    {% endif %}
+                                </em>
+                            </td>
+                        </tr>
+
                     {% endfor %}
                 </tbody>
             </table>

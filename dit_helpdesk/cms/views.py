@@ -6,6 +6,8 @@ from django.views.generic import ListView
 
 from regulations.models import RegulationGroup
 
+from .forms import RegulationSearchForm
+
 
 class BaseCMSMixin(object):
 
@@ -21,5 +23,33 @@ class CMSView(BaseCMSMixin, View):
 
 
 class RegulationGroupsListView(BaseCMSMixin, ListView):
-    queryset = RegulationGroup.objects.all()[:10]
+    model = RegulationGroup
+    paginate_by = 10
     template_name = "cms/regulations/regulationgroup_list.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        search_form = self.get_search_form()
+        ctx["search_form"] = search_form
+        ctx["searching"] = False
+        ctx["search_query"] = None
+
+        if self.request.GET and search_form.is_valid():
+            ctx["searching"] = True
+            ctx["search_query"] = search_form.cleaned_data.get("q")
+
+        return ctx
+
+    def get_search_form(self):
+        return RegulationSearchForm(self.request.GET)
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by("title")
+
+        search_form = self.get_search_form()
+        if search_form.is_valid():
+            search_query = search_form.cleaned_data.get("q")
+            queryset = queryset.filter(title__search=search_query)
+
+        return queryset
