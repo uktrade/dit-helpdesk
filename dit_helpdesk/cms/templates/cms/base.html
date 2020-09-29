@@ -39,15 +39,16 @@
       </div>
     </header>
 
-    <div class="app-sub-header govuk-grid-row">
-      <div class="govuk-width-container">
-          <div class="govuk-grid-column-three-quarters">
-              {% block sub_header %}{% endblock %}  
-          </div>
-        </div>
-    </div>
+    {% block sub_header %}{% endblock %}
 
-    {% block content %}{% endblock content %}
+    {% block nav %}{% endblock %}
+
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+            {% block main %}
+            {% endblock %}
+        </main>
+    </div>
 
   </body>
 </html>

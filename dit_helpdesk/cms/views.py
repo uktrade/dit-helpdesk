@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
 from regulations.models import RegulationGroup
 
@@ -53,3 +53,8 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
             queryset = queryset.filter(title__search=search_query)
 
         return queryset
+
+
+class RegulationGroupDetailView(BaseCMSMixin, DetailView):
+    model = RegulationGroup
+    template_name = "cms/regulations/regulationgroup_detail.html"

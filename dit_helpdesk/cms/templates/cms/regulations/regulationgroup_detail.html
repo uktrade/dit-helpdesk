@@ -1,0 +1,36 @@
+{% extends "cms/regulations/base.html" %}
+
+{% block nav %}
+    <nav class="govuk-width-container govuk-grid-row">
+        <a href="{% url 'cms:regulation-groups-list' %}" class="govuk-back-link">Back</a>
+    </nav>
+{% endblock %}
+
+{% block main %}
+    <h2 class="govuk-heading-m">{{ regulationgroup.title }}</h2>
+
+    <h3 class="govuk-heading-m">Regulations</h3>
+
+    <h4 class="govuk-heading-m">Associated regulations ({{ regulationgroup.regulation_set.count }})</h4>
+    <p class="govuk-inset-text">
+        Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+    </p>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Regulation number</th>
+                <th scope="col" class="govuk-table__header">Title</th>
+                <th scope="col" class="govuk-table__header">URL</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for regulation in regulationgroup.regulation_set.all %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ regulation.regulation_number }}</th>
+                    <td class="govuk-table__cell">{{ regulation.title }}</td>
+                    <td class="govuk-table__cell"><a class="govuk-link" href="{{ regulation.url }}">{{ regulation.url }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
