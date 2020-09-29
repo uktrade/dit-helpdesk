@@ -95,23 +95,24 @@ const buildJavascripts = () => {
   return gulp.src([
       paths.javascripts.source,
       '!assets/javascript/global.js',
+      '!assets/javascript/cms.js',
       '!assets/javascript/modules/**',
       '!assets/javascript/vendor/**/*'
     ], { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const compileGovukFrontend = () => {
+const bundle = filename => {
   var b = browserify({
     entries: [
-      './assets/javascript/global.js'
+      "./assets/javascript/" + filename + ".js"
     ],
     debug: true,
     standalone: 'DITGlobals'
   });
 
   return b.bundle()
-    .pipe(source('global.js'))
+    .pipe(source(filename + ".js"))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     // Add transformation tasks to the pipeline here.
@@ -120,6 +121,10 @@ const compileGovukFrontend = () => {
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.javascripts.destination))
 }
+
+const compileGovukFrontend = () => bundle("global")
+
+const compileCMS = () => bundle("cms")
 
 const copyGOVUKFrontendAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
@@ -142,8 +147,8 @@ const watchJavascripts = () => {
 const buildStyles = gulp.parallel(buildStylesForHelpdesk, buildStylesForCMS, buildStylesForOldIE)
 
 const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
-const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend)
-const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend)
+const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend, compileCMS)
+const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend, compileCMS)
 
 gulp.task('default', taskListing)
 gulp.task('copyExternalAssets', copy)

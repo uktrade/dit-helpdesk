@@ -1,61 +1,58 @@
-{% extends "cms/base.html" %}
-
-{% block title %}Regulation {{ block.super }}{% endblock %}
-
-{% block header %}Regulation {{ block.super }}{% endblock %}
+{% extends "cms/regulations/base.html" %}
 
 {% block sub_header %}
-    <h2 class="govuk-heading-xl govuk-!-margin-bottom-2">View regulations</h2>
-    <form>
-        <div class="govuk-form-group govuk-!-margin-bottom-2">
-            <label class="govuk-visuallyhidden" for="{{ search_form.q.id_for_label }}">
-                {{ form.q.label }}
-            </label>
-            <input class="govuk-input" id="{{ search_form.q.id_for_label }}" name="{{ search_form.q.name }}" type="text" value="{{ search_form.q.value|default:"" }}" />
+    <div class="app-sub-header govuk-grid-row">
+        <div class="govuk-width-container">
+            <div class="govuk-grid-column-three-quarters">
+                <h2 class="govuk-heading-xl govuk-!-margin-bottom-2">View regulations</h2>
+                <form>
+                    <div class="govuk-form-group govuk-!-margin-bottom-2">
+                        <label class="govuk-visuallyhidden" for="{{ search_form.q.id_for_label }}">
+                            {{ form.q.label }}
+                        </label>
+                        <input class="govuk-input" id="{{ search_form.q.id_for_label }}" name="{{ search_form.q.name }}" type="text" value="{{ search_form.q.value|default:"" }}" />
+                    </div>
+                    <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Search</button>
+                </form>
+            </div>
         </div>
-        <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Search</button>
-    </form>
+    </div>
 {% endblock %}
 
-{% block content %}
-    <div class="govuk-width-container">
-        <main id="main-content" class="govuk-main-wrapper">
-            <p class="govuk-body">{{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} regulation groups</p>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">Regulation group</th>
-                        <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">Number of regulations</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                            <span class="govuk-visually-hidden">
-                                Actions
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for regulation_group in regulationgroup_list %}
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">{{ regulation_group.title }}</th>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">{{ regulation_group.regulation_set.count }}</td>
-                            <td class="govuk-table__cell app-table__cell--actions"><a class="govuk-link" href="#">View</a></td>
-                        </tr>
-                    {% empty %}
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
-                                <em>
-                                    {% if searching %}
-                                        No results for `{{ search_query }}` found.
-                                    {% else %}
-                                        No regulations groups.
-                                    {% endif %}
-                                </em>
-                            </td>
-                        </tr>
-
-                    {% endfor %}
-                </tbody>
-            </table>
-        </main>
-    </div>
+{% block main %}
+    <p class="govuk-body">{{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} regulation groups</p>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">Regulation group</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">Number of regulations</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                    <span class="govuk-visually-hidden">
+                        Actions
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for regulation_group in regulationgroup_list %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ regulation_group.title }}</th>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">{{ regulation_group.regulation_set.count }}</td>
+                    <td class="govuk-table__cell app-table__cell--actions"><a class="govuk-link" href="{% url "cms:regulation-group-detail" regulation_group.pk %}">View</a></td>
+                </tr>
+            {% empty %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
+                        <em>
+                            {% if searching %}
+                                No results for `{{ search_query }}` found.
+                            {% else %}
+                                No regulations groups.
+                            {% endif %}
+                        </em>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

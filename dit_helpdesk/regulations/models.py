@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 
 from .managers import RegulationGroupManager
@@ -34,3 +36,10 @@ class Regulation(models.Model):
 
     def __str__(self):
         return self.url
+
+    @property
+    def regulation_number(self):
+        legislation_url_regex = r"http:\/\/www.legislation.gov.uk\/(eur|eudn|eudr)\/(?P<year>\d{4})\/(?P<number>\d+)\/contents"
+        matches = re.match(legislation_url_regex, self.url)
+
+        return f"{matches['number']}/{matches['year']}"
