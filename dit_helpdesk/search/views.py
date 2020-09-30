@@ -57,6 +57,8 @@ class CommoditySearchView(FormView):
     form_class = CommoditySearchForm
     template_name = "search/commodity_search.html"
 
+    EMPTY_RESULTS_SUFFIX = " (no results)"
+
     def get_initial(self):
         initial = super(CommoditySearchView, self).get_initial()
         country_code = self.kwargs.get("country_code")
@@ -69,6 +71,7 @@ class CommoditySearchView(FormView):
         form = self.form_class(request.GET)
 
         context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
+        context["title_suffix"] = ""
 
         if form.is_valid():
 
@@ -137,9 +140,11 @@ class CommoditySearchView(FormView):
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
                         context["results"] = []
+                        context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
                         return self.render_to_response(context)
                 else:
                     context["results"] = []
+                    context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
                     return self.render_to_response(context)
             else:
 
@@ -158,6 +163,9 @@ class CommoditySearchView(FormView):
                 context["current_page"] = page
                 context["results_per_page"] = settings.RESULTS_PER_PAGE
                 context["page_total"] = len(context["results"])
+
+                if not context["results"]:
+                    context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
