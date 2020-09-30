@@ -249,6 +249,26 @@ class CommodityKeywordSearchViewTestCase(TestCase):
 
         self.assertEqual(resp.context["form"].is_valid(), False)
 
+    def test_commodity_keyword_empty_search(self):
+        session = self.client.session
+        session["origin_country"] = "AU"
+        session.save()
+
+        resp = self.client.get(
+            reverse("search:search-commodity", kwargs={"country_code": "au"}),
+            data={
+                "q": "nonexistent_product",
+                "country": "au",
+                "toggle_headings": 0,
+                "sort": "ranking",
+                "sort_order": "asc",
+                "page": 1
+            },
+        )
+
+        self.assertEqual(resp.context["form"].is_valid(), False)
+        self.assertEqual(resp.context["title_suffix"], " (no results)")
+
 
 class ProcessCommodityCodeTestCase(TestCase):
     """
