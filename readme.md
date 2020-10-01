@@ -169,6 +169,7 @@ of the Initialize section are commented as below
     # python manage.py import_regulations
     # python manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
     # python manage.py search_index --populate
+    # python manage.py createinitialrevisions
 ```
 
 make sure the commands of the Ongoing Development section are commented as below
