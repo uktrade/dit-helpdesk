@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl_drf",
     "accessibility",
     "cms",
+    "reversion",
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
     "core.middleware.CheckCountryUrlMiddleware",

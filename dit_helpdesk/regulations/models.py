@@ -1,10 +1,12 @@
 import re
+import reversion
 
 from django.db import models
 
 from .managers import RegulationGroupManager
 
 
+@reversion.register()
 class RegulationGroup(models.Model):
     """
     Regulation group model
@@ -23,6 +25,7 @@ class RegulationGroup(models.Model):
         return self.title
 
 
+@reversion.register()
 class Regulation(models.Model):
     """
     Regulation model
