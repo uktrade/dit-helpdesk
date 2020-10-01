@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
 
 from regulations.models import RegulationGroup
 
-from .forms import RegulationSearchForm
+from .forms import RegulationForm, RegulationSearchForm
 
 
 class BaseCMSMixin(object):
@@ -58,3 +60,36 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
 class RegulationGroupDetailView(BaseCMSMixin, DetailView):
     model = RegulationGroup
     template_name = "cms/regulations/regulationgroup_detail.html"
+
+
+class RegulationGroupRegulationCreateView(RegulationGroupDetailView):
+    template_name = "cms/regulations/regulation_group_regulation_create.html"
+
+    def get_context_data(self, regulation_form=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        if not regulation_form:
+            regulation_form_class = self.get_regulation_form_class()
+            regulation_form = regulation_form_class(self.get_object())
+        ctx["regulation_form"] = regulation_form
+
+        return ctx
+
+    def get_regulation_form_class(self):
+        return RegulationForm
+
+    def post(self, request, *args, **kwargs):
+        regulation_group = self.get_object()
+
+        regulation_form_class = self.get_regulation_form_class()
+        regulation_form = regulation_form_class(regulation_group, request.POST)
+        if regulation_form.is_valid():
+            regulation_form.save()
+            return redirect(
+                "cms:regulation-group-detail",
+                pk=regulation_group.pk,
+            )
+
+        self.object = self.get_object()
+        ctx = self.get_context_data(object=self.object, regulation_form=regulation_form)
+        return self.render_to_response(ctx)
