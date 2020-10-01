@@ -5,6 +5,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import dj_database_url
+import ecs_logging
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
@@ -247,13 +248,39 @@ CSRF_COOKIE_HTTPONLY = True
 
 
 LOG_LEVEL = env("LOG_LEVEL")
+LOG_ECS = env.bool("LOG_ECS", True)
 
 
 LOGGING = {
-    "version": 1,
-    "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
-    "root": {"handlers": ["console"], "level": LOG_LEVEL},
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'ecs_formatter': {
+            '()': ecs_logging.StdlibFormatter,
+        },
+        'console_formatter': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+    },
+    'handlers': {
+        'ecs': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'ecs_formatter',
+            'stream': sys.stdout,
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_formatter',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': LOG_LEVEL,
+            'handlers': ['console' if not LOG_ECS else 'ecs'],
+        },
+    },
 }
+
 
 ELASTIC_APM = {
   'SERVICE_NAME': env.str('APM_SERVICE_NAME'),

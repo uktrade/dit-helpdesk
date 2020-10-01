@@ -15,7 +15,6 @@ pre-commit = "*"
 pytest = "==5.3.2"
 splinter = "==0.13.0"
 ipython_genutils = "==0.2.0"
-ipython = "*"
 coverage = "==4.5.2"
 mypy = "==0.670"
 #pytest-sugar = "==0.9.2"
@@ -28,6 +27,7 @@ django-extensions = "*"
 graphviz = "*"
 pygraphviz = "*"
 parameterized = "*"
+ipython = "==7.16.1"
 
 [packages]
 beautifulsoup4 = "==4.7.0"
@@ -81,6 +81,7 @@ django-environ = "*"
 Django = "==2.2.13"
 gevent = "==1.4.0"
 elastic-apm = "*"
+ecs-logging = "*"
 
 [requires]
 python_version = "3.6"
