@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
@@ -57,13 +56,28 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
         return queryset
 
 
-class RegulationGroupDetailView(BaseCMSMixin, DetailView):
+class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
     model = RegulationGroup
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        try:
+            ctx["selected_panel"] = self.selected_panel
+        except AttributeError:
+            raise NotImplementedError("Specify a `selected_panel`.")
+
+        return ctx
+
+
+class RegulationGroupDetailView(BaseRegulationGroupDetailView):
+    selected_panel = "regulations"
     template_name = "cms/regulations/regulationgroup_detail.html"
 
 
-class RegulationGroupRegulationCreateView(RegulationGroupDetailView):
-    template_name = "cms/regulations/regulation_group_regulation_create.html"
+class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
+    selected_panel = "regulations"
+    template_name = "cms/regulations/regulationgroup_regulation_create.html"
 
     def get_context_data(self, regulation_form=None, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -95,5 +109,6 @@ class RegulationGroupRegulationCreateView(RegulationGroupDetailView):
         return self.render_to_response(ctx)
 
 
-class RegulationGroupChapterListView(RegulationGroupDetailView):
+class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
+    selected_panel = "chapters"
     template_name = "cms/regulations/regulationgroup_chapter_list.html"
