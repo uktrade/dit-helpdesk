@@ -154,3 +154,13 @@ def get_alias_from_hit(hit: Hit) -> str:
 
     alias = hit.meta["index"].split("-")[0]
     return alias
+
+
+def normalise_commodity_code(code: str) -> str:
+    """
+    Normalises a string which is a candidate for a commodity code.
+    Removes all dots.
+
+    """
+    code = code.replace('.', '')
+    return code
