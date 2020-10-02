@@ -1,56 +1,40 @@
-{% extends "cms/regulations/base.html" %}
+{% extends "cms/regulations/base_regulationgroup_detail.html" %}
 
-{% block nav %}
-    <nav class="govuk-width-container govuk-grid-row">
-        <a href="{% url 'cms:regulation-groups-list' %}" class="govuk-back-link">Back</a>
-    </nav>
+{% block panel_heading %}
+    <div class="app-panel-heading">
+        <h3 class="govuk-heading-m">Associated regulations ({{ regulationgroup.regulation_set.count }})</h4>
+        <p class="govuk-inset-text">
+            Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+        </p>
+        <nav>
+            <ul class="app-regulation-sub-nav">
+                <li>
+                    <a class="govuk-link" href="{% url 'cms:regulation-group-regulation-create' pk=regulationgroup.pk %}">
+                        Add new regulation
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 {% endblock %}
 
-{% block main %}
-    <h2 class="govuk-heading-m">{{ regulationgroup.title }}</h2>
-
-    <div class="govuk-tabs" data-module="govuk-tabs">
-        <ul class="govuk-tabs__list">
-            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                <a class="govuk-tabs__tab" href="#regulations">
-                    Regulations
-                </a>
-            </li>
-        </ul>
-        <div class="govuk-tabs__panel" id="regulations">
-            <div class="app-panel-heading">
-                <h3 class="govuk-heading-m">Associated regulations ({{ regulationgroup.regulation_set.count }})</h4>
-                <p class="govuk-inset-text">
-                    Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
-                </p>
-                <nav>
-                    <ul class="app-regulation-sub-nav">
-                        <li>
-                            <a class="govuk-link" href="{% url 'cms:regulation-group-regulation-create' pk=regulationgroup.pk %}">
-                                Add new regulation
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Regulation number</th>
-                        <th scope="col" class="govuk-table__header">Title</th>
-                        <th scope="col" class="govuk-table__header">URL</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for regulation in regulationgroup.regulation_set.all %}
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">{{ regulation.regulation_number }}</th>
-                            <td class="govuk-table__cell">{{ regulation.title }}</td>
-                            <td class="govuk-table__cell"><a class="govuk-link" href="{{ regulation.url }}">{{ regulation.url }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+{% block panel_content %}
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Regulation number</th>
+                <th scope="col" class="govuk-table__header">Title</th>
+                <th scope="col" class="govuk-table__header">URL</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for regulation in regulationgroup.regulation_set.all %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ regulation.regulation_number }}</th>
+                    <td class="govuk-table__cell">{{ regulation.title }}</td>
+                    <td class="govuk-table__cell"><a class="govuk-link" href="{{ regulation.url }}">{{ regulation.url }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
