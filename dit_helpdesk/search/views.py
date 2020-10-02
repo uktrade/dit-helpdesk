@@ -79,8 +79,6 @@ class CommoditySearchView(FormView):
 
             page = int(form_data.get("page")) if form_data.get("page") else 1
 
-            form_data = self.check_for_dotted_code_numbers(form_data)
-
             normalised_q = helpers.normalise_commodity_code(form_data.get("q"))
             if normalised_q.isdigit():
                 response = helpers.search_by_code(code=normalised_q)
