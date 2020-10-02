@@ -93,3 +93,7 @@ class RegulationGroupRegulationCreateView(RegulationGroupDetailView):
         self.object = self.get_object()
         ctx = self.get_context_data(object=self.object, regulation_form=regulation_form)
         return self.render_to_response(ctx)
+
+
+class RegulationGroupChapterListView(RegulationGroupDetailView):
+    template_name = "cms/regulations/regulationgroup_chapter_list.html"

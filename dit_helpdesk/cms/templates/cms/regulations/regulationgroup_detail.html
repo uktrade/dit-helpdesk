@@ -12,8 +12,13 @@
     <div class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                <a class="govuk-tabs__tab" href="#regulations">
+                <a class="govuk-tabs__tab govuk-tabs__tab--selected" href="{% url 'cms:regulation-group-detail' pk=regulationgroup.pk %}">
                     Regulations
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="{% url 'cms:regulation-group-chapter-list' pk=regulationgroup.pk %}">
+                    Chapters
                 </a>
             </li>
         </ul>
