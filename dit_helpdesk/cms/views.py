@@ -5,9 +5,15 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
 
+from hierarchy.models import Chapter
 from regulations.models import RegulationGroup
 
-from .forms import RegulationForm, RegulationSearchForm
+from .forms import (
+    ChapterAddForm,
+    ChapterAddSearchForm,
+    RegulationForm,
+    RegulationSearchForm,
+)
 
 
 class BaseCMSMixin(object):
@@ -112,3 +118,53 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
 class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
     selected_panel = "chapters"
     template_name = "cms/regulations/regulationgroup_chapter_list.html"
+
+
+class RegulationGroupChapterAddView(BaseRegulationGroupDetailView):
+    selected_panel = "chapters"
+    template_name = "cms/regulations/regulationgroup_chapter_add.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        search_form = self.get_search_form()
+        ctx["search_form"] = search_form
+        ctx["searching"] = False
+        ctx["search_results"] = None
+
+        if self.request.GET and search_form.is_valid():
+            ctx["searching"] = True
+            ctx["search_results"] = self.get_search_results(search_form)
+
+        add_form = self.get_add_form()
+        ctx["add_form"] = add_form
+
+        return ctx
+
+    def get_search_form(self):
+        return ChapterAddSearchForm(self.request.GET)
+
+    def get_add_form(self):
+        return ChapterAddForm(self.request.POST, instance=self.get_object())
+
+    def get_search_results(self, search_form):
+        chapter_codes = search_form.cleaned_data["chapter_codes"]
+        chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
+
+        return chapters
+
+    def post(self, request, *args, **kwargs):
+        regulation_group = self.get_object()
+
+        add_form = self.get_add_form()
+        if add_form.is_valid():
+            add_form.save()
+
+            return redirect(
+                "cms:regulation-group-chapter-list",
+                pk=regulation_group.pk,
+            )
+
+        self.object = regulation_group
+        ctx = self.get_context_data(object=self.object)
+        return self.render_to_response(ctx)
