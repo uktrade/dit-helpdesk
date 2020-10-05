@@ -6,7 +6,11 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
 
-from hierarchy.models import Chapter, Heading
+from hierarchy.models import (
+    Chapter,
+    Heading,
+    SubHeading,
+)
 from regulations.models import RegulationGroup
 
 from .forms import (
@@ -18,6 +22,9 @@ from .forms import (
     HeadingRemoveForm,
     RegulationForm,
     RegulationSearchForm,
+    SubHeadingAddForm,
+    SubHeadingAddSearchForm,
+    SubHeadingRemoveForm,
 )
 
 
@@ -299,6 +306,60 @@ class RegulationGroupHeadingRemoveView(BaseRemoveView):
 
         return reverse(
             "cms:regulation-group-heading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+
+class RegulationGroupSubHeadingListView(BaseRegulationGroupDetailView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_list.html"
+
+
+class RegulationGroupSubHeadingAddView(BaseAddView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_add.html"
+    search_form_class = SubHeadingAddSearchForm
+    add_form_class = SubHeadingAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        subheading_codes = search_form.cleaned_data["subheading_codes"]
+        subheadings = SubHeading.objects.filter(commodity_code__in=subheading_codes)
+
+        return subheadings
+
+
+class RegulationGroupSubHeadingRemoveView(BaseRemoveView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_remove.html"
+    context_object_to_remove_name = "subheading"
+
+    def get_object_to_remove(self):
+        return SubHeading.objects.get(pk=self.kwargs["subheading_pk"])
+
+    def get_remove_form(self):
+        return SubHeadingRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            subheading=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-subheading-list",
             kwargs={
                 "pk": regulation_group.pk,
             },

@@ -132,3 +132,50 @@ class HeadingRemoveForm(forms.ModelForm):
             instance.headings.remove(self.heading)
 
         return instance
+
+
+class SubHeadingAddSearchForm(forms.Form):
+    subheading_codes = forms.CharField(
+        label="Search subheadings",
+        help_text="Comma separated list of heading codes e.g. 010101,2101220000,822020 (both 6, 8 and 10 digits accepted)",
+    )
+
+    def clean_subheading_codes(self):
+        heading_codes = self.cleaned_data["subheading_codes"]
+
+        return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
+
+
+class SubHeadingAddForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["subheadings"]
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.subheadings.add(*self.cleaned_data["subheadings"])
+
+        return instance
+
+
+class SubHeadingRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, subheading, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.subheading = subheading
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.subheadings.remove(self.subheading)
+
+        return instance

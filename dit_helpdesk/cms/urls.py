@@ -44,4 +44,19 @@ urlpatterns = [
         views.RegulationGroupHeadingRemoveView.as_view(),
         name="regulation-group-heading-remove",
     ),
+    path(
+        "regulation-group/<int:pk>/subheadings/",
+        views.RegulationGroupSubHeadingListView.as_view(),
+        name="regulation-group-subheading-list",
+    ),
+    path(
+        "regulation-group/<int:pk>/subheadings/add/",
+        views.RegulationGroupSubHeadingAddView.as_view(),
+        name="regulation-group-subheading-add",
+    ),
+    path(
+        "regulation-group/<int:pk>/subheading/<int:subheading_pk>/remove/",
+        views.RegulationGroupSubHeadingRemoveView.as_view(),
+        name="regulation-group-subheading-remove",
+    ),
 ]
