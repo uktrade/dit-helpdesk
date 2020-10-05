@@ -7,14 +7,12 @@ import re
 
 import requests
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import reverse
 
 from countries.models import Country
-from hierarchy.helpers import IMPORT_MEASURE_GROUPS
 from hierarchy.models import (
-    Heading, SubHeading, Chapter, NomenclatureTree,
+    BaseHierarchyModel, Heading, NomenclatureTree,
     EUHierarchyManager, TreeSelectorMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
@@ -22,7 +20,7 @@ from trade_tariff_service.tts_api import CommodityJson
 logger = logging.getLogger(__name__)
 
 
-class Commodity(models.Model, TreeSelectorMixin):
+class Commodity(BaseHierarchyModel, TreeSelectorMixin):
     """
     Commodity model
     """
@@ -41,8 +39,6 @@ class Commodity(models.Model, TreeSelectorMixin):
     number_indents = models.SmallIntegerField()
     keywords = models.TextField()
     ranking = models.SmallIntegerField(null=True)
-
-    tts_json = models.TextField(blank=True, null=True)
 
     tts_is_leaf = models.BooleanField()
 

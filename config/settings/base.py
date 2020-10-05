@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "elasticapm.contrib.django",
     "formtools",
+    "readonly",
     "core",
     "commodities",
     "cookies",
@@ -105,7 +106,11 @@ DATABASES = {"default": dj_database_url.config()}
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
 CACHES = {
-    "default": {"BACKEND": "redis_cache.RedisCache", "LOCATION": "localhost:6379"}
+    "default": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": "localhost:6379",
+        "TIMEOUT": 60 * 60 * 24,
+    }
 }
 
 # ELASTICSEARCH_DSL SETTINGS
@@ -239,6 +244,7 @@ COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/%s.json"
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 # Secure cookie settings.
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

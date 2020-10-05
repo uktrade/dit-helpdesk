@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.core.cache import cache
 
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
@@ -69,7 +70,24 @@ class NomenclatureTree(models.Model):
         return f"{self.region} {self.start_date} - {self.end_date}"
 
 
-class Section(models.Model, TreeSelectorMixin):
+class BaseHierarchyModel(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def _get_cache_key(self):
+        return f"{self.nomenclature_tree_id}_{str(self)}".replace(' ', '_')
+
+    @property
+    def tts_json(self):
+        return cache.get(self._get_cache_key())
+
+    @tts_json.setter
+    def tts_json(self, val):
+        cache.set(self._get_cache_key(), val)
+
+
+class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
@@ -78,7 +96,6 @@ class Section(models.Model, TreeSelectorMixin):
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
     section_id = models.IntegerField()
-    tts_json = models.TextField(blank=True)
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
     position = models.IntegerField()
@@ -319,7 +336,7 @@ class Section(models.Model, TreeSelectorMixin):
         return None
 
 
-class Chapter(models.Model, TreeSelectorMixin):
+class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
@@ -339,7 +356,6 @@ class Chapter(models.Model, TreeSelectorMixin):
     keywords = models.TextField(null=True, blank=True)
     ranking = models.SmallIntegerField(null=True, blank=True)
     chapter_code = models.CharField(max_length=30)
-    tts_json = models.TextField(blank=True, null=True)
 
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
@@ -631,7 +647,7 @@ class Chapter(models.Model, TreeSelectorMixin):
         return self.section
 
 
-class Heading(models.Model, TreeSelectorMixin):
+class Heading(BaseHierarchyModel, TreeSelectorMixin):
     objects = EUHierarchyManager()
     all_objects = models.Manager()
 
@@ -649,7 +665,6 @@ class Heading(models.Model, TreeSelectorMixin):
     ranking = models.SmallIntegerField(null=True, blank=True)
     heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(max_length=4, null=True, blank=True)
-    tts_json = models.TextField(blank=True, null=True)
     chapter = models.ForeignKey(
         "hierarchy.Chapter",
         blank=True,
@@ -926,7 +941,7 @@ class Heading(models.Model, TreeSelectorMixin):
         return self.chapter
 
 
-class SubHeading(models.Model, TreeSelectorMixin):
+class SubHeading(BaseHierarchyModel, TreeSelectorMixin):
     objects = EUHierarchyManager()
     all_objects = models.Manager()
 
@@ -943,7 +958,6 @@ class SubHeading(models.Model, TreeSelectorMixin):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     leaf = models.BooleanField()
-    tts_json = models.TextField(blank=True, null=True)
 
     last_updated = models.DateTimeField(auto_now=True)
 
