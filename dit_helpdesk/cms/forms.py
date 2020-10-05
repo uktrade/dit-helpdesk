@@ -85,3 +85,50 @@ class ChapterRemoveForm(forms.ModelForm):
             instance.chapters.remove(self.chapter)
 
         return instance
+
+
+class HeadingAddSearchForm(forms.Form):
+    heading_codes = forms.CharField(
+        label="Search headings",
+        help_text="Comma separated list of heading codes e.g. 0101,2101000000,8220 (both 4 and 10 digits accepted)",
+    )
+
+    def clean_heading_codes(self):
+        heading_codes = self.cleaned_data["heading_codes"]
+
+        return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
+
+
+class HeadingAddForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["headings"]
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.headings.add(*self.cleaned_data["headings"])
+
+        return instance
+
+
+class HeadingRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, heading, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.heading = heading
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.headings.remove(self.heading)
+
+        return instance

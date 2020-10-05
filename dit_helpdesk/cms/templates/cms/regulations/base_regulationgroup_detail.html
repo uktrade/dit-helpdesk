@@ -21,6 +21,11 @@
                     Chapters
                 </a>
             </li>
+            <li class="govuk-tabs__list-item{% if selected_panel == "headings" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "headings" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-heading-list' pk=regulationgroup.pk %}">
+                    Headings
+                </a>
+            </li>
         </ul>
         <div class="govuk-tabs__panel">
             {% block panel_heading %}{% endblock %}
