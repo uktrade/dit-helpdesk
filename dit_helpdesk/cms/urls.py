@@ -19,4 +19,9 @@ urlpatterns = [
         views.RegulationGroupChapterListView.as_view(),
         name="regulation-group-chapter-list",
     ),
+    path(
+        "regulation-group/<int:pk>/chapters/add/",
+        views.RegulationGroupChapterAddView.as_view(),
+        name="regulation-group-chapter-add",
+    )
 ]

@@ -1,0 +1,68 @@
+{% extends "cms/regulations/base_regulationgroup_detail.html" %}
+
+{% block panel_heading %}
+    <div class="app-panel-heading">
+        <h3 class="govuk-heading-m">Link other chapters to the group</h4>
+        <p class="govuk-inset-text">
+            Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+        </p>
+        <form>
+            <div class="govuk-form-group govuk-!-margin-bottom-2">
+                <label for="{{ search_form.chapter_codes.id_for_label }}">
+                    {{ search_form.chapter_codes.label }}
+                </label>
+                <div class="govuk-hint">
+                    {{ search_form.chapter_codes.help_text }}
+                </div>
+                <input class="govuk-input" id="{{ search_form.chapter_codes.id_for_label }}" name="{{ search_form.chapter_codes.name }}" type="text" value="{{ search_form.chapter_codes.value|default:"" }}" />
+            </div>
+
+            <div class="govuk-!-margin-top-6">
+                <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
+                    Find chapters
+                </button>
+                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-group-chapter-list' pk=regulationgroup.pk %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block panel_content %}
+    {% if searching %}
+        <form method="post">
+            {% csrf_token %}
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">ID</th>
+                        <th scope="col" class="govuk-table__header">Title</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for chapter in search_results %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                {{ chapter.chapter_code }}
+                                <input name="{{ add_form.chapters.name }}" type="hidden" value="{{ chapter.pk }}" />
+                            </th>
+                            <td class="govuk-table__cell">{{ chapter.description }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell app-table__cell--no-results" colspan="2">
+                                <em>
+                                    No chapters found.
+                                </em>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="govuk-button" data-module="govuk-button">
+                Attach chapters
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}
