@@ -65,3 +65,23 @@ class ChapterAddForm(forms.ModelForm):
             instance.chapters.add(*self.cleaned_data["chapters"])
 
         return instance
+
+
+class ChapterRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, chapter, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.chapter = chapter
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.chapters.remove(self.chapter)
+
+        return instance

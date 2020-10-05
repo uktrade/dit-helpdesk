@@ -1,0 +1,17 @@
+{% extends "cms/regulations/base.html" %}
+
+{% block main %}
+    <h2 class="govuk-heading-m">
+        Remove <em>{{ chapter.title }}</em> from <em>{{ regulationgroup.title }}</em>?
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
+            Remove
+        </button>
+        <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-group-chapter-list' pk=regulationgroup.pk %}">
+            Cancel
+        </a>
+    </form>
+{% endblock %}
