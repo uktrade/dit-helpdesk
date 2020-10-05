@@ -23,5 +23,10 @@ urlpatterns = [
         "regulation-group/<int:pk>/chapters/add/",
         views.RegulationGroupChapterAddView.as_view(),
         name="regulation-group-chapter-add",
-    )
+    ),
+    path(
+        "regulation-group/<int:pk>/chapter/<int:chapter_pk>/remove/",
+        views.RegulationGroupChapterRemoveView.as_view(),
+        name="regulation-group-chapter-remove",
+    ),
 ]

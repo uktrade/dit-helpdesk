@@ -11,6 +11,7 @@ from regulations.models import RegulationGroup
 from .forms import (
     ChapterAddForm,
     ChapterAddSearchForm,
+    ChapterRemoveForm,
     RegulationForm,
     RegulationSearchForm,
 )
@@ -159,6 +160,45 @@ class RegulationGroupChapterAddView(BaseRegulationGroupDetailView):
         add_form = self.get_add_form()
         if add_form.is_valid():
             add_form.save()
+
+            return redirect(
+                "cms:regulation-group-chapter-list",
+                pk=regulation_group.pk,
+            )
+
+        self.object = regulation_group
+        ctx = self.get_context_data(object=self.object)
+        return self.render_to_response(ctx)
+
+
+class RegulationGroupChapterRemoveView(BaseRegulationGroupDetailView):
+    selected_panel = "chapters"
+    template_name = "cms/regulations/regulationgroup_chapter_remove.html"
+
+    def get_chapter(self):
+        return Chapter.objects.get(pk=self.kwargs["chapter_pk"])
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["chapter"] = self.get_chapter()
+        ctx["remove_form"] = self.get_remove_form()
+
+        return ctx
+
+    def get_remove_form(self):
+        return ChapterRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            chapter=self.get_chapter(),
+        )
+
+    def post(self, request, *args, **kwargs):
+        regulation_group = self.get_object()
+
+        remove_form = self.get_remove_form()
+        if remove_form.is_valid():
+            remove_form.save()
 
             return redirect(
                 "cms:regulation-group-chapter-list",

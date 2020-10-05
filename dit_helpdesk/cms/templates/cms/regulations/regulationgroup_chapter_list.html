@@ -24,6 +24,11 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">ID</th>
                 <th scope="col" class="govuk-table__header">Title</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                    <span class="govuk-visually-hidden">
+                        Actions
+                    </span>
+                </th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
@@ -31,6 +36,12 @@
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">{{ chapter.chapter_code }}</th>
                     <td class="govuk-table__cell">{{ chapter.description }}</td>
+                    <td class="govuk-table__cell app-table__cell--actions">
+                        <a
+                            class="govuk-link"
+                            href="{% url "cms:regulation-group-chapter-remove" regulationgroup.pk chapter.pk %}"
+                        >Remove</a>
+                    </td>
                 </tr>
             {% empty %}
                 <tr class="govuk-table__row">
