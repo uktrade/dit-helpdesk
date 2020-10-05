@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
 
+from commodities.models import Commodity
 from hierarchy.models import (
     Chapter,
     Heading,
@@ -17,6 +18,9 @@ from .forms import (
     ChapterAddForm,
     ChapterAddSearchForm,
     ChapterRemoveForm,
+    CommodityAddForm,
+    CommodityAddSearchForm,
+    CommodityRemoveForm,
     HeadingAddForm,
     HeadingAddSearchForm,
     HeadingRemoveForm,
@@ -360,6 +364,60 @@ class RegulationGroupSubHeadingRemoveView(BaseRemoveView):
 
         return reverse(
             "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+
+class RegulationGroupCommodityListView(BaseRegulationGroupDetailView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodities_list.html"
+
+
+class RegulationGroupCommodityAddView(BaseAddView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodity_add.html"
+    search_form_class = CommodityAddSearchForm
+    add_form_class = CommodityAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        commodity_codes = search_form.cleaned_data["commodity_codes"]
+        commodities = Commodity.objects.filter(commodity_code__in=commodity_codes)
+
+        return commodities
+
+
+class RegulationGroupCommodityRemoveView(BaseRemoveView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodities_remove.html"
+    context_object_to_remove_name = "commodity"
+
+    def get_object_to_remove(self):
+        return Commodity.objects.get(pk=self.kwargs["commodity_pk"])
+
+    def get_remove_form(self):
+        return CommodityRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            commodity=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-commodity-list",
             kwargs={
                 "pk": regulation_group.pk,
             },

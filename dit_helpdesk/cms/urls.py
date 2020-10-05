@@ -59,4 +59,19 @@ urlpatterns = [
         views.RegulationGroupSubHeadingRemoveView.as_view(),
         name="regulation-group-subheading-remove",
     ),
+    path(
+        "regulation-group/<int:pk>/commodities/",
+        views.RegulationGroupCommodityListView.as_view(),
+        name="regulation-group-commodity-list",
+    ),
+    path(
+        "regulation-group/<int:pk>/commodities/add/",
+        views.RegulationGroupCommodityAddView.as_view(),
+        name="regulation-group-commodity-add",
+    ),
+    path(
+        "regulation-group/<int:pk>/commodity/<int:commodity_pk>/remove/",
+        views.RegulationGroupCommodityRemoveView.as_view(),
+        name="regulation-group-commodity-remove",
+    ),
 ]
