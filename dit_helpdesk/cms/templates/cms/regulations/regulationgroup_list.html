@@ -1,20 +1,27 @@
 {% extends "cms/regulations/base.html" %}
 
 {% block sub_header %}
-    <div class="app-sub-header govuk-grid-row">
-        <div class="govuk-width-container">
-            <div class="govuk-grid-column-three-quarters">
-                <h2 class="govuk-heading-xl govuk-!-margin-bottom-2">View regulations</h2>
-                <form>
-                    <div class="govuk-form-group govuk-!-margin-bottom-2">
-                        <label class="govuk-visuallyhidden" for="{{ search_form.q.id_for_label }}">
-                            {{ form.q.label }}
-                        </label>
-                        <input class="govuk-input" id="{{ search_form.q.id_for_label }}" name="{{ search_form.q.name }}" type="text" value="{{ search_form.q.value|default:"" }}" />
-                    </div>
-                    <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Search</button>
-                </form>
+    <div class="app-sub-header">
+        <div class="govuk-grid-row govuk-!-margin-bottom-4">
+            <div class="govuk-width-container">
+                <div class="govuk-grid-column-three-quarters">
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-2">View regulations</h2>
+                    <form>
+                        <div class="govuk-form-group govuk-!-margin-bottom-2">
+                            <label class="govuk-visuallyhidden" for="{{ search_form.q.id_for_label }}">
+                                {{ form.q.label }}
+                            </label>
+                            <input class="govuk-input" id="{{ search_form.q.id_for_label }}" name="{{ search_form.q.name }}" type="text" value="{{ search_form.q.value|default:"" }}" />
+                        </div>
+                        <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Search</button>
+                    </form>
+                </div>
             </div>
+        </div>
+        <div class="govuk-grid-row">
+            <nav class="govuk-width-container govuk-body">
+                <a class="govuk-link" href="{% url 'cms:regulation-group-create' %}">Add new regulation group</a>
+            </nav>
         </div>
     </div>
 {% endblock %}

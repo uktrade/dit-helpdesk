@@ -8,6 +8,7 @@ app_name = "cms"
 urlpatterns = [
     path("", views.CMSView.as_view(), name="home"),
     path("regulation-groups/", views.RegulationGroupsListView.as_view(), name="regulation-groups-list"),
+    path("regulation-group/create/", views.RegulationGroupCreateView.as_view(), name="regulation-group-create"),
     path("regulation-group/<int:pk>/", views.RegulationGroupDetailView.as_view(), name="regulation-group-detail"),
     path(
         "regulation-group/<int:pk>/regulation/create/",
