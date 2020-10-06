@@ -10,8 +10,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core.cache import cache
 
+from backports.datetime_fromisoformat import MonkeyPatch
+
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+
+
+MonkeyPatch.patch_fromisoformat()
 
 logger = logging.getLogger(__name__)
 
