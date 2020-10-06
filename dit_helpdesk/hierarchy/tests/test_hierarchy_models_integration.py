@@ -13,7 +13,11 @@ logger.setLevel(logging.INFO)
 
 def create_instance(data, app_name, model_name):
 
+    tts_json = data.pop('tts_json', None)
     model = apps.get_model(app_label=app_name, model_name=model_name)
+    if tts_json:
+        model.tts_json = tts_json
+
     instance = model(**data)
     instance.save()
     return instance

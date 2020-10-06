@@ -57,8 +57,6 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin):
         on_delete=models.CASCADE,
     )
 
-    last_updated = models.DateTimeField(auto_now=True)
-
     class Meta:
         unique_together = ("commodity_code", "goods_nomenclature_sid", "nomenclature_tree")
         verbose_name_plural = "commodities"
@@ -335,7 +333,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin):
         resp_content = self._amend_measure_conditions(resp_content)
 
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     def get_hierarchy_children(self):
         return []

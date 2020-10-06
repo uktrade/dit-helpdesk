@@ -1,11 +1,13 @@
 import json
 import logging
 import re
+import datetime as dt
 
 import requests
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.core.cache import cache
 
 from countries.models import Country
@@ -82,6 +84,9 @@ class BaseHierarchyModel(models.Model):
     def _get_external_cache_key(self):
         return f"{self.__class__.__name__}_{self.pk}"
 
+    def _get_updated_at_cache_key(self):
+        return f"{self._get_external_cache_key()}__updated_at"
+
     @property
     def tts_json(self):
         if self._temp_cache:
@@ -93,10 +98,20 @@ class BaseHierarchyModel(models.Model):
         # only write to local cache immediately, store in external cache on .save
         self._temp_cache = val
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    @property
+    def last_updated(self):
+        date_str = cache.get(self._get_updated_at_cache_key())
+
+        if date_str:
+            date = dt.datetime.fromisoformat(date_str)
+        else:
+            date = None
+        return date
+
+    def save_cache(self):
         if self._temp_cache:
             cache.set(self._get_external_cache_key(), self._temp_cache)
+            cache.set(self._get_updated_at_cache_key(), timezone.now().isoformat())
 
         self._temp_cache = None
 
@@ -374,7 +389,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
     )
-    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
@@ -568,22 +582,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             if code_match_obj.group(i) != "00"
         ]
 
-        # gets the Commodity content from the trade tariff service url as json response and stores
-        # it in the commodity's tts_json field
-        # TODO: unreachable code below, audit if OK to delete
-
-        url = settings.HEADING_URL % self.heading_code[:4]
-
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-        self.tts_json = resp_content
-        self.save()
-
     def update_content(self):
         url = settings.CHAPTER_URL.format(self.chapter_code[:2])
 
@@ -593,7 +591,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             resp_content = resp.content.decode()
 
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     @property
     def tts_obj(self):
@@ -686,7 +684,6 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin):
         on_delete=models.CASCADE,
         related_name="headings",
     )
-    last_updated = models.DateTimeField(auto_now=True)
 
     @property
     def commodity_code(self):
@@ -861,7 +858,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin):
 
         resp_content = self._amend_measure_conditions(resp_content)
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     @staticmethod
     def _amend_measure_conditions(resp_content):
@@ -972,8 +969,6 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     leaf = models.BooleanField()
-
-    last_updated = models.DateTimeField(auto_now=True)
 
     @property
     def heading_code_4(self):
@@ -1189,7 +1184,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin):
 
         self.tts_json = resp_content
 
-        self.save()
+        self.save_cache()
 
     @staticmethod
     def _amend_measure_conditions(resp_content):
