@@ -85,3 +85,144 @@ class ChapterRemoveForm(forms.ModelForm):
             instance.chapters.remove(self.chapter)
 
         return instance
+
+
+class HeadingAddSearchForm(forms.Form):
+    heading_codes = forms.CharField(
+        label="Search headings",
+        help_text="Comma separated list of heading codes e.g. 0101,2101000000,8220 (both 4 and 10 digits accepted)",
+    )
+
+    def clean_heading_codes(self):
+        heading_codes = self.cleaned_data["heading_codes"]
+
+        return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
+
+
+class HeadingAddForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["headings"]
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.headings.add(*self.cleaned_data["headings"])
+
+        return instance
+
+
+class HeadingRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, heading, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.heading = heading
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.headings.remove(self.heading)
+
+        return instance
+
+
+class SubHeadingAddSearchForm(forms.Form):
+    subheading_codes = forms.CharField(
+        label="Search subheadings",
+        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",
+    )
+
+    def clean_subheading_codes(self):
+        subheading_codes = self.cleaned_data["subheading_codes"]
+
+        return [code.strip().ljust(10, "0") for code in subheading_codes.split(",")]
+
+
+class SubHeadingAddForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["subheadings"]
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.subheadings.add(*self.cleaned_data["subheadings"])
+
+        return instance
+
+
+class SubHeadingRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, subheading, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.subheading = subheading
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.subheadings.remove(self.subheading)
+
+        return instance
+
+
+class CommodityAddSearchForm(forms.Form):
+    commodity_codes = forms.CharField(
+        label="Search commodities",
+        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",
+    )
+
+    def clean_commodity_codes(self):
+        commodity_codes = self.cleaned_data["commodity_codes"]
+
+        return [code.strip().ljust(10, "0") for code in commodity_codes.split(",")]
+
+
+class CommodityAddForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["commodities"]
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.commodities.add(*self.cleaned_data["commodities"])
+
+        return instance
+
+
+class CommodityRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, commodity, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.commodity = commodity
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.commodities.remove(self.commodity)
+
+        return instance

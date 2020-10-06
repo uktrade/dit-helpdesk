@@ -1,19 +1,34 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, ListView
 
-from hierarchy.models import Chapter
+from commodities.models import Commodity
+from hierarchy.models import (
+    Chapter,
+    Heading,
+    SubHeading,
+)
 from regulations.models import RegulationGroup
 
 from .forms import (
     ChapterAddForm,
     ChapterAddSearchForm,
     ChapterRemoveForm,
+    CommodityAddForm,
+    CommodityAddSearchForm,
+    CommodityRemoveForm,
+    HeadingAddForm,
+    HeadingAddSearchForm,
+    HeadingRemoveForm,
     RegulationForm,
     RegulationSearchForm,
+    SubHeadingAddForm,
+    SubHeadingAddSearchForm,
+    SubHeadingRemoveForm,
 )
 
 
@@ -121,9 +136,7 @@ class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
     template_name = "cms/regulations/regulationgroup_chapter_list.html"
 
 
-class RegulationGroupChapterAddView(BaseRegulationGroupDetailView):
-    selected_panel = "chapters"
-    template_name = "cms/regulations/regulationgroup_chapter_add.html"
+class BaseAddView(BaseRegulationGroupDetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -143,16 +156,10 @@ class RegulationGroupChapterAddView(BaseRegulationGroupDetailView):
         return ctx
 
     def get_search_form(self):
-        return ChapterAddSearchForm(self.request.GET)
+        return self.search_form_class(self.request.GET)
 
     def get_add_form(self):
-        return ChapterAddForm(self.request.POST, instance=self.get_object())
-
-    def get_search_results(self, search_form):
-        chapter_codes = search_form.cleaned_data["chapter_codes"]
-        chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
-
-        return chapters
+        return self.add_form_class(self.request.POST, instance=self.get_object())
 
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
@@ -161,37 +168,59 @@ class RegulationGroupChapterAddView(BaseRegulationGroupDetailView):
         if add_form.is_valid():
             add_form.save()
 
-            return redirect(
-                "cms:regulation-group-chapter-list",
-                pk=regulation_group.pk,
-            )
+            return redirect(self.get_success_url())
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
 
+    def get_success_url(self):
+        raise NotImplementedError("`get_success_url` needs to be implemented.")
 
-class RegulationGroupChapterRemoveView(BaseRegulationGroupDetailView):
+    def get_search_results(self, search_form):
+        raise NotImplementedError("`get_search_results` needs to be implemented.")
+
+
+class RegulationGroupChapterAddView(BaseAddView):
     selected_panel = "chapters"
-    template_name = "cms/regulations/regulationgroup_chapter_remove.html"
+    template_name = "cms/regulations/regulationgroup_chapter_add.html"
+    search_form_class = ChapterAddSearchForm
+    add_form_class = ChapterAddForm
 
-    def get_chapter(self):
-        return Chapter.objects.get(pk=self.kwargs["chapter_pk"])
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                'pk': regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        chapter_codes = search_form.cleaned_data["chapter_codes"]
+        chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
+
+        return chapters
+
+
+class BaseRemoveView(BaseRegulationGroupDetailView):
+    def get_object_to_remove(self):
+        raise NotImplementedError("`get_object_to_remove` needs to be implemented.")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["chapter"] = self.get_chapter()
+        ctx[self.context_object_to_remove_name] = self.get_object_to_remove()
         ctx["remove_form"] = self.get_remove_form()
 
         return ctx
 
     def get_remove_form(self):
-        return ChapterRemoveForm(
-            self.request.POST,
-            instance=self.get_object(),
-            chapter=self.get_chapter(),
-        )
+        raise NotImplementedError("`get_remove_form` needs to be implemented.")
+
+    def get_success_url(self):
+        raise NotImplementedError("`get_success_url` needs to be implemented.")
 
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
@@ -200,11 +229,196 @@ class RegulationGroupChapterRemoveView(BaseRegulationGroupDetailView):
         if remove_form.is_valid():
             remove_form.save()
 
-            return redirect(
-                "cms:regulation-group-chapter-list",
-                pk=regulation_group.pk,
-            )
+            return redirect(self.get_success_url())
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
+
+
+class RegulationGroupChapterRemoveView(BaseRemoveView):
+    selected_panel = "chapters"
+    template_name = "cms/regulations/regulationgroup_chapter_remove.html"
+    context_object_to_remove_name = "chapter"
+
+    def get_object_to_remove(self):
+        return Chapter.objects.get(pk=self.kwargs["chapter_pk"])
+
+    def get_remove_form(self):
+        return ChapterRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            chapter=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+
+class RegulationGroupHeadingListView(BaseRegulationGroupDetailView):
+    selected_panel = "headings"
+    template_name = "cms/regulations/regulationgroup_heading_list.html"
+
+
+class RegulationGroupHeadingAddView(BaseAddView):
+    selected_panel = "headings"
+    template_name = "cms/regulations/regulationgroup_heading_add.html"
+    search_form_class = HeadingAddSearchForm
+    add_form_class = HeadingAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-heading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        heading_codes = search_form.cleaned_data["heading_codes"]
+        headings = Heading.objects.filter(heading_code__in=heading_codes)
+
+        return headings
+
+
+class RegulationGroupHeadingRemoveView(BaseRemoveView):
+    selected_panel = "headings"
+    template_name = "cms/regulations/regulationgroup_heading_remove.html"
+    context_object_to_remove_name = "heading"
+
+    def get_object_to_remove(self):
+        return Heading.objects.get(pk=self.kwargs["heading_pk"])
+
+    def get_remove_form(self):
+        return HeadingRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            heading=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-heading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+
+class RegulationGroupSubHeadingListView(BaseRegulationGroupDetailView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_list.html"
+
+
+class RegulationGroupSubHeadingAddView(BaseAddView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_add.html"
+    search_form_class = SubHeadingAddSearchForm
+    add_form_class = SubHeadingAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        subheading_codes = search_form.cleaned_data["subheading_codes"]
+        subheadings = SubHeading.objects.filter(commodity_code__in=subheading_codes)
+
+        return subheadings
+
+
+class RegulationGroupSubHeadingRemoveView(BaseRemoveView):
+    selected_panel = "subheadings"
+    template_name = "cms/regulations/regulationgroup_subheading_remove.html"
+    context_object_to_remove_name = "subheading"
+
+    def get_object_to_remove(self):
+        return SubHeading.objects.get(pk=self.kwargs["subheading_pk"])
+
+    def get_remove_form(self):
+        return SubHeadingRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            subheading=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+
+class RegulationGroupCommodityListView(BaseRegulationGroupDetailView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodities_list.html"
+
+
+class RegulationGroupCommodityAddView(BaseAddView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodity_add.html"
+    search_form_class = CommodityAddSearchForm
+    add_form_class = CommodityAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        commodity_codes = search_form.cleaned_data["commodity_codes"]
+        commodities = Commodity.objects.filter(commodity_code__in=commodity_codes)
+
+        return commodities
+
+
+class RegulationGroupCommodityRemoveView(BaseRemoveView):
+    selected_panel = "commodities"
+    template_name = "cms/regulations/regulationgroup_commodities_remove.html"
+    context_object_to_remove_name = "commodity"
+
+    def get_object_to_remove(self):
+        return Commodity.objects.get(pk=self.kwargs["commodity_pk"])
+
+    def get_remove_form(self):
+        return CommodityRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            commodity=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
