@@ -55,14 +55,24 @@ var CommoditySearchForm = {
       this.addListener(target[i], event)
     }
   },
+  setChangedBy: function (target) {
+    var changedByValue = target.dataset.changedBy
+    if (changedByValue) {
+      var $changedBy = document.querySelector("#changed_by")
+      $changedBy.value = changedByValue
+    }
+  },
   addListener: function (target, event) {
     var theForm = this.searchForm
+    var self = this
     if (target.attachEvent) {
       target.attachEvent('on' + event, function () {
+        self.setChangedBy(target)
         theForm.submit()
       })
     } else {
       target.addEventListener(event, function () {
+        self.setChangedBy(target)
         theForm.submit()
       }, false)
     }
