@@ -15,6 +15,11 @@ urlpatterns = [
         name="regulation-group-regulation-create",
     ),
     path(
+        "regulation-group/<int:pk>/regulation/<int:regulation_pk>/remove/",
+        views.RegulationGroupRegulationRemoveView.as_view(),
+        name="regulation-group-regulation-remove",
+    ),
+    path(
         "regulation-group/<int:pk>/chapters/",
         views.RegulationGroupChapterListView.as_view(),
         name="regulation-group-chapter-list",
