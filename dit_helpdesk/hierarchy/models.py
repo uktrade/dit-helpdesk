@@ -76,7 +76,7 @@ class BaseHierarchyModel(models.Model):
         abstract = True
 
     def _get_cache_key(self):
-        return f"{self.nomenclature_tree_id}_{str(self)}".replace(' ', '_')
+        return f"{self.__class__}_{self.pk}"
 
     @property
     def tts_json(self):
