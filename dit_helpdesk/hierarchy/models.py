@@ -72,19 +72,33 @@ class NomenclatureTree(models.Model):
 
 class BaseHierarchyModel(models.Model):
 
+    def __init__(self, *args, **kwargs):
+        super(BaseHierarchyModel, self).__init__(*args, **kwargs)
+        self._temp_cache = None
+
     class Meta:
         abstract = True
 
-    def _get_cache_key(self):
-        return f"{self.__class__}_{self.pk}"
+    def _get_external_cache_key(self):
+        return f"{self.__class__.__name__}_{self.pk}"
 
     @property
     def tts_json(self):
-        return cache.get(self._get_cache_key())
+        if self._temp_cache:
+            return self._temp_cache
+        return cache.get(self._get_external_cache_key())
 
     @tts_json.setter
     def tts_json(self, val):
-        cache.set(self._get_cache_key(), val)
+        # only write to local cache immediately, store in external cache on .save
+        self._temp_cache = val
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self._temp_cache:
+            cache.set(self._get_external_cache_key(), self._temp_cache)
+
+        self._temp_cache = None
 
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
