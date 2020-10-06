@@ -40,6 +40,26 @@ class RegulationForm(forms.ModelForm):
         return instance
 
 
+class RegulationRemoveForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = []
+
+    def __init__(self, *args, regulation, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.regulation = regulation
+
+    def save(self, commit=True):
+        instance = super().save(False)
+
+        if commit:
+            instance.save()
+            instance.regulation_set.remove(self.regulation)
+
+        return instance
+
+
 class ChapterAddSearchForm(forms.Form):
     chapter_codes = forms.CharField(
         label="Search chapters",

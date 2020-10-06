@@ -12,7 +12,10 @@ from hierarchy.models import (
     Heading,
     SubHeading,
 )
-from regulations.models import RegulationGroup
+from regulations.models import (
+    Regulation,
+    RegulationGroup,
+)
 
 from .forms import (
     ChapterAddForm,
@@ -25,6 +28,7 @@ from .forms import (
     HeadingAddSearchForm,
     HeadingRemoveForm,
     RegulationForm,
+    RegulationRemoveForm,
     RegulationSearchForm,
     SubHeadingAddForm,
     SubHeadingAddSearchForm,
@@ -92,50 +96,6 @@ class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
         return ctx
 
 
-class RegulationGroupDetailView(BaseRegulationGroupDetailView):
-    selected_panel = "regulations"
-    template_name = "cms/regulations/regulationgroup_detail.html"
-
-
-class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
-    selected_panel = "regulations"
-    template_name = "cms/regulations/regulationgroup_regulation_create.html"
-
-    def get_context_data(self, regulation_form=None, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        if not regulation_form:
-            regulation_form_class = self.get_regulation_form_class()
-            regulation_form = regulation_form_class(self.get_object())
-        ctx["regulation_form"] = regulation_form
-
-        return ctx
-
-    def get_regulation_form_class(self):
-        return RegulationForm
-
-    def post(self, request, *args, **kwargs):
-        regulation_group = self.get_object()
-
-        regulation_form_class = self.get_regulation_form_class()
-        regulation_form = regulation_form_class(regulation_group, request.POST)
-        if regulation_form.is_valid():
-            regulation_form.save()
-            return redirect(
-                "cms:regulation-group-detail",
-                pk=regulation_group.pk,
-            )
-
-        self.object = self.get_object()
-        ctx = self.get_context_data(object=self.object, regulation_form=regulation_form)
-        return self.render_to_response(ctx)
-
-
-class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
-    selected_panel = "chapters"
-    template_name = "cms/regulations/regulationgroup_chapter_list.html"
-
-
 class BaseAddView(BaseRegulationGroupDetailView):
 
     def get_context_data(self, **kwargs):
@@ -181,29 +141,6 @@ class BaseAddView(BaseRegulationGroupDetailView):
         raise NotImplementedError("`get_search_results` needs to be implemented.")
 
 
-class RegulationGroupChapterAddView(BaseAddView):
-    selected_panel = "chapters"
-    template_name = "cms/regulations/regulationgroup_chapter_add.html"
-    search_form_class = ChapterAddSearchForm
-    add_form_class = ChapterAddForm
-
-    def get_success_url(self):
-        regulation_group = self.get_object()
-
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': regulation_group.pk,
-            },
-        )
-
-    def get_search_results(self, search_form):
-        chapter_codes = search_form.cleaned_data["chapter_codes"]
-        chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
-
-        return chapters
-
-
 class BaseRemoveView(BaseRegulationGroupDetailView):
     def get_object_to_remove(self):
         raise NotImplementedError("`get_object_to_remove` needs to be implemented.")
@@ -234,6 +171,98 @@ class BaseRemoveView(BaseRegulationGroupDetailView):
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
+
+
+class RegulationGroupDetailView(BaseRegulationGroupDetailView):
+    selected_panel = "regulations"
+    template_name = "cms/regulations/regulationgroup_detail.html"
+
+
+class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
+    selected_panel = "regulations"
+    template_name = "cms/regulations/regulationgroup_regulation_create.html"
+
+    def get_context_data(self, regulation_form=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        if not regulation_form:
+            regulation_form_class = self.get_regulation_form_class()
+            regulation_form = regulation_form_class(self.get_object())
+        ctx["regulation_form"] = regulation_form
+
+        return ctx
+
+    def get_regulation_form_class(self):
+        return RegulationForm
+
+    def post(self, request, *args, **kwargs):
+        regulation_group = self.get_object()
+
+        regulation_form_class = self.get_regulation_form_class()
+        regulation_form = regulation_form_class(regulation_group, request.POST)
+        if regulation_form.is_valid():
+            regulation_form.save()
+            return redirect(
+                "cms:regulation-group-detail",
+                pk=regulation_group.pk,
+            )
+
+        self.object = self.get_object()
+        ctx = self.get_context_data(object=self.object, regulation_form=regulation_form)
+        return self.render_to_response(ctx)
+
+
+class RegulationGroupRegulationRemoveView(BaseRemoveView):
+    selected_panel = "regulations"
+    template_name = "cms/regulations/regulationgroup_regulation_remove.html"
+    context_object_to_remove_name = "regulation"
+
+    def get_object_to_remove(self):
+        return Regulation.objects.get(pk=self.kwargs["regulation_pk"])
+
+    def get_remove_form(self):
+        return RegulationRemoveForm(
+            self.request.POST,
+            instance=self.get_object(),
+            regulation=self.get_object_to_remove(),
+        )
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
+
+class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
+    selected_panel = "chapters"
+    template_name = "cms/regulations/regulationgroup_chapter_list.html"
+
+
+class RegulationGroupChapterAddView(BaseAddView):
+    selected_panel = "chapters"
+    template_name = "cms/regulations/regulationgroup_chapter_add.html"
+    search_form_class = ChapterAddSearchForm
+    add_form_class = ChapterAddForm
+
+    def get_success_url(self):
+        regulation_group = self.get_object()
+
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                'pk': regulation_group.pk,
+            },
+        )
+
+    def get_search_results(self, search_form):
+        chapter_codes = search_form.cleaned_data["chapter_codes"]
+        chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
+
+        return chapters
 
 
 class RegulationGroupChapterRemoveView(BaseRemoveView):
