@@ -1,57 +1,8 @@
-@import "./common.scss";
+@import "./common";
 @import "govuk-frontend/components/tabs/tabs";
 
-.app-sub-header {
-    background-color: #f8f8f8;
-    margin: 0;
-    padding: 2rem 0;
-}
-
-.app-table__cell--actions {
-    text-align: center;
-}
-
-.app-table__cell--no-results {
-    text-align: center;
-}
-
-.app-panel-heading {
-    background-color: #f8f8f8;
-    margin: -30px -20px;
-    margin-bottom: 20px;
-    padding: 20px 30px;
-}
-
-.app-regulation-sub-nav {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.app-pagination {
-    display: flex;
-
-    &__links {
-        margin-left: auto;
-    }
-
-    &__previous {
-        margin-right: 10px;
-
-        &:before {
-            content: "< ";
-        }
-    }
-
-    &__page {
-        margin: 0 2px;
-    }
-
-    &__next {
-        margin-left: 10px;
-
-        &:after {
-            content: " >";
-        }
-    }
-}
+@import "./cms/sub-header";
+@import "./cms/table";
+@import "./cms/panels";
+@import "./cms/regulations";
+@import "./cms/pagination";
