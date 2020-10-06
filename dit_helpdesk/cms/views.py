@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView
 
 from commodities.models import Commodity
 from hierarchy.models import (
@@ -12,7 +12,10 @@ from hierarchy.models import (
     Heading,
     SubHeading,
 )
-from regulations.models import RegulationGroup
+from regulations.models import (
+    Regulation,
+    RegulationGroup,
+)
 
 from .forms import (
     ChapterAddForm,
@@ -76,6 +79,20 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
             queryset = queryset.filter(title__search=search_query)
 
         return queryset
+
+
+class RegulationGroupCreateView(BaseCMSMixin, CreateView):
+    fields = ["title"]
+    model = RegulationGroup
+    template_name = "cms/regulations/regulationgroup_create.html"
+
+    def get_success_url(self):
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                "pk": self.object.pk,
+            },
+        )
 
 
 class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
