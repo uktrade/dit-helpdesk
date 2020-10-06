@@ -55,25 +55,5 @@
             {% endfor %}
         </tbody>
     </table>
-    <nav class="app-pagination govuk-body">
-        <div class="app-pagination__links">
-            {% if page_obj.has_previous %}
-                <a class="govuk-link app-pagination__previous" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            {% endif %}
-
-            <span class="app-pagination__pages">
-                {% for page_num in paginator.page_range %}
-                    {% if page_num == page_obj.number %}
-                        <span class="app-pagination__page">{{ page_num }}</span>
-                    {% else %}
-                        <a class="govuk-link app-pagination__page" href="?page={{ page_num }}">{{ page_num }}</a>
-                    {% endif %}
-                {% endfor %}
-            </span>
-
-            {% if page_obj.has_next %}
-                <a class="govuk-link app-pagination__next" href="?page={{ page_obj.next_page_number }}">Next</a>
-            {% endif %}
-        </div>
-    </nav>
+    {% include "cms/_pagination.html" %}
 {% endblock %}
