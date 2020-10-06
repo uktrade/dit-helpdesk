@@ -47,11 +47,12 @@ class CommodityTestCase(TestCase):
         self.commodity = mixer.blend(
             Commodity,
             commodity_code="0101210000",
-            tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading,
             goods_nomenclature_sid=12345,
             nomenclature_tree=self.tree,
         )
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_STRUCTURE))
+        self.commodity.save_cache()
 
     def test_str(self):
         self.assertEquals(

@@ -259,10 +259,11 @@ class MeasureConditionDetailTestCase(TestCase):
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
             goods_nomenclature_sid=12345,
             nomenclature_tree=self.tree,
         )
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
+        self.commodity.save_cache()
 
     fixtures = ["../../countries/fixtures/countries_data.json"]
 
