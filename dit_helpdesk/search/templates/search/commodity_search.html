@@ -55,31 +55,34 @@
                         {% if not request.GET.q %}
 
                             <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
-                                Search for the goods you are exporting
+                                <label for="search">Search for the goods you are exporting</label>
                             </h2>
                             <div class="govuk-form-group{% if form_q_error %} govuk-form-group--error{% endif %}">
-                            <label class="govuk-hint" for="search">
+                            <div class="govuk-hint">
                                 You can search using either:
                                 <ul>
                                     <li>the name of what you are exporting</li>
                                     <li>the commodity code of what you are exporting</li>
                                 </ul>
-                            </label>
+                            </div>
                         {% endif %}
 
                         {% if request.GET.q and not results %}
 
-                            <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">There are no results
-                                for {{ request.GET.q }}</h2>
+                            <h2 class="govuk-visually-hidden">
+                                <label for="search">Search for the goods you are exporting</label>
+                            </h2>
+                            <h3 class="govuk-heading-xl govuk-!-margin-bottom-3">There are no results
+                                for {{ request.GET.q }}</h3>
 
                             <div class="govuk-form-group{% if form_q_errors %} govuk-form-group--error{% endif %}">
-                            <label class="govuk-hint" for="search">
+                            <div class="govuk-hint">
                                 Search again and consider:
                                 <ul>
                                     <li>searching what the item is used for or made from</li>
                                     <li>checking your spelling</li>
                                 </ul>
-                            </label>
+                            </div>
                         {% endif %}
 
                         {% if form_q_error %}
