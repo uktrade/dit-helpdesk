@@ -4,26 +4,26 @@
 
 {% block panel_heading %}
     <div class="app-panel-heading">
-        <h3 class="govuk-heading-m">Link other chapters to the group</h4>
+        <h3 class="govuk-heading-m">Link other subheadings to the group</h4>
         <p class="govuk-inset-text">
             Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
         </p>
         <form>
             <div class="govuk-form-group govuk-!-margin-bottom-2">
-                <label for="{{ search_form.chapter_codes.id_for_label }}">
-                    {{ search_form.chapter_codes.label }}
+                <label for="{{ search_form.subheading_codes.id_for_label }}">
+                    {{ search_form.subheading_codes.label }}
                 </label>
                 <div class="govuk-hint">
-                    {{ search_form.chapter_codes.help_text }}
+                    {{ search_form.subheading_codes.help_text }}
                 </div>
-                <input class="govuk-input" id="{{ search_form.chapter_codes.id_for_label }}" name="{{ search_form.chapter_codes.name }}" type="text" value="{{ search_form.chapter_codes.value|default:"" }}" />
+                <input class="govuk-input" id="{{ search_form.subheading_codes.id_for_label }}" name="{{ search_form.subheading_codes.name }}" type="text" value="{{ search_form.subheading_codes.value|default:"" }}" />
             </div>
 
             <div class="govuk-!-margin-top-6">
                 <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
-                    Find chapters
+                    Find subheadings
                 </button>
-                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-group-chapter-list' pk=regulationgroup.pk %}">
+                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-group-subheading-list' pk=regulationgroup.pk %}">
                     Cancel
                 </a>
             </div>
@@ -43,19 +43,19 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    {% for chapter in search_results %}
+                    {% for subheading in search_results %}
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">
-                                {{ chapter.chapter_code }}
-                                <input name="{{ add_form.chapters.name }}" type="hidden" value="{{ chapter.pk|unlocalize }}" />
+                                {{ subheading.commodity_code }}
+                                <input name="{{ add_form.subheadings.name }}" type="hidden" value="{{ subheading.pk|unlocalize }}" />
                             </th>
-                            <td class="govuk-table__cell">{{ chapter.description }}</td>
+                            <td class="govuk-table__cell">{{ subheading.description }}</td>
                         </tr>
                     {% empty %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell app-table__cell--no-results" colspan="2">
                                 <em>
-                                    No chapters found.
+                                    No subheadings found.
                                 </em>
                             </td>
                         </tr>
@@ -63,7 +63,7 @@
                 </tbody>
             </table>
             <button class="govuk-button" data-module="govuk-button">
-                Attach chapters
+                Attach subheadings
             </button>
         </form>
     {% endif %}
