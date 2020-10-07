@@ -42,6 +42,37 @@ class TreeSelectorMixin:
         super().save()
 
 
+class RulesOfOriginMixin:
+
+    def get_chapter():
+        raise NotImplementedError()
+
+    def get_rules_of_origin(self, country_code):
+        """
+        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
+        country code parameter.
+        the dictionary has two keys one for the list of rules and one for the related footnotes
+        :param country_code: string
+        :return: dictionary
+        """
+
+        country = Country.objects.get(country_code=country_code)
+        groups = {}
+        rules_of_origin = {"rules": [], "footnotes": []}
+        chapter = self.get_chapter()
+
+        for group_member in country.rulesgroupmember_set.all():
+            for document in group_member.rules_group.rulesdocument_set.all():
+                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
+                for rule in document.rule_set.all().order_by("id").select_related("chapter"):
+                    if rule.chapter == chapter:
+                        rules_of_origin["rules"].append(rule)
+            group_name = group_member.rules_group.description
+            groups[group_name] = rules_of_origin
+
+        return groups
+
+
 class NomenclatureTree(models.Model):
     """
     Model to identify which tree does a nomenclature object belong to, differentiated
@@ -631,7 +662,7 @@ class Chapter(models.Model, TreeSelectorMixin):
         return self.section
 
 
-class Heading(models.Model, TreeSelectorMixin):
+class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     objects = EUHierarchyManager()
     all_objects = models.Manager()
 
@@ -671,6 +702,9 @@ class Heading(models.Model, TreeSelectorMixin):
         :return: CommodityJson object
         """
         return HeadingJson(json.loads(self.tts_json))
+
+    def get_chapter(self):
+        return self.chapter
 
     def get_path(self, parent=None, tree=None, level=0):
         """
@@ -728,29 +762,6 @@ class Heading(models.Model, TreeSelectorMixin):
         if not self.tts_json:
             return {}
         return self.tts_obj.footnotes
-
-    def get_rules_of_origin(self, country_code):
-        """
-        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
-        country code parameter.
-        the dictionary has two keys one for the list of rules and one for the related footnotes
-        :param country_code: string
-        :return: dictionary
-        """
-
-        country = Country.objects.get(country_code=country_code)
-        groups = {}
-        rules_of_origin = {"rules": [], "footnotes": []}
-        for group_member in country.rulesgroupmember_set.all():
-            for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
-                for rule in document.rule_set.all().order_by("id"):
-                    if rule.chapter == self.chapter:
-                        rules_of_origin["rules"].append(rule)
-            group_name = group_member.rules_group.description
-            groups[group_name] = rules_of_origin
-
-        return groups
 
     @property
     def hierarchy_key(self):
@@ -926,7 +937,7 @@ class Heading(models.Model, TreeSelectorMixin):
         return self.chapter
 
 
-class SubHeading(models.Model, TreeSelectorMixin):
+class SubHeading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     objects = EUHierarchyManager()
     all_objects = models.Manager()
 
@@ -1229,29 +1240,6 @@ class SubHeading(models.Model, TreeSelectorMixin):
         #     self._append_path_children(self.parent_subheading, tree, level)
 
         return tree
-
-    def get_rules_of_origin(self, country_code):
-        """
-        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
-        country code parameter.
-        the dictionary has two keys one for the list of rules and one for the related footnotes
-        :param country_code: string
-        :return: dictionary
-        """
-
-        country = Country.objects.get(country_code=country_code)
-        groups = {}
-        rules_of_origin = {"rules": [], "footnotes": []}
-        for group_member in country.rulesgroupmember_set.all():
-            for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
-                for rule in document.rule_set.all().order_by("id"):
-                    if rule.chapter == self.get_chapter():
-                        rules_of_origin["rules"].append(rule)
-            group_name = group_member.rules_group.description
-            groups[group_name] = rules_of_origin
-
-        return groups
 
     @property
     def subheading_code_split(self):
