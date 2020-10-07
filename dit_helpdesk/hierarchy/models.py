@@ -58,7 +58,7 @@ class RulesOfOriginMixin:
 
         country = Country.objects.get(country_code=country_code)
         groups = {}
-        rules_of_origin = {"rules": [], "footnotes": []}
+        rules_of_origin = {"rules": set(), "footnotes": []}
         chapter = self.get_chapter()
 
         for group_member in country.rulesgroupmember_set.all():
@@ -66,7 +66,7 @@ class RulesOfOriginMixin:
                 rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
                 for rule in document.rule_set.all().order_by("id").select_related("chapter"):
                     if rule.chapter == chapter:
-                        rules_of_origin["rules"].append(rule)
+                        rules_of_origin["rules"].add(rule)
             group_name = group_member.rules_group.description
             groups[group_name] = rules_of_origin
 
