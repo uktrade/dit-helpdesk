@@ -16,7 +16,7 @@ nltk.download("wordnet")
 
 warnings.filterwarnings("ignore")
 
-SYNONYM_LIMIT = 6
+SYNONYM_LIMIT = 3
 
 
 logger = logging.getLogger(__name__)

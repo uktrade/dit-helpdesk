@@ -82,10 +82,9 @@ class CommoditySearchView(FormView):
 
             page = int(form_data.get("page")) if form_data.get("page") else 1
 
-            form_data = self.check_for_dotted_code_numbers(form_data)
-
-            if form_data.get("q").isdigit():
-                response = helpers.search_by_code(code=form_data.get("q"))
+            normalised_q = helpers.normalise_commodity_code(form_data.get("q"))
+            if normalised_q.isdigit():
+                response = helpers.search_by_code(code=normalised_q)
                 hits = [hit for hit in response.scan()]
 
                 if hits:
@@ -217,32 +216,6 @@ class CommoditySearchView(FormView):
                 context["form_q_validation_message"] = error_data["q"][0]
 
             return self.render_to_response(context)
-
-    def check_for_dotted_code_numbers(self, form_data):
-        """
-        entering a code number with dots makes the query a string not a digit
-        here we convert to a digit if found
-        :param form_data:
-        :return:
-        """
-        pattern_a = "(\d{4}).(\d{2}).(\d{2}).(\d{2})"
-        pattern_b = "(\d{4}).(\d{2}).(\d{2})"
-        pattern_c = "(\d{4}).(\d{2})"
-
-        match_a = re.match(pattern_a, form_data.get("q"))
-        match_b = re.match(pattern_b, form_data.get("q"))
-        match_c = re.match(pattern_c, form_data.get("q"))
-
-        if match_a:
-            match_obj = match_a
-        elif match_b:
-            match_obj = match_b
-        else:
-            match_obj = match_c
-        if match_obj:
-            form_data["q"] = match_obj.group().replace(".", "")
-
-        return form_data
 
     def get_context_data(self, **kwargs):
         context = super(CommoditySearchView, self).get_context_data(**kwargs)
