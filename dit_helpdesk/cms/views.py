@@ -110,6 +110,18 @@ class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
         return ctx
 
 
+class SearchResult:
+    def __init__(self, regulation_group, commodity_object):
+        self.regulation_group = regulation_group
+        self.commodity_object = commodity_object
+
+    def is_already_associated(self):
+        return self.regulation_group in RegulationGroup.objects.inherited(self.commodity_object)
+
+    def __getattr__(self, attr):
+        return getattr(self.commodity_object, attr)
+
+
 class BaseAddView(BaseRegulationGroupDetailView):
 
     def get_context_data(self, **kwargs):
@@ -122,7 +134,10 @@ class BaseAddView(BaseRegulationGroupDetailView):
 
         if self.request.GET and search_form.is_valid():
             ctx["searching"] = True
-            ctx["search_results"] = self.get_search_results(search_form)
+            regulation_group = self.get_object()
+            ctx["search_results"] = (
+                SearchResult(regulation_group, obj) for obj in self.get_search_results(search_form)
+            )
 
         add_form = self.get_add_form()
         ctx["add_form"] = add_form
@@ -250,6 +265,7 @@ class RegulationGroupRegulationRemoveView(BaseRemoveView):
                 "pk": regulation_group.pk,
             },
         )
+
 
 class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
     selected_panel = "chapters"
