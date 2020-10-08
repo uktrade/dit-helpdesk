@@ -8,11 +8,10 @@ from django.conf import settings
 from numpy import nan
 
 from commodities.models import Commodity
-from hierarchy.models import SubHeading, Heading
+from hierarchy.models import SubHeading, Heading, NomenclatureTree
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-import sys
 
 
 def data_loader(file_path):
@@ -51,7 +50,8 @@ class RegulationsImporter:
     heading and commodity leaf items
     """
 
-    def __init__(self):
+    def __init__(self, tree=None, region='EU'):
+        self.tree = tree or NomenclatureTree.get_active_tree(region)
         self.data = []
         self.documents = None
         self.app_label = __package__.rsplit(".", 1)[-1]
@@ -139,7 +139,7 @@ class RegulationsImporter:
 
         model = apps.get_model(app_label=self.app_label, model_name=model_name)
 
-        instance, created = model.objects.get_or_create(**field_data)
+        instance, created = model.objects.get_or_create(**field_data, nomenclature_tree=self.tree)
         if created:
             logger.info("{0} instance created".format(model_name))
         else:
