@@ -27,6 +27,9 @@ from search.serializers import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 def search_hierarchy(request, node_id="root", country_code=None):
     """
     build and return the hierarchy html
@@ -165,6 +168,13 @@ class CommoditySearchView(FormView):
 
                 if not context["results"]:
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
+
+                logger.info(
+                    f"Performed search for {form_data.get('q')}",
+                    extra={
+                        'search_term': form_data.get('q'),
+                        'search_count': context['total_results'],
+                    })
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
