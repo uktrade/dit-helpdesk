@@ -40,6 +40,9 @@
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header">ID</th>
                         <th scope="col" class="govuk-table__header">Title</th>
+                        <th scope="col" class="govuk-table__header">
+                            <span class="govuk-visually-hidden">Already associated?</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
@@ -50,10 +53,15 @@
                                 <input name="{{ add_form.commodities.name }}" type="hidden" value="{{ commodity.pk|unlocalize }}" />
                             </th>
                             <td class="govuk-table__cell">{{ commodity.description }}</td>
+                            <td class="govuk-table__cell">
+                                {% if commodity.is_already_associated %}
+                                    <em>Already applies via ancestor</em>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% empty %}
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell app-table__cell--no-results" colspan="2">
+                            <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
                                 <em>
                                     No commodities found.
                                 </em>
