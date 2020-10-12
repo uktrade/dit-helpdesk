@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])
-                import ipdb; ipdb.set_trace()
+
                 if not options["activate_new_tree"]:
                     # switch back active tree to previous since we only want to properly activate
                     # the new one after we reindex ElasticSearch results
