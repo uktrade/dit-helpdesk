@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "elasticapm.contrib.django",
     "formtools",
-    "readonly",
     "core",
     "commodities",
     "cookies",
