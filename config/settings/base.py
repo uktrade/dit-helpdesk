@@ -260,6 +260,9 @@ LOGGING = {
     'formatters': {
         'ecs_formatter': {
             '()': ecs_logging.StdlibFormatter,
+
+            # Kibana mapping expects a different type (long) to what is sent by the library (object)
+            'exclude_fields': ['process'],
         },
         'console_formatter': {
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
