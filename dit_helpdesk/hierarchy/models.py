@@ -18,7 +18,7 @@ CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 class RegionHierarchyManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(
-            nomenclature_tree__region='UK',
+            nomenclature_tree__region=settings.PRIMARY_REGION,
             nomenclature_tree__end_date__isnull=True
         )
 
@@ -37,7 +37,7 @@ class TreeSelectorMixin:
 
     def save(self):
         if not self.nomenclature_tree:
-            self.nomenclature_tree = NomenclatureTree.get_active_tree('UK')
+            self.nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
 
         super().save()
 
@@ -84,7 +84,7 @@ class NomenclatureTree(models.Model):
     end_date = models.DateTimeField(null=True)
 
     @classmethod
-    def get_active_tree(cls, region='UK'):
+    def get_active_tree(cls, region=settings.PRIMARY_REGION):
 
         try:
             prev_tree = NomenclatureTree.objects.filter(

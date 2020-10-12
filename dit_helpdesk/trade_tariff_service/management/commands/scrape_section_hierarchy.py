@@ -39,10 +39,10 @@ class Command(BaseCommand):
         with transaction.atomic():
 
             with transaction.atomic():
-                prev_tree = NomenclatureTree.get_active_tree('UK')
+                prev_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
 
                 # creating new tree automatically activates it (at least within transaction)
-                new_tree = create_nomenclature_tree('UK')
+                new_tree = create_nomenclature_tree(settings.PRIMARY_REGION)
 
                 builder = HierarchyBuilder(new_tree=new_tree)
                 builder.data_scanner(model_names)
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                 # we are not indexing EU documents in ElasticSearch (at least
                 # yet) so we can
                 # safely activate this tree
-                builder = HierarchyBuilder(region='EU')
+                builder = HierarchyBuilder(region=settings.SECONDARY_REGION)
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])

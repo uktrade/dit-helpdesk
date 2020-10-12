@@ -390,3 +390,7 @@ HIERARCHY_MODEL_MAP = {
     "SubHeading": {"file_name": "prepared/sub_headings.json", "app_name": "hierarchy"},
     "Section": {"file_name": "prepared/sections.json", "app_name": "hierarchy"},
 }
+
+
+PRIMARY_REGION = 'UK'
+SECONDARY_REGION = 'EU'
