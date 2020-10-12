@@ -22,7 +22,7 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
-DEFAULT_REGION = 'EU'
+DEFAULT_REGION = 'UK'
 
 
 class HierarchyBuilder:

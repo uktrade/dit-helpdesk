@@ -176,6 +176,10 @@ class CommoditySearchView(FormView):
                         'search_count': context['total_results'],
                     })
 
+                # from elasticsearch_dsl import connections
+                # es = connections.get_connection()
+                # import ipdb; ipdb.set_trace()
+
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
                         index = helpers.get_alias_from_hit(hit)

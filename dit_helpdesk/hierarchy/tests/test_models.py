@@ -20,7 +20,7 @@ class SectionTestCase(TestCase):
 
     def setUp(self):
 
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         self.section = mixer.blend(
             Section, section_id=1, roman_numeral="I", tts_json="[]", nomenclature_tree=self.tree
@@ -96,7 +96,7 @@ class ChapterTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         self.chapter = mixer.blend(Chapter, tts_json="{}", nomenclature_tree=self.tree)
 
@@ -242,7 +242,7 @@ class HeadingTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
         self.heading = mixer.blend(Heading, tts_json="{}", nomenclature_tree=self.tree)
 
         self.parent_subheadings = mixer.cycle(5).blend(
@@ -306,7 +306,7 @@ class SubHeadingTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         self.heading = mixer.blend(Heading, tts_json="{}", nomenclature_tree=self.tree)
 

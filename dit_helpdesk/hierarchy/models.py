@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
-class EUHierarchyManager(models.Manager):
+class RegionHierarchyManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(
-            nomenclature_tree__region='EU',
+            nomenclature_tree__region='UK',
             nomenclature_tree__end_date__isnull=True
         )
 
@@ -37,7 +37,7 @@ class TreeSelectorMixin:
 
     def save(self):
         if not self.nomenclature_tree:
-            self.nomenclature_tree = NomenclatureTree.get_active_tree('EU')
+            self.nomenclature_tree = NomenclatureTree.get_active_tree('UK')
 
         super().save()
 
@@ -84,7 +84,7 @@ class NomenclatureTree(models.Model):
     end_date = models.DateTimeField(null=True)
 
     @classmethod
-    def get_active_tree(cls, region='EU'):
+    def get_active_tree(cls, region='UK'):
 
         try:
             prev_tree = NomenclatureTree.objects.filter(
@@ -104,7 +104,7 @@ class Section(models.Model, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -354,7 +354,7 @@ class Chapter(models.Model, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -663,7 +663,7 @@ class Chapter(models.Model, TreeSelectorMixin):
 
 
 class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -938,7 +938,7 @@ class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
 
 
 class SubHeading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)

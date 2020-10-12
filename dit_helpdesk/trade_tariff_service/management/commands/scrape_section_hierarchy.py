@@ -39,30 +39,31 @@ class Command(BaseCommand):
         with transaction.atomic():
 
             with transaction.atomic():
-                prev_eu_tree = NomenclatureTree.get_active_tree('EU')
+                prev_tree = NomenclatureTree.get_active_tree('UK')
 
                 # creating new tree automatically activates it (at least within transaction)
-                new_eu_tree = create_nomenclature_tree('EU')
+                new_tree = create_nomenclature_tree('UK')
 
-                builder = HierarchyBuilder(new_tree=new_eu_tree)
+                builder = HierarchyBuilder(new_tree=new_tree)
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])
-
+                import ipdb; ipdb.set_trace()
                 if not options["activate_new_tree"]:
                     # switch back active tree to previous since we only want to properly activate
                     # the new one after we reindex ElasticSearch results
-                    if prev_eu_tree:
-                        prev_eu_tree.end_date = None
-                        prev_eu_tree.save()
+                    if prev_tree:
+                        prev_tree.end_date = None
+                        prev_tree.save()
 
-                    new_eu_tree.end_date = timezone.now()
-                    new_eu_tree.save()
+                    new_tree.end_date = timezone.now()
+                    new_tree.save()
 
             with transaction.atomic():
-                # we are not indexing UK documents in ElasticSearch (at least yet) so we can
+                # we are not indexing EU documents in ElasticSearch (at least
+                # yet) so we can
                 # safely activate this tree
-                builder = HierarchyBuilder(region='UK')
+                builder = HierarchyBuilder(region='EU')
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
                 builder.process_orphaned_commodities(options['skip_commodity'])

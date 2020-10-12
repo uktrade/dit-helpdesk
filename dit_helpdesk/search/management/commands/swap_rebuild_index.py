@@ -143,10 +143,10 @@ class Command(BaseCommand):
         with transaction.atomic():
             # get latest tree - not yet active because we want to activate it only immediately after
             # finishing reindexing (and swapping index aliases)
-            new_tree = NomenclatureTree.objects.filter(region='EU').latest('start_date')
+            new_tree = NomenclatureTree.objects.filter(region='UK').latest('start_date')
 
             # get active (but not latest) tree
-            prev_tree = NomenclatureTree.get_active_tree('EU')
+            prev_tree = NomenclatureTree.get_active_tree('UK')
 
             if prev_tree:
                 prev_tree.end_date = timezone.now()
