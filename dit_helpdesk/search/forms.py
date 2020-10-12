@@ -32,6 +32,8 @@ class CommoditySearchForm(forms.Form):
         self.fields["toggle_headings"].initial = 0
         self.fields["page"].initial = 1
 
+        self.fields["changed_by"].initial = ""
+
     q = forms.CharField()
     toggle_headings = forms.ChoiceField(
         choices=TOGGLE_CHOICES, widget=forms.HiddenInput
@@ -40,12 +42,12 @@ class CommoditySearchForm(forms.Form):
     sort_order = forms.ChoiceField(choices=SORT_ORDER, widget=forms.HiddenInput)
     page = forms.CharField(widget=forms.HiddenInput())
     country = forms.CharField(widget=forms.HiddenInput())
+    changed_by = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def clean(self):
         cleaned_data = super().clean()
 
         if cleaned_data.get("sort") == "commodity_code":
-            cleaned_data["sort"] = "commodity_code.keyword"
             cleaned_data["sort_order"] = "asc"
         elif cleaned_data.get("sort") == "ranking":
             cleaned_data["sort"] = "_score"

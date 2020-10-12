@@ -10,17 +10,16 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
-from countries.models import Country
 from hierarchy.models import (
     BaseHierarchyModel, Heading, NomenclatureTree,
-    EUHierarchyManager, TreeSelectorMixin,
+    EUHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
 
 
-class Commodity(BaseHierarchyModel, TreeSelectorMixin):
+class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
@@ -110,6 +109,13 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin):
         """
         return CommodityJson(json.loads(self.tts_json))
 
+    def get_chapter(self):
+        """
+        returns the chapter for this commodity via the heading
+        :return: Chapter object
+        """
+        return self.get_heading().chapter
+
     def get_heading(self):
         """
         returns the commodity's Heading instance
@@ -121,29 +127,6 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin):
         while type(obj) is not Heading:
             obj = obj.get_parent()
         return obj
-
-    def get_rules_of_origin(self, country_code):
-        """
-        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
-        country code parameter.
-        the dictionary has two keys one for the list of rules and one for the related footnotes
-        :param country_code: string
-        :return: dictionary
-        """
-
-        country = Country.objects.get(country_code=country_code)
-        groups = {}
-        rules_of_origin = {"rules": [], "footnotes": []}
-        for group_member in country.rulesgroupmember_set.all():
-            for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
-                for rule in document.rule_set.all().order_by("id"):
-                    if rule.chapter == self.get_heading().chapter:
-                        rules_of_origin["rules"].append(rule)
-            group_name = group_member.rules_group.description
-            groups[group_name] = rules_of_origin
-
-        return groups
 
     def get_path(self, parent=None, tree=None, level=0):
         """
