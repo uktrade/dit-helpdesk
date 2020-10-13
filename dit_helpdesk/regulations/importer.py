@@ -260,7 +260,7 @@ class RegulationsImporter:
                     )
             except KeyError as key_err:
                 logger.debug(
-                    "Missing regulations documents for %s: with error %s",
+                    "Missing regulations documents for %s",
                     item["title"],
                     exc_info=key_err,
                 )
