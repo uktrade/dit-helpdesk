@@ -104,13 +104,6 @@ DATABASES = {"default": dj_database_url.config()}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 85000  # default is 1000
 
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "localhost:6379",
-        "TIMEOUT": 60 * 60 * 24,
-    }
-}
 
 # ELASTICSEARCH_DSL SETTINGS
 # https://github.com/sabricot/django-elasticsearch-dsl
