@@ -29,7 +29,7 @@ class CommodityTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
         self.section = mixer.blend(Section, section_id=1, nomenclature_tree=self.tree)
         self.chapter = mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section, nomenclature_tree=self.tree
@@ -47,11 +47,12 @@ class CommodityTestCase(TestCase):
         self.commodity = mixer.blend(
             Commodity,
             commodity_code="0101210000",
-            tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
             parent_subheading=self.subheading,
             goods_nomenclature_sid=12345,
             nomenclature_tree=self.tree,
         )
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_STRUCTURE))
+        self.commodity.save_cache()
 
     def test_str(self):
         self.assertEquals(

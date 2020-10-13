@@ -1,24 +1,32 @@
 import json
 import logging
 import re
+import datetime as dt
 
 import requests
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+from django.core.cache import cache
+
+from backports.datetime_fromisoformat import MonkeyPatch
 
 from countries.models import Country
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+
+
+MonkeyPatch.patch_fromisoformat()
 
 logger = logging.getLogger(__name__)
 
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
-class EUHierarchyManager(models.Manager):
+class RegionHierarchyManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(
-            nomenclature_tree__region='EU',
+            nomenclature_tree__region=settings.PRIMARY_REGION,
             nomenclature_tree__end_date__isnull=True
         )
 
@@ -37,7 +45,7 @@ class TreeSelectorMixin:
 
     def save(self):
         if not self.nomenclature_tree:
-            self.nomenclature_tree = NomenclatureTree.get_active_tree('EU')
+            self.nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
 
         super().save()
 
@@ -84,7 +92,7 @@ class NomenclatureTree(models.Model):
     end_date = models.DateTimeField(null=True)
 
     @classmethod
-    def get_active_tree(cls, region='EU'):
+    def get_active_tree(cls, region=settings.PRIMARY_REGION):
 
         try:
             prev_tree = NomenclatureTree.objects.filter(
@@ -100,16 +108,67 @@ class NomenclatureTree(models.Model):
         return f"{self.region} {self.start_date} - {self.end_date}"
 
 
-class Section(models.Model, TreeSelectorMixin):
+class BaseHierarchyModel(models.Model):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseHierarchyModel, self).__init__(*args, **kwargs)
+        self._temp_cache = None
+
+    class Meta:
+        abstract = True
+
+    def _get_external_cache_key(self):
+        return f"{self.__class__.__name__}_{self.pk}"
+
+    def _get_updated_at_cache_key(self):
+        return f"{self._get_external_cache_key()}__updated_at"
+
+    @property
+    def tts_json(self):
+        if self._temp_cache:
+            return self._temp_cache
+        return cache.get(self._get_external_cache_key())
+
+    @tts_json.setter
+    def tts_json(self, val):
+        # only write to local cache immediately, store in external cache on .save_cache
+        self._temp_cache = val
+
+    @property
+    def last_updated(self):
+        date_str = cache.get(self._get_updated_at_cache_key())
+
+        if date_str:
+            date = dt.datetime.fromisoformat(date_str)
+        else:
+            date = None
+        return date
+
+    def save_cache(self):
+        if self._temp_cache:
+            cache.set(self._get_external_cache_key(), self._temp_cache)
+            cache.set(self._get_updated_at_cache_key(), timezone.now().isoformat())
+
+        self._temp_cache = None
+
+    def should_update_content(self):
+        is_stale_tts_json = (
+            not self.last_updated
+            or self.last_updated < dt.datetime.now(timezone.utc) - dt.timedelta(days=1)
+        )
+        should_update = is_stale_tts_json or self.tts_json is None
+        return should_update
+
+
+class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
     section_id = models.IntegerField()
-    tts_json = models.TextField(blank=True)
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
     position = models.IntegerField()
@@ -350,11 +409,11 @@ class Section(models.Model, TreeSelectorMixin):
         return None
 
 
-class Chapter(models.Model, TreeSelectorMixin):
+class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -370,12 +429,10 @@ class Chapter(models.Model, TreeSelectorMixin):
     keywords = models.TextField(null=True, blank=True)
     ranking = models.SmallIntegerField(null=True, blank=True)
     chapter_code = models.CharField(max_length=30)
-    tts_json = models.TextField(blank=True, null=True)
 
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
     )
-    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
@@ -569,22 +626,6 @@ class Chapter(models.Model, TreeSelectorMixin):
             if code_match_obj.group(i) != "00"
         ]
 
-        # gets the Commodity content from the trade tariff service url as json response and stores
-        # it in the commodity's tts_json field
-        # TODO: unreachable code below, audit if OK to delete
-
-        url = settings.HEADING_URL % self.heading_code[:4]
-
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-        self.tts_json = resp_content
-        self.save()
-
     def update_content(self):
         url = settings.CHAPTER_URL.format(self.chapter_code[:2])
 
@@ -594,7 +635,7 @@ class Chapter(models.Model, TreeSelectorMixin):
             resp_content = resp.content.decode()
 
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     @property
     def tts_obj(self):
@@ -662,8 +703,8 @@ class Chapter(models.Model, TreeSelectorMixin):
         return self.section
 
 
-class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = EUHierarchyManager()
+class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -680,7 +721,6 @@ class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     ranking = models.SmallIntegerField(null=True, blank=True)
     heading_code = models.CharField(max_length=10)
     heading_code_4 = models.CharField(max_length=4, null=True, blank=True)
-    tts_json = models.TextField(blank=True, null=True)
     chapter = models.ForeignKey(
         "hierarchy.Chapter",
         blank=True,
@@ -688,7 +728,6 @@ class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
         on_delete=models.CASCADE,
         related_name="headings",
     )
-    last_updated = models.DateTimeField(auto_now=True)
 
     @property
     def commodity_code(self):
@@ -843,7 +882,7 @@ class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
 
         resp_content = self._amend_measure_conditions(resp_content)
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     @staticmethod
     def _amend_measure_conditions(resp_content):
@@ -937,8 +976,8 @@ class Heading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
         return self.chapter
 
 
-class SubHeading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = EUHierarchyManager()
+class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -954,9 +993,6 @@ class SubHeading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     leaf = models.BooleanField()
-    tts_json = models.TextField(blank=True, null=True)
-
-    last_updated = models.DateTimeField(auto_now=True)
 
     @property
     def heading_code_4(self):
@@ -1172,7 +1208,7 @@ class SubHeading(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
 
         self.tts_json = resp_content
 
-        self.save()
+        self.save_cache()
 
     @staticmethod
     def _amend_measure_conditions(resp_content):

@@ -5,6 +5,8 @@ from django.db import models
 
 from .managers import RegulationGroupManager
 
+from hierarchy.models import NomenclatureTree
+
 
 @reversion.register()
 class RegulationGroup(models.Model):
@@ -13,6 +15,8 @@ class RegulationGroup(models.Model):
     """
 
     objects = RegulationGroupManager()
+
+    nomenclature_trees = models.ManyToManyField(NomenclatureTree)
 
     title = models.TextField()
     sections = models.ManyToManyField("hierarchy.Section")
@@ -30,6 +34,8 @@ class Regulation(models.Model):
     """
     Regulation model
     """
+
+    nomenclature_trees = models.ManyToManyField(NomenclatureTree)
 
     title = models.TextField()
     regulation_groups = models.ManyToManyField(RegulationGroup)

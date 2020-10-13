@@ -44,7 +44,7 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='EU')
+        self.tree = create_nomenclature_tree(region='UK')
 
         self.section = self.create_instance(
             get_data(settings.SECTION_STRUCTURE), "hierarchy", "Section"
@@ -254,15 +254,16 @@ class MeasureConditionDetailTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree(region='EU')
+        self.tree = create_nomenclature_tree(region='UK')
 
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
             goods_nomenclature_sid=12345,
             nomenclature_tree=self.tree,
         )
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
+        self.commodity.save_cache()
 
     fixtures = ["../../countries/fixtures/countries_data.json"]
 

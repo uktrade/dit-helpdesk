@@ -83,6 +83,8 @@ gevent = "==1.4.0"
 elastic-apm = "*"
 django-reversion = "*"
 ecs-logging = "*"
+django-db-readonly = "*"
+backports-datetime-fromisoformat = "*"
 
 [requires]
 python_version = "3.6"

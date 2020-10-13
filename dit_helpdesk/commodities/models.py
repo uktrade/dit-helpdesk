@@ -7,26 +7,23 @@ import re
 
 import requests
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import reverse
 
-from countries.models import Country
-from hierarchy.helpers import IMPORT_MEASURE_GROUPS
 from hierarchy.models import (
-    Heading, RulesOfOriginMixin, SubHeading, Chapter, NomenclatureTree,
-    EUHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
+    BaseHierarchyModel, Heading, RulesOfOriginMixin, SubHeading, Chapter, NomenclatureTree,
+    RegionHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
 
 logger = logging.getLogger(__name__)
 
 
-class Commodity(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
+class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
@@ -41,8 +38,6 @@ class Commodity(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     number_indents = models.SmallIntegerField()
     keywords = models.TextField()
     ranking = models.SmallIntegerField(null=True)
-
-    tts_json = models.TextField(blank=True, null=True)
 
     tts_is_leaf = models.BooleanField()
 
@@ -60,8 +55,6 @@ class Commodity(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
         related_name="children_concrete",
         on_delete=models.CASCADE,
     )
-
-    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("commodity_code", "goods_nomenclature_sid", "nomenclature_tree")
@@ -323,7 +316,7 @@ class Commodity(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
         resp_content = self._amend_measure_conditions(resp_content)
 
         self.tts_json = resp_content
-        self.save()
+        self.save_cache()
 
     def get_hierarchy_children(self):
         return []

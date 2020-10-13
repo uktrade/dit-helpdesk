@@ -15,10 +15,10 @@ models = (
 )
 
 
-class EUHierarchyManagerTestCase(TestCase):
+class RegionHierarchyManagerTestCase(TestCase):
 
     """
-    Test EUHierarchyManager
+    Test RegionHierarchyManager
     """
 
     def setUp(self):
@@ -32,15 +32,15 @@ class EUHierarchyManagerTestCase(TestCase):
     def test_retrieval_eu(self):
 
         for model in models:
-            instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
-            self.assertEquals(model.objects.count(), 1)
-            self.assertEquals(model.objects.first(), instance)
+            mixer.blend(model, nomenclature_tree=self.eu_tree)
+            self.assertFalse(model.objects.all().exists())
 
     def test_retrieval_uk(self):
 
         for model in models:
-            mixer.blend(model, nomenclature_tree=self.uk_tree)
-            self.assertFalse(model.objects.all().exists())
+            instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
+            self.assertEquals(model.objects.count(), 1)
+            self.assertEquals(model.objects.first(), instance)
 
     def test_retrieval_eu_uk(self):
 
@@ -48,12 +48,12 @@ class EUHierarchyManagerTestCase(TestCase):
             uk_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
             eu_instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
             self.assertEquals(model.objects.count(), 1)
-            self.assertEquals(model.objects.first(), eu_instance)
+            self.assertEquals(model.objects.first(), uk_instance)
 
     def test_retrieval_old_tree(self):
         for model in models:
-            old_instance = mixer.blend(model, nomenclature_tree=self.old_eu_tree)
-            new_instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
+            old_instance = mixer.blend(model, nomenclature_tree=self.old_uk_tree)
+            new_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
 
             self.assertEquals(model.objects.count(), 1)
             self.assertEquals(model.objects.first(), new_instance)
@@ -73,7 +73,7 @@ class TreeSelectorMixinTestCase(TestCase):
         for model in models:
             instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
             self.assertEquals(model.get_active_objects('EU').count(), 1)
-            self.assertEquals(model.objects.first(), instance)
+            self.assertEquals(model.get_active_objects('EU').first(), instance)
 
     def test_retrieval_uk(self):
 
