@@ -5,11 +5,17 @@ from django.db import migrations
 def swap_nomenclature_trees(apps, schema_editor):
     NomenclatureTree = apps.get_model('hierarchy', 'NomenclatureTree')
 
-    uk_trees = NomenclatureTree.objects.filter(region='UK').all()
-    eu_trees = NomenclatureTree.objects.filter(region='EU').all()
+    uk_trees = NomenclatureTree.objects.filter(region='UK').all()[:]
+    eu_trees = NomenclatureTree.objects.filter(region='EU').all()[:]
 
-    uk_trees.update(region='EU')
-    eu_trees.update(region='UK')
+    for uk_tree in uk_trees:
+        uk_tree.region = 'EU'
+
+    for eu_tree in eu_trees:
+        eu_tree.region = 'UK'
+
+    NomenclatureTree.objects.bulk_update(uk_trees, ['region'])
+    NomenclatureTree.objects.bulk_update(eu_trees, ['region'])
 
 
 class Migration(migrations.Migration):
