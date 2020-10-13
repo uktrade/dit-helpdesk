@@ -99,6 +99,9 @@ class RegulationsImporterTestCase(TestCase):
         for legislation_url, celex in mapping:
             regulation = Regulation.objects.get(url=legislation_url)
             self.assertEqual(regulation.celex, celex)
+        self.assertFalse(
+            Regulation.objects.filter(celex="").exists(),
+        )
 
     @override_settings(
         HIERARCHY_MODEL_MAP={
@@ -135,6 +138,9 @@ class RegulationsImporterTestCase(TestCase):
         for legislation_url, celex in mapping:
             regulation = Regulation.objects.get(url=legislation_url)
             self.assertEqual(regulation.celex, celex)
+        self.assertFalse(
+            Regulation.objects.filter(celex="").exists(),
+        )
 
     def test_data_loader_with_csv(self):
         file_path = settings.REGULATIONS_DATA_PATH.format(
