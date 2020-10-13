@@ -15,5 +15,9 @@ ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 
 CACHES = {
-    "default": {"BACKEND": "django_redis.cache.RedisCache", "LOCATION": REDIS_URL}
+    "default": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "TIMEOUT": 60 * 60 * 24,
+    }
 }
