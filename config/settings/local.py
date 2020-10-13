@@ -13,8 +13,8 @@ DATABASES = {
 
 CACHES = {
     "default": {
-        "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "localhost:6379",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://localhost:6379",
         "TIMEOUT": 60 * 60 * 24,
     }
 }
