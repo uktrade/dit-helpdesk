@@ -86,7 +86,14 @@ class RegulationsImporter:
 
         if data_map["document"]["url"] is None:
             data_map["document"]["url"] = ""
-        regulation = self._create_instance("Regulation", data_map["document"])
+        kwargs = {
+            "url": data_map["document"]["url"],
+        }
+        defaults = {
+            "celex": data_map["document"]["celex"],
+            "title": data_map["document"]["title"],
+        }
+        regulation = self._create_instance("Regulation", kwargs, defaults=defaults)
         regulation.regulation_groups.add(regulation_group)
         regulation.save()
 
@@ -129,7 +136,7 @@ class RegulationsImporter:
         )
         return commodities
 
-    def _create_instance(self, model_name, field_data):
+    def _create_instance(self, model_name, field_data, defaults=None):
         """
         get or create an instance of <model_name> with <field_data> and return the create instance
         :param model_name: model name of the instance to create
@@ -139,7 +146,7 @@ class RegulationsImporter:
 
         model = apps.get_model(app_label=self.app_label, model_name=model_name)
 
-        instance, created = model.objects.get_or_create(**field_data)
+        instance, created = model.objects.update_or_create(defaults, **field_data)
         if created:
             logger.info("{0} instance created".format(model_name))
         else:
@@ -212,14 +219,15 @@ class RegulationsImporter:
         :param regulations: table of regulation titles with urls
         :return: return list of regulations each with a corresponding document url and title
         """
-        regulations_table = regulations[["Title", "UK Reg"]].values.tolist()
+        regulations_table = regulations[["Title", "CELEX", "UK Reg"]].values.tolist()
 
         for item in regulations_table:
-            if item[1] is not nan and item[1] in documents.keys():
-                item.append(documents[item[1]])
+            if item[2] is not nan and item[2] in documents.keys():
+                item.append(documents[item[2]])
             else:
-                item[1] = None
+                item[2] = None
                 item.append(None)
+
         return regulations_table
 
     def build_list_of_regulation_maps(self, data_table, titles_to_codes_map):
@@ -244,8 +252,12 @@ class RegulationsImporter:
                         {
                             "parent_codes": parent_codes,
                             "title": item[0],
-                            "document": {"url": item[1], "title": item[2]},
-                        }
+                            "document": {
+                                "celex": item[1],
+                                "url": item[2],
+                                "title": item[3],
+                            },
+                        },
                     )
             except KeyError as key_err:
                 logger.debug(
