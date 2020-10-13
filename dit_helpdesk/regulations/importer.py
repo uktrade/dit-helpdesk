@@ -55,7 +55,6 @@ class RegulationsImporter:
         self.data = []
         self.documents = None
         self.data_path = settings.REGULATIONS_DATA_PATH
-        self.missing_commodities = []
 
     def instance_builder(self, data_map):
         """
