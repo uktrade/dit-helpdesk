@@ -46,10 +46,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
     )
 
-    if (
-        commodity.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
-        or commodity.tts_json is None
-    ):
+    if commodity.should_update_content():
         commodity.update_content()
 
     modals_dict = {}
