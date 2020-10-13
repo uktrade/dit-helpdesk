@@ -27,7 +27,7 @@ class RegulationsImporterTestCase(TestCase):
             "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
         },
     )
-    def test_for_missing_regulations(self):
+    def test_regulation_groups_attached_to_commodity_objects(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
         builder = HierarchyBuilder()
         builder.data_scanner(model_names)
@@ -39,21 +39,30 @@ class RegulationsImporterTestCase(TestCase):
 
         commodity_code_list = ["2928001000", "2902500000", "2823000010"]
         commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-        regulation_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
+        regulation_group_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
         for item in commodities:
-            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
+            self.assertIn(
+                regulation_group_title,
+                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+            )
 
         commodity_code_list = ["2901100000", "7102100000"]
         commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-        regulation_title = "Voluntary - Eco-label for furniture"
+        regulation_group_title = "Voluntary - Eco-label for furniture"
         for item in commodities:
-            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
+            self.assertIn(
+                regulation_group_title,
+                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+            )
 
         commodity_code_list = ["2850009000"]
         commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-        regulation_title = "Voluntary - Eco-label for absorbent hygiene products"
+        regulation_group_title = "Voluntary - Eco-label for absorbent hygiene products"
         for item in commodities:
-            self.assertIn(regulation_title, [regulation.title for regulation in item.regulationgroup_set.all()])
+            self.assertIn(
+                regulation_group_title,
+                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+            )
 
     def test_data_loader_with_csv(self):
         file_path = settings.REGULATIONS_DATA_PATH.format(
