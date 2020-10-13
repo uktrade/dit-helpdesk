@@ -1,6 +1,7 @@
 import contextlib
 
 from django.utils import timezone
+from django.conf import settings
 from django.db import transaction
 
 from .models import NomenclatureTree
@@ -190,7 +191,7 @@ def get_nomenclature_group_measures(nomenclature_model, group_name, country_code
     ]
 
 
-def create_nomenclature_tree(region='EU'):
+def create_nomenclature_tree(region=settings.PRIMARY_REGION):
     """Create new nomenclature tree and mark the previous most recent
     one as ended.
 
@@ -231,7 +232,7 @@ def fill_tree_in_json_data(json_data, tree):
 
 
 @contextlib.contextmanager
-def process_swapped_tree():
+def process_swapped_tree(region=settings.PRIMARY_REGION):
     """This enables to populate data to a tree that is active only within transaction,
     and not visible from within the app. Thanks to this we can add data and make the tree
     visibly active only as a very last step.
@@ -242,9 +243,9 @@ def process_swapped_tree():
     with transaction.atomic():
         # get latest tree - not yet active because we want to activate it only immediately after
         # finishing reindexing (and swapping index aliases)
-        new_tree = NomenclatureTree.objects.filter(region='EU').latest('start_date')
+        new_tree = NomenclatureTree.objects.filter(region=region).latest('start_date')
         # get active (but not latest) tree
-        prev_tree = NomenclatureTree.get_active_tree('EU')
+        prev_tree = NomenclatureTree.get_active_tree(region=region)
         if prev_tree:
             prev_tree.end_date = timezone.now()
             prev_tree.save()

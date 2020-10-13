@@ -15,7 +15,7 @@ from countries.models import Country
 from hierarchy.helpers import IMPORT_MEASURE_GROUPS
 from hierarchy.models import (
     Heading, RulesOfOriginMixin, SubHeading, Chapter, NomenclatureTree,
-    EUHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
+    RegionHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
 
@@ -26,7 +26,7 @@ class Commodity(models.Model, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)

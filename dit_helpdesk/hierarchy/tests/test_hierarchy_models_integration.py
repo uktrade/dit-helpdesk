@@ -39,7 +39,7 @@ class HierarchyModelsTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='EU')
+        self.tree = create_nomenclature_tree(region='UK')
         self.section = create_instance(
             get_data(settings.SECTION_STRUCTURE, self.tree), "hierarchy", "Section"
         )

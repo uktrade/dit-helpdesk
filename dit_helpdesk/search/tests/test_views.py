@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class CommoditySetupTestCase(TestCase):
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
         self.section = mixer.blend(
             Section,
             section_id=10,

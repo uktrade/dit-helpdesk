@@ -20,7 +20,7 @@ class InheritedRegulationGroupsTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         self.model_classes = [
             Chapter,
