@@ -29,7 +29,7 @@ class CommodityTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
         self.section = mixer.blend(Section, section_id=1, nomenclature_tree=self.tree)
         self.chapter = mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section, nomenclature_tree=self.tree

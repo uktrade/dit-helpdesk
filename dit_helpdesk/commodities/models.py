@@ -11,8 +11,8 @@ from django.db import models
 from django.urls import reverse
 
 from hierarchy.models import (
-    BaseHierarchyModel, Heading, NomenclatureTree,
-    EUHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
+    BaseHierarchyModel, Heading, RulesOfOriginMixin, SubHeading, Chapter, NomenclatureTree,
+    RegionHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
 
@@ -23,7 +23,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
-    objects = EUHierarchyManager()
+    objects = RegionHierarchyManager()
     all_objects = models.Manager()
 
     nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
