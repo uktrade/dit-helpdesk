@@ -131,7 +131,7 @@ class BaseHierarchyModel(models.Model):
 
     @tts_json.setter
     def tts_json(self, val):
-        # only write to local cache immediately, store in external cache on .save
+        # only write to local cache immediately, store in external cache on .save_cache
         self._temp_cache = val
 
     @property
@@ -150,6 +150,14 @@ class BaseHierarchyModel(models.Model):
             cache.set(self._get_updated_at_cache_key(), timezone.now().isoformat())
 
         self._temp_cache = None
+
+    def should_update_content(self):
+        is_stale_tts_json = (
+            not self.last_updated
+            or self.last_updated < dt.datetime.now(timezone.utc) - dt.timedelta(days=1)
+        )
+        should_update = is_stale_tts_json or self.tts_json is None
+        return should_update
 
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):

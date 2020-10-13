@@ -201,11 +201,7 @@ def section_detail(request, section_id, country_code):
 
     section = get_object_or_404(Heading, heading_code=section_id)
 
-    is_stale_tts_json = (
-        not section.last_updated
-        or section.last_updated < datetime.now(timezone.utc) - timedelta(days=1)
-    )
-    if is_stale_tts_json or section.tts_json is None:
+    if section.should_update_content():
         section.update_content()
 
     import_measures = section.tts_obj.get_import_measures(country.country_code)
@@ -268,12 +264,7 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     accordion_title = hierarchy_section_header(chapter_path)
 
     try:
-        is_stale_tts_json = (
-            not chapter.last_updated
-            or chapter.last_updated < datetime.now(timezone.utc) - timedelta(
-                days=1)
-        )
-        if is_stale_tts_json or chapter.tts_json is None:
+        if chapter.should_update_content():
             chapter.update_content()
 
     except Exception as ex:
@@ -324,12 +315,7 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
 
     try:
 
-        is_stale_tts_json = (
-            not heading.last_updated
-            or heading.last_updated < datetime.now(timezone.utc) - timedelta(
-                days=1)
-        )
-        if is_stale_tts_json or heading.tts_json is None:
+        if heading.should_update_content():
             heading.update_content()
 
         import_measures = heading.tts_obj.get_import_measures(country.country_code)
@@ -446,14 +432,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
 
     modals_dict = {}
     try:
-        is_stale_tts_json = (
-                not subheading.last_updated
-                or subheading.last_updated < datetime.now(timezone.utc) - timedelta(
-            days=1)
-        )
-        if is_stale_tts_json or not subheading.tts_json:
-            subheading.update_content()
-        else:
+        if subheading.should_update_content():
             subheading.update_content()
 
         import_measures = subheading.tts_obj.get_import_measures(country.country_code)
