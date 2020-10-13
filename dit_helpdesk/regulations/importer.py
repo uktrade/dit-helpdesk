@@ -1,11 +1,11 @@
 import json
 import logging
-from pathlib import Path
-
 import pandas
-from django.apps import apps
-from django.conf import settings
+
+from pathlib import Path
 from numpy import nan
+
+from django.conf import settings
 
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading
@@ -13,7 +13,6 @@ from regulations.models import Regulation, RegulationGroup
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-import sys
 
 
 def data_loader(file_path):
