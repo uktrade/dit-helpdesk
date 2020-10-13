@@ -80,7 +80,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
 
     def test_instance_builder_for_existing_items_with_hierarchy(self):
-        tree = create_nomenclature_tree('EU')
+        tree = create_nomenclature_tree('UK')
 
         section = mixer.blend(Section, section_id=1, nomenclature_tree=tree)
 

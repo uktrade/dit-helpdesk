@@ -31,7 +31,7 @@ class HierarchyBuilderTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree(region='EU')
+        self.tree = create_nomenclature_tree(region='UK')
 
     def test_file_loader(self):
         sections = HierarchyBuilder().file_loader(model_name="Section", tree=self.tree)
@@ -54,7 +54,7 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'EU')
+        self.assertEquals(tree.region, 'UK')
 
     def test_instance_builder_for_chapter(self):
         chapter_model_name = "Chapter"
@@ -87,7 +87,7 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'EU')
+        self.assertEquals(tree.region, 'UK')
 
     def test_instance_builder_for_heading(self):
         model_name = "Heading"
@@ -108,7 +108,7 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'EU')
+        self.assertEquals(tree.region, 'UK')
 
     def test_instance_builder_for_subheading(self):
 
@@ -131,7 +131,7 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'EU')
+        self.assertEquals(tree.region, 'UK')
 
     def test_instance_builder_for_commodity(self):
         model_name = "Commodity"
@@ -151,7 +151,7 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'EU')
+        self.assertEquals(tree.region, 'UK')
 
     def test_load_data_for_section(self):
         model_name = "Section"
@@ -209,7 +209,7 @@ class HierarchyBuilderTestCase(TestCase):
 
     def test_incorrect_instantiation(self):
         with self.assertRaises(ValueError):
-            HierarchyBuilder(region='EU', new_tree='some fake tree')
+            HierarchyBuilder(region='UK', new_tree='some fake tree')
 
     # def test_processed_orphan_subheadings(self):
     #

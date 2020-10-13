@@ -40,7 +40,7 @@ class TestHeadingModel(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         for model in [Section, Chapter, Heading, SubHeading, Commodity]:
             mixer.register(model, nomenclature_tree=self.tree)
@@ -75,7 +75,7 @@ class TestSubHeadingModel(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         for model in [Section, Chapter, Heading, SubHeading, Commodity]:
             mixer.register(model, nomenclature_tree=self.tree)
@@ -120,7 +120,7 @@ class TestCommodityModel(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree('EU')
+        self.tree = create_nomenclature_tree('UK')
 
         for model in [Section, Chapter, Heading, SubHeading, Commodity]:
             mixer.register(model, nomenclature_tree=self.tree)
