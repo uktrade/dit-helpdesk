@@ -219,14 +219,16 @@ class RegulationsImporter:
         :param regulations: table of regulation titles with urls
         :return: return list of regulations each with a corresponding document url and title
         """
-        regulations_table = regulations[["Title", "CELEX", "UK Reg"]].values.tolist()
+        regulations_table = regulations[["Title", "CELEX", "UK Reg"]]
+        regulations_table.columns = ["title", "celex", "url"]
+        regulations_table = regulations_table.to_dict("records")
 
         for item in regulations_table:
-            if item[2] is not nan and item[2] in documents.keys():
-                item.append(documents[item[2]])
+            if item["url"] is not nan and item["url"] in documents.keys():
+                item["document_title"] = documents[item["url"]]
             else:
-                item[2] = None
-                item.append(None)
+                item["document_title"] = None
+                item["url"] = None
 
         return regulations_table
 
@@ -235,35 +237,36 @@ class RegulationsImporter:
         build a list of dictionaries
         eg. [{"parent_codes": [], "title": "title", "document" {"url": "url", "title": "title"}},]
 
-        :param data_table: e.g. "regulations_title", "document_url", "document_title"
+        :param data_table: list of dictionaries [{"celex": ..., "reg": ..., "document_title": ..., "url': ...}, ...]
         :param titles_to_codes_map: e.g. {"commodity_title": ["list", "of", "code"], ...}
         :return: list of dictionaries
         """
         map_list = []
         for item in data_table:
+            title = item["title"]
             try:
                 parent_codes = [
                     self._normalise_commodity_code(code)
-                    for code in titles_to_codes_map[item[0]]
+                    for code in titles_to_codes_map[title]
                 ]
 
-                if item[0] in titles_to_codes_map.keys():
+                if title in titles_to_codes_map.keys():
                     map_list.append(
                         {
                             "parent_codes": parent_codes,
-                            "title": item[0],
+                            "title": item["title"],
                             "document": {
-                                "celex": item[1],
-                                "url": item[2],
-                                "title": item[3],
+                                "celex": item["celex"],
+                                "url": item["url"],
+                                "title": item["document_title"],
                             },
                         },
                     )
             except KeyError as key_err:
                 logger.debug(
-                    "Missing regulations documents for {0}: with error {1} ".format(
-                        item[0], key_err.args
-                    )
+                    "Missing regulations documents for %s: with error %s",
+                    item["title"],
+                    exc_info=key_err,
                 )
 
         return map_list
