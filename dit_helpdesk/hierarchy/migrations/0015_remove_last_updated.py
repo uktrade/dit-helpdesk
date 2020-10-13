@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hierarchy', '0013_auto_20201005_1720'),
+        ('hierarchy', '0014_remove_tts_json'),
     ]
 
     operations = [
