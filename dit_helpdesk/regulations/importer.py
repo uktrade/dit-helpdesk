@@ -9,6 +9,7 @@ from numpy import nan
 
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading
+from regulations.models import Regulation, RegulationGroup
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -54,7 +55,6 @@ class RegulationsImporter:
     def __init__(self):
         self.data = []
         self.documents = None
-        self.app_label = __package__.rsplit(".", 1)[-1]
         self.data_path = settings.REGULATIONS_DATA_PATH
         self.missing_commodities = []
 
@@ -79,7 +79,7 @@ class RegulationsImporter:
 
         regulation_group_field_data = {"title": data_map["title"]}
 
-        regulation_group = self._create_instance("RegulationGroup", regulation_group_field_data)
+        regulation_group = self._create_instance(RegulationGroup, regulation_group_field_data)
         regulation_group.headings.add(*list(parent_headings))
         regulation_group.commodities.add(*list(parent_commodities))
         regulation_group.subheadings.add(*list(parent_subheadings))
@@ -93,7 +93,7 @@ class RegulationsImporter:
             "celex": data_map["document"]["celex"],
             "title": data_map["document"]["title"],
         }
-        regulation = self._create_instance("Regulation", kwargs, defaults=defaults)
+        regulation = self._create_instance(Regulation, kwargs, defaults=defaults)
         regulation.regulation_groups.add(regulation_group)
         regulation.save()
 
@@ -136,7 +136,7 @@ class RegulationsImporter:
         )
         return commodities
 
-    def _create_instance(self, model_name, field_data, defaults=None):
+    def _create_instance(self, model_class, field_data, defaults=None):
         """
         get or create an instance of <model_name> with <field_data> and return the create instance
         :param model_name: model name of the instance to create
@@ -144,13 +144,11 @@ class RegulationsImporter:
         :return: existing or created instance
         """
 
-        model = apps.get_model(app_label=self.app_label, model_name=model_name)
-
-        instance, created = model.objects.update_or_create(defaults, **field_data)
+        instance, created = model_class.objects.update_or_create(defaults, **field_data)
         if created:
-            logger.info("{0} instance created".format(model_name))
+            logger.info("%s instance created", model_class.__name__)
         else:
-            logger.info("Returning existing {0}".format(model_name))
+            logger.info("Returning existing %s", model_class.__name__)
         return instance
 
     @staticmethod
