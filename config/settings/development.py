@@ -11,7 +11,7 @@ REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 
 CACHES = {
     "default": {
-        "BACKEND": "redis_cache.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": REDIS_URL,
         "TIMEOUT": 60 * 60 * 24,
     }
