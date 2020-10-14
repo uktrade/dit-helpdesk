@@ -1,9 +1,15 @@
-with open("commodity_category_all_with_synonyms_greenpage.csv", "r") as file1:
-    with open("keywords_and_synonyms_merged.csv", "r") as file2:
-        same = set(file1).difference(file2)
+def main():
 
-same.discard("\n")
+    with open("commodity_category_all_with_synonyms_greenpage.csv", "r") as file1:
+        with open("keywords_and_synonyms_merged.csv", "r") as file2:
+            same = set(file1).difference(file2)
 
-with open("some_output_file.txt", "w") as file_out:
-    for line in same:
-        file_out.write(line)
+    same.discard("\n")
+
+    with open("some_output_file.txt", "w") as file_out:
+        for line in same:
+            file_out.write(line)
+
+
+if __name__ == '__main__':
+    main()

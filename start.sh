@@ -34,7 +34,7 @@
 # Also do not forget to comment out the command in the INITIALISE SECTION
 # ----------------- commands ----------------
 #pipenv run /app/manage.py runserver_plus 0.0.0.0:8000
-pipenv run /app/manage.py runserver 0.0.0.0:8000
+pipenv run python /app/manage.py runserver 0.0.0.0:8000
 # --------------------------------------------
 
 # ----------------- instruction -------------
