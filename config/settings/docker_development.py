@@ -13,11 +13,11 @@ DATABASES = {
     }
 }
 
-REDIS_URL = "redis:6379"
+REDIS_URL = "redis://redis:6379"
 
 CACHES = {
     "default": {
-        "BACKEND": "redis_cache.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": REDIS_URL,
         "TIMEOUT": 60 * 60 * 24,
     }
