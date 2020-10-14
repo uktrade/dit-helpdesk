@@ -2,7 +2,9 @@ from django.core.management.base import BaseCommand
 
 from django.conf import settings
 
-from hierarchy.models import NomenclatureTree
+from hierarchy.models import NomenclatureTree, Section, Chapter, Heading, SubHeading
+from commodities.models import Commodity
+from regulations.models import RegulationGroup, Regulation
 from hierarchy.helpers import process_swapped_tree
 
 
@@ -30,5 +32,9 @@ class Command(BaseCommand):
             regulations = prev_tree.regulation_set.all()
             new_tree.regulation_set.set(regulations)
             new_tree.save()
+
+            for regulation_group in RegulationGroup.objects.all():
+                regulation_group.commodities.values_list('commodity_code', flat=True)
+
 
         self.stdout.write("Done!")
