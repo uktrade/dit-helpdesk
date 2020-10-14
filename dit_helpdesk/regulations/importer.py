@@ -94,6 +94,7 @@ class RegulationsImporter:
             "title": data_map["document"]["title"],
         }
         regulation = self._create_instance(Regulation, kwargs, defaults=defaults)
+        regulation.nomenclature_trees.add(self.tree)
         regulation.regulation_groups.add(regulation_group)
         regulation.save()
 
