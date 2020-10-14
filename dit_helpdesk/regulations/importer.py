@@ -1,18 +1,18 @@
 import json
 import logging
-from pathlib import Path
-
 import pandas
-from django.apps import apps
-from django.conf import settings
+
+from pathlib import Path
 from numpy import nan
+
+from django.conf import settings
 
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading
+from regulations.models import Regulation, RegulationGroup
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-import sys
 
 
 def data_loader(file_path):
@@ -54,9 +54,7 @@ class RegulationsImporter:
     def __init__(self):
         self.data = []
         self.documents = None
-        self.app_label = __package__.rsplit(".", 1)[-1]
         self.data_path = settings.REGULATIONS_DATA_PATH
-        self.missing_commodities = []
 
     def instance_builder(self, data_map):
         """
@@ -79,14 +77,21 @@ class RegulationsImporter:
 
         regulation_group_field_data = {"title": data_map["title"]}
 
-        regulation_group = self._create_instance("RegulationGroup", regulation_group_field_data)
+        regulation_group = self._create_instance(RegulationGroup, regulation_group_field_data)
         regulation_group.headings.add(*list(parent_headings))
         regulation_group.commodities.add(*list(parent_commodities))
         regulation_group.subheadings.add(*list(parent_subheadings))
 
         if data_map["document"]["url"] is None:
             data_map["document"]["url"] = ""
-        regulation = self._create_instance("Regulation", data_map["document"])
+        kwargs = {
+            "url": data_map["document"]["url"],
+        }
+        defaults = {
+            "celex": data_map["document"]["celex"],
+            "title": data_map["document"]["title"],
+        }
+        regulation = self._create_instance(Regulation, kwargs, defaults=defaults)
         regulation.regulation_groups.add(regulation_group)
         regulation.save()
 
@@ -129,7 +134,7 @@ class RegulationsImporter:
         )
         return commodities
 
-    def _create_instance(self, model_name, field_data):
+    def _create_instance(self, model_class, field_data, defaults=None):
         """
         get or create an instance of <model_name> with <field_data> and return the create instance
         :param model_name: model name of the instance to create
@@ -137,13 +142,11 @@ class RegulationsImporter:
         :return: existing or created instance
         """
 
-        model = apps.get_model(app_label=self.app_label, model_name=model_name)
-
-        instance, created = model.objects.get_or_create(**field_data)
+        instance, created = model_class.objects.update_or_create(defaults, **field_data)
         if created:
-            logger.info("{0} instance created".format(model_name))
+            logger.info("%s instance created", model_class.__name__)
         else:
-            logger.info("Returning existing {0}".format(model_name))
+            logger.info("Returning existing %s", model_class.__name__)
         return instance
 
     @staticmethod
@@ -212,14 +215,17 @@ class RegulationsImporter:
         :param regulations: table of regulation titles with urls
         :return: return list of regulations each with a corresponding document url and title
         """
-        regulations_table = regulations[["Title", "UK Reg"]].values.tolist()
+        regulations_table = regulations[["Title", "CELEX", "UK Reg"]]
+        regulations_table.columns = ["title", "celex", "url"]
+        regulations_table = regulations_table.to_dict("records")
 
         for item in regulations_table:
-            if item[1] is not nan and item[1] in documents.keys():
-                item.append(documents[item[1]])
+            if item["url"] is not nan and item["url"] in documents.keys():
+                item["document_title"] = documents[item["url"]]
             else:
-                item[1] = None
-                item.append(None)
+                item["document_title"] = None
+                item["url"] = None
+
         return regulations_table
 
     def build_list_of_regulation_maps(self, data_table, titles_to_codes_map):
@@ -227,31 +233,36 @@ class RegulationsImporter:
         build a list of dictionaries
         eg. [{"parent_codes": [], "title": "title", "document" {"url": "url", "title": "title"}},]
 
-        :param data_table: e.g. "regulations_title", "document_url", "document_title"
+        :param data_table: list of dictionaries [{"celex": ..., "reg": ..., "document_title": ..., "url': ...}, ...]
         :param titles_to_codes_map: e.g. {"commodity_title": ["list", "of", "code"], ...}
         :return: list of dictionaries
         """
         map_list = []
         for item in data_table:
+            title = item["title"]
             try:
                 parent_codes = [
                     self._normalise_commodity_code(code)
-                    for code in titles_to_codes_map[item[0]]
+                    for code in titles_to_codes_map[title]
                 ]
 
-                if item[0] in titles_to_codes_map.keys():
+                if title in titles_to_codes_map.keys():
                     map_list.append(
                         {
                             "parent_codes": parent_codes,
-                            "title": item[0],
-                            "document": {"url": item[1], "title": item[2]},
-                        }
+                            "title": item["title"],
+                            "document": {
+                                "celex": item["celex"],
+                                "url": item["url"],
+                                "title": item["document_title"],
+                            },
+                        },
                     )
             except KeyError as key_err:
                 logger.debug(
-                    "Missing regulations documents for {0}: with error {1} ".format(
-                        item[0], key_err.args
-                    )
+                    "Missing regulations documents for %s",
+                    item["title"],
+                    exc_info=key_err,
                 )
 
         return map_list
