@@ -6,7 +6,6 @@ from mixer.backend.django import mixer
 from django.core.management import call_command
 from django.test import override_settings, TestCase
 from django.utils import timezone
-from django.conf import settings
 
 from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
 from commodities.models import Commodity
@@ -40,16 +39,32 @@ class MigrateRegulationsTest(TestCase):
         self.commodity = mixer.blend(
             Commodity, parent_subheading=self.subheading, nomenclature_tree=self.tree)
 
+        self.new_tree = NomenclatureTree.objects.create(
+            region="UK", start_date=timezone.now(), end_date=timezone.now())
+        self.new_commodity = mixer.blend(
+            Commodity,
+            commodity_code=self.commodity.commodity_code,
+            nomenclature_tree=self.new_tree
+        )
+
     @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
-    def test_command_output(self):
+    def test_migrate_regulation_groups(self):
         regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
         regulation_group.nomenclature_trees.add(self.tree)
         regulation_group.save()
 
-        new_tree = NomenclatureTree.objects.create(
-            region=settings.PRIMARY_REGION, start_date=timezone.now())
+        call_command('migrate_regulations', stdout=sys.stdout)
+
+        self.assertIn(self.new_tree, regulation_group.nomenclature_trees.all())
+        self.assertEqual(self.new_tree.regulationgroup_set.count(), 1)
+
+    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
+    def test_migrate_nomenclature_objects(self):
+        regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
+        regulation_group.nomenclature_trees.add(self.tree)
+        regulation_group.save()
 
         call_command('migrate_regulations', stdout=sys.stdout)
 
-        self.assertIn(new_tree, regulation_group.nomenclature_trees.all())
-        self.assertEqual(new_tree.regulationgroup_set.count(), 1)
+        self.assertIn(regulation_group, self.new_commodity.regulationgroup_set.all())
+        self.assertEqual(self.new_commodity.regulationgroup_set.count(), 1)
