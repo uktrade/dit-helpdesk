@@ -764,12 +764,8 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                     commodity_type = "commodity"
                     nomenclature_sid = item.goods_nomenclature_sid
 
-                expand = "open"
-                if index is listSize:
-                    expand = "closed"
-
                 if item_commodity_code == commodity_code and item == current_item:
-                    html += f"""<li><span class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</span><span class="govuk-visually-hidden"> &ndash; </span><strong>{_commodity_code_html(item)}</strong></li>"""
+                    html += f"""<li><div class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</div><div class="govuk-visually-hidden"> &ndash; </div><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
 
                     if commodity_type == "chapter":
