@@ -48,7 +48,7 @@
                                 <select name="origin_country"
                                         class="govuk-select{% if isError %} govuk-select--error{% endif %}"
                                         id="country-picker"
-                                        aria-labelledby="select-country-label"
+                                        role="combobox"
                                         {% if isError %}aria-describedby="select-country-error"{% endif %}>
                                     <option value="">Select the export country</option>
                                     {% for country_code, country_name in country_options %}
@@ -70,13 +70,10 @@
 {% endblock %}
 
 {% block footer_additions %}
-    <script src="/assets/js/location-autocomplete.min.js"></script>
+    <script src="/assets/js/accessible-autocomplete.min.js"></script>
     <script>
-        openregisterLocationPicker({
-            selectElement: document.getElementById('country-picker'),
-            url: '/assets/js/location-autocomplete-graph.json',
-            defaultValue: '',
-            displayMenu: 'overlay'
+        accessibleAutocomplete.enhanceSelectElement({
+          selectElement: document.querySelector('#country-picker')
         })
     </script>
 {% endblock footer_additions %}
