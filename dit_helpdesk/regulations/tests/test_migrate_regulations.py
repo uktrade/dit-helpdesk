@@ -68,3 +68,17 @@ class MigrateRegulationsTest(TestCase):
 
         self.assertIn(regulation_group, self.new_commodity.regulationgroup_set.all())
         self.assertEqual(self.new_commodity.regulationgroup_set.count(), 1)
+
+    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
+    def test_migrate_nomenclature_objects__unbind_commodity(self):
+        regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
+        regulation_group.nomenclature_trees.add(self.tree)
+        regulation_group.save()
+
+        self.commodity.regulationgroup_set.clear()
+        self.commodity.save()
+
+        call_command('migrate_regulations', stdout=sys.stdout)
+
+        self.assertNotIn(regulation_group, self.new_commodity.regulationgroup_set.all())
+        self.assertEqual(self.new_commodity.regulationgroup_set.count(), 0)
