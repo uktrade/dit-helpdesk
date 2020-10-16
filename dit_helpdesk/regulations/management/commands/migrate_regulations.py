@@ -34,21 +34,23 @@ class Command(BaseCommand):
             self.stdout.write(f"New tree: {new_tree}")
             self.stdout.write(f"Previous tree: {prev_tree}")
 
-            regulation_groups = prev_tree.regulationgroup_set.all()
-            new_tree.regulationgroup_set.set(regulation_groups)
-
-            regulations = prev_tree.regulation_set.all()
-            new_tree.regulation_set.set(regulations)
-            new_tree.save()
-
             prev_tree_groups = prev_tree.regulationgroup_set.all()
-
             # if for some reason previous tree doesn't have RegulationGroups assigned (e.g.
             # running this for the first time without running import_initial_regulations),
             # take all of them
             regulation_groups = (
                 prev_tree_groups if prev_tree_groups.exists() else RegulationGroup.objects.all()
             )
+            new_tree.regulationgroup_set.set(regulation_groups)
+
+            prev_tree_regulations = prev_tree.regulation_set.all()
+            # same here
+            regulations = (
+                prev_tree_regulations if prev_tree_groups.exists()
+                else Regulation.objects.all()
+            )
+            new_tree.regulation_set.set(regulations)
+            new_tree.save()
 
             for regulation_group in regulation_groups:
                 self.stdout.write(f"Migrating regulation group {regulation_group}..")
