@@ -46,6 +46,10 @@
             </span>
                                 {% endif %}
                                 <select name="origin_country"
+                                        class="govuk-select{% if isError %} govuk-select--error{% endif %}"
+                                        id="country-picker"
+                                        aria-labelledby="select-country-label"
+                                        {% if isError %}aria-describedby="select-country-error"{% endif %}
                                         id="country-picker">
                                     <option value="">Select the export country</option>
                                     {% for country_code, country_name in country_options %}
