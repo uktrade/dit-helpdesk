@@ -72,12 +72,15 @@
 {% endblock %}
 
 {% block footer_additions %}
-    <script src="{% static 'js/accessible-autocomplete.min.js' %}"></script>
+    <script src="{% static 'js/location-autocomplete.min.js' %}"></script>
     <script>
-        accessibleAutocomplete.enhanceSelectElement({
-          selectElement: document.querySelector('#country-picker'),
-          tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.'
+        openregisterLocationPicker({
+            selectElement: document.getElementById('country-picker'),
+            url: '/assets/js/location-autocomplete-graph.json',
+            defaultValue: '',
+            displayMenu: 'overlay'
         })
+
         const input = document.querySelector('#country-picker')
         input.setAttribute("role", "combobox")
         input.setAttribute("aria-describedby", "country-picker__assistiveHint")
