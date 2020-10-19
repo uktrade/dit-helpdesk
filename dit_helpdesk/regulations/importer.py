@@ -8,7 +8,7 @@ from numpy import nan
 from django.conf import settings
 
 from commodities.models import Commodity
-from hierarchy.models import SubHeading, Heading
+from hierarchy.models import SubHeading, Heading, NomenclatureTree
 from regulations.models import Regulation, RegulationGroup
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,8 @@ class RegulationsImporter:
     heading and commodity leaf items
     """
 
-    def __init__(self):
+    def __init__(self, tree=None):
+        self.tree = tree or NomenclatureTree.get_active_tree()
         self.data = []
         self.documents = None
         self.data_path = settings.REGULATIONS_DATA_PATH
@@ -78,6 +79,7 @@ class RegulationsImporter:
         regulation_group_field_data = {"title": data_map["title"]}
 
         regulation_group = self._create_instance(RegulationGroup, regulation_group_field_data)
+        regulation_group.nomenclature_trees.add(self.tree)
         regulation_group.headings.add(*list(parent_headings))
         regulation_group.commodities.add(*list(parent_commodities))
         regulation_group.subheadings.add(*list(parent_subheadings))
@@ -92,6 +94,7 @@ class RegulationsImporter:
             "title": data_map["document"]["title"],
         }
         regulation = self._create_instance(Regulation, kwargs, defaults=defaults)
+        regulation.nomenclature_trees.add(self.tree)
         regulation.regulation_groups.add(regulation_group)
         regulation.save()
 
