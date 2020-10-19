@@ -68,7 +68,7 @@
 {% endblock %}
 
 {% block footer_additions %}
-    <script src="/assets/js/accessible-autocomplete.min.js"></script>
+    <script src="{% static 'js/accessible-autocomplete.min.js' %}"></script>
     <script>
         accessibleAutocomplete.enhanceSelectElement({
           selectElement: document.querySelector('#country-picker'),
