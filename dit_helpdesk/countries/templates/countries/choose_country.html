@@ -46,15 +46,13 @@
             </span>
                                 {% endif %}
                                 <select name="origin_country"
-                                        class="govuk-select{% if isError %} govuk-select--error{% endif %}"
-                                        id="country-picker"
-                                        role="combobox"
-                                        {% if isError %}aria-describedby="select-country-error"{% endif %}>
+                                        id="country-picker">
                                     <option value="">Select the export country</option>
                                     {% for country_code, country_name in country_options %}
                                         <option value="{{ country_code | lower }}">{{ country_name }}</option>
                                     {% endfor %}
                                 </select>
+                                <span id="country-picker__assistiveHint" style="display: none;">When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.</span>
                             </label>
                         </div>
                         <button type="submit" class="govuk-button govuk-!-padding-left-8 govuk-!-padding-right-8">
@@ -73,7 +71,15 @@
     <script src="/assets/js/accessible-autocomplete.min.js"></script>
     <script>
         accessibleAutocomplete.enhanceSelectElement({
-          selectElement: document.querySelector('#country-picker')
+          selectElement: document.querySelector('#country-picker'),
+          tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.'
         })
+        const input = document.querySelector('#country-picker')
+        input.setAttribute("role", "combobox")
+        input.setAttribute("aria-describedby", "country-picker__assistiveHint")
+
+        const wrapper = document.getElementsByClassName("autocomplete__wrapper")[0]
+        const hint = document.getElementById("country-picker__assistiveHint")
+        wrapper.appendChild(hint)
     </script>
 {% endblock footer_additions %}
