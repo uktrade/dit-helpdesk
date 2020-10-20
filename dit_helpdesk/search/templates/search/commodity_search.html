@@ -193,7 +193,8 @@
                                 </fieldset>
                                 <div id="select-sortby" class="govuk-select--inline">
                                     <label class="govuk-label" for="sort">Sort by
-                                        <select class="govuk-select" name="sort" id="sort" data-changed-by="sort" {% if request.GET.changed_by == "sort" %}autofocus="true"{% endif %}>
+                                        <select class="govuk-select" name="sort" id="sort" aria-label="Sort by relevance or code. This will refresh the page."
+                                                data-changed-by="sort" {% if request.GET.changed_by == "sort" %}autofocus="true"{% endif %}>
                                             <option value="ranking"
                                                     {% if request.GET.sort == "ranking" %}selected{% endif %}>
                                                 Relevance
