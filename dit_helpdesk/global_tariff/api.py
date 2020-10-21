@@ -39,7 +39,7 @@ def get_commodity_data(codes: Sequence[CommodityCodeType]) -> Tuple[CommodityCod
 
         num_results = len(response)
         if num_results > 1:
-            raise MultipleResultsError(f"Found {num_results} expected 1.")
+            raise MultipleResultsError(f"Found {num_results} for {stripped_code} expected 1.")
 
         if response:
             return stripped_code, response[0]
