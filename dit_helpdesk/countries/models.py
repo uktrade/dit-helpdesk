@@ -7,7 +7,7 @@ class Country(models.Model):
     name = models.CharField(max_length=250)
 
     scenario = models.CharField(max_length=255)
-    content_url = models.URLField(null=True)
+    content_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.country_code} - {self.name} - {self.scenario}"

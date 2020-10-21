@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='country',
             name='content_url',
-            field=models.URLField(null=True),
+            field=models.URLField(null=True, blank=True),
         ),
         migrations.AddField(
             model_name='country',
