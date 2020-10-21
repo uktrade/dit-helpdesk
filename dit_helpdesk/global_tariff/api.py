@@ -1,8 +1,6 @@
 import requests
 
-from typing import Dict, List, Tuple
-
-from hierarchy.helpers import permute_code_hierarchy
+from typing import Dict, List, Sequence, Tuple
 
 ROOT_URL = "https://www.check-future-uk-trade-tariffs.service.gov.uk/api/global-uk-tariff"
 
@@ -28,14 +26,13 @@ class MultipleResultsError(Exception):
     pass
 
 
-def get_commodity_data(code: CommodityCodeType) -> Tuple[CommodityCodeType, GlobalTariffCommodityResponseType]:
-    """Gets results for the commodity code either of the commodity directly or by
-    searching up through the commodity code hierarchy until it finds a result.
+def get_commodity_data(codes: Sequence[CommodityCodeType]) -> Tuple[CommodityCodeType, GlobalTariffCommodityResponseType]:
+    """Gets results for the first commodity code in the sequence of commodity codes that has a single result.
 
-    :raises NoResultError: When there are no results after traversing up the commodity code hierarchy.
-    :raises MultipleResultsError: When it finds more than one result for a commodity code.
+    :raises NoResultError: When there are no results after traversing through the codes.
+    :raises MultipleResultsError: When it finds more than one result for a code.
     """
-    for code in permute_code_hierarchy(code):
+    for code in codes:
         response = get_commodity_code_data(code)
 
         num_results = len(response)

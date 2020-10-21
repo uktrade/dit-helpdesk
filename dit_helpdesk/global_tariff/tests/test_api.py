@@ -1,7 +1,5 @@
 import requests_mock
 
-from unittest.mock import patch
-
 from django.test import TestCase
 
 from ..api import (
@@ -54,11 +52,9 @@ class GetCommodityDataTestCase(TestCase):
         }
 
     @requests_mock.Mocker()
-    @patch("global_tariff.api.permute_code_hierarchy")
-    def test_commodity_has_direct_result(self, mock_requests, mock_permute_code_hierarchy):
+    def test_commodity_has_direct_result(self, mock_requests):
         code = "123456"
         hierarchy_codes = [code, code[:-2], code[:-4]]
-        mock_permute_code_hierarchy.return_value = hierarchy_codes
 
         test_response = [
             self._get_test_commodity_response(hierarchy_codes[0], f"Desc for {hierarchy_codes[0]}"),
@@ -67,17 +63,15 @@ class GetCommodityDataTestCase(TestCase):
             f"{ROOT_URL}?q={hierarchy_codes[0]}",
             json=test_response
         )
-        commodity_code, output = get_commodity_data(code)
+        commodity_code, output = get_commodity_data(hierarchy_codes)
 
         self.assertEqual(commodity_code, hierarchy_codes[0])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
-    @patch("global_tariff.api.permute_code_hierarchy")
-    def test_commodity_has_direct_ancestor_result(self, mock_requests, mock_permute_code_hierarchy):
+    def test_commodity_has_direct_ancestor_result(self, mock_requests):
         code = "123456"
         hierarchy_codes = [code, code[:-2], code[:-4]]
-        mock_permute_code_hierarchy.return_value = hierarchy_codes
 
         test_no_data_response = []
         mock_requests.get(
@@ -93,17 +87,15 @@ class GetCommodityDataTestCase(TestCase):
             json=test_response,
         )
 
-        commodity_code, output = get_commodity_data(code)
+        commodity_code, output = get_commodity_data(hierarchy_codes)
 
         self.assertEqual(commodity_code, hierarchy_codes[1])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
-    @patch("global_tariff.api.permute_code_hierarchy")
-    def test_commodity_has_indirect_ancestor_result(self, mock_requests, mock_permute_code_hierarchy):
+    def test_commodity_has_indirect_ancestor_result(self, mock_requests):
         code = "123456"
         hierarchy_codes = [code, code[:-2], code[:-4]]
-        mock_permute_code_hierarchy.return_value = hierarchy_codes
 
         test_no_data_response = []
 
@@ -124,17 +116,15 @@ class GetCommodityDataTestCase(TestCase):
             json=test_response,
         )
 
-        commodity_code, output = get_commodity_data(code)
+        commodity_code, output = get_commodity_data(hierarchy_codes)
 
         self.assertEqual(commodity_code, hierarchy_codes[2])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
-    @patch("global_tariff.api.permute_code_hierarchy")
-    def test_commodity_has_no_results(self, mock_requests, mock_permute_code_hierarchy):
+    def test_commodity_has_no_results(self, mock_requests):
         code = "123456"
         hierarchy_codes = [code, code[:-2], code[:-4]]
-        mock_permute_code_hierarchy.return_value = hierarchy_codes
 
         test_no_data_response = []
 
@@ -152,14 +142,12 @@ class GetCommodityDataTestCase(TestCase):
         )
 
         with self.assertRaises(NoResultError):
-            get_commodity_data(code)
+            get_commodity_data(hierarchy_codes)
 
     @requests_mock.Mocker()
-    @patch("global_tariff.api.permute_code_hierarchy")
-    def test_commodity_has_multiple_results(self, mock_requests, mock_permute_code_hierarchy):
+    def test_commodity_has_multiple_results(self, mock_requests):
         code = "123456"
         hierarchy_codes = [code, code[:-2], code[:-4]]
-        mock_permute_code_hierarchy.return_value = hierarchy_codes
 
         test_no_data_response = []
         mock_requests.get(
@@ -180,4 +168,4 @@ class GetCommodityDataTestCase(TestCase):
         )
 
         with self.assertRaises(MultipleResultsError):
-            get_commodity_data(code)
+            get_commodity_data(hierarchy_codes)
