@@ -51,6 +51,9 @@ class GetCommodityDataTestCase(TestCase):
             'ukgt_duty_rate': '12.0%',
         }
 
+    def _get_url(self, code):
+        return f"{ROOT_URL}?q={code.ljust(8, '0')}"
+
     @requests_mock.Mocker()
     def test_commodity_has_direct_result(self, mock_requests):
         code = "123456"
@@ -60,12 +63,11 @@ class GetCommodityDataTestCase(TestCase):
             self._get_test_commodity_response(hierarchy_codes[0], f"Desc for {hierarchy_codes[0]}"),
         ]
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[0]}",
+            self._get_url(hierarchy_codes[0]),
             json=test_response
         )
-        commodity_code, output = get_commodity_data(hierarchy_codes)
+        output = get_commodity_data(hierarchy_codes)
 
-        self.assertEqual(commodity_code, hierarchy_codes[0])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
@@ -75,7 +77,7 @@ class GetCommodityDataTestCase(TestCase):
 
         test_no_data_response = []
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[0]}",
+            self._get_url(hierarchy_codes[0]),
             json=test_no_data_response,
         )
 
@@ -83,13 +85,12 @@ class GetCommodityDataTestCase(TestCase):
             self._get_test_commodity_response(hierarchy_codes[1], f"Desc for {hierarchy_codes[1]}"),
         ]
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[1]}",
+            self._get_url(hierarchy_codes[1]),
             json=test_response,
         )
 
-        commodity_code, output = get_commodity_data(hierarchy_codes)
+        output = get_commodity_data(hierarchy_codes)
 
-        self.assertEqual(commodity_code, hierarchy_codes[1])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
@@ -100,11 +101,11 @@ class GetCommodityDataTestCase(TestCase):
         test_no_data_response = []
 
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[0]}",
+            self._get_url(hierarchy_codes[0]),
             json=test_no_data_response,
         )
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[1]}",
+            self._get_url(hierarchy_codes[1]),
             json=test_no_data_response,
         )
 
@@ -112,13 +113,12 @@ class GetCommodityDataTestCase(TestCase):
             self._get_test_commodity_response(hierarchy_codes[2], f"Desc for {hierarchy_codes[2]}"),
         ]
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[2]}",
+            self._get_url(hierarchy_codes[2]),
             json=test_response,
         )
 
-        commodity_code, output = get_commodity_data(hierarchy_codes)
+        output = get_commodity_data(hierarchy_codes)
 
-        self.assertEqual(commodity_code, hierarchy_codes[2])
         self.assertEqual(output, test_response[0])
 
     @requests_mock.Mocker()
@@ -129,15 +129,15 @@ class GetCommodityDataTestCase(TestCase):
         test_no_data_response = []
 
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[0]}",
+            self._get_url(hierarchy_codes[0]),
             json=test_no_data_response,
         )
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[1]}",
+            self._get_url(hierarchy_codes[1]),
             json=test_no_data_response,
         )
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[2]}",
+            self._get_url(hierarchy_codes[2]),
             json=test_no_data_response,
         )
 
@@ -151,15 +151,15 @@ class GetCommodityDataTestCase(TestCase):
 
         test_no_data_response = []
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[0]}",
+            self._get_url(hierarchy_codes[0]),
             json=test_no_data_response,
         )
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[1]}",
+            self._get_url(hierarchy_codes[1]),
             json=test_no_data_response,
         )
         mock_requests.get(
-            f"{ROOT_URL}?q={hierarchy_codes[2]}",
+            self._get_url(hierarchy_codes[2]),
             json=[
                 self._get_test_commodity_response("01", "01 result"),
                 self._get_test_commodity_response("02", "02 result"),
@@ -168,42 +168,3 @@ class GetCommodityDataTestCase(TestCase):
 
         with self.assertRaises(MultipleResultsError):
             get_commodity_data(hierarchy_codes)
-
-    @requests_mock.Mocker()
-    def test_commodity_code_strips_zero_couples(self, mock_requests):
-        hierarchy_codes = [
-            "1234567890",
-            "1234567800",
-            "1234560000",
-            "1234000000",
-            "1200000000",
-        ]
-
-        test_no_data_response = []
-        mock_requests.get(
-            f"{ROOT_URL}?q=1234567890",
-            json=test_no_data_response,
-        )
-        mock_requests.get(
-            f"{ROOT_URL}?q=12345678",
-            json=test_no_data_response,
-        )
-        mock_requests.get(
-            f"{ROOT_URL}?q=123456",
-            json=test_no_data_response,
-        )
-        mock_requests.get(
-            f"{ROOT_URL}?q=1234",
-            json=test_no_data_response,
-        )
-
-        test_response = self._get_test_commodity_response("12", "12 result"),
-        mock_requests.get(
-            f"{ROOT_URL}?q=12",
-            json=test_response,
-        )
-
-        commodity_code, output = get_commodity_data(hierarchy_codes)
-
-        self.assertEqual(commodity_code, "12")
-        self.assertEqual(output, test_response[0])

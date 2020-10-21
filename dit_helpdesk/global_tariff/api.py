@@ -34,14 +34,15 @@ def get_commodity_data(codes: Sequence[CommodityCodeType]) -> Tuple[CommodityCod
     :raises MultipleResultsError: When it finds more than one result for a code.
     """
     for code in codes:
-        stripped_code = re.sub(r"(0{2})*$", "", code)
-        response = get_commodity_code_data(stripped_code)
+        normalised_code = re.sub(r"(0{2})*$", "", code)
+        normalised_code = normalised_code.ljust(8, "0")
+        response = get_commodity_code_data(normalised_code)
 
         num_results = len(response)
         if num_results > 1:
-            raise MultipleResultsError(f"Found {num_results} for {stripped_code} expected 1.")
+            raise MultipleResultsError(f"Found {num_results} for {normalised_code} expected 1.")
 
         if response:
-            return stripped_code, response[0]
+            return response[0]
 
     raise NoResultError()
