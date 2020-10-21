@@ -6,15 +6,8 @@ class Country(models.Model):
     country_code = models.CharField(max_length=2)  # ISO_3166-1_alpha-2 code
     name = models.CharField(max_length=250)
 
-    def __str__(self):
-        return "%s %s" % (self.country_code, self.name)
-
-
-class TradeRelation(models.Model):
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
-
     scenario = models.CharField(max_length=255)
-    content_url = models.URLField()
+    content_url = models.URLField(null=True)
 
     def __str__(self):
-        return f"{self.country} - {self.scenario}"
+        return f"{self.country_code} - {self.name} - {self.scenario}"
