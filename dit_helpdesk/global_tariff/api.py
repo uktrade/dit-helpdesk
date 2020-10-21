@@ -34,6 +34,16 @@ def get_commodity_data(codes: Iterable[CommodityCodeType]) -> Tuple[CommodityCod
     :raises MultipleResultsError: When it finds more than one result for a code.
     """
     for code in codes:
+        # The Global Tariff API mostly expects 8 digit commodity codes with the
+        # the code being padded with 0s up until 8 digits.
+        # However it does also accept 10 digit codes if the commodity code is
+        # at that level.
+        # Example:
+        # 1234567890 - Returns results (if it exists as a commodity code in GT)
+        # 1234567800 - Won't return results
+        # 12345678   - Returns results
+        # 12345600   - Returns results
+        # etc.
         normalised_code = re.sub(r"(0{2})*$", "", code)
         normalised_code = normalised_code.ljust(8, "0")
         response = get_commodity_code_data(normalised_code)
