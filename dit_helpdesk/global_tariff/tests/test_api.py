@@ -158,7 +158,6 @@ class GetCommodityDataTestCase(TestCase):
             f"{ROOT_URL}?q={hierarchy_codes[1]}",
             json=test_no_data_response,
         )
-
         mock_requests.get(
             f"{ROOT_URL}?q={hierarchy_codes[2]}",
             json=[
@@ -169,3 +168,42 @@ class GetCommodityDataTestCase(TestCase):
 
         with self.assertRaises(MultipleResultsError):
             get_commodity_data(hierarchy_codes)
+
+    @requests_mock.Mocker()
+    def test_commodity_code_strips_zero_couples(self, mock_requests):
+        hierarchy_codes = [
+            "1234567890",
+            "1234567800",
+            "1234560000",
+            "1234000000",
+            "1200000000",
+        ]
+
+        test_no_data_response = []
+        mock_requests.get(
+            f"{ROOT_URL}?q=1234567890",
+            json=test_no_data_response,
+        )
+        mock_requests.get(
+            f"{ROOT_URL}?q=12345678",
+            json=test_no_data_response,
+        )
+        mock_requests.get(
+            f"{ROOT_URL}?q=123456",
+            json=test_no_data_response,
+        )
+        mock_requests.get(
+            f"{ROOT_URL}?q=1234",
+            json=test_no_data_response,
+        )
+
+        test_response = self._get_test_commodity_response("12", "12 result"),
+        mock_requests.get(
+            f"{ROOT_URL}?q=12",
+            json=test_response,
+        )
+
+        commodity_code, output = get_commodity_data(hierarchy_codes)
+
+        self.assertEqual(commodity_code, "12")
+        self.assertEqual(output, test_response[0])
