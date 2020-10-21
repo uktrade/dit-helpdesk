@@ -19,6 +19,7 @@
     "update-countries": "node assets/countries/add-synonyms.js"
   },
   "dependencies": {
+    "accessible-autocomplete": "^2.0.3",
     "autoprefixer": "^9.8.6",
     "cssnano": "^4.1.10",
     "govuk-country-and-territory-autocomplete": "^0.5.3",
