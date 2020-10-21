@@ -266,14 +266,11 @@ def process_swapped_tree(region=settings.PRIMARY_REGION):
         prev_tree.save()
 
 
-def permute_code_hierarchy(code: str) -> Iterator[str]:
+def permute_code_hierarchy(commodity_object) -> Iterator[str]:
     """Permutes all possible commodity codes working up through the tree.
 
     Will return a generator of commodity codes working from the bottom of the
     tree upwards yielding each result.
-
-    The results are based on the fact that each level up the tree is 2 digits
-    less than the current level.
 
     Example:
       output = permute_code_hierarchy("1234")
@@ -281,6 +278,9 @@ def permute_code_hierarchy(code: str) -> Iterator[str]:
       next(output)  # 12
     """
 
-    while code:
-        yield code
-        code = code[:-2]
+    while commodity_object:
+        if not commodity_object.commodity_code:
+            break
+
+        yield commodity_object.commodity_code
+        commodity_object = commodity_object.get_parent()

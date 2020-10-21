@@ -35,7 +35,6 @@ class CommoditySetupTestCase(TestCase):
             title=settings.TEST_SECTION_DESCRIPTION,
             roman_numeral="X",
             tts_json="{}",
-            commodity_code=10,
             nomenclature_tree=self.tree,
         )
         """create three chapters starting at 47 and attach to section 10"""
