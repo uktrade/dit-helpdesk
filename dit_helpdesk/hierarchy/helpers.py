@@ -1,5 +1,7 @@
 import contextlib
 
+from typing import Iterator
+
 from django.utils import timezone
 from django.conf import settings
 from django.db import transaction
@@ -262,3 +264,23 @@ def process_swapped_tree(region=settings.PRIMARY_REGION):
 
         prev_tree.end_date = None
         prev_tree.save()
+
+
+def permute_code_hierarchy(code: str) -> Iterator[str]:
+    """Permutes all possible commodity codes working up through the tree.
+
+    Will return a generator of commodity codes working from the bottom of the
+    tree upwards yielding each result.
+
+    The results are based on the fact that each level up the tree is 2 digits
+    less than the current level.
+
+    Example:
+      output = permute_code_hierarchy("1234")
+      next(output)  # 1234
+      next(output)  # 12
+    """
+
+    while code:
+        yield code
+        code = code[:-2]
