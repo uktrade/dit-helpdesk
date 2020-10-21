@@ -26,6 +26,11 @@ CMS_ENABLED = env.bool("CMS_ENABLED", False)
 
 READ_ONLY = env.bool("READ_ONLY", True)
 
+
+# Feature flags
+UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
+
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.auth",
