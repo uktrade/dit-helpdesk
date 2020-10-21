@@ -1,12 +1,12 @@
 import re
 import requests
 
-from typing import Dict, List, Iterable, Tuple
+from typing import Any, Dict, List, Iterable
 
 ROOT_URL = "https://www.check-future-uk-trade-tariffs.service.gov.uk/api/global-uk-tariff"
 
 CommodityCodeType = str
-GlobalTariffCommodityResponseType = Dict[str, any]
+GlobalTariffCommodityResponseType = Dict[str, Any]
 
 
 def get_commodity_code_data(code: CommodityCodeType) -> List[GlobalTariffCommodityResponseType]:
@@ -27,7 +27,7 @@ class MultipleResultsError(Exception):
     pass
 
 
-def get_commodity_data(codes: Iterable[CommodityCodeType]) -> Tuple[CommodityCodeType, GlobalTariffCommodityResponseType]:
+def get_commodity_data(codes: Iterable[CommodityCodeType]) -> GlobalTariffCommodityResponseType:
     """Gets results for the first commodity code in the sequence of commodity codes that has a single result.
 
     :raises NoResultError: When there are no results after traversing through the codes.
