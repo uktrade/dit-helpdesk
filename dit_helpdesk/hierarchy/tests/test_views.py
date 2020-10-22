@@ -1,15 +1,15 @@
 import json
 import logging
 
-from django.apps import apps
 from django.conf import settings
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 
 from commodities.models import Commodity
 from countries.models import Country
-from hierarchy.models import Section, Chapter, Heading, SubHeading
-from hierarchy.helpers import create_nomenclature_tree
-from hierarchy.views import _get_expanded_context
+
+from ..helpers import create_nomenclature_tree
+from ..models import Section, Chapter, Heading, SubHeading
+from ..views import _get_expanded_context
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
