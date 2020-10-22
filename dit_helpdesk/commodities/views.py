@@ -12,7 +12,15 @@ from django.urls import reverse
 from django.contrib import messages
 
 from countries.models import Country
-from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+
+from global_tariff.api import (
+    get_commodity_data as get_global_tariff_commodity_data,
+)
+from hierarchy.helpers import (
+    permute_code_hierarchy,
+    get_nomenclature_group_measures,
+    TABLE_COLUMN_TITLES,
+)
 from hierarchy.views import get_hierarchy_context
 from regulations.models import RegulationGroup
 
@@ -63,6 +71,8 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         ]
     )
 
+    global_tariff_data = get_global_tariff_commodity_data(permute_code_hierarchy(commodity))
+
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)
 
@@ -97,6 +107,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
         "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+        "global_tariff_data": global_tariff_data,
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,

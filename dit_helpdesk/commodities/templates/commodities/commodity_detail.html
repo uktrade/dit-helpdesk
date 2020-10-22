@@ -88,9 +88,11 @@
 
                     {% if tariffs_and_charges_table_data %}
                     <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
-
-                        {% include "commodities/_tariffs_and_charges.html" %}
-
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            <a name="tariffs_and_charges"></a>Tariffs and charges - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
+                        </h3>
+                        {% include "commodities/_current_tariffs_and_charges.html" %}
+                        {% include "commodities/_upcoming_tariffs_and_charges.html" %}
                     </div>
                     {% endif %}
 
