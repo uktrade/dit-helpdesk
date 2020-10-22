@@ -29,9 +29,14 @@ def get_data(file_path, tree):
 
 
 def create_instance(data, app_name, model_name):
-
     model = apps.get_model(app_label=app_name, model_name=model_name)
-    instance = model(**data)
+    skip_attributes = ["tts_json"]
+    filtered_data = {
+        k: v
+        for k, v in data.items()
+        if k not in skip_attributes
+    }
+    instance = model(**filtered_data)
     instance.save()
     return instance
 
