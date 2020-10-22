@@ -95,7 +95,6 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
     section = chapter.section
 
     context = {
-        "ukgt_enabled": settings.UKGT_ENABLED,
         "selected_origin_country": country.country_code,
         "commodity": commodity,
         "selected_origin_country_name": country.name,
