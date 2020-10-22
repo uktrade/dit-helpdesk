@@ -28,15 +28,14 @@ def get_data(file_path, tree):
     return json_data
 
 
-def create_instance(data, app_name, model_name):
-    model = apps.get_model(app_label=app_name, model_name=model_name)
+def create_instance(data, model_class):
     skip_attributes = ["tts_json"]
     filtered_data = {
         k: v
         for k, v in data.items()
         if k not in skip_attributes
     }
-    instance = model(**filtered_data)
+    instance = model_class(**filtered_data)
     instance.save()
     return instance
 
@@ -55,29 +54,29 @@ class HierarchyViewTestCase(TestCase):
         self.tree = create_nomenclature_tree(region='UK')
 
         self.section = create_instance(
-            get_data(settings.SECTION_STRUCTURE, self.tree), "hierarchy", "Section"
+            get_data(settings.SECTION_STRUCTURE, self.tree), Section
         )
 
         self.chapter = create_instance(
-            get_data(settings.CHAPTER_STRUCTURE, self.tree), "hierarchy", "Chapter"
+            get_data(settings.CHAPTER_STRUCTURE, self.tree), Chapter
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
         self.heading = create_instance(
-            get_data(settings.HEADING_STRUCTURE, self.tree), "hierarchy", "Heading"
+            get_data(settings.HEADING_STRUCTURE, self.tree), Heading
         )
         self.heading.chapter_id = self.chapter.pk
         self.heading.save()
 
         self.subheading = create_instance(
-            get_data(settings.SUBHEADING_STRUCTURE, self.tree), "hierarchy", "SubHeading"
+            get_data(settings.SUBHEADING_STRUCTURE, self.tree), SubHeading
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
         self.commodity = create_instance(
-            get_data(settings.COMMODITY_STRUCTURE, self.tree), "commodities", "Commodity"
+            get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
         )
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
