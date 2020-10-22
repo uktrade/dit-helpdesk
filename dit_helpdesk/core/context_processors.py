@@ -7,5 +7,5 @@ def ga_gtm_processor(request):
 
 def feature_flag_processor(request):
     return {
-        "ugkt_enabled": settings.UKGT_ENABLED
+        "ukgt_enabled": settings.UKGT_ENABLED
     }
