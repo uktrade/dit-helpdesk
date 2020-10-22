@@ -104,6 +104,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.ga_gtm_processor",
+                "core.context_processors.feature_flag_processor",
             ],
         },
     }

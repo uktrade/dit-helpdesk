@@ -1,5 +1,8 @@
                             {% if tariffs_and_charges_table_data %}
-                            <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#tariffs_and_charges">Tariffs and charges</a></li>
+                                <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#tariffs_and_charges">{% if ukgt_enabled %}Current tariffs and charges{% else %}Tariffs and charges{% endif %}</a></li>
+                                {% if ukgt_enabled %}
+                                <li class="govuk-!-margin-bottom-1"><a class="govuk-body" href="#tariffs_after_transition">Tariffs after transition</a></li>
+                                {% endif %}
                             {% endif %}
 
                             {% if quotas_table_data %}

@@ -92,6 +92,14 @@
                         {% include "commodities/_tariffs_and_charges.html" %}
 
                     </div>
+
+                    {% if ukgt_enabled %}
+                    <div id="tariffs_after_transition" class="govuk-!-margin-bottom-9">
+
+                        {% include "commodities/_tariffs_and_charges_future.html" %}
+
+                    </div>
+                    {% endif %}
                     {% endif %}
 
                     {% if quotas_table_data %}

@@ -11,12 +11,11 @@ from datetime import datetime, timedelta, timezone
 from pprint import pprint
 
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
 from countries.models import Country
-from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from hierarchy.views import get_hierarchy_context
 from regulations.models import RegulationGroup
