@@ -6,6 +6,8 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
+from enum import auto, Enum
+
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -15,6 +17,8 @@ from countries.models import Country
 
 from global_tariff.api import (
     get_commodity_data as get_global_tariff_commodity_data,
+    MultipleResultsError as GlobalTariffMultipleResultsError,
+    NoResultError as GlobalTariffNoResultError,
 )
 from hierarchy.helpers import (
     permute_code_hierarchy,
@@ -26,6 +30,12 @@ from regulations.models import RegulationGroup
 
 from .models import Commodity
 from .helpers import get_tariff_content_context
+
+
+class GlobalTariffResult(Enum):
+    HAS_RESULTS = auto()
+    NO_RESULT = auto()
+    MULTIPLE_RESULTS = auto()
 
 
 def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
@@ -71,7 +81,23 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         ]
     )
 
-    global_tariff_data = get_global_tariff_commodity_data(permute_code_hierarchy(commodity))
+    global_tariff_data = {
+        "result_types": GlobalTariffResult.__members__,
+    }
+    try:
+        global_tariff_data_result = get_global_tariff_commodity_data(permute_code_hierarchy(commodity))
+        global_tariff_data.update({
+            "result_type": GlobalTariffResult.HAS_RESULTS,
+            "result": global_tariff_data_result,
+        })
+    except GlobalTariffMultipleResultsError:
+        global_tariff_data.update({
+            "result_type": GlobalTariffResult.MULTIPLE_RESULTS,
+        })
+    except GlobalTariffNoResultError:
+        global_tariff_data.update({
+            "result_type": GlobalTariffResult.NO_RESULT,
+        })
 
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)

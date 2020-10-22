@@ -92,7 +92,13 @@
                             <a name="tariffs_and_charges"></a>Tariffs and charges - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
                         </h3>
                         {% include "commodities/_current_tariffs_and_charges.html" %}
-                        {% include "commodities/_upcoming_tariffs_and_charges.html" %}
+                        {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
+                            {% include "commodities/_upcoming_tariffs_and_charges.html" with global_tariff_data=global_tariff_data.result %}
+                        {% elif global_tariff_data.result_type == global_tariff_data.result_types.MULTIPLE_RESULTS %}
+                            {% include "commodities/_upcoming_tariffs_and_charges_multiple_results.html" %}
+                        {% elif global_tariff_data.result_type == global_tariff_data.result_types.NO_RESULT %}
+                            {% include "commodities/_upcoming_tariffs_and_charges_no_result.html" %}
+                        {% endif %}
                     </div>
                     {% endif %}
 
