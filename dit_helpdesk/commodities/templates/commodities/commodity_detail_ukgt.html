@@ -107,9 +107,13 @@
                     </div>
 
                     <div id="tariffs_after_transition" class="govuk-!-margin-bottom-9">
-
-                        {% include "commodities/_tariffs_and_charges_ukgt_future.html" %}
-
+                        {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
+                            {% include "commodities/_tariffs_and_charges_ukgt_future.html" with global_tariff_data=global_tariff_data.result %}
+                        {% elif global_tariff_data.result_type == global_tariff_data.result_types.MULTIPLE_RESULTS %}
+                            {% include "commodities/_tariffs_and_charges_ukgt_future_multiple_results.html" %}
+                        {% elif global_tariff_data.result_type == global_tariff_data.result_types.NO_RESULT %}
+                            {% include "commodities/_tariffs_and_charges_ukgt_future_no_result.html" %}
+                        {% endif %}
                     </div>
                     {% endif %}
 
