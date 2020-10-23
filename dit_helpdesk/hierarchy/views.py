@@ -12,6 +12,7 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
 from commodities.models import Commodity
+from commodities.helpers import get_tariff_content_context
 from countries.models import Country
 from regulations.models import RegulationGroup
 
@@ -499,6 +500,10 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
+    tariff_content_context = get_tariff_content_context(country)
+
+    context.update(tariff_content_context)
+
     if (
         import_measures
         and tariffs_and_charges_table_data
@@ -517,7 +522,12 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
             }
         )
 
-    return render(request, "hierarchy/subheading_detail.html", context)
+    if settings.UKGT_ENABLED:
+        template = "commodities/commodity_detail_ukgt.html"
+    else:
+        template = "commodities/commodity_detail.html"
+
+    return render(request, template, context)
 
 
 def hierarchy_section_header(reversed_heading_tree):
