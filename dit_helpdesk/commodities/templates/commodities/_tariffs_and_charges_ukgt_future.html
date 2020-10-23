@@ -1,4 +1,4 @@
-{% load cell_cleaner %}
+{% load cell_cleaner dotted_format %}
 
 <h4 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
     <a name="tariffs_after_transition"></a>
@@ -83,7 +83,7 @@
     <tbody class="govuk-table__body app-flexible-table__body">
         <tr class="govuk-table__row app-flexible-table__row">
             <th class="govuk-table__header app-flexible-table__cell" scope="row">
-                <p>{{ global_tariff_data.commodity }}</p>
+                <p>{{ global_tariff_data.commodity|dotted_format }}</p>
             </th>
             <td class="govuk-table__cell app-flexible-table__cell">
                 <p>{{ global_tariff_data.description }}</p>
