@@ -387,6 +387,9 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
+    tariff_content_context = get_tariff_content_context(country, heading)
+    context.update(tariff_content_context)
+
     if import_measures:
         context.update(
             {
@@ -400,7 +403,12 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
             }
         )
 
-    return render(request, "hierarchy/heading_detail.html", context)
+    if settings.UKGT_ENABLED:
+        template = "hierarchy/heading_detail_ukgt.html"
+    else:
+        template = "hierarchy/heading_detail.html"
+
+    return render(request, template, context)
 
 
 def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
@@ -501,7 +509,6 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
     }
 
     tariff_content_context = get_tariff_content_context(country, subheading)
-
     context.update(tariff_content_context)
 
     if (
