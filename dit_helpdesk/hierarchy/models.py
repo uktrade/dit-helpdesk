@@ -408,6 +408,10 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
     def get_parent(self):
         return None
 
+    @property
+    def commodity_code(self):
+        return None
+
 
 class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """

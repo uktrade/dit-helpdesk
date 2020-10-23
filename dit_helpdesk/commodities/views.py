@@ -6,13 +6,18 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
+
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
 from countries.models import Country
-from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+
+from hierarchy.helpers import (
+    get_nomenclature_group_measures,
+    TABLE_COLUMN_TITLES,
+)
 from hierarchy.views import get_hierarchy_context
 from regulations.models import RegulationGroup
 
@@ -113,7 +118,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
-    tariff_content_context = get_tariff_content_context(country)
+    tariff_content_context = get_tariff_content_context(country, commodity)
 
     context.update(tariff_content_context)
 
