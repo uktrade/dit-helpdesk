@@ -523,9 +523,9 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
         )
 
     if settings.UKGT_ENABLED:
-        template = "commodities/commodity_detail_ukgt.html"
+        template = "hierarchy/subheading_detail_ukgt.html"
     else:
-        template = "commodities/commodity_detail.html"
+        template = "hierarchy/subheading_detail.html"
 
     return render(request, template, context)
 
