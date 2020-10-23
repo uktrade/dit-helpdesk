@@ -11,7 +11,7 @@ from ..api import (
 )
 
 
-class GetCommodityCpdeDataTestCase(TestCase):
+class GetCommodityCodeDataTestCase(TestCase):
 
     @requests_mock.Mocker()
     def test_get_commodity_code_data_test(self, mock_requests):
