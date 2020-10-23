@@ -87,9 +87,28 @@
                     </nav>
 
                     {% if tariffs_and_charges_table_data %}
+                    <h3 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">Tariffs and charges - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</h3>
+                    <div class="govuk-caption-m ">
+                        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+                    </div>
+
+                    {% if tariff_content_label %}
+                        <div class="govuk-body">
+                        {% with template_name=tariff_content_label|stringformat:"s"|add:".html" %}
+                            {% include "commodities/"|add:template_name %}
+                        {% endwith %}
+                        </div>
+                    {% endif %}
+
                     <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
 
-                        {% include "commodities/_tariffs_and_charges.html" %}
+                        {% include "commodities/_tariffs_and_charges_ukgt.html" %}
+
+                    </div>
+
+                    <div id="tariffs_after_transition" class="govuk-!-margin-bottom-9">
+
+                        {% include "commodities/_tariffs_and_charges_ukgt_future.html" %}
 
                     </div>
                     {% endif %}

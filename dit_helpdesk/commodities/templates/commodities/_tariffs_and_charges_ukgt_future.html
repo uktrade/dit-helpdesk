@@ -1,12 +1,10 @@
 {% load cell_cleaner %}
 
-                         <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                             <a name="tariffs_and_charges"></a>Tariffs and charges - {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                         </h3>
+                         <h4 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                             <a name="tariffs_after_transition"></a>
+                             Tariffs and charges after 1 January 2021
+                         </h4>
 
-                         <div class="govuk-caption-m ">
-                             <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
-                         </div>
                         {% if is_eu_member %}
                         <p class="govuk-body">
                             The UK is currently in the same customs union as {{ selected_origin_country_name }} as a fellow EU Member State. This means that no customs duties apply.
