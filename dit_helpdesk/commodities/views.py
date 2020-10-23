@@ -6,7 +6,6 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
-from enum import auto, Enum
 
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -15,13 +14,7 @@ from django.contrib import messages
 
 from countries.models import Country
 
-from global_tariff.api import (
-    get_commodity_data as get_global_tariff_commodity_data,
-    MultipleResultsError as GlobalTariffMultipleResultsError,
-    NoResultError as GlobalTariffNoResultError,
-)
 from hierarchy.helpers import (
-    permute_code_hierarchy,
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
@@ -30,12 +23,6 @@ from regulations.models import RegulationGroup
 
 from .models import Commodity
 from .helpers import get_tariff_content_context
-
-
-class GlobalTariffResult(Enum):
-    HAS_RESULTS = auto()
-    NO_RESULT = auto()
-    MULTIPLE_RESULTS = auto()
 
 
 def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
@@ -81,24 +68,6 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         ]
     )
 
-    global_tariff_data = {
-        "result_types": GlobalTariffResult.__members__,
-    }
-    try:
-        global_tariff_data_result = get_global_tariff_commodity_data(permute_code_hierarchy(commodity))
-        global_tariff_data.update({
-            "result_type": GlobalTariffResult.HAS_RESULTS,
-            "result": global_tariff_data_result,
-        })
-    except GlobalTariffMultipleResultsError:
-        global_tariff_data.update({
-            "result_type": GlobalTariffResult.MULTIPLE_RESULTS,
-        })
-    except GlobalTariffNoResultError:
-        global_tariff_data.update({
-            "result_type": GlobalTariffResult.NO_RESULT,
-        })
-
     for measure_json in tariffs_and_charges_measures:
         modals_dict.update(measure_json.measures_modals)
 
@@ -133,7 +102,6 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "selected_origin_country_name": country.name,
         "rules_of_origin": rules_of_origin,
         "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
-        "global_tariff_data": global_tariff_data,
         "quotas_table_data": quotas_table_data,
         "other_table_data": other_table_data,
         "column_titles": TABLE_COLUMN_TITLES,
@@ -150,7 +118,7 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
-    tariff_content_context = get_tariff_content_context(country)
+    tariff_content_context = get_tariff_content_context(country, commodity)
 
     context.update(tariff_content_context)
 

@@ -500,7 +500,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
-    tariff_content_context = get_tariff_content_context(country)
+    tariff_content_context = get_tariff_content_context(country, subheading)
 
     context.update(tariff_content_context)
 
