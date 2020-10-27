@@ -1,4 +1,5 @@
 import datetime as dt
+import requests_mock
 
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -59,3 +60,25 @@ class TestViews(TestCase):
 
         self.assertEqual(resp.content, b"Failed")
         self.assertEqual(resp.status_code, 503)
+
+    @requests_mock.Mocker()
+    def test_cms_existence__exists(self, mock_requests):
+        mock_requests.get("http://testserver/cms/", status_code=200)
+        resp = self.anonymous_client.get(reverse("healthcheck:cms_existence"))
+
+        self.assertEqual(resp.content, b"Failed")
+        self.assertEqual(resp.status_code, 503)
+
+        mock_requests.get("http://testserver/cms/", status_code=302)
+        resp = self.anonymous_client.get(reverse("healthcheck:cms_existence"))
+
+        self.assertEqual(resp.content, b"Failed")
+        self.assertEqual(resp.status_code, 503)
+
+    @requests_mock.Mocker()
+    def test_cms_existence__does_not_exists(self, mock_requests):
+        mock_requests.get("http://testserver/cms/", status_code=404)
+        resp = self.anonymous_client.get(reverse("healthcheck:cms_existence"))
+
+        self.assertEqual(resp.content, b"OK")
+        self.assertEqual(resp.status_code, 200)
