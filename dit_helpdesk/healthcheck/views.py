@@ -37,7 +37,7 @@ class HealthCheckView(TemplateView):
 
 class TreeRefreshCheckView(View):
 
-    MAX_DELTA = dt.timedelta(days=7)
+    MAX_DELTA = dt.timedelta(days=7, hours=2)
 
     CHECK_SUCCEEDED_STATUS = 200
     CHECK_FAILED_STATUS = 503
