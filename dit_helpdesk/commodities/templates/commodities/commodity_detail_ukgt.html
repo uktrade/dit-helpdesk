@@ -10,7 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n cell_cleaner replace %}
+{% load static staticfiles i18n cell_cleaner replace dotted_format %}
 
 {% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
@@ -23,9 +23,16 @@
                 <div class="govuk-grid-column-full">
                     <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">New search</a>
 
-                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Export
-                        {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                        from {{ selected_origin_country_name }} to the United Kingdom
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                        {% if commodity.leaf %}
+                            Product export information for
+                            {{ commodity.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% else %}
+                            Continue to classify
+                            {{ commodity.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% endif %}
                     </h2>
 
                     <p class="govuk-body-s">Last updated {{ commodity.last_updated }}</p>

@@ -355,8 +355,6 @@ class ImportMeasureJson(object):
         if self.di["geographical_area"]["id"][0].isalpha():
             country = country + " (%s)" % self.di["geographical_area"]["id"]
 
-        measure_description = self.di["measure_type"]["description"]
-
         try:
             measure_description = (
                 self.di["measure_type"]["description"],
