@@ -1,5 +1,6 @@
 import time
 import datetime as dt
+import requests
 
 from django.views.generic import View, TemplateView
 from django.http import HttpResponse
@@ -35,19 +36,35 @@ class HealthCheckView(TemplateView):
         return context
 
 
-class TreeRefreshCheckView(View):
-
-    MAX_DELTA = dt.timedelta(days=7, hours=2)
-
+class BaseCheckView(View):
     CHECK_SUCCEEDED_STATUS = 200
     CHECK_FAILED_STATUS = 503
 
-    def get(self, *args, **kwargs):
-        is_fresh = check_tree_freshness(self.MAX_DELTA)
+    def check(self):
+        raise NotImplementedError(f"Implement `check`")
 
-        if is_fresh:
+    def get(self, request, *args, **kwargs):
+        is_check_successful = self.check(request)
+
+        if is_check_successful:
             resp = HttpResponse('OK', status=self.CHECK_SUCCEEDED_STATUS)
         else:
             resp = HttpResponse('Failed', status=self.CHECK_FAILED_STATUS)
 
         return resp
+
+
+class TreeRefreshCheckView(BaseCheckView):
+    MAX_DELTA = dt.timedelta(days=7, hours=2)
+
+    def check(self, request):
+        return check_tree_freshness(self.MAX_DELTA)
+
+
+class CMSCheckView(BaseCheckView):
+
+    def check(self, request):
+        url = request.build_absolute_uri("/cms/")
+        response = requests.get(url, allow_redirects=False)
+
+        return response.status_code == 404
