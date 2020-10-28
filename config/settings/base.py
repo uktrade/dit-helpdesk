@@ -29,6 +29,8 @@ READ_ONLY = env.bool("READ_ONLY", True)
 
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
+FTA_INFO_SHARING_ENABLED = env.bool("FTA_INFO_SHARING_ENABLED", False)
+NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
 
 
 # Application definition
