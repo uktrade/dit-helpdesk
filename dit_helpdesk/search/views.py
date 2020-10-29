@@ -13,9 +13,7 @@ from django.views.generic.edit import FormView
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
 from analytics.track import track_event
-from commodities.models import Commodity
 from countries.models import Country
-from hierarchy.models import Heading, Chapter, SubHeading
 from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
 
@@ -90,56 +88,14 @@ class CommoditySearchView(FormView):
 
                 if hits:
                     hit = hits[0]
-                    index = helpers.get_alias_from_hit(hit)
-                    hit.meta["index"] = index
+                    item = helpers.get_object_from_hit(hit)
+                    hit.meta["index"] = helpers.get_alias_from_hit(hit)
 
-                    if index == "chapter":
-                        return redirect(
-                            reverse(
-                                "chapter-detail",
-                                kwargs={
-                                    "chapter_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "commodity":
-                        return redirect(
-                            reverse(
-                                "commodity-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "heading":
-                        return redirect(
-                            reverse(
-                                "heading-detail",
-                                kwargs={
-                                    "heading_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
+                    country_code = form_data.get("country")
 
-                    elif index == "subheading":
-                        return redirect(
-                            reverse(
-                                "subheading-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-
-                    else:
+                    try:
+                        return redirect(item.get_detail_url(country_code))
+                    except helpers.ObjectNotFoundFromHit:
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
                         context["results"] = []
@@ -188,32 +144,12 @@ class CommoditySearchView(FormView):
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
-                        index = helpers.get_alias_from_hit(hit)
-                        hit.meta["index"] = index
-
-                        if index == "chapter":
-                            item = Chapter.objects.get(
-                                chapter_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "heading":
-                            item = Heading.objects.get(
-                                heading_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "subheading":
-                            item = SubHeading.objects.get(
-                                commodity_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "commodity":
-                            item = Commodity.objects.get(
-                                commodity_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        else:
+                        try:
+                            item = helpers.get_object_from_hit(hit)
+                        except helpers.ObjectNotFoundFromHit:
                             item = None
 
+                        hit.meta["index"] = helpers.get_alias_from_hit(hit)
                         hit["commodity_code_html"] = _commodity_code_html(item)
 
                 return self.render_to_response(context)
