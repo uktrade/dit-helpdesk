@@ -12,6 +12,7 @@ from django.views.generic.edit import FormView
 
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
+from analytics.track import track_event
 from commodities.models import Commodity
 from countries.models import Country
 from hierarchy.models import Heading, Chapter, SubHeading
@@ -149,7 +150,6 @@ class CommoditySearchView(FormView):
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
                     return self.render_to_response(context)
             else:
-
                 context.update(helpers.search_by_term(form_data=form_data))
 
                 curr_url_items = dict((x, y) for x, y in request.GET.items())
@@ -169,12 +169,22 @@ class CommoditySearchView(FormView):
                 if not context["results"]:
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
 
+                search_term = form_data.get('q')
+                total_results = context['total_results']
+
                 logger.info(
-                    f"Performed search for {form_data.get('q')}",
+                    f"Performed search for {search_term}",
                     extra={
-                        'search_term': form_data.get('q'),
-                        'search_count': context['total_results'],
+                        'search_term': search_term,
+                        'search_count': total_results,
                     })
+
+                track_event(
+                    "search",
+                    "results",
+                    search_term,
+                    total_results,
+                )
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
