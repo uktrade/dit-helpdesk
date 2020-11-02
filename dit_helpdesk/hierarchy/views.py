@@ -376,6 +376,7 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
+        "commodity": heading,   # to make it compatible with commodity templates
         "selected_origin_country_name": country.name,
         "heading_notes": heading.heading_notes,
         "chapter_notes": chapter.chapter_notes,
@@ -497,6 +498,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
     context = {
         "selected_origin_country": country.country_code,
         "subheading": subheading,
+        "commodity": subheading,    # to make it compatible with commodity templates
         "selected_origin_country_name": country.name,
         "heading_notes": subheading.heading_notes,
         "chapter_notes": subheading.get_chapter().chapter_notes,
