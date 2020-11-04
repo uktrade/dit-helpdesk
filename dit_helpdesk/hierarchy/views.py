@@ -581,21 +581,23 @@ def get_hierarchy_item_by_code(code):
         pass
 
 
-def _commodity_code_html(item):
+def _commodity_code_html(item, ignore_duplicate=True):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
     of 6, 2 and  digits and colour code formatted
     :param item: model instance
     :return: html
     """
-    if isinstance(item, SubHeading) and item.is_duplicate_heading():
-        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
-    if isinstance(item, Heading) and item.is_duplicate_heading():
-        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
+    if ignore_duplicate:
+        if isinstance(item, SubHeading) and item.is_duplicate_heading():
+            return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
+
+        if isinstance(item, Heading) and item.is_duplicate_heading():
+            return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
     leaf = False
-    code = ""
+
     if isinstance(item, str):
         code = item
     elif isinstance(item, Chapter):
