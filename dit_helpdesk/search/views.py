@@ -345,6 +345,9 @@ class GroupedCommoditySearchView(FormView):
 
                 grouped_context = helpers.group_search_by_term(form_data=form_data)
                 grouped_hits = grouped_context["grouped_hits"]
+                chapter_sort_order = grouped_context["chapter_sort_order"]
+                heading_sort_order = grouped_context["heading_sort_order"]
+
                 context.update(grouped_context)
 
                 chapters = Chapter.objects.filter(
@@ -356,17 +359,24 @@ class GroupedCommoditySearchView(FormView):
                 ).order_by("heading_code").all()
 
                 # to facilitate lookup
+                chapters_dict = {ch.chapter_code: ch for ch in chapters}
                 headings_dict = {h.heading_code: h for h in headings}
 
                 results = []
-                for chapter in chapters:
+                for chapter_code in chapter_sort_order:
+                    chapter = chapters_dict[chapter_code]
                     chapter_result = _construct_result(chapter)
                     chapter_result["headings"] = []
 
                     heading_codes = grouped_hits[chapter.commodity_code].keys()
                     heading_codes = sorted(heading_codes)
 
-                    for heading_code in heading_codes:
+                    headings_in_chapter_order = [
+                        heading_code for heading_code in heading_sort_order
+                        if heading_code in heading_codes
+                    ]
+
+                    for heading_code in headings_in_chapter_order:
                         heading = headings_dict[heading_code]
                         heading_result = _construct_result(heading)
                         chapter_result["headings"].append(heading_result)

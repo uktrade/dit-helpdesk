@@ -54,12 +54,27 @@ def _build_search_request(query, sort_key, sort_order, filter_on_leaf=None):
     return request
 
 
-def group_hits_by_chapter_heading(hits):
+def _choose_max_score(prev_score, new_score):
+    return max(prev_score, new_score)
+
+
+def _accumulate_score(prev_score, new_score):
+    return prev_score + new_score
+
+
+def _no_score(prev_score, new_score):
+    return 0
+
+
+def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
 
     hits_by_chapter_heading = defaultdict(lambda: defaultdict(list))
+    chapter_scores = defaultdict(lambda: 0)
+    heading_scores = defaultdict(lambda: 0)
 
     for hit in hits:
         commodity_code = hit["commodity_code"]
+        score = hit.meta["score"]
 
         index = get_alias_from_hit(hit)
         if index == 'section':
@@ -67,6 +82,7 @@ def group_hits_by_chapter_heading(hits):
 
         if index == 'chapter':
             hits_by_chapter_heading[commodity_code] = defaultdict(list)
+            chapter_scores[commodity_code] = score_strategy(chapter_scores[commodity_code], score)
             continue
 
         try:
@@ -97,8 +113,10 @@ def group_hits_by_chapter_heading(hits):
                     f"Can't find parent heading for {commodity_code}") from e
 
         hits_by_chapter_heading[chapter_code][heading_code].append(hit)
+        heading_scores[heading_code] = score_strategy(heading_scores[heading_code], score)
+        chapter_scores[chapter_code] = score_strategy(chapter_scores[chapter_code], score)
 
-    return hits_by_chapter_heading
+    return hits_by_chapter_heading, chapter_scores, heading_scores
 
 
 def search_by_term(form_data=None, page_size=None):
@@ -144,10 +162,17 @@ def search_by_term(form_data=None, page_size=None):
     }
 
 
+def _sorted_dict_keys_by_values(d):
+    sorted_tuples = sorted(d.items(), key=lambda tup: tup[1], reverse=True)
+    return [k for k, v in sorted_tuples]
+
+
 def group_search_by_term(form_data=None, page_size=None):
 
+    sort_key = form_data.get("sort")
+
     request = _build_search_request(
-        sort_key=form_data.get("sort"),
+        sort_key=sort_key,
         sort_order=form_data.get("sort_order"),
         query=form_data.get("q"),
         filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False
@@ -158,17 +183,29 @@ def group_search_by_term(form_data=None, page_size=None):
     request = request[0:total]
     hits = request.execute()
 
-    grouped_hits = group_hits_by_chapter_heading(hits)
+    score_strategy = _no_score if sort_key == 'commodity_code' else _choose_max_score
+
+    grouped_hits, chapter_scores, heading_scores = group_hits_by_chapter_heading(
+        hits, score_strategy=score_strategy)
     group_chapters = grouped_hits.keys()
 
     group_headings = []
     for chapter_code, hits_by_heading in grouped_hits.items():
         group_headings.extend(hits_by_heading.keys())
 
+    chapter_sort_order = group_chapters
+    heading_sort_order = group_headings
+
+    if sort_key == '_score':
+        chapter_sort_order = _sorted_dict_keys_by_values(chapter_scores)
+        heading_sort_order = _sorted_dict_keys_by_values(heading_scores)
+
     return {
         "grouped_hits": grouped_hits,
         "group_chapters": group_chapters,
         "group_headings": group_headings,
+        "chapter_sort_order": chapter_sort_order,
+        "heading_sort_order": heading_sort_order,
         "hits": hits,
         "total_results": total_results,
         "no_results": True if not total_results else False,
