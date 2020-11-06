@@ -8,7 +8,7 @@
         <main id="main-content" class="govuk-main-wrapper">
 
             {% if results %}
-                <a href="{% url 'search:search-commodity' country_code=country_code %}"  class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">New search</a>
+                    {% include "search/_new_search_link.html" %}
             {% endif %}
 
             {% if not request.GET.q %}
@@ -142,72 +142,17 @@
                         {% endif %}
 
                         {% if results %}
-                            {% if results %}
-                                <h2 class="govuk-heading-l">
-                                    Search results for {{ request.GET.q }}
-                                    <span class="govuk-visually-hidden">
-                                        {% if request.GET.toggle_headings == '0' %}
-                                            (All results)
-                                        {% endif %}
-                                        {% if request.GET.toggle_headings == '1' %}
-                                            (Complete commodity codes only)
-                                        {% endif %}
-                                    </span>
-                                </h2>
-                            {% endif %}
-                            <div class="govuk-form-group {% if not results %}govuk-visually-hidden{% endif %}">
-                                <fieldset class="govuk-fieldset govuk-grid-column-two-thirds">
-                                    <legend class="govuk-visually-hidden">Filter results</legend>
-                                    <div id="toggle_headings"
-                                         class="govuk-radios govuk-radios--inline">
-                                        <div class="govuk-radios__item">
-                                            <input class="govuk-radios__input" id="show-headings" name="toggle_headings"
-                                                   type="radio"
-                                                   {% if request.GET.toggle_headings == '0' %}checked="checked"{% endif %}
-                                                   value="0"
-                                                   {% if request.GET.changed_by == "show-headings" %}
-                                                        autofocus="true"
-                                                   {% endif %}
-                                                   data-changed-by="show-headings"
-                                                   >
-                                            <label class="govuk-label govuk-radios__label" for="show_headings">
-                                                All results
-                                            </label>
-                                        </div>
-                                        <div class="govuk-radios__item">
-                                            <input class="govuk-radios__input" id="hide-headings" name="toggle_headings"
-                                                   type="radio"
-                                                   {% if request.GET.toggle_headings == '1' %}checked="checked"{% endif %}
-                                                   value="1"
-                                                   {% if request.GET.changed_by == "hide-headings" %}
-                                                        autofocus="true"
-                                                   {% endif %}
-                                                   data-changed-by="hide-headings"
-                                                   >
-
-                                            <label class="govuk-label govuk-radios__label" for="hide_headings">
-                                                Complete commodity codes only
-                                            </label>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <div id="select-sortby" class="govuk-select--inline">
-                                    <label class="govuk-label" for="sort">Sort by
-                                        <select class="govuk-select" name="sort" id="sort" aria-label="Sort by relevance or code. This will refresh the page."
-                                                data-changed-by="sort" {% if request.GET.changed_by == "sort" %}autofocus="true"{% endif %}>
-                                            <option value="ranking"
-                                                    {% if request.GET.sort == "ranking" %}selected{% endif %}>
-                                                Relevance
-                                            </option>
-                                            <option value="commodity_code"
-                                                    {% if form.sort.value == "commodity_code" or request.GET.sort == "commodity_code" %}selected{% endif %}>
-                                                Code
-                                            </option>
-                                        </select>
-                                    </label>
-                                </div>
-                                <input type="hidden" id="changed_by" name="{{ form.changed_by.name }}" value="{{ form.changed_by.value|default:"" }}" />
-                            </div>
+                            <h2 class="govuk-heading-l">
+                                Search results for {{ request.GET.q }}
+                                <span class="govuk-visually-hidden">
+                                    {% if request.GET.toggle_headings == '0' %}
+                                        (All results)
+                                    {% endif %}
+                                    {% if request.GET.toggle_headings == '1' %}
+                                        (Complete commodity codes only)
+                                    {% endif %}
+                                </span>
+                            </h2>
                         {% endif %}
 
                         {% if request.GET.q and results %}

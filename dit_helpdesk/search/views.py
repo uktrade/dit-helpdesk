@@ -69,7 +69,6 @@ class CommoditySearchView(FormView):
         return initial
 
     def get(self, request, *args, **kwargs):
-
         self.initial = self.get_initial()
         form = self.form_class(request.GET)
 
@@ -223,12 +222,13 @@ class CommoditySearchView(FormView):
         country_code = self.kwargs["country_code"]
 
         if country_code is None:
-            return redirect(reverse("choose-country"))
+            return redirect(reverse("choose-country-old"))
 
         country = Country.objects.get(country_code=country_code.upper())
 
         context["hierarchy_html"] = hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
+        context["selected_origin_country"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
 
         return context
@@ -268,7 +268,11 @@ class GroupedCommoditySearchView(FormView):
         self.initial = self.get_initial()
         form = self.form_class(request.GET)
 
-        context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
+        context = self.get_context_data(
+            kwargs={
+                "country_code": kwargs["country_code"],
+                "selected_origin_country": kwargs["country_code"]
+            })
         context["title_suffix"] = ""
 
         if form.is_valid():
@@ -418,6 +422,7 @@ class GroupedCommoditySearchView(FormView):
 
         context["hierarchy_html"] = hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
+        context["selected_origin_country"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
 
         return context

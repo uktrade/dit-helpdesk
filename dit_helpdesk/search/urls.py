@@ -6,16 +6,15 @@ from search import views
 app_name = "search"
 
 
-if settings.GROUPED_SEARCH_ENABLED:
-    commodity_search_view = views.GroupedCommoditySearchView
-else:
-    commodity_search_view = views.CommoditySearchView
-
-
 urlpatterns = [
     re_path(
+        r"old/country/(?P<country_code>\w+)/$",
+        views.CommoditySearchView.as_view(),
+        name="search-commodity-old",
+    ),
+    re_path(
         r"country/(?P<country_code>\w+)/$",
-        commodity_search_view.as_view(),
+        views.GroupedCommoditySearchView.as_view(),
         name="search-commodity",
     ),
     re_path(
