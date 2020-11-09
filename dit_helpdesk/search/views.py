@@ -233,56 +233,14 @@ class GroupedCommoditySearchView(FormView):
 
                 if hits:
                     hit = hits[0]
-                    index = helpers.get_alias_from_hit(hit)
-                    hit.meta["index"] = index
+                    item = helpers.get_object_from_hit(hit)
+                    hit.meta["index"] = helpers.get_alias_from_hit(hit)
 
-                    if index == "chapter":
-                        return redirect(
-                            reverse(
-                                "chapter-detail",
-                                kwargs={
-                                    "chapter_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "commodity":
-                        return redirect(
-                            reverse(
-                                "commodity-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "heading":
-                        return redirect(
-                            reverse(
-                                "heading-detail",
-                                kwargs={
-                                    "heading_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
+                    country_code = form_data.get("country")
 
-                    elif index == "subheading":
-                        return redirect(
-                            reverse(
-                                "subheading-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-
-                    else:
+                    try:
+                        return redirect(item.get_detail_url(country_code))
+                    except helpers.ObjectNotFoundFromHit:
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
                         context["results"] = []
