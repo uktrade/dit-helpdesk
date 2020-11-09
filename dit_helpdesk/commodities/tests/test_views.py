@@ -300,4 +300,4 @@ class MeasureConditionDetailTestCase(TestCase):
             )
         )
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, "/choose-country/")
+        self.assertEqual(resp.url, "/choose-country-new/")
