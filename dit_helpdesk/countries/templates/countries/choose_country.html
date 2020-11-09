@@ -33,7 +33,7 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds govuk-grid-column-one-half-from-desktop">
 
-                    <form action="{% url 'choose-country' %}" method="post" autocomplete="off">
+                    <form method="post" autocomplete="off">
                         <div class="govuk-form-group{% if isError %} govuk-form-group--error{% endif %}">
                             {% csrf_token %}
                             <label class="govuk-hint" for="country-picker">
