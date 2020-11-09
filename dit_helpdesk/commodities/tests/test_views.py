@@ -179,7 +179,7 @@ class CommodityViewTestCase(TestCase):
             )
         )
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, "/choose-country/")
+        self.assertEqual(resp.url, reverse("choose-country"))
 
     def test_commodity_detail_update(self):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
@@ -300,4 +300,4 @@ class MeasureConditionDetailTestCase(TestCase):
             )
         )
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, "/choose-country-new/")
+        self.assertEqual(resp.url, reverse("choose-country"))
