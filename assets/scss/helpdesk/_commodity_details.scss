@@ -8,12 +8,20 @@
       visibility: hidden;
     }
 
-    .govuk-accordion__section {
-    }
-
     .govuk-accordion__section--expanded {
       .govuk-accordion__section-header {
         border-bottom: None;
+      }
+    }
+
+    .app-accordian__heading-title {
+      color: $govuk-link-colour;
+      text-decoration: underline;
+    }
+
+    .govuk-accordion__section-header--focused {
+      .app-accordian__heading-title {
+        color: $govuk-text-colour !important;
       }
     }
 
