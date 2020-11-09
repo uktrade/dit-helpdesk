@@ -22,6 +22,36 @@
 
 .chapter-result {
     background-color: #f8f8f8;
+    position: relative;
+}
+
+.chapter-result h1 {
+    margin-bottom: 0px;
+}
+
+.chapter-result div.text-right {
+    position: absolute;
+    top: 50%;
+    height: 32px;
+    margin-top: -16px;
+    right: 0px;
+}
+
+.heading-result {
+    border-bottom: 1px solid #bfc1c3;
+    position: relative;
+}
+
+.heading-result:last-child {
+    border-bottom: none;
+}
+
+.heading-result div.text-right {
+    position: absolute;
+    top: 50%;
+    height: 32px;
+    margin-top: -16px;
+    right: 0px;
 }
 
 .govuk-search-pagination {

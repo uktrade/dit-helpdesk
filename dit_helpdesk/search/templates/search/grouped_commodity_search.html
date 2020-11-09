@@ -159,11 +159,11 @@
                             <div id="search-results">
 
                                 {% for chapter_result in results %}
-                                    <section>
-                                        <div class="govuk-grid-row">
+                                    <section class="govuk-!-margin-bottom-2">
+                                        <div class="govuk-grid-row chapter-result govuk-!-padding-bottom-3 govuk-!-padding-top-3">
                                             <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
 
-                                                <h1 class="govuk-heading-s govuk-!-margin-bottom-3">
+                                                <h1 class="govuk-heading-s">
                                                         <a href="{% url 'chapter-detail' country_code=country_code chapter_code=chapter_result.commodity_code nomenclature_sid=chapter_result.id %}"
                                                            class="govuk-link">{{ chapter_result.description | safe }}</a>
                                                 </h1>
@@ -177,12 +177,12 @@
                                         </div>
                                         {% for heading_result in chapter_result.headings %}
 
-                                            <div class="govuk-grid-row">
+                                            <div class="govuk-grid-row govuk-!-padding-top-2 govuk-!-padding-bottom-2 heading-result">
                                                 <div class="govuk-grid-column-two-thirds govuk-!-width-three-quarters">
 
-                                                    <div class="govuk-!-margin-bottom-3 govuk-!-margin-left-3">
+                                                    <div class="govuk-!-margin-left-4">
                                                             <a href="{% url 'heading-detail' country_code=country_code heading_code=heading_result.commodity_code nomenclature_sid=heading_result.id %}"
-                                                               class="govuk-link">{{ heading_result.description | safe }}</a>
+                                                               class="govuk-link chapter-link">{{ heading_result.description | safe }}</a>
                                                     </div>
                                                 </div>
 
@@ -196,7 +196,6 @@
                                         {% endfor %}
 
                                     </section>
-                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                                 {% empty %}
                                     <h2 class="govuk-heading-l">There are no results for {{ query }}</h2>
 
