@@ -14,6 +14,7 @@ from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
 from analytics.track import track_event
 from countries.models import Country
+from hierarchy.models import Chapter, Heading
 from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
 
