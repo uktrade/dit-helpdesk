@@ -169,7 +169,7 @@ class CommoditySearchView(FormView):
         country_code = self.kwargs["country_code"]
 
         if country_code is None:
-            return redirect(reverse("choose-country-old"))
+            return redirect(reverse("choose-country"))
 
         country = Country.objects.get(country_code=country_code.upper())
 

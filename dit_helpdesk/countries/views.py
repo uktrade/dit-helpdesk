@@ -8,7 +8,7 @@ from countries.models import Country
 class ChooseCountryView(TemplateView):
 
     template_name = "countries/choose_country.html"
-    redirect_to = "search:search-commodity"
+    redirect_to = "search:search-commodity-new"
     search_version = "new"
 
     countries = Country.objects.all()
@@ -53,6 +53,6 @@ class ChooseCountryView(TemplateView):
 
 class ChooseCountryOldView(ChooseCountryView):
 
-    redirect_to = "search:search-commodity-old"
+    redirect_to = "search:search-commodity"
     search_version = "old"
 
