@@ -12,9 +12,9 @@ from django.views.generic.edit import FormView
 
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
-from commodities.models import Commodity
+from analytics.track import track_event
 from countries.models import Country
-from hierarchy.models import Heading, Chapter, SubHeading
+from hierarchy.models import Chapter, Heading
 from hierarchy.views import hierarchy_data, _commodity_code_html
 from search import helpers
 
@@ -88,56 +88,14 @@ class CommoditySearchView(FormView):
 
                 if hits:
                     hit = hits[0]
-                    index = helpers.get_alias_from_hit(hit)
-                    hit.meta["index"] = index
+                    item = helpers.get_object_from_hit(hit)
+                    hit.meta["index"] = helpers.get_alias_from_hit(hit)
 
-                    if index == "chapter":
-                        return redirect(
-                            reverse(
-                                "chapter-detail",
-                                kwargs={
-                                    "chapter_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "commodity":
-                        return redirect(
-                            reverse(
-                                "commodity-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "heading":
-                        return redirect(
-                            reverse(
-                                "heading-detail",
-                                kwargs={
-                                    "heading_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
+                    country_code = form_data.get("country")
 
-                    elif index == "subheading":
-                        return redirect(
-                            reverse(
-                                "subheading-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-
-                    else:
+                    try:
+                        return redirect(item.get_detail_url(country_code))
+                    except helpers.ObjectNotFoundFromHit:
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
                         context["results"] = []
@@ -148,7 +106,6 @@ class CommoditySearchView(FormView):
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
                     return self.render_to_response(context)
             else:
-
                 context.update(helpers.search_by_term(form_data=form_data))
 
                 curr_url_items = dict((x, y) for x, y in request.GET.items())
@@ -168,41 +125,31 @@ class CommoditySearchView(FormView):
                 if not context["results"]:
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
 
+                search_term = form_data.get('q')
+                total_results = context['total_results']
+
                 logger.info(
-                    f"Performed search for {form_data.get('q')}",
+                    f"Performed search for {search_term}",
                     extra={
-                        'search_term': form_data.get('q'),
-                        'search_count': context['total_results'],
+                        'search_term': search_term,
+                        'search_count': total_results,
                     })
+
+                track_event(
+                    "search",
+                    "results",
+                    search_term,
+                    total_results,
+                )
 
                 for hit in context["results"]:
                     if isinstance(hit["commodity_code"], str):
-                        index = helpers.get_alias_from_hit(hit)
-                        hit.meta["index"] = index
-
-                        if index == "chapter":
-                            item = Chapter.objects.get(
-                                chapter_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "heading":
-                            item = Heading.objects.get(
-                                heading_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "subheading":
-                            item = SubHeading.objects.get(
-                                commodity_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        elif index == "commodity":
-                            item = Commodity.objects.get(
-                                commodity_code=hit["commodity_code"],
-                                goods_nomenclature_sid=hit.id,
-                            )
-                        else:
+                        try:
+                            item = helpers.get_object_from_hit(hit)
+                        except helpers.ObjectNotFoundFromHit:
                             item = None
 
+                        hit.meta["index"] = helpers.get_alias_from_hit(hit)
                         hit["commodity_code_html"] = _commodity_code_html(item)
 
                 return self.render_to_response(context)
@@ -286,56 +233,14 @@ class GroupedCommoditySearchView(FormView):
 
                 if hits:
                     hit = hits[0]
-                    index = helpers.get_alias_from_hit(hit)
-                    hit.meta["index"] = index
+                    item = helpers.get_object_from_hit(hit)
+                    hit.meta["index"] = helpers.get_alias_from_hit(hit)
 
-                    if index == "chapter":
-                        return redirect(
-                            reverse(
-                                "chapter-detail",
-                                kwargs={
-                                    "chapter_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "commodity":
-                        return redirect(
-                            reverse(
-                                "commodity-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-                    elif index == "heading":
-                        return redirect(
-                            reverse(
-                                "heading-detail",
-                                kwargs={
-                                    "heading_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
+                    country_code = form_data.get("country")
 
-                    elif index == "subheading":
-                        return redirect(
-                            reverse(
-                                "subheading-detail",
-                                kwargs={
-                                    "commodity_code": hit.commodity_code,
-                                    "country_code": form_data.get("country"),
-                                    "nomenclature_sid": hit.id,
-                                },
-                            )
-                        )
-
-                    else:
+                    try:
+                        return redirect(item.get_detail_url(country_code))
+                    except helpers.ObjectNotFoundFromHit:
                         # response for no results found for commodity code
                         context["message"] = "nothing found for that number"
                         context["results"] = []
@@ -392,12 +297,22 @@ class GroupedCommoditySearchView(FormView):
 
                 context["results"] = results
 
+                search_term = form_data.get('q')
+                total_results = context['total_results']
+
                 logger.info(
-                    f"Performed search for {form_data.get('q')}",
+                    f"Performed search for {search_term}",
                     extra={
-                        'search_term': form_data.get('q'),
-                        'search_count': context['total_results'],
+                        'search_term': search_term,
+                        'search_count': total_results,
                     })
+
+                track_event(
+                    "search",
+                    "results",
+                    search_term,
+                    total_results,
+                )
 
                 return self.render_to_response(context)
 

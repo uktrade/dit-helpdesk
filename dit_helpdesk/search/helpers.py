@@ -2,11 +2,20 @@ import logging
 import json
 from collections import defaultdict
 
+from typing import Union
+
 from django_elasticsearch_dsl.search import Search
 from elasticsearch_dsl.response.hit import Hit
 from elasticsearch import Elasticsearch
 
 from django.conf import settings
+
+from commodities.models import Commodity
+from hierarchy.models import (
+    Heading,
+    SubHeading,
+    Chapter,
+)
 
 from search.documents.section import INDEX as section_index
 from search.documents.chapter import INDEX as chapter_index
@@ -282,6 +291,36 @@ def get_alias_from_hit(hit: Hit) -> str:
 
     alias = hit.meta["index"].split("-")[0]
     return alias
+
+
+INDEX_TO_MODEL_CLASS_MAP = {
+    "chapter": Chapter,
+    "heading": Heading,
+    "subheading": SubHeading,
+    "commodity": Commodity,
+}
+
+
+class ObjectNotFoundFromHit(Exception):
+    pass
+
+
+def get_object_from_hit(hit: Hit) -> Union[Chapter, Heading, SubHeading, Commodity]:
+    """Returns the commodity object related to a hit."""
+    alias = get_alias_from_hit(hit)
+    model_class = INDEX_TO_MODEL_CLASS_MAP[alias]
+
+    try:
+        model = model_class.objects.get(
+            goods_nomenclature_sid=hit.id,
+            **{
+                model_class.COMMODITY_CODE_FIELD: hit["commodity_code"],
+            },
+        )
+    except model_class.DoesNotExist:
+        raise ObjectNotFoundFromHit()
+
+    return model
 
 
 def normalise_commodity_code(code: str) -> str:

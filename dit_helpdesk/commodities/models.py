@@ -56,6 +56,8 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         on_delete=models.CASCADE,
     )
 
+    COMMODITY_CODE_FIELD = "commodity_code"
+
     class Meta:
         unique_together = ("commodity_code", "goods_nomenclature_sid", "nomenclature_tree")
         verbose_name_plural = "commodities"
@@ -323,3 +325,13 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_parent(self):
         return self.heading or self.parent_subheading
+
+    def get_detail_url(self, country_code):
+        return reverse(
+            "commodity-detail",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
