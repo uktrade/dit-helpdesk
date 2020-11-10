@@ -10,7 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n cell_cleaner replace %}
+{% load static staticfiles i18n cell_cleaner replace dotted_format %}
 
 {% block title %}Sub Heading information for {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }} {% endfor %}{% endblock title %}
 
@@ -22,9 +22,16 @@
                 <div class="govuk-grid-column-full">
                     {% include "search/_new_search_link.html" %}
 
-                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Export
-                        {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                        from {{ selected_origin_country_name }} to the United Kingdom
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                        {% if subheading.leaf %}
+                            Product export information for
+                            {{ subheading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% else %}
+                            Continue to classify
+                            {{ subheading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% endif %}
                     </h2>
 
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
