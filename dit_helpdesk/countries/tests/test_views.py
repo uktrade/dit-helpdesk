@@ -81,13 +81,12 @@ class CountriesViewsTestCase(TestCase):
         resp = self.client.post(
             reverse("choose-country"), data={"origin_country": "au"}
         )
-        self.assertEqual(self.client.session["origin_country"], "AU")
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
             resp.url,
             reverse(
                 "search:search-commodity",
-                kwargs={"country_code": self.client.session["origin_country"].lower()},
+                kwargs={"country_code": "au"},
             ),
         )
 

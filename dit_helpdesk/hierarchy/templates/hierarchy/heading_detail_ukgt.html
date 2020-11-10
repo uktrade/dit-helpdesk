@@ -10,7 +10,7 @@
 # -----------------------------------------------------------------------------
 {% endcomment %}
 
-{% load static staticfiles i18n cell_cleaner replace %}
+{% load static staticfiles i18n cell_cleaner replace dotted_format %}
 
 {% block title %}Heading information for {% for commodity_code_segment in heading.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
@@ -21,11 +21,18 @@
         <div id="app-commodity-overview">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    <a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">New search</a>
+                    {% include "search/_new_search_link.html" %}
 
-                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Export
-                        {% for heading_code_segment in heading.heading_code_split %}{{ heading_code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}
-                        from {{ selected_origin_country_name }} to the United Kingdom
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                        {% if heading.leaf %}
+                            Product export information for
+                            {{ heading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% else %}
+                            Continue to classify
+                            {{ heading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% endif %}
                     </h2>
 
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">

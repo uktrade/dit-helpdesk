@@ -1,10 +1,17 @@
 from django.urls import re_path, path
+from django.conf import settings
 
 from search import views
 
 app_name = "search"
 
+
 urlpatterns = [
+    re_path(
+        r"new/country/(?P<country_code>\w+)/$",
+        views.GroupedCommoditySearchView.as_view(),
+        name="search-commodity-new",
+    ),
     re_path(
         r"country/(?P<country_code>\w+)/$",
         views.CommoditySearchView.as_view(),
