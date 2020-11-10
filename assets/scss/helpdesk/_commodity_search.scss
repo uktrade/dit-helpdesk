@@ -29,12 +29,14 @@
     margin-bottom: 0px;
 }
 
-.chapter-result div.text-right {
-    position: absolute;
-    top: 50%;
-    height: 32px;
-    margin-top: -16px;
-    right: 0px;
+@media (min-width: 1000px) {
+    .chapter-result div.text-right {
+        position: absolute;
+        top: 50%;
+        height: 32px;
+        margin-top: -16px;
+        right: 0px;
+    }
 }
 
 .heading-result {
@@ -46,13 +48,17 @@
     border-bottom: none;
 }
 
-.heading-result div.text-right {
-    position: absolute;
-    top: 50%;
-    height: 32px;
-    margin-top: -16px;
-    right: 0px;
+@media (min-width: 1000px) {
+    .heading-result div.text-right {
+        display: block;
+        position: absolute;
+        top: 50%;
+        height: 32px;
+        margin-top: -16px;
+        right: 0px;
+    }
 }
+
 
 .govuk-search-pagination {
   display: block;
