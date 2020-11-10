@@ -15,5 +15,6 @@ python manage.py import_initial_regulations
 # regulations added through CMS
 # python manage.py migrate_regulations
 
+python manage.py generate_search_keywords -f search/data
 python manage.py import_search_keywords -f output/keywords_and_synonyms_merged.csv
 python manage.py swap_rebuild_index --keep-old-trees

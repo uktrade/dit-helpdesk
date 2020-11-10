@@ -376,6 +376,7 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
     context = {
         "selected_origin_country": country.country_code,
         "heading": heading,
+        "commodity": heading,   # to make it compatible with commodity templates
         "selected_origin_country_name": country.name,
         "heading_notes": heading.heading_notes,
         "chapter_notes": chapter.chapter_notes,
@@ -497,6 +498,7 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
     context = {
         "selected_origin_country": country.country_code,
         "subheading": subheading,
+        "commodity": subheading,    # to make it compatible with commodity templates
         "selected_origin_country_name": country.name,
         "heading_notes": subheading.heading_notes,
         "chapter_notes": subheading.get_chapter().chapter_notes,
@@ -579,21 +581,23 @@ def get_hierarchy_item_by_code(code):
         pass
 
 
-def _commodity_code_html(item):
+def _commodity_code_html(item, ignore_duplicate=True):
     """
     View helper function that genrates an html representation of the ten digit commodity code broken into three groups
     of 6, 2 and  digits and colour code formatted
     :param item: model instance
     :return: html
     """
-    if isinstance(item, SubHeading) and item.is_duplicate_heading():
-        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
-    if isinstance(item, Heading) and item.is_duplicate_heading():
-        return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
+    if ignore_duplicate:
+        if isinstance(item, SubHeading) and item.is_duplicate_heading():
+            return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
+
+        if isinstance(item, Heading) and item.is_duplicate_heading():
+            return '<span class="app-commodity-code app-hierarchy-tree__commodity-code">&nbsp;</span>'
 
     leaf = False
-    code = ""
+
     if isinstance(item, str):
         code = item
     elif isinstance(item, Chapter):
