@@ -175,7 +175,7 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def test_commodity_search_is_using_the_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "search/grouped_commodity_search.html")
+        self.assertTemplateUsed(response, "search/commodity_search.html")
 
     def test_search_view_returns_http_200(self):
         response = self.client.get(self.url)

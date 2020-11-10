@@ -21,7 +21,7 @@
                         <p class="govuk-body govuk-!-margin-bottom-2"><span
                                 class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span>
                             United Kingdom</p>
-                        <a href="{% url 'choose-country' %}" class="govuk-body">Change</a>
+                        <a href="{% url 'choose-country-new' %}" class="govuk-body">Change</a>
                         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible govuk-!-margin-top-3">
                     </div>
                 </div>
@@ -31,7 +31,7 @@
 
                 <div class="govuk-grid-column-full">
 
-                    <form id="commodity-search" action="{% url 'search:search-commodity' country_code=country_code %}"
+                    <form id="commodity-search" action="{% url 'search:search-commodity-new' country_code=country_code %}"
                           class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
 
                         {% if form_q_error %}
