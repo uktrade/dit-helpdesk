@@ -8,7 +8,7 @@
         <main id="main-content" class="govuk-main-wrapper">
 
             {% if results %}
-                <a href="{% url 'search:search-commodity' country_code=country_code %}"  class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-0">New search</a>
+                    {% include "search/_new_search_link.html" %}
             {% endif %}
 
             {% if not request.GET.q %}
@@ -31,7 +31,7 @@
 
                 <div class="govuk-grid-column-full">
 
-                    <form id="commodity-search" action="{% url 'search:search-commodity' country_code=country_code %}"
+                    <form id="commodity-search"
                           class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
 
                         {% if form_q_error %}
@@ -193,7 +193,8 @@
                                 </fieldset>
                                 <div id="select-sortby" class="govuk-select--inline">
                                     <label class="govuk-label" for="sort">Sort by
-                                        <select class="govuk-select" name="sort" id="sort" data-changed-by="sort" {% if request.GET.changed_by == "sort" %}autofocus="true"{% endif %}>
+                                        <select class="govuk-select" name="sort" id="sort" aria-label="Sort by relevance or code. This will refresh the page."
+                                                data-changed-by="sort" {% if request.GET.changed_by == "sort" %}autofocus="true"{% endif %}>
                                             <option value="ranking"
                                                     {% if request.GET.sort == "ranking" %}selected{% endif %}>
                                                 Relevance

@@ -26,6 +26,14 @@ CMS_ENABLED = env.bool("CMS_ENABLED", False)
 
 READ_ONLY = env.bool("READ_ONLY", True)
 
+
+# Feature flags
+UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
+FTA_INFO_SHARING_ENABLED = env.bool("FTA_INFO_SHARING_ENABLED", False)
+NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
+GROUPED_SEARCH_ENABLED = env.bool("GROUPED_SEARCH_ENABLED", False)
+
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -102,6 +110,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.ga_gtm_processor",
+                "core.context_processors.feature_flag_processor",
             ],
         },
     }
@@ -403,3 +412,9 @@ PRIMARY_REGION = 'UK'
 SECONDARY_REGION = 'EU'
 
 MIGRATION_LINTER_OVERRIDE_MAKEMIGRATIONS = True
+
+
+SUPPORTED_TRADE_SCENARIOS = (
+    'EU-NOAGR-FOR-EXIT-WTO',
+    'EU-AGR-SIGNED-LINK',
+)

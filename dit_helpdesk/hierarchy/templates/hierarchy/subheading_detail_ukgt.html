@@ -1,0 +1,172 @@
+{% extends 'core/base.html' %}
+
+{% comment %}
+# -----------------------------------------------------------------------------
+# NOTE - table column headers.
+# -----------------------------------------------------------------------------
+# If the table columns headings are changed, they also need to be updated in
+# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
+# smaller screens will break.
+# -----------------------------------------------------------------------------
+{% endcomment %}
+
+{% load static staticfiles i18n cell_cleaner replace dotted_format %}
+
+{% block title %}Sub Heading information for {% for subheading_code_segment in subheading.subheading_code_split %}{{ subheading_code_segment }} {% endfor %}{% endblock title %}
+
+{% block content %}
+<div class="app-commodity-summary">
+    <div class="govuk-width-container">
+        <div id="app-commodity-overview">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    {% include "search/_new_search_link.html" %}
+
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                        {% if subheading.leaf %}
+                            Product export information for
+                            {{ subheading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% else %}
+                            Continue to classify
+                            {{ subheading.commodity_code|dotted_format }}
+                            from {{ selected_origin_country_name }} to the United Kingdom
+                        {% endif %}
+                    </h2>
+
+                    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
+                        Choose the commodity code below that is closest your goods to see more information
+                    </h3>
+
+                    <p class="govuk-body-s">Last updated {{ subheading.last_updated }}</p>
+
+                    <div id="app-hierarchy-context">
+                        <div class="app-hierarchy-context__wrapper">
+                            <div class="helpdesk-breadcrumbs">
+                                <p class="govuk-body govuk-!-font-size-16">{{accordion_title}}</p>
+                                    {{ subheading_hierarchy_context | safe }}
+                            </div>
+                        </div>
+
+                        {% if heading_notes or chapter_notes or section_notes %}
+                        <div id="app-commodity-notes">
+                            <details class="govuk-details govuk-!-margin-bottom-0">
+                                <summary class="govuk-details__summary govuk-!-margin-bottom-0">
+                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
+                                </summary>
+                                <div class="govuk-details__text ">
+
+                                    {%  if heading_notes %}
+                                        <h3>Heading notes</h3>
+                                        {% include "hierarchy/_heading_notes.html" %}
+                                    {% endif %}
+                                    {% if chapter_notes %}
+                                        <h3>Chapter notes</h3>
+                                        {% include "hierarchy/_chapter_notes.html" %}
+                                    {% endif %}
+                                    {%  if section_notes %}
+                                        <h3>Section notes</h3>
+                                        {% include "hierarchy/_section_notes.html" %}
+                                    {% endif %}
+
+                                </div>
+                            </details>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if subheading.leaf %}
+<div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+
+            <div id="app-commodity-details">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+
+                        <nav>
+                            <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
+                            <ul class="app-contents govuk-!-margin-bottom-9">
+
+                            {% include "commodities/_commodity_contents.html" %}
+
+                            </ul>
+                        </nav>
+
+                        {% if tariffs_and_charges_table_data %}
+                        <h3 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">Tariffs and charges - {% for code_segment in subheading.subheading_code_split %}{{ code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</h3>
+                        <div class="govuk-caption-m ">
+                            <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+                        </div>
+
+                        {% if tariff_content_label %}
+                            <div class="govuk-body">
+                            {% with template_name=tariff_content_label|stringformat:"s"|add:".html" %}
+                                {% include "commodities/"|add:template_name %}
+                            {% endwith %}
+                            </div>
+                        {% endif %}
+                        <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
+
+                            {% include "commodities/_tariffs_and_charges_ukgt.html" %}
+
+                        </div>
+                        <div id="tariffs_after_transition" class="govuk-!-margin-bottom-9">
+                            {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
+                                {% include "commodities/_tariffs_and_charges_ukgt_future.html" with global_tariff_data=global_tariff_data.result %}
+                            {% elif global_tariff_data.result_type == global_tariff_data.result_types.MULTIPLE_RESULTS %}
+                                {% include "commodities/_tariffs_and_charges_ukgt_future_multiple_results.html" %}
+                            {% elif global_tariff_data.result_type == global_tariff_data.result_types.NO_RESULT %}
+                                {% include "commodities/_tariffs_and_charges_ukgt_future_no_result.html" %}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if quotas_table_data %}
+                            <div id="quotas" class="govuk-!-margin-bottom-9">
+
+                            {% include "commodities/_quotas.html" %}
+
+                            </div>
+                        {% endif %}
+
+                        {% if other_table_data %}
+                            <div id="other_measures" class="govuk-!-margin-bottom-9">
+
+                            {% include "commodities/_other_measures.html" %}
+
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% if rules_of_origin %}
+
+                        {% include "commodities/_rules_of_origin.html" %}
+
+                    {% endif %}
+
+                    {% if regulation_groups %}
+
+                        {% include "commodities/_regulations.html" %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </main>
+
+        {% if modals %}
+            {% for modal in modals.values %}
+                 {{ modal|safe }}
+            {% endfor %}
+        {% endif %}
+
+    </div>
+{% endif %}
+
+{% endblock %}

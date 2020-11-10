@@ -6,22 +6,23 @@
 # smaller screens will break.
 # -----------------------------------------------------------------------------
 
-import re
-from datetime import datetime, timedelta, timezone
-from pprint import pprint
 
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
 from countries.models import Country
-from hierarchy.models import Section, Chapter, Heading, SubHeading
-from hierarchy.helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+
+from hierarchy.helpers import (
+    get_nomenclature_group_measures,
+    TABLE_COLUMN_TITLES,
+)
 from hierarchy.views import get_hierarchy_context
 from regulations.models import RegulationGroup
 
 from .models import Commodity
+from .helpers import get_tariff_content_context
 
 
 def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
@@ -117,7 +118,16 @@ def commodity_detail(request, commodity_code, country_code, nomenclature_sid):
         "is_eu_member": country_code.upper() == "EU",
     }
 
-    return render(request, "commodities/commodity_detail.html", context)
+    tariff_content_context = get_tariff_content_context(country, commodity)
+
+    context.update(tariff_content_context)
+
+    if settings.UKGT_ENABLED:
+        template = "commodities/commodity_detail_ukgt.html"
+    else:
+        template = "commodities/commodity_detail.html"
+
+    return render(request, template, context)
 
 
 def measure_condition_detail(

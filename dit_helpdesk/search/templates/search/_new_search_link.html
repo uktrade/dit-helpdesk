@@ -1,0 +1,5 @@
+{% if request.session.search_version == 'new' %}
+<a href="{% url 'search:search-commodity-new' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">New search</a>
+{% else %}
+<a href="{% url 'search:search-commodity' country_code=selected_origin_country.lower %}" class="govuk-back-link govuk-!-margin-bottom-7 govuk-!-margin-top-3">New search</a>
+{% endif %}

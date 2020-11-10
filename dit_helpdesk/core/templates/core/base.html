@@ -86,9 +86,15 @@
           </a>
         </div>
         <div class="govuk-header__content">
+          {% if request.session.search_version == 'old' %}
           <a href="{% url 'choose-country' %}" class="govuk-header__link govuk-header__link--service-name">
             Trade with the UK: look up tariffs, taxes and rules
           </a>
+          {% else %}
+          <a href="{% url 'choose-country-new' %}" class="govuk-header__link govuk-header__link--service-name">
+            Trade with the UK: look up tariffs, taxes and rules
+          </a>
+          {% endif %}
         </div>
       </div>
     </header>
@@ -100,8 +106,10 @@
                 beta
               </strong>
               <span class="govuk-phase-banner__text">
+                {% url 'choose-country-new' as choose_country_new %}
+                {% url 'choose-country' as choose_country %}
                 This is a new service
-                  {% if request.path != "/choose-country/" %}– your
+                  {% if request.path != choose_country and request.path != choose_country_new %}– your
                 <a class="govuk-link" href="{% url 'feedback-view' %}">feedback</a> will help us to improve it.
                   {% endif %}
               </span>
@@ -135,7 +143,7 @@
                     Privacy, terms and conditions
                   </a>
                 </li>
-                  {% if request.path != "/choose-country/" %}
+                  {% if request.path != choose_country and request.path != choose_country_new %}
                 <li class="govuk-footer__inline-list-item">
                   <a class="govuk-footer__link" href="/contact/">
                     Contact

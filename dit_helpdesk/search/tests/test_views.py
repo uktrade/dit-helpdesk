@@ -1,5 +1,7 @@
 import logging
 
+from unittest import mock
+
 from django.conf import settings
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory, Client
@@ -35,7 +37,6 @@ class CommoditySetupTestCase(TestCase):
             title=settings.TEST_SECTION_DESCRIPTION,
             roman_numeral="X",
             tts_json="{}",
-            commodity_code=10,
             nomenclature_tree=self.tree,
         )
         """create three chapters starting at 47 and attach to section 10"""
@@ -181,6 +182,43 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
     def test_search_view_returns_http_200(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+
+    def test_search_view_tracks_event(self):
+        with mock.patch("search.views.track_event") as mock_track_event, \
+            mock.patch("search.views.helpers.search_by_term") as mock_search_by_term, \
+            mock.patch("search.views.helpers.get_alias_from_hit") as mock_get_alias_from_hit:
+
+            mock_get_alias_from_hit.return_value = "chapter"
+            mock_hit = mock.MagicMock()
+            mock_hit.meta = {"index": "commodity"}
+            mock_hit.__getitem__.return_value = lambda x: "1234"
+            mock_search_by_term.return_value = {
+                "results": [mock_hit for _ in range(10)],
+                "page_range_start": 1,
+                "page_range_end": 1,
+                "total_pages": 1,
+                "total_results": 10,
+                "no_results": False,
+            }
+
+            self.client.get(
+                self.url,
+                data={
+                    "q": "socks",
+                    "toggle_headings": 0,
+                    "sort": "ranking",
+                    "sort_order": "desc",
+                    "country": "jp",
+                    "page": 0,
+                },
+            )
+
+            mock_track_event.assert_called_once_with(
+                "search",
+                "results",
+                "socks",
+                10,
+            )
 
 
 class CommodityTermSearchAPIViewTestCase(CommoditySetupTestCase):

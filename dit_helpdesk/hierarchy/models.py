@@ -408,6 +408,10 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
     def get_parent(self):
         return None
 
+    @property
+    def commodity_code(self):
+        return None
+
 
 class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
@@ -433,6 +437,8 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
     )
+
+    COMMODITY_CODE_FIELD = "chapter_code"
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
@@ -702,6 +708,16 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     def get_parent(self):
         return self.section
 
+    def get_detail_url(self, country_code):
+        return reverse(
+            "chapter-detail",
+            kwargs={
+                "chapter_code": self.chapter_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
 
 class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     objects = RegionHierarchyManager()
@@ -728,6 +744,8 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         on_delete=models.CASCADE,
         related_name="headings",
     )
+
+    COMMODITY_CODE_FIELD = "heading_code"
 
     @property
     def commodity_code(self):
@@ -975,6 +993,16 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     def get_parent(self):
         return self.chapter
 
+    def get_detail_url(self, country_code):
+        return reverse(
+            "heading-detail",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
 
 class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     objects = RegionHierarchyManager()
@@ -993,6 +1021,8 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     leaf = models.BooleanField()
+
+    COMMODITY_CODE_FIELD = "commodity_code"
 
     @property
     def heading_code_4(self):
@@ -1320,3 +1350,13 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         children = parent.get_hierarchy_children()
         for child in children:
             tree[level].append(child)
+
+    def get_detail_url(self, country_code):
+        return reverse(
+            "subheading-detail",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )

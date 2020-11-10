@@ -10,7 +10,11 @@ class CountryModelTestCase(TestCase):
     """
 
     def setUp(self):
-        self.country = Country.objects.create(country_code="UK", name="United Kingdom")
+        self.country = Country.objects.create(
+            country_code="UK",
+            name="United Kingdom",
+            scenario="Example scenario",
+        )
 
     def test_country_model_str(self):
-        self.assertEquals(str(self.country), "UK United Kingdom")
+        self.assertEquals(str(self.country), "UK - United Kingdom - Example scenario")
