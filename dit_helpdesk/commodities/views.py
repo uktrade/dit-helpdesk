@@ -9,10 +9,10 @@
 
 from django.conf import settings
 from django.contrib import messages
-from django.http.response import HttpResponse
+from django.http.response import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views import View
+from django.views.generic import TemplateView
 
 from countries.models import Country
 
@@ -245,7 +245,57 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     return html
 
 
-class CommodityDetailNorthernIrelandView(View):
+class CommodityDetailNorthernIrelandView(TemplateView):
+    template_name = "commodities/commodity_detail_northern_ireland.html"
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse("OK")
+        country_code = kwargs["country_code"]
+        try:
+            self.country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+
+        commodity_code = kwargs["commodity_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+        try:
+            self.commodity = Commodity.objects.get(
+                commodity_code=commodity_code,
+                goods_nomenclature_sid=goods_nomenclature_sid,
+            )
+        except Commodity.DoesNotExist:
+            raise Http404
+
+        if self.commodity.should_update_content():
+            self.commodity.update_content()
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        commodity = self.commodity
+        country = self.country
+
+        ctx["selected_origin_country"] = country.country_code
+        ctx["selected_origin_country_name"] = country.name
+
+        commodity_path = commodity.get_path()
+        ctx["accordion_title"] = commodity_hierarchy_section_header(commodity_path)
+        ctx["commodity_hierarchy_context"] = get_hierarchy_context(
+            commodity_path,
+            country.country_code,
+            commodity.commodity_code,
+            commodity,
+        )
+        ctx["commodity"] = commodity
+
+        heading = commodity.get_heading()
+        chapter = heading.chapter
+        section = chapter.section
+        ctx["commodity_notes"] = commodity.tts_obj.footnotes
+        ctx["chapter_notes"] = chapter.chapter_notes
+        ctx["heading_notes"] = heading.heading_notes
+        ctx["section_notes"] = section.section_notes
+
+        return ctx
