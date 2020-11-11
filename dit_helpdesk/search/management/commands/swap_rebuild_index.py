@@ -78,7 +78,7 @@ def rebuild():
 
         # `doc` is e.g. `SectionDocument`
         doc_inst = doc()
-        doc_inst._doc_type.index = new_index_name
+        doc_inst._index._name = new_index_name
         qs = doc_inst.get_queryset()
 
         doc_inst.update(qs)
