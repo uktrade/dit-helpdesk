@@ -1,6 +1,5 @@
 from django.conf import settings
-from django_elasticsearch_dsl import Document, Index, fields
-from django_elasticsearch_dsl.registries import registry
+from django_elasticsearch_dsl import DocType, Index, fields
 
 from hierarchy.models import Chapter
 from search.documents.util import html_strip
@@ -13,13 +12,10 @@ INDEX.settings(number_of_shards=1, number_of_replicas=0)
 
 
 @INDEX.doc_type
-class ChapterDocument(Document):
+class ChapterDocument(DocType):
     """
     Chapter elasticsearch document
     """
-
-    class Django:
-        model = Chapter
 
     id = fields.IntegerField(attr="goods_nomenclature_sid")
 
@@ -38,3 +34,6 @@ class ChapterDocument(Document):
     ranking = fields.IntegerField()
 
     leaf = fields.BooleanField(attr="leaf")
+
+    class Meta:
+        model = Chapter

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django_elasticsearch_dsl import Document, Index, fields
+from django_elasticsearch_dsl import DocType, Index, fields
 
 from commodities.models import Commodity
 from search.documents.util import html_strip
@@ -12,13 +12,10 @@ INDEX.settings(number_of_shards=1, number_of_replicas=0)
 
 
 @INDEX.doc_type
-class CommodityDocument(Document):
+class CommodityDocument(DocType):
     """
     Commodity elasticsearch document
     """
-
-    class Django:
-        model = Commodity
 
     id = fields.IntegerField(attr="goods_nomenclature_sid")
 
@@ -37,3 +34,6 @@ class CommodityDocument(Document):
     ranking = fields.IntegerField()
 
     leaf = fields.BooleanField(attr="leaf")
+
+    class Meta:
+        model = Commodity
