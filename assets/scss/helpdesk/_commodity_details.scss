@@ -14,13 +14,13 @@
       }
     }
 
-    .app-accordian__heading-title {
+    .app-accordion__heading-title {
       color: $govuk-link-colour;
       text-decoration: underline;
     }
 
     .govuk-accordion__section-header--focused {
-      .app-accordian__heading-title {
+      .app-accordion__heading-title {
         color: $govuk-text-colour !important;
       }
     }
