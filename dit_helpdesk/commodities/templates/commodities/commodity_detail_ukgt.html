@@ -81,9 +81,15 @@
     <main id="main-content" class="govuk-main-wrapper">
 
         <div id="app-commodity-details">
+            {% if ni_journey_enabled %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        {% include "hierarchy/_ni_warning.html" %}
+                    </div>
+                </div>
+            {% endif %}
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-
                     <nav>
                         <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
                         <ul class="app-contents govuk-!-margin-bottom-9">
