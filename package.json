@@ -23,7 +23,7 @@
     "autoprefixer": "^9.8.6",
     "cssnano": "^4.1.10",
     "govuk-country-and-territory-autocomplete": "^0.5.3",
-    "govuk-frontend": "^2.13.0",
+    "govuk-frontend": "^3.9.1",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",
     "gulp-cssnano": "^2.1.3",

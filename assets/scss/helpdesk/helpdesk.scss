@@ -5,6 +5,28 @@
 @import "helpers";
 @import "commodity_search";
 
+@font-face {
+  font-family: "ntatabularnumbers";
+  src: govuk-font-url("light-tabular-498ea8ffe2-v1.eot");
+  src: govuk-font-url("light-tabular-498ea8ffe2-v1.eot?#iefix") format("embedded-opentype"),
+       govuk-font-url("light-tabular-851b10ccdd-v1.woff2") format("woff2"),
+       govuk-font-url("light-tabular-62cc6f0a28-v1.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: "ntatabularnumbers";
+  src: govuk-font-url("bold-tabular-357fdfbcc3-v1.eot");
+  src: govuk-font-url("bold-tabular-357fdfbcc3-v1.eot?#iefix") format("embedded-opentype"),
+       govuk-font-url("bold-tabular-b89238d840-v1.woff2") format("woff2"),
+       govuk-font-url("bold-tabular-784c21afb8-v1.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: fallback;
+}
+
 article,
 aside,
 details,
@@ -43,6 +65,10 @@ abbr {
   left: 1px;
 }
 
+.autocomplete__input--focused {
+  outline: 3px solid $govuk-focus-colour;
+}
+
 // add error state and
 .govuk-form-group--error .autocomplete__input {
   border: $govuk-border-width-form-element-error solid $govuk-error-colour;
@@ -53,9 +79,9 @@ abbr {
 }
 
 .app-commodity-code__highlight {
-  background: govuk-colour("grey-3");
+  background: govuk-colour("mid-grey", $legacy: "grey-3");
   display: inline-block;
-  font-family: "ntatabularnumbers", "nta", Arial, sans-serif;
+  font-family: $govuk-font-family-nta-tabular, Arial, sans-serif;
   letter-spacing: 0.05em;
   margin: 0 0 0 0.25em;
   padding: 0.25em 0.25em 0.125em  0.25em;

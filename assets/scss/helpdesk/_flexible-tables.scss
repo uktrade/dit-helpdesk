@@ -79,12 +79,12 @@
   .app-flexible-table__row {
     display: block;
     margin: 0 0 1em 0;
-    border: 1px solid govuk-colour("grey-2");
+    border: 1px solid govuk-colour("mid-grey", $legacy: "grey-2");
   }
 
 
   .app-flexible-table__header {
-    background: govuk-colour("grey-4");
+    background: govuk-colour("light-grey", $legacy: "grey-4");
     display: block;
   }
 
@@ -114,7 +114,7 @@
     }
 
     &:nth-child(odd) {
-      background: govuk-colour("grey-4");
+      background: govuk-colour("light-grey", $legacy: "grey-4");
     }
     &:empty {
       display: none;
