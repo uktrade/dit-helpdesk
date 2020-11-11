@@ -276,9 +276,9 @@ class SearchKeywordGenerator:
             green_page, on="Code_First4Digits", how="left"
         )
         self.subhead.Contents = self.subhead.Contents.replace(np.nan, "", regex=True)
-        self.subhead["final_category"] = self.subhead[
-            ["final_category", "Contents"]
-        ].apply(lambda x: " ".join(x), axis=1)
+        # self.subhead["final_category"] = self.subhead[
+        #     ["final_category", "Contents"]
+        # ].apply(lambda x: " ".join(x), axis=1)
         self.subhead = self.subhead.drop(
             ["New_Code", "Code_First4Digits", "Contents"], axis=1
         )
