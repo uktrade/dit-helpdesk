@@ -8,9 +8,11 @@
 
 
 from django.conf import settings
+from django.contrib import messages
+from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.contrib import messages
+from django.views import View
 
 from countries.models import Country
 
@@ -241,3 +243,9 @@ def commodity_hierarchy_section_header(reversed_commodity_tree):
     section = reversed_commodity_tree[section_index][0]
     html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
     return html
+
+
+class CommodityDetailNorthernIrelandView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("OK")

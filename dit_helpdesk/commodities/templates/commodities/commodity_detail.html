@@ -83,7 +83,8 @@
             {% if ni_journey_enabled %}
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-full">
-                        {% include "hierarchy/_ni_warning.html" %}
+                        {% url "commodity-detail-northern-ireland" country_code=selected_origin_country commodity_code=commodity.commodity_code nomenclature_sid=commodity.goods_nomenclature_sid as ni_details_url %}
+                        {% include "hierarchy/_ni_warning.html" with ni_details_url=ni_details_url %}
                     </div>
                 </div>
             {% endif %}
