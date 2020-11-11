@@ -67,7 +67,7 @@ urlpatterns = [
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        commodity_views.commodity_detail,
+        commodity_views.CommodityDetailView.as_view(),
         name="commodity-detail",
     ),
     re_path(
