@@ -548,12 +548,12 @@ def get_hierarchy_item_by_code(code):
 
     try:
         return Chapter.objects.get(chapter_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
         return Heading.objects.get(heading_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
@@ -564,12 +564,12 @@ def get_hierarchy_item_by_code(code):
             return subheading.first()
         else:
             raise ObjectDoesNotExist
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
         return Commodity.objects.get(commodity_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
 
@@ -717,7 +717,6 @@ def measure_quota_detail(
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
     quota_def = import_measure.get_measure_quota_definition_by_order_number(
         order_number
     )
