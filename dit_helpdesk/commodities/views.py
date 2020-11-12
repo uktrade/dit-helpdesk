@@ -27,7 +27,7 @@ from .models import Commodity
 from .helpers import get_tariff_content_context
 
 
-class CommodityDetailView(TemplateView):
+class BaseCommodityDetailView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"]
@@ -51,6 +51,38 @@ class CommodityDetailView(TemplateView):
             self.commodity.update_content()
 
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        commodity = self.commodity
+        country = self.country
+
+        ctx["selected_origin_country"] = country.country_code
+        ctx["selected_origin_country_name"] = country.name
+
+        commodity_path = commodity.get_path()
+        ctx["accordion_title"] = commodity_hierarchy_section_header(commodity_path)
+        ctx["commodity_hierarchy_context"] = get_hierarchy_context(
+            commodity_path,
+            country.country_code,
+            commodity.commodity_code,
+            commodity,
+        )
+        ctx["commodity"] = commodity
+
+        heading = commodity.get_heading()
+        chapter = heading.chapter
+        section = chapter.section
+        ctx["commodity_notes"] = commodity.tts_obj.footnotes
+        ctx["chapter_notes"] = chapter.chapter_notes
+        ctx["heading_notes"] = heading.heading_notes
+        ctx["section_notes"] = section.section_notes
+
+        return ctx
+
+
+class CommodityDetailView(BaseCommodityDetailView):
 
     def get_template_names(self):
         if settings.UKGT_ENABLED:
@@ -104,35 +136,15 @@ class CommodityDetailView(TemplateView):
         for measure_json in other_measures:
             modals_dict.update(measure_json.measures_modals)
 
-        commodity_path = commodity.get_path()
-        accordion_title = commodity_hierarchy_section_header(commodity_path)
         rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
 
-        heading = commodity.get_heading()
-        chapter = heading.chapter
-        section = chapter.section
-
         ctx.update({
-            "selected_origin_country": country.country_code,
-            "commodity": commodity,
-            "selected_origin_country_name": country.name,
             "rules_of_origin": rules_of_origin,
             "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
             "quotas_table_data": quotas_table_data,
             "other_table_data": other_table_data,
             "column_titles": TABLE_COLUMN_TITLES,
             "regulation_groups": RegulationGroup.objects.inherited(commodity).order_by('title'),
-            "accordion_title": accordion_title,
-            "commodity_notes": commodity.tts_obj.footnotes,
-            "chapter_notes": chapter.chapter_notes,
-            "heading_notes": heading.heading_notes,
-            "section_notes": section.section_notes,
-            "commodity_hierarchy_context": get_hierarchy_context(
-                commodity_path,
-                country.country_code,
-                commodity.commodity_code,
-                commodity,
-            ),
             "modals": modals_dict,
             "is_eu_member": country.country_code.upper() == "EU",
         })
@@ -143,60 +155,8 @@ class CommodityDetailView(TemplateView):
         return ctx
 
 
-class CommodityDetailNorthernIrelandView(TemplateView):
+class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
     template_name = "commodities/commodity_detail_northern_ireland.html"
-
-    def get(self, request, *args, **kwargs):
-        country_code = kwargs["country_code"]
-        try:
-            self.country = Country.objects.get(country_code=country_code.upper())
-        except Country.DoesNotExist:
-            messages.error(request, "Invalid originCountry")
-            return redirect("choose-country")
-
-        commodity_code = kwargs["commodity_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
-        try:
-            self.commodity = Commodity.objects.get(
-                commodity_code=commodity_code,
-                goods_nomenclature_sid=goods_nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            raise Http404
-
-        if self.commodity.should_update_content():
-            self.commodity.update_content()
-
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        commodity = self.commodity
-        country = self.country
-
-        ctx["selected_origin_country"] = country.country_code
-        ctx["selected_origin_country_name"] = country.name
-
-        commodity_path = commodity.get_path()
-        ctx["accordion_title"] = commodity_hierarchy_section_header(commodity_path)
-        ctx["commodity_hierarchy_context"] = get_hierarchy_context(
-            commodity_path,
-            country.country_code,
-            commodity.commodity_code,
-            commodity,
-        )
-        ctx["commodity"] = commodity
-
-        heading = commodity.get_heading()
-        chapter = heading.chapter
-        section = chapter.section
-        ctx["commodity_notes"] = commodity.tts_obj.footnotes
-        ctx["chapter_notes"] = chapter.chapter_notes
-        ctx["heading_notes"] = heading.heading_notes
-        ctx["section_notes"] = section.section_notes
-
-        return ctx
 
 
 def measure_condition_detail(
