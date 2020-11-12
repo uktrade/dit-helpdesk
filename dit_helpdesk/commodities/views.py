@@ -63,7 +63,7 @@ class BaseCommodityDetailView(TemplateView):
 
         commodity_path = commodity.get_path()
         ctx["accordion_title"] = commodity_hierarchy_section_header(commodity_path)
-        ctx["commodity_hierarchy_context"] = get_hierarchy_context(
+        ctx["hierarchy_context"] = get_hierarchy_context(
             commodity_path,
             country.country_code,
             commodity.commodity_code,

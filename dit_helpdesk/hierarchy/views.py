@@ -319,7 +319,7 @@ class BaseHeadingDetailView(TemplateView):
         if heading.get_hierarchy_children_count() > 0:
             heading_path.insert(0, heading.get_hierarchy_children())
         ctx["accordion_title"] = hierarchy_section_header(heading_path)
-        ctx["heading_hierarchy_context"] = get_hierarchy_context(
+        ctx["hierarchy_context"] = get_hierarchy_context(
             heading_path,
             country.country_code,
             heading.heading_code,
