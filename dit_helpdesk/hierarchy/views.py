@@ -1,6 +1,4 @@
-import json
 import logging
-import os
 import re
 
 from django.conf import settings
@@ -17,9 +15,6 @@ from .helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from .models import Section, Chapter, Heading, SubHeading
 
 code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
-HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
-with open(HIERARCHY_JSON_PATH) as f:
-    HIERARCHY_CACHED = json.loads(f.read())
 
 logger = logging.getLogger(__name__)
 
