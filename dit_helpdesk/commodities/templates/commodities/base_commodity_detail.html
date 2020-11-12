@@ -12,7 +12,7 @@
 
 {% load dotted_format %}
 
-{% block title %}Commodity information for {% for commodity_code_segment in commodity.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
+{% block title %}Commodity information for {{ commodity.commodity_code|dotted_format }}{% endblock title %}
 
 {% block content %}
     <div class="app-commodity-summary">
