@@ -66,6 +66,11 @@ urlpatterns = [
         name="heading-detail",
     ),
     re_path(
+        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        hierarchy_views.HeadingDetailNorthernIrelandView.as_view(),
+        name="heading-detail-northern-ireland",
+    ),
+    re_path(
         r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         commodity_views.CommodityDetailView.as_view(),
         name="commodity-detail",

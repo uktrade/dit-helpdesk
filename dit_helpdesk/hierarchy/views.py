@@ -4,7 +4,9 @@ import re
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views import View
 
 from commodities.models import Commodity
 from commodities.helpers import get_tariff_content_context
@@ -402,6 +404,12 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
         template = "hierarchy/heading_detail.html"
 
     return render(request, template, context)
+
+
+class HeadingDetailNorthernIrelandView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("OK")
 
 
 def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
