@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        hierarchy_views.heading_detail,
+        hierarchy_views.HeadingDetailView.as_view(),
         name="heading-detail",
     ),
     re_path(
