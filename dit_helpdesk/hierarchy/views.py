@@ -176,6 +176,81 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     return serializer(node="root", expanded=expanded, origin_country=country_code)
 
 
+class BaseCommodityObjectDetailView(TemplateView):
+    context_object_name = None
+
+    def get_commodity_object(self, **kwargs):
+        raise NotImplementedError()
+
+    def get(self, request, *args, **kwargs):
+        country_code = kwargs["country_code"]
+        try:
+            self.country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+
+        try:
+            self.commodity_object = self.get_commodity_object(**kwargs)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        if self.commodity_object.should_update_content():
+            self.commodity_object.update_content()
+
+        return super().get(request, *args, **kwargs)
+
+    def get_commodity_object_path(self, commodity_object):
+        raise NotImplementedError()
+
+    def get_hierarchy_section_header(self, path):
+        """
+        View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
+        and returned as formatted html string
+        :param reversed_commodity_tree: list
+        :return: html
+        """
+        section_index = len(path) - 1
+        section = path[section_index][0]
+        html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
+
+        return html
+
+    def get_hierarchy_context(self, commodity_path, country_code, commodity_code, current_item):
+        return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
+
+    def get_notes_context_data(self, commodity_object):
+        raise NotImplementedError()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        commodity_object = self.commodity_object
+        country = self.country
+
+        ctx["selected_origin_country"] = country.country_code
+        ctx["selected_origin_country_name"] = country.name
+
+        commodity_object_path = self.get_commodity_object_path(self.commodity_object)
+        ctx["accordion_title"] = self.get_hierarchy_section_header(commodity_object_path)
+        ctx["hierarchy_context"] = self.get_hierarchy_context(
+            commodity_object_path,
+            country.country_code,
+            commodity_object.commodity_code,
+            commodity_object,
+        )
+
+        ctx["commodity"] = commodity_object
+        if self.context_object_name:
+            ctx[self.context_object_name] = commodity_object
+
+        ctx["is_eu_member"] = country.country_code.upper() == "EU"
+
+        ctx.update(self.get_notes_context_data(self.commodity_object))
+
+        return ctx
+
+
 def section_detail(request, section_id, country_code):
     """
     View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
@@ -280,61 +355,34 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     return render(request, "hierarchy/chapter_detail.html", context)
 
 
-class BaseHeadingDetailView(TemplateView):
+class BaseHeadingDetailView(BaseCommodityObjectDetailView):
+    context_object_name = "heading"
 
-    def get(self, request, *args, **kwargs):
-        country_code = kwargs["country_code"]
-        try:
-            self.country = Country.objects.get(country_code=country_code.upper())
-        except Country.DoesNotExist:
-            messages.error(request, "Invalid originCountry")
-            return redirect("choose-country")
-
+    def get_commodity_object(self, **kwargs):
         heading_code = kwargs["heading_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
-        try:
-            self.heading = Heading.objects.get(
-                heading_code=heading_code,
-                goods_nomenclature_sid=goods_nomenclature_sid,
-            )
-        except Heading.DoesNotExist:
-            raise Http404
 
-        if self.heading.should_update_content():
-            self.heading.update_content()
+        return Heading.objects.get(
+            heading_code=heading_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
+        )
 
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        heading = self.heading
-        country = self.country
-
-        ctx["selected_origin_country"] = country.country_code
-        ctx["selected_origin_country_name"] = country.name
-
+    def get_commodity_object_path(self, heading):
         heading_path = heading.get_path()
         heading_path.insert(0, [heading])
         if heading.get_hierarchy_children_count() > 0:
             heading_path.insert(0, heading.get_hierarchy_children())
-        ctx["accordion_title"] = hierarchy_section_header(heading_path)
-        ctx["hierarchy_context"] = get_hierarchy_context(
-            heading_path,
-            country.country_code,
-            heading.heading_code,
-            heading,
-        )
-        ctx["heading"] = heading
-        ctx["commodity"] = heading
+
+        return heading_path
+
+    def get_notes_context_data(self, heading):
+        ctx = {}
 
         chapter = heading.chapter
         section = chapter.section
         ctx["heading_notes"] = heading.heading_notes
         ctx["chapter_notes"] = chapter.chapter_notes
         ctx["section_notes"] = section.section_notes
-
-        ctx["is_eu_member"] = country.country_code.upper() == "EU"
 
         return ctx
 
@@ -353,7 +401,7 @@ class HeadingDetailView(BaseHeadingDetailView):
         ctx = super().get_context_data(**kwargs)
 
         country = self.country
-        heading = self.heading
+        heading = self.commodity_object
 
         import_measures = []
         tariffs_and_charges_table_data = []

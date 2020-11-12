@@ -9,10 +9,8 @@
 
 from django.conf import settings
 from django.contrib import messages
-from django.http.response import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
 
 from countries.models import Country
 
@@ -20,56 +18,29 @@ from hierarchy.helpers import (
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
-from hierarchy.views import get_hierarchy_context
+from hierarchy.views import BaseCommodityObjectDetailView, get_hierarchy_context
 from regulations.models import RegulationGroup
 
 from .models import Commodity
 from .helpers import get_tariff_content_context
 
 
-class BaseCommodityDetailView(TemplateView):
+class BaseCommodityDetailView(BaseCommodityObjectDetailView):
 
-    def get(self, request, *args, **kwargs):
-        country_code = kwargs["country_code"]
-        try:
-            self.country = Country.objects.get(country_code=country_code.upper())
-        except Country.DoesNotExist:
-            messages.error(request, "Invalid originCountry")
-            return redirect("choose-country")
-
+    def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
-        try:
-            self.commodity = Commodity.objects.get(
-                commodity_code=commodity_code,
-                goods_nomenclature_sid=goods_nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            raise Http404
 
-        if self.commodity.should_update_content():
-            self.commodity.update_content()
-
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        commodity = self.commodity
-        country = self.country
-
-        ctx["selected_origin_country"] = country.country_code
-        ctx["selected_origin_country_name"] = country.name
-
-        commodity_path = commodity.get_path()
-        ctx["accordion_title"] = commodity_hierarchy_section_header(commodity_path)
-        ctx["hierarchy_context"] = get_hierarchy_context(
-            commodity_path,
-            country.country_code,
-            commodity.commodity_code,
-            commodity,
+        return Commodity.objects.get(
+            commodity_code=commodity_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
         )
-        ctx["commodity"] = commodity
+
+    def get_commodity_object_path(self, commodity):
+        return commodity.get_path()
+
+    def get_notes_context_data(self, commodity):
+        ctx = {}
 
         heading = commodity.get_heading()
         chapter = heading.chapter
@@ -96,7 +67,7 @@ class CommodityDetailView(BaseCommodityDetailView):
         ctx = super().get_context_data(**kwargs)
 
         country = self.country
-        commodity = self.commodity
+        commodity = self.commodity_object
 
         modals_dict = {}
 
@@ -257,16 +228,3 @@ def measure_quota_detail(
     }
 
     return render(request, "commodities/measure_quota_detail.html", context)
-
-
-def commodity_hierarchy_section_header(reversed_commodity_tree):
-    """
-    View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
-    and returned as formatted html string
-    :param reversed_commodity_tree: list
-    :return: html
-    """
-    section_index = len(reversed_commodity_tree) - 1
-    section = reversed_commodity_tree[section_index][0]
-    html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
-    return html
