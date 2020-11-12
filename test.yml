@@ -28,8 +28,10 @@ services:
       - .env.test
 
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     restart: always
+    environment:
+      - discovery.type=single-node
     ports:
       - "9200:9200"
 
