@@ -4,9 +4,9 @@ import re
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.views import View
+from django.views.generic import TemplateView
 
 from commodities.models import Commodity
 from commodities.helpers import get_tariff_content_context
@@ -406,10 +406,58 @@ def heading_detail(request, heading_code, country_code, nomenclature_sid):
     return render(request, template, context)
 
 
-class HeadingDetailNorthernIrelandView(View):
+class HeadingDetailNorthernIrelandView(TemplateView):
+    template_name = "hierarchy/heading_detail_northern_ireland.html"
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse("OK")
+        country_code = kwargs["country_code"]
+        try:
+            self.country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+
+        heading_code = kwargs["heading_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+        try:
+            self.heading = Heading.objects.get(
+                heading_code=heading_code,
+                goods_nomenclature_sid=goods_nomenclature_sid,
+            )
+        except Heading.DoesNotExist:
+            raise Http404
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        heading = self.heading
+        country = self.country
+
+        ctx["selected_origin_country"] = country.country_code
+        ctx["selected_origin_country_name"] = country.name
+
+        heading_path = heading.get_path()
+        heading_path.insert(0, [heading])
+        if heading.get_hierarchy_children_count() > 0:
+            heading_path.insert(0, heading.get_hierarchy_children())
+        ctx["accordion_title"] = hierarchy_section_header(heading_path)
+        ctx["heading_hierarchy_context"] = get_hierarchy_context(
+            heading_path,
+            country.country_code,
+            heading.heading_code,
+            heading,
+        )
+        ctx["heading"] = heading
+
+        chapter = heading.chapter
+        section = chapter.section
+        ctx["heading_notes"] = heading.heading_notes
+        ctx["chapter_notes"] = chapter.chapter_notes
+        ctx["section_notes"] = section.section_notes
+
+        return ctx
 
 
 def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
