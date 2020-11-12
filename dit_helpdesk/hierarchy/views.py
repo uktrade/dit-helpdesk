@@ -1,15 +1,12 @@
+import json
 import logging
 import os
-import json
 import re
-from datetime import datetime, timedelta, timezone
 
-import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 
 from commodities.models import Commodity
 from commodities.helpers import get_tariff_content_context
