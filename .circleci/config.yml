@@ -125,12 +125,14 @@ aliases:
     name: es
     environment:
       ES_URL: http://es:9200
+      discovery.type: single-node
 
   # Kibana container
   - &docker_kibana
     image: *kibana_version
     environment:
       ELASTICSEARCH_URL: http://es:9200
+      ELASTICSEARCH_HOSTS: http://es:9200
     ports: "5601:5601"
 
   # Python container
