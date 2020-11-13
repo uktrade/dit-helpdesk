@@ -11,9 +11,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 
 from countries.models import Country
 
+from core.helpers import require_feature
 from hierarchy.helpers import (
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
@@ -126,6 +128,7 @@ class CommodityDetailView(BaseCommodityDetailView):
         return ctx
 
 
+@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
     template_name = "commodities/commodity_detail_northern_ireland.html"
 

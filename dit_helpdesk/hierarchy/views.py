@@ -6,10 +6,12 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from commodities.models import Commodity
 from commodities.helpers import get_tariff_content_context
+from core.helpers import require_feature
 from countries.models import Country
 from regulations.models import RegulationGroup
 
@@ -473,6 +475,7 @@ class HeadingDetailView(BaseHeadingDetailView):
         return ctx
 
 
+@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class HeadingDetailNorthernIrelandView(BaseHeadingDetailView):
     template_name = "hierarchy/heading_detail_northern_ireland.html"
 
@@ -603,6 +606,7 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
         return ctx
 
 
+@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class SubHeadingDetailNorthernIrelandView(BaseSubHeadingDetailView):
     template_name = "hierarchy/subheading_detail_northern_ireland.html"
 
