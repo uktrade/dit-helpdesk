@@ -535,9 +535,6 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
 
         modals_dict = {}
         try:
-            if subheading.should_update_content():
-                subheading.update_content()
-
             import_measures = subheading.tts_obj.get_import_measures(country.country_code)
 
             tariffs_and_charges_measures = get_nomenclature_group_measures(
