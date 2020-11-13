@@ -20,7 +20,7 @@ from hierarchy.helpers import (
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
-from hierarchy.views import BaseCommodityObjectDetailView, get_hierarchy_context
+from hierarchy.views import BaseCommodityObjectDetailView
 from regulations.models import RegulationGroup
 
 from .models import Commodity
