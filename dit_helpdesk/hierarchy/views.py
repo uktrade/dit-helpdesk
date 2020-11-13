@@ -4,8 +4,9 @@ import re
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views import View
 from django.views.generic import TemplateView
 
 from commodities.models import Commodity
@@ -602,6 +603,12 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
         template = "hierarchy/subheading_detail.html"
 
     return render(request, template, context)
+
+
+class SubHeadingDetailNorthernIrelandView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("OK")
 
 
 def hierarchy_section_header(reversed_heading_tree):
