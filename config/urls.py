@@ -57,7 +57,7 @@ urlpatterns = [
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        hierarchy_views.subheading_detail,
+        hierarchy_views.SubHeadingDetailView.as_view(),
         name="subheading-detail",
     ),
     re_path(

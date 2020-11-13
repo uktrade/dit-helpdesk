@@ -61,7 +61,7 @@ class CommodityDetailView(BaseCommodityDetailView):
         else:
             template = "commodities/commodity_detail.html"
 
-        return template
+        return [template]
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
