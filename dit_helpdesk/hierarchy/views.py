@@ -4,9 +4,8 @@ import re
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.views import View
 from django.views.generic import TemplateView
 
 from commodities.models import Commodity
@@ -181,7 +180,7 @@ class BaseCommodityObjectDetailView(TemplateView):
     context_object_name = None
 
     def get_commodity_object(self, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Implement `get_commodity_object`")
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"]
@@ -202,7 +201,7 @@ class BaseCommodityObjectDetailView(TemplateView):
         return super().get(request, *args, **kwargs)
 
     def get_commodity_object_path(self, commodity_object):
-        raise NotImplementedError()
+        raise NotImplementedError("Implement `get_commodity_object_path`")
 
     def get_hierarchy_section_header(self, path):
         """
@@ -221,7 +220,7 @@ class BaseCommodityObjectDetailView(TemplateView):
         return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
 
     def get_notes_context_data(self, commodity_object):
-        raise NotImplementedError()
+        raise NotImplementedError("Implement `get_notes_context_data`")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -605,10 +604,36 @@ def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
     return render(request, template, context)
 
 
-class SubHeadingDetailNorthernIrelandView(View):
+class SubHeadingDetailNorthernIrelandView(BaseCommodityObjectDetailView):
+    context_object_name = "subheading"
+    template_name = "hierarchy/subheading_detail_northern_ireland.html"
 
-    def get(self, request, *args, **kwargs):
-        return HttpResponse("OK")
+    def get_commodity_object(self, **kwargs):
+        commodity_code = kwargs["commodity_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+
+        return SubHeading.objects.get(
+            commodity_code=commodity_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
+        )
+
+    def get_commodity_object_path(self, subheading):
+        subheading_path = subheading.get_path()
+        subheading_path.insert(0, [subheading])
+        if subheading.get_hierarchy_children_count() > 0:
+            subheading_path.insert(0, subheading.get_hierarchy_children())
+
+        return subheading_path
+
+    def get_notes_context_data(self, subheading):
+        chapter = subheading.get_chapter()
+        section = chapter.section
+
+        return {
+            "heading_notes": subheading.heading_notes,
+            "chapter_notes": chapter.chapter_notes,
+            "section_notes": section.section_notes,
+        }
 
 
 def hierarchy_section_header(reversed_heading_tree):
