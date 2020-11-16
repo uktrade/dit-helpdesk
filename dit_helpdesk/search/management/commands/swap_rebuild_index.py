@@ -1,5 +1,6 @@
 import datetime as dt
 import logging
+import contextlib
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -40,6 +41,16 @@ PATTERN = "{}-*"
 timer = Timer()
 
 
+@contextlib.contextmanager
+def swap_index_name(document, new_name):
+    old_name = document._index._name
+    document._index._name = new_name
+
+    yield
+
+    document._index._name = old_name
+
+
 def rebuild():
     """Create a new index with a unique name, populate it with objects from database and
     create / reassign an alias once the population is done.
@@ -78,10 +89,12 @@ def rebuild():
 
         # `doc` is e.g. `SectionDocument`
         doc_inst = doc()
-        doc_inst._index._name = new_index_name
-        qs = doc_inst.get_queryset()
 
-        doc_inst.update(qs)
+        with swap_index_name(doc_inst, new_index_name):
+            doc_inst._index._name = new_index_name
+            qs = doc_inst.get_queryset()
+
+            doc_inst.update(qs)
         logger.info("Done!")
 
         if is_alias:
