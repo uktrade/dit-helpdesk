@@ -6,3 +6,33 @@
     Export {{ commodity.commodity_code|dotted_format }}
     from {{ selected_origin_country_name }} to Northern Ireland
 {% endblock %}
+
+{% block details %}
+    <div id="app-commodity-details">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <nav>
+                    <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
+
+                    <ul class="app-contents govuk-!-margin-bottom-9">
+                        {% for section, heading, href in section_menu_items %}
+                            {% if section.should_be_displayed %}
+                                <li class="govuk-!-margin-bottom-1">
+                                    <a class="govuk-body" href="#{{href}}">
+                                        {{ heading }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
+
+                {% for section in sections %}
+                    {% if section.should_be_displayed %}
+                        {% include section.template %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
