@@ -146,7 +146,7 @@ class Section:
 
 
 class TariffAndChargesNorthernIrelandSection(Section):
-    template = "commodities/_tariffs_and_charges.html"
+    template = "commodities/_tariffs_and_charges_northern_ireland.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
@@ -223,6 +223,8 @@ class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
         ctx["sections"] = sections
         ctx["section_menu_items"] = section_menu_items
         ctx["modals"] = modals
+
+        ctx["column_titles"] = TABLE_COLUMN_TITLES
 
         return ctx
 
