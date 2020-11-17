@@ -4,6 +4,9 @@ import re
 import datetime as dt
 
 import requests
+
+from collections import defaultdict
+
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -13,6 +16,7 @@ from django.core.cache import cache
 from backports.datetime_fromisoformat import MonkeyPatch
 
 from countries.models import Country
+from rules_of_origin.models import Rule, RuleItem, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
 
 
@@ -65,17 +69,22 @@ class RulesOfOriginMixin:
         """
 
         country = Country.objects.get(country_code=country_code)
-        groups = {}
-        rules_of_origin = {"rules": set(), "footnotes": []}
-        chapter = self.get_chapter()
 
-        for group_member in country.rulesgroupmember_set.all():
-            for document in group_member.rules_group.rulesdocument_set.all():
-                rules_of_origin["footnotes"] = document.footnotes.all().order_by("id")
-                for rule in document.rule_set.all().order_by("id").select_related("chapter"):
-                    if rule.chapter == chapter:
-                        rules_of_origin["rules"].add(rule)
-            group_name = group_member.rules_group.description
+        chapter = self.get_chapter()
+        rules = Rule.objects.filter(
+            chapter=chapter,
+            rules_document__rules_group__rulesgroupmember__country=country,
+        ).select_related("rules_document__rules_group").prefetch_related("ruleitem_set")
+
+        footnotes = RulesDocumentFootnote.objects.filter(
+            rules_document__rules_group__rulesgroupmember__country=country,
+        ).order_by("id")
+        rules_of_origin = {"rules": set(), "footnotes": footnotes}
+
+        groups = {}
+        for rule in rules:
+            rules_of_origin["rules"].add(rule)
+            group_name = rule.rules_document.rules_group.description
             groups[group_name] = rules_of_origin
 
         return groups
