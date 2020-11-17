@@ -46,7 +46,7 @@ class BaseCMSMixin(object):
 class CMSView(BaseCMSMixin, View):
 
     def get(self, request):
-        return HttpResponse("OK")
+        return redirect("cms:regulation-groups-list")
 
 
 class RegulationGroupsListView(BaseCMSMixin, ListView):

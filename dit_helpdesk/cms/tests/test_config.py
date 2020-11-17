@@ -13,7 +13,7 @@ class TestConfig(CMSTestCase):
 
     def setUp(self):
         with reset_urls_for_settings(CMS_ENABLED=True):
-            self.url = reverse("cms:home")
+            self.url = reverse("cms:regulation-groups-list")
 
     def test_hide_cms_logged_out_user(self):
         with reset_urls_for_settings(CMS_ENABLED=True):
