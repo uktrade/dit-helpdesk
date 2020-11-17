@@ -29,8 +29,11 @@ CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 class RegionHierarchyManager(models.Manager):
     def get_queryset(self):
+        return self.for_region(settings.PRIMARY_REGION)
+
+    def for_region(self, region):
         return super().get_queryset().filter(
-            nomenclature_tree__region=settings.PRIMARY_REGION,
+            nomenclature_tree__region=region,
             nomenclature_tree__end_date__isnull=True
         )
 

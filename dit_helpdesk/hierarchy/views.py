@@ -178,19 +178,27 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     return serializer(node="root", expanded=expanded, origin_country=country_code)
 
 
+class Redirect(Exception):
+
+    def __init__(self, redirect_to, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+
+        self.redirect_to = redirect_to
+
+
 class BaseCommodityObjectDetailView(TemplateView):
     context_object_name = None
 
     def get_commodity_object(self, **kwargs):
         raise NotImplementedError("Implement `get_commodity_object`")
 
-    def get(self, request, *args, **kwargs):
+    def initialise(self, request, *args, **kwargs):
         country_code = kwargs["country_code"]
         try:
             self.country = Country.objects.get(country_code=country_code.upper())
         except Country.DoesNotExist:
             messages.error(request, "Invalid originCountry")
-            return redirect("choose-country")
+            raise Redirect(redirect("choose-country"))
 
         try:
             self.commodity_object = self.get_commodity_object(**kwargs)
@@ -199,6 +207,13 @@ class BaseCommodityObjectDetailView(TemplateView):
 
         if self.commodity_object.should_update_content():
             self.commodity_object.update_content()
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.initialise(request, *args, **kwargs)
+        except Redirect as r:
+            messages.error(request, "Invalid originCountry")
+            return r.redirect_to
 
         return super().get(request, *args, **kwargs)
 

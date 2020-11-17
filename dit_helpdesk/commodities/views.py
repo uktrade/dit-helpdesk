@@ -151,15 +151,27 @@ class TariffAndChargesNorthernIrelandSection(Section):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.tariffs_and_charges_measures = get_nomenclature_group_measures(
+        self.uk_tariffs_and_charges_measures = get_nomenclature_group_measures(
             self.commodity_object,
             "Tariffs and charges",
-            self.country.country_code
+            self.country.country_code,
+        )
+
+        eu_commodity_object = Commodity.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_object.commodity_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+        self.eu_tariffs_and_charges_measures = get_nomenclature_group_measures(
+            eu_commodity_object,
+            "Tariffs and charges",
+            self.country.country_code,
         )
 
     @property
     def should_be_displayed(self):
-        return bool(self.tariffs_and_charges_measures)
+        return bool(self.uk_tariffs_and_charges_measures)
 
     def get_menu_items(self):
         return [
@@ -169,28 +181,32 @@ class TariffAndChargesNorthernIrelandSection(Section):
     def get_modals_context_data(self):
         return [
             measure_json.measures_modals
-            for measure_json in self.tariffs_and_charges_measures
+            for measure_json in self.uk_tariffs_and_charges_measures
         ]
 
-    def get_context_data(self):
+    def _get_table_data(self, charges_and_measures):
         is_eu = self.country.country_code.upper() == "EU"
 
         tariffs_and_charges_table_data = (
             [
                 measure_json.get_table_row()
-                for measure_json in self.tariffs_and_charges_measures
+                for measure_json in charges_and_measures
                 if measure_json.vat or measure_json.excise
             ]
             if is_eu
             else
             [
                 measure_json.get_table_row()
-                for measure_json in self.tariffs_and_charges_measures
+                for measure_json in charges_and_measures
             ]
         )
 
+        return tariffs_and_charges_table_data
+
+    def get_context_data(self):
         return {
-            "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+            "uk_tariffs_and_charges_table_data": self._get_table_data(self.uk_tariffs_and_charges_measures),
+            "eu_tariffs_and_charges_table_data": self._get_table_data(self.eu_tariffs_and_charges_measures),
         }
 
 
@@ -200,6 +216,22 @@ class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
         TariffAndChargesNorthernIrelandSection,
     ]
     template_name = "commodities/commodity_detail_northern_ireland.html"
+
+    def initialise(self, request, *args, **kwargs):
+        super().initialise(request, *args, **kwargs)
+
+        try:
+            self.eu_commodity_object = Commodity.objects.for_region(
+                settings.SECONDARY_REGION,
+            ).get(
+                commodity_code=self.commodity_object.commodity_code,
+                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+            )
+        except Commodity.DoesNotExist:
+            self.eu_commodity_object = None
+        else:
+            if self.eu_commodity_object.should_update_content():
+                self.eu_commodity_object.update_content()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
