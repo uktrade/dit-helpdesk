@@ -1,8 +1,9 @@
 import json
 import logging
-from datetime import datetime, timezone
 
-from django.apps import apps
+from datetime import datetime, timezone
+from unittest.mock import PropertyMock, patch
+
 from django.conf import settings
 from django.test import TestCase, Client
 from django.urls import reverse, NoReverseMatch
@@ -32,10 +33,8 @@ class CommodityViewTestCase(TestCase):
     Test Commodity View
     """
 
-    def create_instance(self, data, app_name, model_name):
-        model = apps.get_model(app_label=app_name, model_name=model_name)
-        instance = model(**data, nomenclature_tree=self.tree)
-        instance.save()
+    def create_instance(self, model_class, data):
+        instance = model_class.objects.create(nomenclature_tree=self.tree, **data)
         return instance
 
     def setUp(self):
@@ -47,35 +46,45 @@ class CommodityViewTestCase(TestCase):
         self.tree = create_nomenclature_tree(region='UK')
 
         self.section = self.create_instance(
-            get_data(settings.SECTION_STRUCTURE), "hierarchy", "Section"
+            Section,
+            get_data(settings.SECTION_STRUCTURE),
         )
 
         self.chapter = self.create_instance(
-            get_data(settings.CHAPTER_STRUCTURE), "hierarchy", "Chapter"
+            Chapter,
+            get_data(settings.CHAPTER_STRUCTURE),
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
         self.heading = self.create_instance(
-            get_data(settings.HEADING_STRUCTURE), "hierarchy", "Heading"
+            Heading,
+            get_data(settings.HEADING_STRUCTURE),
         )
         self.heading.chapter_id = self.chapter.id
         self.heading.save()
 
         self.subheading = self.create_instance(
-            get_data(settings.SUBHEADING_STRUCTURE), "hierarchy", "SubHeading"
+            SubHeading,
+            get_data(settings.SUBHEADING_STRUCTURE),
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
         self.commodity = self.create_instance(
-            get_data(settings.COMMODITY_STRUCTURE), "commodities", "Commodity"
+            Commodity,
+            get_data(settings.COMMODITY_STRUCTURE),
         )
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.goods_nomenclature_sid = 12345
-        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
-
         self.commodity.save()
+
+        self.mock_commodity_tts_json = patch.object(
+            Commodity,
+            "tts_json",
+            new_callable=PropertyMock(return_value=json.dumps(get_data(settings.COMMODITY_DATA))),
+        )
+        self.mock_commodity_tts_json.start()
 
         self.client = Client()
         self.url = reverse(
@@ -86,6 +95,11 @@ class CommodityViewTestCase(TestCase):
                 "nomenclature_sid": 12345,
             },
         )
+
+    def tearDown(self):
+        super().tearDown()
+
+        self.mock_commodity_tts_json.stop()
 
     fixtures = [settings.COUNTRIES_DATA]
 
@@ -183,22 +197,26 @@ class CommodityViewTestCase(TestCase):
 
     def test_commodity_detail_update(self):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
-        commodity.tts_json = None
         commodity.save()
-        resp = self.client.get(
-            reverse(
-                "commodity-detail",
-                kwargs={
-                    "commodity_code": settings.TEST_COMMODITY_CODE,
-                    "country_code": settings.TEST_COUNTRY_CODE,
-                    "nomenclature_sid": 12345,
-                },
+
+        with patch.object(Commodity, "should_update_content") as mock_should_update_content, \
+            patch.object(Commodity, "update_content") as mock_update_content:
+            mock_should_update_content.return_value = True
+
+            resp = self.client.get(
+                reverse(
+                    "commodity-detail",
+                    kwargs={
+                        "commodity_code": settings.TEST_COMMODITY_CODE,
+                        "country_code": settings.TEST_COUNTRY_CODE,
+                        "nomenclature_sid": 12345,
+                    },
+                )
             )
-        )
+
         self.assertEqual(resp.status_code, 200)
-        self.assertAlmostEqual(
-            commodity.last_updated.toordinal(), datetime.now(timezone.utc).toordinal()
-        )
+        mock_should_update_content.assert_called_once()
+        mock_update_content.assert_called_once()
 
     def test_commodity_detail_with_rules_or_origin(self):
         rules_group = mixer.blend(RulesGroup, description="test rules group")

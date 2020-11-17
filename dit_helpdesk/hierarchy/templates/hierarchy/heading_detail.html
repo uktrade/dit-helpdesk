@@ -1,148 +1,64 @@
-{% extends 'core/base.html' %}
+{% extends "hierarchy/base_heading_detail.html" %}
 
-{% comment %}
-# -----------------------------------------------------------------------------
-# NOTE - table column headers.
-# -----------------------------------------------------------------------------
-# If the table columns headings are changed, they also need to be updated in
-# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
-# smaller screens will break.
-# -----------------------------------------------------------------------------
-{% endcomment %}
+{% load dotted_format %}
 
-{% load static staticfiles i18n cell_cleaner replace dotted_format %}
+{% block heading %}
+    {% if heading.leaf %}
+        Product export information for
+        {{ heading.commodity_code|dotted_format }}
+        from {{ selected_origin_country_name }} to the United Kingdom
+    {% else %}
+        Continue to classify
+        {{ heading.commodity_code|dotted_format }}
+        from {{ selected_origin_country_name }} to the United Kingdom
+    {% endif %}
+{% endblock %}
 
-{% block title %}Heading information for {% for commodity_code_segment in heading.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
-
-{% block content %}
-
-<div class="app-commodity-summary">
-    <div class="govuk-width-container">
-        <div id="app-commodity-overview">
+{% block details %}
+    <div id="app-commodity-details">
+        {% if ni_journey_enabled %}
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    {% include "search/_new_search_link.html" %}
-
-                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
-                        {% if heading.leaf %}
-                            Product export information for
-                            {{ heading.commodity_code|dotted_format }}
-                            from {{ selected_origin_country_name }} to the United Kingdom
-                        {% else %}
-                            Continue to classify
-                            {{ heading.commodity_code|dotted_format }}
-                            from {{ selected_origin_country_name }} to the United Kingdom
-                        {% endif %}
-                    </h2>
-
-                    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        Choose the commodity code below that is closest your goods to see more information
-                    </h3>
-
-                    <p class="govuk-body-s">Last updated {{ heading.last_updated }}</p>
-
-                    <div id="app-hierarchy-context">
-                        <div class="app-hierarchy-context__wrapper">
-                            <div class="helpdesk-breadcrumbs">
-                                <p class="govuk-body govuk-!-font-size-16">{{accordion_title}}</p>
-                                    {{ heading_hierarchy_context | safe }}
-                            </div>
-                        </div>
-
-                        {% if heading_notes or chapter_notes or section_notes %}
-                        <div id="app-commodity-notes">
-                            <details class="govuk-details govuk-!-margin-bottom-0">
-                                <summary class="govuk-details__summary govuk-!-margin-bottom-0">
-                                  <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
-                                </summary>
-                                <div class="govuk-details__text ">
-                                    {%  if heading_notes %}
-                                        <h3>Heading notes</h3>
-                                        {% include "hierarchy/_heading_notes.html" %}
-                                    {% endif %}
-                                    {% if chapter_notes %}
-                                        <h3>Chapter notes</h3>
-                                        {% include "hierarchy/_chapter_notes.html" %}
-                                    {% endif %}
-                                    {%  if section_notes %}
-                                        <h3>Section notes</h3>
-                                        {% include "hierarchy/_section_notes.html" %}
-                                    {% endif %}
-                                </div>
-                            </details>
-                        </div>
-                        {% endif %}
-                    </div>
+                    {% url "heading-detail-northern-ireland" country_code=selected_origin_country heading_code=heading.commodity_code nomenclature_sid=heading.goods_nomenclature_sid as ni_details_url %}
+                    {% include "hierarchy/_ni_warning.html" with ni_details_url=ni_details_url %}
                 </div>
             </div>
+        {% endif %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <nav>
+                    <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
+                    <ul class="app-contents govuk-!-margin-bottom-9">
+                        {% include "commodities/_commodity_contents.html" %}
+                    </ul>
+                </nav>
+
+                {% if tariffs_and_charges_table_data %}
+                    <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
+                        {% include "commodities/_current_tariffs_and_charges.html" %}
+                    </div>
+                {% endif %}
+
+                {% if quotas_table_data %}
+                    <div id="quotas" class="govuk-!-margin-bottom-9">
+                        {% include "commodities/_quotas.html" %}
+                    </div>
+                {% endif %}
+
+                {% if other_table_data %}
+                    <div id="other_measures" class="govuk-!-margin-bottom-9">
+                        {% include "commodities/_other_measures.html" %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if rules_of_origin %}
+                {% include "commodities/_rules_of_origin.html" %}
+            {% endif %}
+
+            {% if regulation_groups %}
+                {% include "commodities/_regulations.html" %}
+            {% endif %}
         </div>
     </div>
-</div>
-
-{% if heading.leaf %}
-<div class="govuk-width-container">
-    <main id="main-content" class="govuk-main-wrapper">
-
-        <div id="app-commodity-details">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <nav>
-                        <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
-                        <ul class="app-contents govuk-!-margin-bottom-9">
-
-                         {% include "commodities/_commodity_contents.html" %}
-
-                        </ul>
-                    </nav>
-
-                        {% if tariffs_and_charges_table_data %}
-                        <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
-                            {% include "commodities/_current_tariffs_and_charges.html" %}
-                        </div>
-                        {% endif %}
-
-                        {% if quotas_table_data %}
-                            <div id="quotas" class="govuk-!-margin-bottom-9">
-
-                            {% include "commodities/_quotas.html" %}
-
-                            </div>
-                        {% endif %}
-
-                        {% if other_table_data %}
-                            <div id="other_measures" class="govuk-!-margin-bottom-9">
-
-                            {% include "commodities/_other_measures.html" %}
-
-                            </div>
-                        {% endif %}
-
-                </div>
-
-                {% if rules_of_origin %}
-
-                    {% include "commodities/_rules_of_origin.html" %}
-
-                {% endif %}
-
-                {% if regulation_groups %}
-
-                    {% include "commodities/_regulations.html" %}
-
-                {% endif %}
-
-            </div>
-        </div>
-
-    </main>
-
-    {% if modals %}
-        {% for modal in modals.values %}
-            {{ modal|safe }}
-        {% endfor %}
-    {% endif %}
-
-</div>
-{% endif %}
-
 {% endblock %}

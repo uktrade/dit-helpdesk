@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+
+{% comment %}
+# -----------------------------------------------------------------------------
+# NOTE - table column headers.
+# -----------------------------------------------------------------------------
+# If the table columns headings are changed, they also need to be updated in
+# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
+# smaller screens will break.
+# -----------------------------------------------------------------------------
+{% endcomment %}
+
+{% load dotted_format %}
+
+{% block content %}
+    <div class="app-commodity-summary">
+        <div class="govuk-width-container">
+            <div id="app-commodity-overview">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        {% include "search/_new_search_link.html" %}
+
+                        <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                            {% block heading %}
+                            {% endblock %}
+                        </h2>
+
+                        {% block subheading %}
+                        {% endblock %}
+
+                        <p class="govuk-body-s">Last updated {{ commodity.last_updated }}</p>
+
+                        <div id="app-hierarchy-context">
+                            <div class="app-hierarchy-context__wrapper">
+                                <div class="helpdesk-breadcrumbs">
+                                    <p class="govuk-body govuk-!-font-size-16">{{accordion_title}}</p>
+                                        {{ hierarchy_context | safe }}
+                                </div>
+                            </div>
+
+                            {% if commodity_notes or heading_notes or chapter_notes or section_notes %}
+                                <div id="app-commodity-notes">
+                                    <details class="govuk-details govuk-!-margin-bottom-0">
+                                        <summary class="govuk-details__summary govuk-!-margin-bottom-0">
+                                        <span class="govuk-details__summary-text govuk-!-font-size-16">Notes</span>
+                                        </summary>
+                                        <div class="govuk-details__text ">
+                                            {% if commodity_notes %}
+                                                <h3>Commodity notes</h3>
+                                                {% include "commodities/_commodity_notes.html" %}
+                                            {% endif %}
+                                            {%  if heading_notes %}
+                                                <h3>Heading notes</h3>
+                                                {% include "hierarchy/_heading_notes.html" %}
+                                            {% endif %}
+                                            {% if chapter_notes %}
+                                                <h3>Chapter notes</h3>
+                                                {% include "hierarchy/_chapter_notes.html" %}
+                                            {% endif %}
+                                            {%  if section_notes %}
+                                                <h3>Section notes</h3>
+                                                {% include "hierarchy/_section_notes.html" %}
+                                            {% endif %}
+                                        </div>
+                                    </details>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if commodity.leaf %}
+        <div class="govuk-width-container">
+            <main id="main-content" class="govuk-main-wrapper">
+                {% block details %}
+                {% endblock %}
+            </main>
+
+            {% if modals %}
+                {% for modal in modals.values %}
+                    {{ modal|safe }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

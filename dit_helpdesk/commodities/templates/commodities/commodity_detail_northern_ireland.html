@@ -1,0 +1,8 @@
+{% extends "commodities/base_commodity_detail.html" %}
+
+{% load dotted_format %}
+
+{% block heading %}
+    Export {{ commodity.commodity_code|dotted_format }}
+    from {{ selected_origin_country_name }} to Northern Ireland
+{% endblock %}
