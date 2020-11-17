@@ -33,7 +33,6 @@ $govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $gov
 
   @include govuk-font($size: 16);
   @include govuk-text-colour;
-  @include govuk-focusable;
   @include govuk-media-query($from: tablet) {
     position: relative;
     top: inherit;
@@ -114,7 +113,6 @@ $govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $gov
   background: none;
   cursor: pointer;
 
-  @include govuk-focusable-fill;
   @include govuk-font($size: 36, $weight: bold, $line-height: 1.3);
   @include govuk-media-query($until: tablet) {
     font-size: 36px;

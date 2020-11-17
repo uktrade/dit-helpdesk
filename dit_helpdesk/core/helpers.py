@@ -1,10 +1,12 @@
 import sys
 
 from contextlib import contextmanager
+from functools import wraps
 from importlib import import_module, reload
 from time import time
 
 from django.conf import settings
+from django.http import Http404
 from django.test import override_settings
 from django.urls import clear_url_caches
 
@@ -44,3 +46,15 @@ def reset_urls_for_settings(urlconf=None, **kwargs):
         yield
 
     reload_urls(urlconf)
+
+
+def require_feature(feature_switch):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
+            if not getattr(settings, feature_switch, False):
+                raise Http404
+
+            return func(request, *args, **kwargs)
+        return inner
+    return decorator

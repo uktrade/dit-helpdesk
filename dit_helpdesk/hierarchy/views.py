@@ -1,18 +1,17 @@
 import logging
-import os
-import json
 import re
-from datetime import datetime, timedelta, timezone
 
-import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
 
 from commodities.models import Commodity
 from commodities.helpers import get_tariff_content_context
+from core.helpers import require_feature
 from countries.models import Country
 from regulations.models import RegulationGroup
 
@@ -20,9 +19,6 @@ from .helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
 from .models import Section, Chapter, Heading, SubHeading
 
 code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
-HIERARCHY_JSON_PATH = os.path.join(os.path.dirname(__file__), "hierarchy_cached.json")
-with open(HIERARCHY_JSON_PATH) as f:
-    HIERARCHY_CACHED = json.loads(f.read())
 
 logger = logging.getLogger(__name__)
 
@@ -182,6 +178,81 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     return serializer(node="root", expanded=expanded, origin_country=country_code)
 
 
+class BaseCommodityObjectDetailView(TemplateView):
+    context_object_name = None
+
+    def get_commodity_object(self, **kwargs):
+        raise NotImplementedError("Implement `get_commodity_object`")
+
+    def get(self, request, *args, **kwargs):
+        country_code = kwargs["country_code"]
+        try:
+            self.country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+
+        try:
+            self.commodity_object = self.get_commodity_object(**kwargs)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        if self.commodity_object.should_update_content():
+            self.commodity_object.update_content()
+
+        return super().get(request, *args, **kwargs)
+
+    def get_commodity_object_path(self, commodity_object):
+        raise NotImplementedError("Implement `get_commodity_object_path`")
+
+    def get_hierarchy_section_header(self, path):
+        """
+        View helper function to extract the Section Numeral and title for the hierarchy context of the commodity
+        and returned as formatted html string
+        :param reversed_commodity_tree: list
+        :return: html
+        """
+        section_index = len(path) - 1
+        section = path[section_index][0]
+        html = f"Section {section.roman_numeral}: {section.title.capitalize()}"
+
+        return html
+
+    def get_hierarchy_context(self, commodity_path, country_code, commodity_code, current_item):
+        return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
+
+    def get_notes_context_data(self, commodity_object):
+        raise NotImplementedError("Implement `get_notes_context_data`")
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        commodity_object = self.commodity_object
+        country = self.country
+
+        ctx["selected_origin_country"] = country.country_code
+        ctx["selected_origin_country_name"] = country.name
+
+        commodity_object_path = self.get_commodity_object_path(self.commodity_object)
+        ctx["accordion_title"] = self.get_hierarchy_section_header(commodity_object_path)
+        ctx["hierarchy_context"] = self.get_hierarchy_context(
+            commodity_object_path,
+            country.country_code,
+            commodity_object.commodity_code,
+            commodity_object,
+        )
+
+        ctx["commodity"] = commodity_object
+        if self.context_object_name:
+            ctx[self.context_object_name] = commodity_object
+
+        ctx["is_eu_member"] = country.country_code.upper() == "EU"
+
+        ctx.update(self.get_notes_context_data(self.commodity_object))
+
+        return ctx
+
+
 def section_detail(request, section_id, country_code):
     """
     View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
@@ -286,257 +357,255 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     return render(request, "hierarchy/chapter_detail.html", context)
 
 
-def heading_detail(request, heading_code, country_code, nomenclature_sid):
-    """
-    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
-    display and the two character country code to provide the exporter geographical context which is
-    used to display the appropriate related supporting content
+class BaseHeadingDetailView(BaseCommodityObjectDetailView):
+    context_object_name = "heading"
 
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :return:
-    """
+    def get_commodity_object(self, **kwargs):
+        heading_code = kwargs["heading_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
 
-    country = Country.objects.filter(country_code=country_code.upper()).first()
-
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
-
-    heading = Heading.objects.get(
-        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
-    )
-
-    import_measures = []
-    tariffs_and_charges_table_data = []
-    quotas_table_data = []
-    other_table_data = []
-    modals_dict = {}
-
-    try:
-
-        if heading.should_update_content():
-            heading.update_content()
-
-        import_measures = heading.tts_obj.get_import_measures(country.country_code)
-        # table_data = [measure_json.get_table_row() for measure_json in import_measures]
-
-        tariffs_and_charges_measures = get_nomenclature_group_measures(
-            heading, "Tariffs and charges", country.country_code
+        return Heading.objects.get(
+            heading_code=heading_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
         )
-        tariffs_and_charges_table_data = (
-            [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
-                if measure_json.vat or measure_json.excise
+
+    def get_commodity_object_path(self, heading):
+        heading_path = heading.get_path()
+        heading_path.insert(0, [heading])
+        if heading.get_hierarchy_children_count() > 0:
+            heading_path.insert(0, heading.get_hierarchy_children())
+
+        return heading_path
+
+    def get_notes_context_data(self, heading):
+        ctx = {}
+
+        chapter = heading.chapter
+        section = chapter.section
+        ctx["heading_notes"] = heading.heading_notes
+        ctx["chapter_notes"] = chapter.chapter_notes
+        ctx["section_notes"] = section.section_notes
+
+        return ctx
+
+
+class HeadingDetailView(BaseHeadingDetailView):
+
+    def get_template_names(self):
+        if settings.UKGT_ENABLED:
+            template = "hierarchy/heading_detail_ukgt.html"
+        else:
+            template = "hierarchy/heading_detail.html"
+
+        return [template]
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        country = self.country
+        heading = self.commodity_object
+
+        import_measures = []
+        tariffs_and_charges_table_data = []
+        quotas_table_data = []
+        other_table_data = []
+        modals_dict = {}
+
+        try:
+            import_measures = heading.tts_obj.get_import_measures(country.country_code)
+
+            tariffs_and_charges_measures = get_nomenclature_group_measures(
+                heading, "Tariffs and charges", country.country_code
+            )
+            tariffs_and_charges_table_data = (
+                [
+                    measure_json.get_table_row()
+                    for measure_json in tariffs_and_charges_measures
+                    if measure_json.vat or measure_json.excise
+                ]
+                if country.country_code.upper() == "EU"
+                else [
+                    measure_json.get_table_row()
+                    for measure_json in tariffs_and_charges_measures
+                ]
+            )
+
+            for measure_json in tariffs_and_charges_measures:
+                modals_dict.update(measure_json.measures_modals)
+
+            quotas_measures = get_nomenclature_group_measures(
+                heading, "Quotas", country.country_code
+            )
+            quotas_table_data = [
+                measure_json.get_table_row() for measure_json in quotas_measures
             ]
-            if country_code.upper() == "EU"
-            else [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
+            for measure_json in quotas_measures:
+                modals_dict.update(measure_json.measures_modals)
+
+            other_measures = get_nomenclature_group_measures(
+                heading, "Other measures", country.country_code
+            )
+            other_table_data = [
+                measure_json.get_table_row() for measure_json in other_measures
             ]
+            for measure_json in other_measures:
+                modals_dict.update(measure_json.measures_modals)
+
+        except Exception as ex:
+            logger.info(ex.args)
+
+        rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
+
+        tariff_content_context = get_tariff_content_context(country, heading)
+        ctx.update(tariff_content_context)
+
+        if import_measures:
+            ctx.update(
+                {
+                    "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+                    "quotas_table_data": quotas_table_data,
+                    "other_table_data": other_table_data,
+                    "column_titles": TABLE_COLUMN_TITLES,
+                    "modals": modals_dict,
+                    "rules_of_origin": rules_of_origin,
+                    "regulation_groups": RegulationGroup.objects.inherited(heading).order_by('title'),
+                }
+            )
+
+        return ctx
+
+
+@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
+class HeadingDetailNorthernIrelandView(BaseHeadingDetailView):
+    template_name = "hierarchy/heading_detail_northern_ireland.html"
+
+
+class BaseSubHeadingDetailView(BaseCommodityObjectDetailView):
+    context_object_name = "subheading"
+
+    def get_commodity_object(self, **kwargs):
+        commodity_code = kwargs["commodity_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+
+        return SubHeading.objects.get(
+            commodity_code=commodity_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
         )
 
-        for measure_json in tariffs_and_charges_measures:
-            modals_dict.update(measure_json.measures_modals)
+    def get_commodity_object_path(self, subheading):
+        subheading_path = subheading.get_path()
+        subheading_path.insert(0, [subheading])
+        if subheading.get_hierarchy_children_count() > 0:
+            subheading_path.insert(0, subheading.get_hierarchy_children())
 
-        quotas_measures = get_nomenclature_group_measures(
-            heading, "Quotas", country.country_code
-        )
-        quotas_table_data = [
-            measure_json.get_table_row() for measure_json in quotas_measures
-        ]
-        for measure_json in quotas_measures:
-            modals_dict.update(measure_json.measures_modals)
+        return subheading_path
 
-        other_measures = get_nomenclature_group_measures(
-            heading, "Other measures", country.country_code
-        )
-        other_table_data = [
-            measure_json.get_table_row() for measure_json in other_measures
-        ]
-        for measure_json in other_measures:
-            modals_dict.update(measure_json.measures_modals)
+    def get_notes_context_data(self, subheading):
+        chapter = subheading.get_chapter()
+        section = chapter.section
 
-    except Exception as ex:
-        logger.info(ex.args)
-
-    heading_path = heading.get_path()
-    heading_path.insert(0, [heading])
-    if heading.get_hierarchy_children_count() > 0:
-        heading_path.insert(0, heading.get_hierarchy_children())
-
-    accordion_title = hierarchy_section_header(heading_path)
-    rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
-
-    chapter = heading.chapter
-    section = chapter.section
-
-    context = {
-        "selected_origin_country": country.country_code,
-        "heading": heading,
-        "commodity": heading,   # to make it compatible with commodity templates
-        "selected_origin_country_name": country.name,
-        "heading_notes": heading.heading_notes,
-        "chapter_notes": chapter.chapter_notes,
-        "section_notes": section.section_notes,
-        "accordion_title": accordion_title,
-        "heading_hierarchy_context": get_hierarchy_context(
-            heading_path, country.country_code, heading_code, heading
-        ),
-        "is_eu_member": country_code.upper() == "EU",
-    }
-
-    tariff_content_context = get_tariff_content_context(country, heading)
-    context.update(tariff_content_context)
-
-    if import_measures:
-        context.update(
-            {
-                "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
-                "quotas_table_data": quotas_table_data,
-                "other_table_data": other_table_data,
-                "column_titles": TABLE_COLUMN_TITLES,
-                "modals": modals_dict,
-                "rules_of_origin": rules_of_origin,
-                "regulation_groups": RegulationGroup.objects.inherited(heading).order_by('title'),
-            }
-        )
-
-    if settings.UKGT_ENABLED:
-        template = "hierarchy/heading_detail_ukgt.html"
-    else:
-        template = "hierarchy/heading_detail.html"
-
-    return render(request, template, context)
+        return {
+            "heading_notes": subheading.heading_notes,
+            "chapter_notes": chapter.chapter_notes,
+            "section_notes": section.section_notes,
+        }
 
 
-def subheading_detail(request, commodity_code, country_code, nomenclature_sid):
-    """
-    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
-    display and the two character country code to provide the exporter geographical context which is
-    used to display the appropriate related supporting content
+class SubHeadingDetailView(BaseSubHeadingDetailView):
 
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :return:
-    """
+    def get_template_names(self):
+        if settings.UKGT_ENABLED:
+            template = "hierarchy/subheading_detail_ukgt.html"
+        else:
+            template = "hierarchy/subheading_detail.html"
 
-    country = Country.objects.filter(country_code=country_code.upper()).first()
+        return [template]
 
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
 
-    subheading = SubHeading.objects.get(
-        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
-    )
+        subheading = self.commodity_object
+        country = self.country
 
-    import_measures = []
+        import_measures = []
 
-    tariffs_and_charges_table_data = []
-    quotas_table_data = []
-    other_table_data = []
+        tariffs_and_charges_table_data = []
+        quotas_table_data = []
+        other_table_data = []
 
-    modals_dict = {}
-    try:
-        if subheading.should_update_content():
-            subheading.update_content()
+        modals_dict = {}
+        try:
+            import_measures = subheading.tts_obj.get_import_measures(country.country_code)
 
-        import_measures = subheading.tts_obj.get_import_measures(country.country_code)
+            tariffs_and_charges_measures = get_nomenclature_group_measures(
+                subheading, "Tariffs and charges", country.country_code
+            )
+            tariffs_and_charges_table_data = (
+                [
+                    measure_json.get_table_row()
+                    for measure_json in tariffs_and_charges_measures
+                    if measure_json.vat or measure_json.excise
+                ]
+                if country.country_code.upper() == "EU"
+                else [
+                    measure_json.get_table_row()
+                    for measure_json in tariffs_and_charges_measures
+                ]
+            )
 
-        tariffs_and_charges_measures = get_nomenclature_group_measures(
-            subheading, "Tariffs and charges", country.country_code
-        )
-        tariffs_and_charges_table_data = (
-            [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
-                if measure_json.vat or measure_json.excise
+            for measure_json in tariffs_and_charges_measures:
+                modals_dict.update(measure_json.measures_modals)
+
+            quotas_measures = get_nomenclature_group_measures(
+                subheading, "Quotas", country.country_code
+            )
+            quotas_table_data = [
+                measure_json.get_table_row() for measure_json in quotas_measures
             ]
-            if country_code.upper() == "EU"
-            else [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
+            for measure_json in quotas_measures:
+                modals_dict.update(measure_json.measures_modals)
+
+            other_measures = get_nomenclature_group_measures(
+                subheading, "Other measures", country.country_code
+            )
+            other_table_data = [
+                measure_json.get_table_row() for measure_json in other_measures
             ]
-        )
+            for measure_json in other_measures:
+                modals_dict.update(measure_json.measures_modals)
 
-        for measure_json in tariffs_and_charges_measures:
-            modals_dict.update(measure_json.measures_modals)
+        except Exception as ex:
+            logger.info("subheading 2: ", ex.args)
 
-        quotas_measures = get_nomenclature_group_measures(
-            subheading, "Quotas", country.country_code
-        )
-        quotas_table_data = [
-            measure_json.get_table_row() for measure_json in quotas_measures
-        ]
-        for measure_json in quotas_measures:
-            modals_dict.update(measure_json.measures_modals)
+        rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
-        other_measures = get_nomenclature_group_measures(
-            subheading, "Other measures", country.country_code
-        )
-        other_table_data = [
-            measure_json.get_table_row() for measure_json in other_measures
-        ]
-        for measure_json in other_measures:
-            modals_dict.update(measure_json.measures_modals)
+        tariff_content_context = get_tariff_content_context(country, subheading)
+        ctx.update(tariff_content_context)
 
-    except Exception as ex:
-        logger.info("subheading 2: ", ex.args)
+        if (
+            import_measures
+            and tariffs_and_charges_table_data
+            or quotas_table_data
+            or other_table_data
+        ):
+            ctx.update(
+                {
+                    "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
+                    "quotas_table_data": quotas_table_data,
+                    "other_table_data": other_table_data,
+                    "column_titles": TABLE_COLUMN_TITLES,
+                    "modals": modals_dict,
+                    "rules_of_origin": rules_of_origin,
+                    "regulation_groups": RegulationGroup.objects.inherited(subheading).order_by('title'),
+                }
+            )
 
-    subheading_path = subheading.get_path()
-    subheading_path.insert(0, [subheading])
-    if subheading.get_hierarchy_children_count() > 0:
-        subheading_path.insert(0, subheading.get_hierarchy_children())
+        return ctx
 
-    accordion_title = hierarchy_section_header(subheading_path)
-    rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
-    context = {
-        "selected_origin_country": country.country_code,
-        "subheading": subheading,
-        "commodity": subheading,    # to make it compatible with commodity templates
-        "selected_origin_country_name": country.name,
-        "heading_notes": subheading.heading_notes,
-        "chapter_notes": subheading.get_chapter().chapter_notes,
-        "section_notes": subheading.get_chapter().section.section_notes,
-        "accordion_title": accordion_title,
-        "subheading_hierarchy_context": get_hierarchy_context(
-            subheading_path, country.country_code, commodity_code, subheading
-        ),
-        "is_eu_member": country_code.upper() == "EU",
-    }
-
-    tariff_content_context = get_tariff_content_context(country, subheading)
-    context.update(tariff_content_context)
-
-    if (
-        import_measures
-        and tariffs_and_charges_table_data
-        or quotas_table_data
-        or other_table_data
-    ):
-        context.update(
-            {
-                "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
-                "quotas_table_data": quotas_table_data,
-                "other_table_data": other_table_data,
-                "column_titles": TABLE_COLUMN_TITLES,
-                "modals": modals_dict,
-                "rules_of_origin": rules_of_origin,
-                "regulation_groups": RegulationGroup.objects.inherited(subheading).order_by('title'),
-            }
-        )
-
-    if settings.UKGT_ENABLED:
-        template = "hierarchy/subheading_detail_ukgt.html"
-    else:
-        template = "hierarchy/subheading_detail.html"
-
-    return render(request, template, context)
+@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
+class SubHeadingDetailNorthernIrelandView(BaseSubHeadingDetailView):
+    template_name = "hierarchy/subheading_detail_northern_ireland.html"
 
 
 def hierarchy_section_header(reversed_heading_tree):
@@ -556,12 +625,12 @@ def get_hierarchy_item_by_code(code):
 
     try:
         return Chapter.objects.get(chapter_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
         return Heading.objects.get(heading_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
@@ -572,12 +641,12 @@ def get_hierarchy_item_by_code(code):
             return subheading.first()
         else:
             raise ObjectDoesNotExist
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
     try:
         return Commodity.objects.get(commodity_code=code)
-    except ObjectDoesNotExist as ex:
+    except ObjectDoesNotExist:
         pass
 
 
@@ -725,7 +794,6 @@ def measure_quota_detail(
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
     quota_def = import_measure.get_measure_quota_definition_by_order_number(
         order_number
     )

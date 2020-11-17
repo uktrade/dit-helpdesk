@@ -1,5 +1,5 @@
-require('govuk-frontend/vendor/polyfills/Function/prototype/bind')
-require('govuk-frontend/vendor/polyfills/Event')
+require('govuk-frontend/govuk/vendor/polyfills/Function/prototype/bind')
+require('govuk-frontend/govuk/vendor/polyfills/Event')
 require('../vendor/polyfills/array-filter')
 
 // enable collapsing on commodity tree

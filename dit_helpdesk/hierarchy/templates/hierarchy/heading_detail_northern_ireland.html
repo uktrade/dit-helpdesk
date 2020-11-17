@@ -1,0 +1,8 @@
+{% extends "hierarchy/base_heading_detail.html" %}
+
+{% load dotted_format %}
+
+{% block heading %}
+    Export {{ heading.heading_code|dotted_format }}
+    from {{ selected_origin_country_name }} to Northern Ireland
+{% endblock %}

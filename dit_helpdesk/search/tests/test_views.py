@@ -273,6 +273,13 @@ class CommodityKeywordSearchViewTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
+    @classmethod
+    def setUpClass(cls):
+        super(CommodityKeywordSearchViewTestCase, cls).setUpClass()
+        for index in indices:
+            if not index.exists():
+                index.save()
+
     fixtures = [settings.COUNTRIES_DATA]
 
     def test_commodity_keyword_search_query_is_empty(self):

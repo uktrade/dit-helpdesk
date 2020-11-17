@@ -1,4 +1,6 @@
-@import "./common.scss";
+@import "govuk-frontend/govuk/all";
+
+@import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";
 
 @import "./_modal.scss";
 

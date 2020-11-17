@@ -57,18 +57,33 @@ urlpatterns = [
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        hierarchy_views.subheading_detail,
+        hierarchy_views.SubHeadingDetailView.as_view(),
         name="subheading-detail",
     ),
     re_path(
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        hierarchy_views.SubHeadingDetailNorthernIrelandView.as_view(),
+        name="subheading-detail-northern-ireland",
+    ),
+    re_path(
         r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        hierarchy_views.heading_detail,
+        hierarchy_views.HeadingDetailView.as_view(),
         name="heading-detail",
     ),
     re_path(
+        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        hierarchy_views.HeadingDetailNorthernIrelandView.as_view(),
+        name="heading-detail-northern-ireland",
+    ),
+    re_path(
         r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        commodity_views.commodity_detail,
+        commodity_views.CommodityDetailView.as_view(),
         name="commodity-detail",
+    ),
+    re_path(
+        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        commodity_views.CommodityDetailNorthernIrelandView.as_view(),
+        name="commodity-detail-northern-ireland",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"

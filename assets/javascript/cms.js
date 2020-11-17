@@ -1,5 +1,5 @@
-var Button = require('govuk-frontend/components/button/button.js')
-var common = require('govuk-frontend/common')
+var Button = require('govuk-frontend/govuk/components/button/button.js')
+var common = require('govuk-frontend/govuk/common')
 
 var nodeListForEach = common.nodeListForEach
 

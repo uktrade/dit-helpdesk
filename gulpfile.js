@@ -42,7 +42,7 @@ const paths = {
     destination: './dit_helpdesk/static_collected/js/'
   },
   govukFrontendAssets: {
-    source: './node_modules/govuk-frontend/assets/**/*.*',
+    source: './node_modules/govuk-frontend/govuk/assets/**/*.*',
     destination: './dit_helpdesk/static_collected/'
   },
   manifest: './manifest'

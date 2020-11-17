@@ -1,5 +1,7 @@
 from django.conf import settings
-from django_elasticsearch_dsl import DocType, Index, fields
+from django_elasticsearch_dsl import Document, Index, fields
+from django_elasticsearch_dsl.registries import registry
+
 from hierarchy.models import SubHeading
 from search.documents.util import html_strip
 
@@ -11,10 +13,13 @@ INDEX.settings(number_of_shards=1, number_of_replicas=0)
 
 
 @INDEX.doc_type
-class SubHeadingDocument(DocType):
+class SubHeadingDocument(Document):
     """
     SubHeading elasticsearch document
     """
+
+    class Django:
+        model = SubHeading
 
     id = fields.IntegerField(attr="goods_nomenclature_sid")
 
@@ -33,6 +38,3 @@ class SubHeadingDocument(DocType):
     ranking = fields.IntegerField()
 
     leaf = fields.BooleanField(attr="leaf")
-
-    class Meta:
-        model = SubHeading
