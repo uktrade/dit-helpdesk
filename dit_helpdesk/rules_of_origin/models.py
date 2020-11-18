@@ -1,38 +1,6 @@
 from django.db import models
 
-
-class RulesGroup(models.Model):
-    """
-    Rules of Origin Group
-    """
-
-    description = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        verbose_name_plural = "rules of origin"
-
-    def __str__(self):
-        return self.description
-
-
-class RulesGroupMember(models.Model):
-    """
-    Rules of Origin Group
-    """
-
-    rules_group = models.ForeignKey("RulesGroup", on_delete=models.CASCADE)
-    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE)
-    start_date = models.DateField()
-    finish_date = models.DateField(null=True, blank=True)
-
-    class Meta:
-        verbose_name_plural = "rules of origin group members"
-        unique_together = ("country", "rules_group", "start_date")
-
-    def __str__(self):
-        return "{1} Rules group member {0}".format(
-            self.country.country_code, self.rules_group.description
-        )
+from countries.models import Country
 
 
 class RulesDocument(models.Model):
@@ -41,14 +9,14 @@ class RulesDocument(models.Model):
     """
 
     description = models.TextField()
-    rules_group = models.ForeignKey(
-        "RulesGroup", on_delete=models.CASCADE, null=True, blank=True
-    )
+    countries = models.ManyToManyField(Country, related_name='rules_documents')
     source_url = models.URLField(null=True, blank=True)
+    start_date = models.DateField(auto_now=True)
+    end_date = models.DateField(null=True)
 
     class Meta:
         verbose_name_plural = "rules of origin documents"
-        unique_together = ("rules_group", "source_url")
+        unique_together = ("source_url", )
 
     def __str__(self):
         return self.description
@@ -59,16 +27,20 @@ class Rule(models.Model):
     Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
     """
 
-    rule_id = models.CharField(max_length=255)
+    code = models.CharField(null=True, blank=True, max_length=255)
+    description = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
     )
-    chapter = models.ForeignKey(
+    rule_text = models.TextField(null=True, blank=True)
+    alt_rule_text = models.TextField(null=True, blank=True)
+    chapters = models.ManyToManyField(
         "hierarchy.Chapter",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        related_name="rules_of_origin",
+    )
+    headings = models.ManyToManyField(
+        "hierarchy.Heading",
         related_name="rules_of_origin",
     )
 
@@ -76,7 +48,7 @@ class Rule(models.Model):
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
-        return self.rule_id
+        return self.description
 
     def get_child_rules(self):
         """
@@ -90,11 +62,12 @@ class Rule(models.Model):
         ]
 
 
-class RuleItem(models.Model):
+class SubRule(models.Model):
     rule = models.ForeignKey("Rule", on_delete=models.CASCADE)
     order = models.IntegerField()
     description = models.TextField(null=True, blank=True)
-    working_or_processing = models.TextField(null=True, blank=True)
+    rule_text = models.TextField(null=True, blank=True)
+    alt_rule_text = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ["order"]
@@ -106,7 +79,8 @@ class RulesDocumentFootnote(models.Model):
     """
 
     number = models.PositiveSmallIntegerField()
-    link_html = models.TextField()
+    identifier = models.TextField(blank=True, null=True)
+    link_html = models.TextField(blank=True, null=True)
     note = models.TextField()
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, related_name="footnotes"
@@ -114,6 +88,7 @@ class RulesDocumentFootnote(models.Model):
 
     class Meta:
         verbose_name_plural = "rules document footnotes"
+        ordering = ["number"]
 
     def __str__(self):
         return "Footnote {0}".format(self.number)
