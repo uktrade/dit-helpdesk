@@ -1,4 +1,5 @@
 from typing import List, Dict, Optional
+import os
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
@@ -11,7 +12,7 @@ def _get_text_from_rule(rule: Optional[Element]) -> str:
     return rule
 
 
-def _process_subpositions(subpositions: Element) -> List[Dict]:
+def _process_subpositions(subpositions: List[Element]) -> List[Dict]:
     subposition_list = []
 
     for subposition in subpositions:
@@ -41,10 +42,11 @@ def _process_positions(positions: Element) -> List[Dict]:
 
         inclusions = position.find('positionCodeXml').find('inclusions')
 
-        subpositions = position.findall('subposition')
+        subpositions = position.findall('subPosition')
         subpositions_list = _process_subpositions(subpositions)
 
         positions_list.append({
+            'code': position.attrib['positionCode'],
             'description': description,
             'rule1': rule1,
             'rule2': rule2,
@@ -71,6 +73,11 @@ def _process_notes(notes: Element) -> List[Dict]:
 
 
 def parse_file(f):
+
+    file_name = f.split(os.sep)[-1]
+    document_name, extension = file_name.split('.')
+    fta_name = ' '.join(document_name.split('-')[1:])
+
     tree = ET.parse(f)
     root = tree.getroot()
 
@@ -80,7 +87,7 @@ def parse_file(f):
 
     agreement_partners = meta.findall('agreementPartner')
     countries_with_dates = [
-        ap.find('country') for ap in agreement_partners
+        ap.find('country').attrib for ap in agreement_partners
         if ap.attrib['code'] != 'GB'
     ]
 
@@ -89,14 +96,16 @@ def parse_file(f):
     notes_list = _process_notes(notes)
 
     output = {
+        'name': fta_name,
         'countries_with_dates': countries_with_dates,
         'positions': positions_list,
         'notes': notes_list,
     }
 
-    import ipdb; ipdb.set_trace()
     return output
 
 
 if __name__ == '__main__':
-    parse_file('PSRO_UK_EN-UK-CL-FTA.xml')
+    output = parse_file('PSRO_UK_EN-UK-CL-FTA.xml')
+    import json
+    json.dump(output, open('output.json', 'w'), indent=4)
