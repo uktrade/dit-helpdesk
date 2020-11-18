@@ -281,13 +281,13 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
         modals = {}
         for section_class in self.sections:
             section = section_class(self.country, self.commodity_object)
+            if not section.should_be_displayed:
+                continue
+
             ctx.update(section.get_context_data())
             sections.append(section)
 
-            section_menu_items += [
-                (section, heading, item)
-                for heading, item in section.get_menu_items()
-            ]
+            section_menu_items += section.get_menu_items()
 
             for modals_context_data in section.get_modals_context_data():
                 modals.update(modals_context_data)
@@ -300,7 +300,7 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
 
 
 class CommodityDetailSection:
-    should_be_display = True
+    should_be_displayed = True
 
     def __init__(self, country, commodity_object):
         self.country = country
@@ -382,6 +382,56 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
             ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
 
         return ctx
+
+
+class QuotasNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_quotas_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.has_quotas_measures = True
+
+        self.quotas_measures = get_nomenclature_group_measures(
+            self.commodity_object,
+            "Quotas",
+            self.country.country_code,
+        )
+
+        try:
+            self.quotas_table_data = self._get_table_data(self.quotas_measures)
+        except Exception as ex:
+            self.has_quotas_measures = False
+            logger.info(ex.args)
+
+    @property
+    def should_be_displayed(self):
+        return self.has_quotas_measures and bool(self.quotas_measures)
+
+    def get_menu_items(self):
+        return [
+            ("Quotas", "quotas"),
+        ]
+
+    def get_modals_context_data(self):
+        return [
+            measure_json.measures_modals
+            for measure_json in self.quotas_measures
+        ]
+
+    def _get_table_data(self, quotas_measures):
+        return [
+            measure_json.get_table_row() for measure_json in quotas_measures
+        ]
+
+    def _get_eu_quotas_link(self):
+        return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={self.commodity_object.commodity_code}&origin={self.country.country_code}&destination=IE"
+
+    def get_context_data(self):
+        return {
+            "eu_quotas_link": self._get_eu_quotas_link(),
+            "quotas_table_data": self.quotas_table_data,
+        }
 
 
 def section_detail(request, section_id, country_code):
@@ -629,6 +679,7 @@ class HeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthern
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
     ]
     template_name = "hierarchy/heading_detail_northern_ireland.html"
 
@@ -802,6 +853,7 @@ class SubHeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorth
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
     ]
     template_name = "hierarchy/subheading_detail_northern_ireland.html"
 

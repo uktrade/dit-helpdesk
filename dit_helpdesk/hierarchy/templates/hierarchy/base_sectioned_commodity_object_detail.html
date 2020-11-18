@@ -8,22 +8,18 @@
                     <p class="govuk-body govuk-!-margin-bottom-3">Contents</p>
 
                     <ul class="app-contents govuk-!-margin-bottom-9">
-                        {% for section, heading, href in section_menu_items %}
-                            {% if section.should_be_displayed %}
-                                <li class="govuk-!-margin-bottom-1">
-                                    <a class="govuk-body" href="#{{href}}">
-                                        {{ heading }}
-                                    </a>
-                                </li>
-                            {% endif %}
+                        {% for heading, href in section_menu_items %}
+                            <li class="govuk-!-margin-bottom-1">
+                                <a class="govuk-body" href="#{{href}}">
+                                    {{ heading }}
+                                </a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </nav>
 
                 {% for section in sections %}
-                    {% if section.should_be_displayed %}
-                        {% include section.template %}
-                    {% endif %}
+                    {% include section.template %}
                 {% endfor %}
             </div>
         </div>

@@ -22,6 +22,7 @@ from hierarchy.helpers import (
 )
 from hierarchy.views import (
     BaseCommodityObjectDetailView,
+    QuotasNorthernIrelandSection,
     BaseTariffAndChargesNorthernIrelandSection,
     BaseSectionedCommodityObjectDetailView,
 )
@@ -139,7 +140,7 @@ class CommodityDetailView(BaseCommodityDetailView):
         return ctx
 
 
-class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+class CommodityEUObjectMixin:
 
     def get_eu_commodity_object(self, commodity_object):
         return Commodity.objects.for_region(
@@ -150,10 +151,15 @@ class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIreland
         )
 
 
+class TariffAndChargesNorthernIrelandSection(CommodityEUObjectMixin, BaseTariffAndChargesNorthernIrelandSection):
+    pass
+
+
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
     ]
     template_name = "commodities/commodity_detail_northern_ireland.html"
 
