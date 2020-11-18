@@ -10,7 +10,10 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from commodities.models import Commodity
-from commodities.helpers import get_tariff_content_context
+from commodities.helpers import (
+    get_global_tariff_context,
+    get_tariff_content_context,
+)
 from core.helpers import require_feature
 from countries.models import Country
 from regulations.models import RegulationGroup
@@ -370,10 +373,15 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
         return tariffs_and_charges_table_data
 
     def get_context_data(self):
-        return {
+        ctx = {
             "uk_tariffs_and_charges_table_data": self._get_table_data(self.uk_tariffs_and_charges_measures),
             "eu_tariffs_and_charges_table_data": self._get_table_data(self.eu_tariffs_and_charges_measures),
         }
+
+        if settings.UKGT_ENABLED:
+            ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
+
+        return ctx
 
 
 def section_detail(request, section_id, country_code):
