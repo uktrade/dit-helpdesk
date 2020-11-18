@@ -20,15 +20,18 @@ from hierarchy.helpers import (
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
-from hierarchy.views import BaseCommodityObjectDetailView
+from hierarchy.views import (
+    BaseCommodityObjectDetailView,
+    BaseTariffAndChargesNorthernIrelandSection,
+    BaseSectionedCommodityObjectDetailView,
+)
 from regulations.models import RegulationGroup
 
 from .models import Commodity
 from .helpers import get_tariff_content_context
 
 
-class BaseCommodityDetailView(BaseCommodityObjectDetailView):
-
+class CommodityObjectMixin:
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
@@ -53,6 +56,14 @@ class BaseCommodityDetailView(BaseCommodityObjectDetailView):
         ctx["section_notes"] = section.section_notes
 
         return ctx
+
+
+class BaseCommodityDetailView(CommodityObjectMixin, BaseCommodityObjectDetailView):
+    pass
+
+
+class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
+    pass
 
 
 class CommodityDetailView(BaseCommodityDetailView):
@@ -128,90 +139,19 @@ class CommodityDetailView(BaseCommodityDetailView):
         return ctx
 
 
-class Section:
-    should_be_display = True
+class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
 
-    def __init__(self, country, commodity_object):
-        self.country = country
-        self.commodity_object = commodity_object
-
-    def get_menu_items(self):
-        raise NotImplementedError("Implement `get_menu_items`")
-
-    def get_modals_context_data(self):
-        raise NotImplementedError("Implement `get_modals_context_data`")
-
-    def get_context_data(self):
-        raise NotImplementedError("Implement `get_context_data`")
-
-
-class TariffAndChargesNorthernIrelandSection(Section):
-    template = "commodities/_tariffs_and_charges_northern_ireland.html"
-
-    def __init__(self, country, commodity_object):
-        super().__init__(country, commodity_object)
-
-        self.uk_tariffs_and_charges_measures = get_nomenclature_group_measures(
-            self.commodity_object,
-            "Tariffs and charges",
-            self.country.country_code,
-        )
-
-        eu_commodity_object = Commodity.objects.for_region(
+    def get_eu_commodity_object(self, commodity_object):
+        return Commodity.objects.for_region(
             settings.SECONDARY_REGION,
         ).get(
             commodity_code=commodity_object.commodity_code,
             goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
         )
-        self.eu_tariffs_and_charges_measures = get_nomenclature_group_measures(
-            eu_commodity_object,
-            "Tariffs and charges",
-            self.country.country_code,
-        )
-
-    @property
-    def should_be_displayed(self):
-        return bool(self.uk_tariffs_and_charges_measures)
-
-    def get_menu_items(self):
-        return [
-            ("Tariffs and charges", "tariffs_and_charges"),
-        ]
-
-    def get_modals_context_data(self):
-        return [
-            measure_json.measures_modals
-            for measure_json in self.uk_tariffs_and_charges_measures
-        ]
-
-    def _get_table_data(self, charges_and_measures):
-        is_eu = self.country.country_code.upper() == "EU"
-
-        tariffs_and_charges_table_data = (
-            [
-                measure_json.get_table_row()
-                for measure_json in charges_and_measures
-                if measure_json.vat or measure_json.excise
-            ]
-            if is_eu
-            else
-            [
-                measure_json.get_table_row()
-                for measure_json in charges_and_measures
-            ]
-        )
-
-        return tariffs_and_charges_table_data
-
-    def get_context_data(self):
-        return {
-            "uk_tariffs_and_charges_table_data": self._get_table_data(self.uk_tariffs_and_charges_measures),
-            "eu_tariffs_and_charges_table_data": self._get_table_data(self.eu_tariffs_and_charges_measures),
-        }
 
 
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
-class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
+class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffAndChargesNorthernIrelandSection,
     ]
@@ -235,26 +175,6 @@ class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-
-        sections = []
-        section_menu_items = []
-        modals = {}
-        for section_class in self.sections:
-            section = section_class(self.country, self.commodity_object)
-            ctx.update(section.get_context_data())
-            sections.append(section)
-
-            section_menu_items += [
-                (section, heading, item)
-                for heading, item in section.get_menu_items()
-            ]
-
-            for modals_context_data in section.get_modals_context_data():
-                modals.update(modals_context_data)
-
-        ctx["sections"] = sections
-        ctx["section_menu_items"] = section_menu_items
-        ctx["modals"] = modals
 
         ctx["column_titles"] = TABLE_COLUMN_TITLES
 
