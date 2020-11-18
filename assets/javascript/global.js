@@ -24,7 +24,7 @@ if ($details) {
 }
 
 // Find all global accordion components to enhance.
-var $accordions = document.querySelectorAll('[data-module="accordion"]')
+var $accordions = document.querySelectorAll('[data-module="accordion"], [data-module="govuk-accordion"]')
 nodeListForEach($accordions, function ($accordion) {
   new Accordion($accordion).init()
 })

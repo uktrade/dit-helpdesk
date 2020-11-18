@@ -1,0 +1,11 @@
+{% extends 'hierarchy/base_sectioned_commodity_object_detail.html' %}
+
+{% load dotted_format %}
+
+{% block title %}Sub Heading information for {{ subheading.commodity_code|dotted_format }}{% endblock title %}
+
+{% block subheading %}
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
+        Choose the commodity code below that is closest your goods to see more information
+    </h3>
+{% endblock %}

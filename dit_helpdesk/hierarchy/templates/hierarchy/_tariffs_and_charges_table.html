@@ -1,0 +1,39 @@
+{% load cell_cleaner %}
+
+<table class="govuk-table govuk-table__tariffs_and_measures app-flexible-table govuk-!-margin-bottom-6" >
+    <thead class="govuk-table__head app-flexible-table__head">
+        <tr class="govuk-table__row">
+            {% for key in column_titles %}
+                <th class="govuk-table__header app-flexible-table__header" scope="col">{{ key }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body app-flexible-table__body">
+        {% spaceless %}
+            {% for row in table_data %}
+                <tr class="govuk-table__row app-flexible-table__row">
+                    {% for col in row %}
+                        {% if forloop.counter == 1 %}
+                            <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ col.0 }}">
+                                <p>{{ col.1 }}</p>
+                            </td>
+                        {% else %}
+                            <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ col.0 }}">
+                                {% if col.1.1.code %}
+                                    <p>{{ col.1.0 | cell_cleaner | safe }}</p>
+                                    <p>Additional code: <strong>{{ col.1.1.code }}</strong></p>
+                                {% endif %}
+                                {% if col.1.1.description %}
+                                    <p>{{ col.1.1.description | lower | capfirst }}</p>
+                                {% endif %}
+                                {% if not col.1.1.code or not col.1.1.description %}
+                                    <p>{{ col.1 | cell_cleaner | safe }}</p>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endspaceless %}
+    </tbody>
+</table>
