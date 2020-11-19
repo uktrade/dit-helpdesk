@@ -32,29 +32,29 @@
         If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
     </p>
 
-    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-tariffs-and-charges">
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-quotas">
         <div class="govuk-accordion__section">
             <div class="govuk-accordion__section-header">
-                <h2 class="govuk-accordion__section-heading">
-                    <span class="govuk-accordion__section-button" id="accordion-uk-tariffs-and-charges-heading">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-quotas-heading">
                         UK quotas - {{ commodity.commodity_code|dotted_format }}
                     </span>
-                </h2>
+                </h4>
             </div>
-            <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
+            <div id="accordion-uk-quotas-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-quotas-heading">
                 {% include "hierarchy/_quotas_table.html" with column_title=column_titles table_data=quotas_table_data %}
             </div>
         </div>
 
         <div class="govuk-accordion__section">
             <div class="govuk-accordion__section-header">
-                <h2 class="govuk-accordion__section-heading">
-                    <span class="govuk-accordion__section-button" id="accordion-uk-tariffs-and-charges-heading">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-quotas-heading">
                         EU quotas - {{ commodity.commodity_code|dotted_format }}
                     </span>
-                </h2>
+                </h4>
             </div>
-            <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
+            <div id="accordion-eu-quotas-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-quotas-heading">
                 <p class="govuk-body">
                     European Union "out of quota" rates may apply where goods are exported to Northern Ireland for use in the European Union. These can be found on the European Commission's Access2Markets site.
                 </p>
