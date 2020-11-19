@@ -284,3 +284,7 @@ def permute_code_hierarchy(commodity_object) -> Iterator[str]:
 
         yield commodity_object.commodity_code
         commodity_object = commodity_object.get_parent()
+
+
+def get_eu_commodity_link(commodity_object, country) -> str:
+    return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={commodity_object.commodity_code}&origin={country.country_code}&destination=IE"

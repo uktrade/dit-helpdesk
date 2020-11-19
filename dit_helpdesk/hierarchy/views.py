@@ -18,7 +18,11 @@ from core.helpers import require_feature
 from countries.models import Country
 from regulations.models import RegulationGroup
 
-from .helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+from .helpers import (
+    get_eu_commodity_link,
+    get_nomenclature_group_measures,
+    TABLE_COLUMN_TITLES,
+)
 from .models import Section, Chapter, Heading, SubHeading
 
 code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
@@ -310,7 +314,7 @@ class CommodityDetailSection:
         raise NotImplementedError("Implement `get_menu_items`")
 
     def get_modals_context_data(self):
-        raise NotImplementedError("Implement `get_modals_context_data`")
+        return []
 
     def get_context_data(self):
         raise NotImplementedError("Implement `get_context_data`")
@@ -424,13 +428,22 @@ class QuotasNorthernIrelandSection(CommodityDetailSection):
             measure_json.get_table_row() for measure_json in quotas_measures
         ]
 
-    def _get_eu_quotas_link(self):
-        return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={self.commodity_object.commodity_code}&origin={self.country.country_code}&destination=IE"
+    def get_context_data(self):
+        return {
+            "eu_quotas_link": get_eu_commodity_link(self.commodity_object, self.country),
+            "quotas_table_data": self.quotas_table_data,
+        }
+
+
+class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_product_regulations_northern_ireland.html"
+
+    def get_menu_items(self):
+        return [("Product-specific regulations", "regulations")]
 
     def get_context_data(self):
         return {
-            "eu_quotas_link": self._get_eu_quotas_link(),
-            "quotas_table_data": self.quotas_table_data,
+            "eu_regulations_link": get_eu_commodity_link(self.commodity_object, self.country),
         }
 
 
@@ -680,6 +693,7 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        ProductRegulationsNorthernIrelandSection,
     ]
     template_name = "hierarchy/heading_detail_northern_ireland.html"
 
@@ -854,6 +868,7 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        ProductRegulationsNorthernIrelandSection,
     ]
     template_name = "hierarchy/subheading_detail_northern_ireland.html"
 
