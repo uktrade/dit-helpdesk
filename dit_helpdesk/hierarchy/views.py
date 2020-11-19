@@ -435,6 +435,46 @@ class QuotasNorthernIrelandSection(CommodityDetailSection):
         }
 
 
+class OtherMeasuresNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_other_measures_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.has_other_measures = True
+
+        self.other_measures = get_nomenclature_group_measures(
+            commodity_object,
+            "Other measures",
+            country.country_code,
+        )
+
+        try:
+            self.other_measures_table_data = [measure_json.get_table_row() for measure_json in self.other_measures]
+        except Exception as ex:
+            self.has_other_measures = False
+            logger.info(ex.args)
+
+    @property
+    def should_be_displayed(self):
+        return self.has_other_measures and bool(self.other_measures)
+
+    def get_menu_items(self):
+        return [("Other measures", "other_measures")]
+
+    def get_modals_context_data(self):
+        return [
+            measure_json.measures_modals
+            for measure_json in self.other_measures
+        ]
+
+    def get_context_data(self):
+        return {
+            "eu_other_measures_link": get_eu_commodity_link(self.commodity_object, self.country),
+            "other_measures_table": self.other_measures_table_data,
+        }
+
+
 class RulesOfOriginNorthernIrelandSection(CommodityDetailSection):
     template = "hierarchy/_rules_of_origin_northern_ireland.html"
 

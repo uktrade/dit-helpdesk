@@ -24,6 +24,7 @@ from hierarchy.views import (
     BaseCommodityObjectDetailView,
     BaseTariffAndChargesNorthernIrelandSection,
     BaseSectionedCommodityObjectDetailView,
+    OtherMeasuresNorthernIrelandSection,
     ProductRegulationsNorthernIrelandSection,
     QuotasNorthernIrelandSection,
     RulesOfOriginNorthernIrelandSection,
@@ -162,6 +163,7 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]

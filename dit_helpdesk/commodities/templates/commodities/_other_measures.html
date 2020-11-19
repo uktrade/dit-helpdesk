@@ -1,103 +1,18 @@
-{% load cell_cleaner dotted_format %}
+{% load dotted_format %}
 
 {% if ukgt_enabled %}
-<h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-   <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
-</h2>
+    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
+    </h2>
 {% else %}
-<h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-   <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
-</h3>
+    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
+    </h3>
 {% endif %}
 
-
 <div class="govuk-caption-m ">
-   <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+    <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
 </div>
 
-<details class="govuk-details govuk-!-margin-bottom-0">
-<summary class="govuk-details__summary ">
-<span class="govuk-details__summary-text govuk-!-font-size-16">What are the main types of measures</span>
-</summary>
-<div class="govuk-details__text govuk-!-font-size-16">
-
-<details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">
-      Reliefs
-    </span>
-  </summary>
-  <div class="govuk-details__text">
-    A relief removes some or all of the import duty for certain goods.
-  </div>
-</details>
-
-<details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">
-      Anti-dumping duty
-    </span>
-  </summary>
-  <div class="govuk-details__text">
-    <a class="govuk-link"
-       href="https://www.gov.uk/government/publications/notice-376-anti-dumping-and-countervailing-duties">Anti-dumping
-      duty</a> is an amount of import duty applied in addition to any other duties that apply. It protects UK
-    industry against the dumping of goods at a substantially lower value than normal.
-  </div>
-</details>
-
-<details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">
-      Import controls
-    </span>
-  </summary>
-  <div class="govuk-details__text">
-    <a class="govuk-link"
-       href="https://www.gov.uk/guidance/import-controls">Import controls</a> can be either prohibitions,
-    where
-    goods cannot be imported under any circumstances, or restrictions, where goods can be imported only under
-    certain circumstances. Check the conditions related to this type of measure.
-  </div>
-</details>
-
-</div>
-</details>
-
-<table class="govuk-table govuk-table__tariffs_and_measures app-flexible-table govuk-!-margin-bottom-6" >
-<thead class="govuk-table__head app-flexible-table__head">
-<tr class="govuk-table__row">
-  {% for key in column_titles %}
-  <th class="govuk-table__header app-flexible-table__header" scope="col">{{ key }}</th>
-  {% endfor %}
-</tr>
-</thead>
-<tbody class="govuk-table__body app-flexible-table__body">
-{% spaceless %}
-  {% for row in other_table_data %}
-  <tr class="govuk-table__row app-flexible-table__row">
-    {% for  col in row %}
-      {% if forloop.counter == 1 %}
-      <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ col.0 }}">
-        <p>{{ col.1 }}</p>
-      </td>
-      {% else %}
-      <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ col.0 }}">
-        {% if col.1.1.code %}
-          <p>{{ col.1.0 | cell_cleaner | safe }}</p>
-          <p>Additional code: <strong>{{ col.1.1.code }}</strong></p>
-        {% endif %}
-        {% if col.1.1.description %}
-          <p>{{ col.1.1.description | lower | capfirst }}</p>
-        {% endif %}
-        {% if not col.1.1.code or not col.1.1.description %}
-          <p>{{ col.1 | cell_cleaner | safe }}</p>
-        {% endif %}
-      </td>
-      {% endif %}
-    {% endfor %}
-  </tr>
-  {% endfor %}
-{% endspaceless %}
-</tbody>
-</table>
+{% include "hierarchy/_other_measures_types.html" %}
+{% include "hierarchy/_other_measures_table_data.html" %}
