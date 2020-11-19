@@ -753,6 +753,8 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
     template_name = "hierarchy/heading_detail_northern_ireland.html"
@@ -928,6 +930,8 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
     template_name = "hierarchy/subheading_detail_northern_ireland.html"
