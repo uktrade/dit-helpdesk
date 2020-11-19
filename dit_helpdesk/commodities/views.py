@@ -26,6 +26,7 @@ from hierarchy.views import (
     BaseSectionedCommodityObjectDetailView,
     ProductRegulationsNorthernIrelandSection,
     QuotasNorthernIrelandSection,
+    RulesOfOriginNorthernIrelandSection,
 )
 from regulations.models import RegulationGroup
 
@@ -161,6 +162,7 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffAndChargesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
     template_name = "commodities/commodity_detail_northern_ireland.html"

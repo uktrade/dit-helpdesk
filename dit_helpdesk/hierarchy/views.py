@@ -435,6 +435,26 @@ class QuotasNorthernIrelandSection(CommodityDetailSection):
         }
 
 
+class RulesOfOriginNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_rules_of_origin_northern_ireland.html"
+
+    def get_menu_items(self):
+        return [("Rules of origin", "rules_of_origin")]
+
+    def get_context_data(self):
+        commodity_object = self.commodity_object
+        country = self.country
+
+        rules_of_origin = commodity_object.get_rules_of_origin(
+            country_code=country.country_code,
+        )
+
+        return {
+            "eu_rules_of_origin_link": get_eu_commodity_link(commodity_object, country),
+            "rules_of_origin": rules_of_origin,
+        }
+
+
 class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
     template = "hierarchy/_product_regulations_northern_ireland.html"
 
