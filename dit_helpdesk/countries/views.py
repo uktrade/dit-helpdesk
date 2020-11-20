@@ -46,7 +46,7 @@ class ChooseCountryView(TemplateView):
             request.session["search_version"] = self.search_version
 
             if _get_agreement(origin_country):
-                return redirect("agreement", country_code=origin_country.lower())
+                return redirect("country-information", country_code=origin_country.lower())
 
             return redirect(self.redirect_to, country_code=origin_country.lower())
         else:
@@ -65,8 +65,8 @@ class ChooseCountryOldView(ChooseCountryView):
     search_version = "old"
 
 
-class AgreementView(TemplateView):
-    template_name = "countries/agreement.html"
+class CountryInformationView(TemplateView):
+    template_name = "countries/information.html"
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"].upper()

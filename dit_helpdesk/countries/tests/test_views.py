@@ -126,7 +126,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(
             resp.url,
             reverse(
-                "agreement",
+                "country-information",
                 kwargs={"country_code": "xx"},
             ),
         )
@@ -175,14 +175,14 @@ class CountriesViewsTestCase(TestCase):
         "append": ["countries.tests"],
     }
 )
-class AgreementViewTestCase(TestCase):
+class CountryInformationViewTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
 
         self.country = Country.objects.create(country_code="XX", name="Atlantis")
         self.url = reverse(
-            "agreement",
+            "country-information",
             kwargs={
                 "country_code":
                 self.country.country_code.lower(),
@@ -193,7 +193,7 @@ class AgreementViewTestCase(TestCase):
         with self.assertRaises(Country.DoesNotExist):
             Country.objects.get(country_code="TT")
 
-        url = reverse("agreement", kwargs={"country_code": "TT"})
+        url = reverse("country-information", kwargs={"country_code": "TT"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
@@ -227,7 +227,7 @@ class AgreementViewTestCase(TestCase):
     )
     def test_renders_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "countries/agreement.html")
+        self.assertTemplateUsed(response, "countries/information.html")
 
     @override_settings(
         AGREEMENTS=[
