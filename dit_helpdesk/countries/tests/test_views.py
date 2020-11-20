@@ -156,3 +156,49 @@ class CountriesViewsTestCase(TestCase):
                 kwargs={"country_code": "xx"},
             ),
         )
+
+
+class AgreementViewTestCase(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.country = Country.objects.create(country_code="XX", name="Atlantis")
+        self.url = reverse(
+            "agreement",
+            kwargs={
+                "country_code":
+                self.country.country_code.lower(),
+            },
+        )
+
+    def test_agreement_with_invalid_country_code(self):
+        with self.assertRaises(Country.DoesNotExist):
+            Country.objects.get(country_code="TT")
+
+        url = reverse("agreement", kwargs={"country_code": "TT"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(AGREEMENTS=[])
+    def test_agreement_page_without_settings(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(
+        AGREEMENTS=[
+            ("XX", False),
+        ],
+    )
+    def test_agreement_page_with_setting_disabled(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(
+        AGREEMENTS=[
+            ("XX", True),
+        ],
+    )
+    def test_agreement_page_with_setting_enabled(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)

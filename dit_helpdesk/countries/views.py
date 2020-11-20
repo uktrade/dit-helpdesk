@@ -1,10 +1,16 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic.base import TemplateView
 
 from .models import Country
+
+
+def _country_has_agreement(country_code):
+    agreements = dict(settings.AGREEMENTS)
+
+    return agreements.get(country_code, False)
 
 
 class ChooseCountryView(TemplateView):
@@ -16,11 +22,6 @@ class ChooseCountryView(TemplateView):
     countries = Country.objects.all()
     country_not_selected_summary_error_message = "Enter a country or territory"
     country_not_selected_input_error_message = "Enter a country or territory"
-
-    def _country_has_agreement(self, country_code):
-        agreements = dict(settings.AGREEMENTS)
-
-        return agreements.get(country_code, False)
 
     def get(self, request, *args, **kwargs):
         context = {"country_options": [(c.country_code, c.name) for c in self.countries]}
@@ -42,7 +43,7 @@ class ChooseCountryView(TemplateView):
         ):
             request.session["search_version"] = self.search_version
 
-            if self._country_has_agreement(origin_country):
+            if _country_has_agreement(origin_country):
                 return redirect("agreement", country_code=origin_country.lower())
 
             return redirect(self.redirect_to, country_code=origin_country.lower())
@@ -65,4 +66,13 @@ class ChooseCountryOldView(ChooseCountryView):
 class AgreementView(View):
 
     def get(self, request, *args, **kwargs):
+        country_code = kwargs["country_code"].upper()
+        try:
+            country = Country.objects.get(country_code=country_code)
+        except Country.DoesNotExist:
+            raise Http404
+
+        if not _country_has_agreement(country.country_code):
+            raise Http404
+
         return HttpResponse("OK")
