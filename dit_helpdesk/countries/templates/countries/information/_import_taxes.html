@@ -1,0 +1,20 @@
+<div class="govuk-accordion__section">
+    <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button govuk-!-font-size-19" id="{{ accordion_id }}-import-taxes-heading">
+                Import taxes
+            </span>
+        </h2>
+    </div>
+    <div id="{{ accordion_id }}-import-taxes-content" class="govuk-accordion__section-content" aria-labelledby="{{ accordion_id }}-import-taxes-heading">
+        <h3 class="govuk-heading-s">Duties and tariffs</h3>
+        <p class="govuk-body">
+            The UK charges customs duties and other tariffs on certain goods. You can <a class="govuk-link" href="{% url "search:search-commodity" country_code=country_code %}">search for your goods</a> to find the specific charges that are applicable to them.
+        </p>
+
+        <h3 class="govuk-heading-s">VAT</h3>
+        <p class="govuk-body">
+            We also charge <abbr title="Value Added Tax">VAT</abbr> on some goods when they are sold. VAT is a sales tax that you must pay in the UK when you buy goods or services. Excise Duty is also charged on some goods. These charges apply even for goods produced in the UK. Rates for different goods are still listed in our tariff, and you should check with your customer whether they need to be included in the price.
+        </p>
+    </div>
+</div>

@@ -7,6 +7,8 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import dj_database_url
 import ecs_logging
 
+from collections import namedtuple
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
 
@@ -29,9 +31,9 @@ READ_ONLY = env.bool("READ_ONLY", True)
 
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
-FTA_INFO_SHARING_ENABLED = env.bool("FTA_INFO_SHARING_ENABLED", False)
 NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
 GROUPED_SEARCH_ENABLED = env.bool("GROUPED_SEARCH_ENABLED", False)
+JAPAN_FTA_ENABLED = env.bool("JAPAN_FTA_ENABLED", False)
 
 
 # Application definition
@@ -419,4 +421,23 @@ SUPPORTED_TRADE_SCENARIOS = (
     'ICELAND-NORWAY',
 )
 
-AGREEMENTS = []
+Agreement = namedtuple(
+    "Agreement",
+    [
+        "country_code",
+        "agreements",
+    ],
+)
+
+AGREEMENTS = [
+    (
+        Agreement(
+            "JP",
+            [
+                "Japan-UK Continuity Plus Agreement",
+                "EU-Japan Economic Partnership Agreement",
+            ],
+        ),
+        JAPAN_FTA_ENABLED,
+    ),
+]
