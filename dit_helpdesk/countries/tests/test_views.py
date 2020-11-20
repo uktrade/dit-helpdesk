@@ -1,6 +1,9 @@
 import logging
 
+from collections import namedtuple
+
 from django.test import override_settings, TestCase
+from django.test.utils import modify_settings
 from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
 
@@ -9,6 +12,15 @@ from countries.models import Country
 logger = logging.getLogger(__name__)
 # logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
+
+
+Agreement = namedtuple(
+    "Agreement",
+    [
+        "country_code",
+        "agreements",
+    ],
+)
 
 
 class CountriesViewsTestCase(TestCase):
@@ -101,7 +113,7 @@ class CountriesViewsTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            ("XX", True),
+            (Agreement("XX", []), True),
         ],
     )
     def test_post_with_country_having_fta_and_enabled(self):
@@ -121,7 +133,7 @@ class CountriesViewsTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            ("XX", False),
+            (Agreement("XX", []), False),
         ],
     )
     def test_post_with_country_having_fta_and_disabled(self):
@@ -158,6 +170,11 @@ class CountriesViewsTestCase(TestCase):
         )
 
 
+@modify_settings(
+    INSTALLED_APPS={
+        "append": ["countries.tests"],
+    }
+)
 class AgreementViewTestCase(TestCase):
 
     def setUp(self):
@@ -187,7 +204,7 @@ class AgreementViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            ("XX", False),
+            (Agreement("XX", []), False),
         ],
     )
     def test_agreement_page_with_setting_disabled(self):
@@ -196,7 +213,7 @@ class AgreementViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            ("XX", True),
+            (Agreement("XX", []), True),
         ],
     )
     def test_agreement_page_with_setting_enabled(self):
@@ -205,9 +222,54 @@ class AgreementViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            ("XX", True),
+            (Agreement("XX", []), True),
         ],
     )
     def test_renders_template(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "countries/agreement.html")
+
+    @override_settings(
+        AGREEMENTS=[
+            (Agreement("XX", ["agreement one", "agreement two"]), True),
+        ],
+    )
+    def test_context_data(self):
+        response = self.client.get(self.url)
+        ctx = response.context_data
+
+        self.assertEqual(ctx["country"], self.country)
+        self.assertEqual(ctx["country_code"], "xx")
+        self.assertEqual(
+            ctx["agreements"],
+            ["agreement one", "agreement two"],
+        )
+        self.assertEqual(
+            ctx["trade_agreements_template_name"],
+            "countries/XX/_trade_agreements.html",
+        )
+        self.assertEqual(
+            ctx["goods_template_name"],
+            "countries/XX/_goods.html",
+        )
+        self.assertEqual(
+            ctx["grow_your_business_template_name"],
+            "countries/XX/_grow_your_business.html",
+        )
+        self.assertEqual(
+            ctx["other_information_template_name"],
+            "countries/XX/_other_information.html",
+        )
+
+    @override_settings(
+        AGREEMENTS=[
+            (Agreement("XX", []), True),
+        ],
+    )
+    def test_renders_custom_html(self):
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "Custom XX trade agreements")
+        self.assertContains(response, "Custom XX goods")
+        self.assertContains(response, "Custom XX grow your business")
+        self.assertContains(response, "Custom XX other information")

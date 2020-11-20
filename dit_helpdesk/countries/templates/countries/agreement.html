@@ -1,1 +1,92 @@
 {% extends 'core/base.html' %}
+
+{% load humanize %}
+
+{% block title %}Exporting to the UK from {{ country.name }}{% endblock %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6 govuk-!-margin-top-6">
+                        Exporting to the UK from {{ country.name }}
+                    </h1>
+
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                        Search for your goods
+                    </a>
+
+                    <p class="govuk-body govuk-!-font-weight-bold">
+                        The UK currently has {{ agreements|length|apnumber }} trade agreements with {{ country.name }}:
+                    </p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        {% for agreement_name in agreements %}
+                            <li>{{ agreement_name }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <p class="govuk-body">
+                        You can find information on these trade agreements here.
+                    </p>
+
+                    <p class="govuk-body">
+                        There are also links to other resources within the UK goverment to:
+                    </p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>facilitate your use of these agreements</li>
+                        <li>explain the associated regulations and requirements</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l">
+                        Trade Agreements
+                    </h2>
+
+                    {% include trade_agreements_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l">
+                        Get your goods in the UK
+                    </h2>
+
+                    {% include goods_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l">
+                        Grow your business with the UK
+                    </h2>
+
+                    {% include grow_your_business_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l">
+                        Other information
+                    </h2>
+
+                    {% include other_information_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row govuk-!-margin-top-6">
+                <div class="govuk-grid-column-full">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                        Search for your goods
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
