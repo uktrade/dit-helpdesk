@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
-from django.views import View
 from django.views.generic.base import TemplateView
 
 from .models import Country
@@ -63,7 +62,8 @@ class ChooseCountryOldView(ChooseCountryView):
     search_version = "old"
 
 
-class AgreementView(View):
+class AgreementView(TemplateView):
+    template_name = "countries/agreement.html"
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"].upper()
@@ -75,4 +75,4 @@ class AgreementView(View):
         if not _country_has_agreement(country.country_code):
             raise Http404
 
-        return HttpResponse("OK")
+        return super().get(request, *args, **kwargs)

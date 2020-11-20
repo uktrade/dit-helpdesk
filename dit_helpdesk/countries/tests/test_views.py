@@ -202,3 +202,12 @@ class AgreementViewTestCase(TestCase):
     def test_agreement_page_with_setting_enabled(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(
+        AGREEMENTS=[
+            ("XX", True),
+        ],
+    )
+    def test_renders_template(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "countries/agreement.html")
