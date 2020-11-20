@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.views import View
 from django.views.generic.base import TemplateView
 
-from countries.models import Country
+from .models import Country
 
 
 class ChooseCountryView(TemplateView):
@@ -14,6 +16,11 @@ class ChooseCountryView(TemplateView):
     countries = Country.objects.all()
     country_not_selected_summary_error_message = "Enter a country or territory"
     country_not_selected_input_error_message = "Enter a country or territory"
+
+    def _country_has_agreement(self, country_code):
+        agreements = dict(settings.AGREEMENTS)
+
+        return agreements.get(country_code, False)
 
     def get(self, request, *args, **kwargs):
         context = {"country_options": [(c.country_code, c.name) for c in self.countries]}
@@ -35,12 +42,10 @@ class ChooseCountryView(TemplateView):
         ):
             request.session["search_version"] = self.search_version
 
-            return redirect(
-                reverse(
-                    self.redirect_to,
-                    kwargs={"country_code": origin_country.lower()},
-                )
-            )
+            if self._country_has_agreement(origin_country):
+                return redirect("agreement", country_code=origin_country.lower())
+
+            return redirect(self.redirect_to, country_code=origin_country.lower())
         else:
             context = {
                 "country_options": [(c.country_code, c.name) for c in self.countries],
@@ -56,3 +61,8 @@ class ChooseCountryOldView(ChooseCountryView):
     redirect_to = "search:search-commodity"
     search_version = "old"
 
+
+class AgreementView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("OK")

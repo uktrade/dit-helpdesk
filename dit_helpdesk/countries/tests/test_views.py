@@ -1,6 +1,6 @@
 import logging
 
-from django.test import TestCase
+from django.test import override_settings, TestCase
 from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
 
@@ -98,3 +98,61 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
         self.assertTrue("origin_country" not in self.client.session)
+
+    @override_settings(
+        AGREEMENTS=[
+            ("XX", True),
+        ],
+    )
+    def test_post_with_country_having_fta_and_enabled(self):
+        Country.objects.create(country_code="XX", name="Atlantis")
+        self.assertTrue("origin_country" not in self.client.session)
+        resp = self.client.post(
+            reverse("choose-country"), data={"origin_country": "xx"}
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(
+            resp.url,
+            reverse(
+                "agreement",
+                kwargs={"country_code": "xx"},
+            ),
+        )
+
+    @override_settings(
+        AGREEMENTS=[
+            ("XX", False),
+        ],
+    )
+    def test_post_with_country_having_fta_and_disabled(self):
+        Country.objects.create(country_code="XX", name="Atlantis")
+        self.assertTrue("origin_country" not in self.client.session)
+        resp = self.client.post(
+            reverse("choose-country"), data={"origin_country": "xx"}
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(
+            resp.url,
+            reverse(
+                "search:search-commodity",
+                kwargs={"country_code": "xx"},
+            ),
+        )
+
+    @override_settings(
+        AGREEMENTS=[],
+    )
+    def test_post_with_country_having_fta_and_without_setting(self):
+        Country.objects.create(country_code="XX", name="Atlantis")
+        self.assertTrue("origin_country" not in self.client.session)
+        resp = self.client.post(
+            reverse("choose-country"), data={"origin_country": "xx"}
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(
+            resp.url,
+            reverse(
+                "search:search-commodity",
+                kwargs={"country_code": "xx"},
+            ),
+        )

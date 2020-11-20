@@ -41,6 +41,11 @@ urlpatterns = [
          name="choose-country-new"),
     path("choose-country/",
          country_views.ChooseCountryOldView.as_view(), name="choose-country"),
+    re_path(
+        r"^country/(?P<country_code>\w+)/agreement/$",
+        country_views.AgreementView.as_view(),
+        name="agreement",
+    ),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
