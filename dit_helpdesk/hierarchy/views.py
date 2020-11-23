@@ -277,6 +277,10 @@ class BaseCommodityObjectDetailView(TemplateView):
 
 class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
 
+    @property
+    def sections(self):
+        raise NotImplementedError("Add property `sections` as a list of `CommodityDetailSection` classes")
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
