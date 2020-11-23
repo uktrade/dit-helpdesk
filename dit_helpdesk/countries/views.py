@@ -44,6 +44,7 @@ class ChooseCountryView(TemplateView):
                 and Country.objects.filter(country_code=origin_country).exists()
         ):
             request.session["search_version"] = self.search_version
+            request.session["origin_country"] = origin_country
 
             if _get_agreement(origin_country):
                 return redirect("country-information", country_code=origin_country.lower())

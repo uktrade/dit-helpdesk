@@ -143,6 +143,8 @@
                     Privacy, terms and conditions
                   </a>
                 </li>
+                  {% url 'choose-country-new' as choose_country_new %}
+                  {% url 'choose-country' as choose_country %}
                   {% if request.path != choose_country and request.path != choose_country_new %}
                 <li class="govuk-footer__inline-list-item">
                   <a class="govuk-footer__link" href="/contact/">
