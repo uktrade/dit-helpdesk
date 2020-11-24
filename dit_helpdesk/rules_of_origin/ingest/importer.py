@@ -72,40 +72,38 @@ def _commodity_code_to_int(heading_code):
     return int(heading_code.lstrip('0'))
 
 
-def _int_to_heading_code(heading_int):
-    return f'{heading_int:04}'
+def _int_to_code(code: int, original_length):
+    return str(code).rjust(original_length).ljust(10, '0')
 
 
-def _int_to_chapter_code(chapter_int):
-    return f'{chapter_int:02}'
+def _normalise_code(code: str):
+    if code:
+        return code.replace(".", "")
 
 
 def _get_objects_for_range(hs_type, hs_from, hs_to):
+    hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
+    if hs_to and len(hs_from) != len(hs_to):
+        raise InvalidDocumentException(
+            f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes")
+
     hs_range = [hs_from]
 
     initial_hs_int = _commodity_code_to_int(hs_from)
 
-    int_to_code_func_map = {
-        'PO': _int_to_heading_code,
-        'CH': _int_to_chapter_code,
-    }
-    int_to_code_func = int_to_code_func_map[hs_type]
-
     if hs_to:
         hs_delta = _commodity_code_to_int(hs_to) - initial_hs_int
         hs_range = [
-            int_to_code_func(initial_hs_int + increment)
+            _int_to_code(initial_hs_int + increment, original_length=len(hs_from))
             for increment in range(hs_delta + 1)
         ]
 
     arg_name_map = {
-        'PO': 'heading_code_4',
-        'CH': 'chapter_code__startswith',
+        'PO': 'heading_code__in',
+        'CH': 'chapter_code__in',
     }
     arg_name = arg_name_map[hs_type]
-    query = Q()
-    for hs_code in hs_range:
-        query = query | Q(**{arg_name: hs_code})
+    query = Q(**{arg_name: hs_range})
 
     model_map = {
         'PO': Heading,
@@ -125,7 +123,9 @@ def _process_inclusions(rule, inclusions):
     hs_type = inclusions['hsFromType']
     hs_to_type = inclusions.get('hsToType')
     if hs_to_type and hs_type != hs_to_type:
-        raise InvalidDocumentException("RoO HS range has to be defined in consistent units")
+        raise InvalidDocumentException(
+            f"RoO HS range has to be defined in consistent units: {inclusions}"
+        )
 
     objects_to_bind = _get_objects_for_range(
         hs_type=hs_type,

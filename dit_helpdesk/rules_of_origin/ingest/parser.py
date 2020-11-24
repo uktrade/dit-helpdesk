@@ -74,10 +74,6 @@ def _process_notes(notes: Element) -> List[Dict]:
 
 def parse_file(f):
 
-    file_name = f.split(os.sep)[-1]
-    document_name, extension = file_name.split('.')
-    fta_name = ' '.join(document_name.split('-')[1:])
-
     tree = ET.parse(f)
     root = tree.getroot()
 
@@ -86,9 +82,13 @@ def parse_file(f):
     notes = root.find('notes')
 
     agreement_partners = meta.findall('agreementPartner')
+    non_gb_partners = [ap for ap in agreement_partners if ap.attrib['code'] != 'GB']
+    non_gb_partners_labels = [ap.find('label').text for ap in non_gb_partners]
+    fta_name = f"FTA {', '.join(non_gb_partners_labels)}"
     countries_with_dates = [
-        ap.find('country').attrib for ap in agreement_partners
-        if ap.attrib['code'] != 'GB'
+        country_element.attrib
+        for ap in non_gb_partners
+        for country_element in ap.findall('country')
     ]
 
     positions_list = _process_positions(positions)
