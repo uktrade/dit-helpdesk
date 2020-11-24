@@ -548,7 +548,7 @@ class ChapterJson(object):
 
     @property
     def heading_urls(self):
-        return [settings.HEADING_URL % id for id in self.heading_ids]
+        return [settings.HEADING_URL.format(id) for id in self.heading_ids]
 
     @property
     def chapter_note(self):
@@ -588,7 +588,7 @@ class HeadingJson(object):
     @property
     def commodity_urls(self):
         return [
-            ((settings.COMMODITY_URL % _id), is_leaf)
+            ((settings.COMMODITY_URL.format(_id)), is_leaf)
             for (_id, is_leaf) in self.commodity_ids
         ]
 
@@ -661,7 +661,7 @@ class SubHeadingJson(object):
     @property
     def commodity_urls(self):
         return [
-            ((settings.COMMODITY_URL % _id), is_leaf)
+            ((settings.COMMODITY_URL.format(_id)), is_leaf)
             for (_id, is_leaf) in self.commodity_ids
         ]
 

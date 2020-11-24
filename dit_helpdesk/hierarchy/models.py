@@ -902,7 +902,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.heading_code[:4]
+        url = settings.HEADING_URL.format(self.heading_code[:4])
 
         resp = requests.get(url, timeout=10)
         resp_content = None
@@ -1238,7 +1238,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.commodity_code[:4]
+        url = settings.HEADING_URL.format(self.commodity_code[:4])
 
         resp = requests.get(url, timeout=10)
         resp_content = None

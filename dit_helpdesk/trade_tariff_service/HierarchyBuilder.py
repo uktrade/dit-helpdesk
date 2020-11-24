@@ -267,7 +267,7 @@ class HierarchyBuilder:
         data = []
 
         logger.info("Getting {0} data".format(data_type))
-        url = settings.TRADE_TARIFF_API["BASE_URL"].format(data_type)
+        url = settings.TRADE_TARIFF_API_BASE_URL.format(data_type)
         resp = requests.get(url)
 
         if resp.status_code == 200:
@@ -296,7 +296,7 @@ class HierarchyBuilder:
             path = "{0}/{1}".format(
                 "commodities" if data_type == "subheadings" else data_type, item_id
             )
-            url = settings.TRADE_TARIFF_API["BASE_URL"].format(path)
+            url = settings.TRADE_TARIFF_API_BASE_URL.format(path)
 
             resp = requests.get(url)
 

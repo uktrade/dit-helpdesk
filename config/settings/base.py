@@ -220,36 +220,19 @@ CONTACT_MAX_LENGTH = 1000
 
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
-TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
-TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = (
-    "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
-)
-TRADE_TARIFF_SERVICE_SECTION_URL = (
-    "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
-)
-TRADE_TARIFF_SERVICE_MODEL_ARGS = [
-    "Section",
-    "Chapter",
-    "Heading",
-    "SubHeading",
-    "Commodity",
-]
+
+TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
+
+SECTION_URL = "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
+CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
+HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/{0}.json"
+COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/{0}.json"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
-
-TRADE_TARIFF_API = {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}"}
-
-SECTION_URL = "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
-
-CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
-
-HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/%s.json"
-
-COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/%s.json"
 
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
 
