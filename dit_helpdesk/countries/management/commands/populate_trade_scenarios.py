@@ -121,7 +121,7 @@ trade_data = [
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
      'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
     {'Country code': 'UA',
-     'GOVUK FTA URL': '',
+     'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement',
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
      'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
     {'Country code': 'AT',
