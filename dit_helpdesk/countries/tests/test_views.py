@@ -113,7 +113,7 @@ class CountriesViewsTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), True),
+            ("XX", True),
         ],
     )
     def test_post_with_country_having_fta_and_enabled(self):
@@ -133,7 +133,7 @@ class CountriesViewsTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), False),
+            ("XX", False),
         ],
     )
     def test_post_with_country_having_fta_and_disabled(self):
@@ -204,7 +204,7 @@ class CountryInformationViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), False),
+            ("XX", False),
         ],
     )
     def test_agreement_page_with_setting_disabled(self):
@@ -213,7 +213,7 @@ class CountryInformationViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), True),
+            ("XX", True),
         ],
     )
     def test_agreement_page_with_setting_enabled(self):
@@ -222,7 +222,7 @@ class CountryInformationViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), True),
+            ("XX", True),
         ],
     )
     def test_renders_template(self):
@@ -231,7 +231,7 @@ class CountryInformationViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", ["agreement one", "agreement two"]), True),
+            ("XX", True),
         ],
     )
     def test_context_data(self):
@@ -240,10 +240,6 @@ class CountryInformationViewTestCase(TestCase):
 
         self.assertEqual(ctx["country"], self.country)
         self.assertEqual(ctx["country_code"], "xx")
-        self.assertEqual(
-            ctx["agreements"],
-            ["agreement one", "agreement two"],
-        )
         self.assertEqual(
             ctx["trade_agreements_template_name"],
             "countries/XX/_trade_agreements.html",
@@ -263,7 +259,7 @@ class CountryInformationViewTestCase(TestCase):
 
     @override_settings(
         AGREEMENTS=[
-            (Agreement("XX", []), True),
+            ("XX", True),
         ],
     )
     def test_renders_custom_html(self):

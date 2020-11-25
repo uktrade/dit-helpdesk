@@ -410,23 +410,6 @@ SUPPORTED_TRADE_SCENARIOS = (
     "US",
 )
 
-Agreement = namedtuple(
-    "Agreement",
-    [
-        "country_code",
-        "agreements",
-    ],
-)
-
 AGREEMENTS = [
-    (
-        Agreement(
-            "JP",
-            [
-                "Japan-UK Continuity Plus Agreement",
-                "EU-Japan Economic Partnership Agreement",
-            ],
-        ),
-        JAPAN_FTA_ENABLED,
-    ),
+    ("JP", JAPAN_FTA_ENABLED),
 ]

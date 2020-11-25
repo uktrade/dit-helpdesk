@@ -6,13 +6,10 @@ from django.views.generic.base import TemplateView
 from .models import Country
 
 
-def _get_agreement(country_code):
-    agreements = {
-        a.country_code: a
-        for a, enabled in settings.AGREEMENTS if enabled
-    }
+def _has_agreement(country_code):
+    agreements = dict(settings.AGREEMENTS)
 
-    return agreements.get(country_code, None)
+    return agreements.get(country_code, False)
 
 
 class ChooseCountryView(TemplateView):
@@ -46,7 +43,7 @@ class ChooseCountryView(TemplateView):
             request.session["search_version"] = self.search_version
             request.session["origin_country"] = origin_country
 
-            if _get_agreement(origin_country):
+            if _has_agreement(origin_country):
                 return redirect("country-information", country_code=origin_country.lower())
 
             return redirect(self.redirect_to, country_code=origin_country.lower())
@@ -76,12 +73,10 @@ class CountryInformationView(TemplateView):
         except Country.DoesNotExist:
             raise Http404
 
-        agreement = _get_agreement(country.country_code)
-        if not agreement:
+        if not _has_agreement(country.country_code):
             raise Http404
 
         self.country = country
-        self.agreement = agreement
 
         return super().get(request, *args, **kwargs)
 
@@ -95,7 +90,6 @@ class CountryInformationView(TemplateView):
 
         ctx["country"] = country
         ctx["country_code"] = country.country_code.lower()
-        ctx["agreements"] = self.agreement.agreements
 
         ctx["trade_agreements_template_name"] = self._get_template_name(country, "trade_agreements")
         ctx["goods_template_name"] = self._get_template_name(country, "goods")
