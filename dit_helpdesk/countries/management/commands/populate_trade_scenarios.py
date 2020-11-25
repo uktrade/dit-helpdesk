@@ -16,6 +16,7 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement',
      'Mendel agreement label': 'ANDEAN-COUNTRIES',
      'TWUK content template label': 'ANDEAN-COUNTRIES'},
+
     {'Country code': 'AG',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement',
      'Mendel agreement label': 'CARIFORUM',
@@ -72,6 +73,7 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement',
      'Mendel agreement label': 'CARIFORUM',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'CR',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-central-america-association-agreement',
      'Mendel agreement label': 'CENTRAL-AMERICA',
@@ -96,10 +98,12 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-central-america-association-agreement',
      'Mendel agreement label': 'CENTRAL-AMERICA',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'CL',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-chile-association-agreement',
      'Mendel agreement label': 'CHILE',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'MG',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2',
      'Mendel agreement label': 'ESA',
@@ -116,14 +120,17 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2',
      'Mendel agreement label': 'ESA',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'CI',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
      'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
+
     {'Country code': 'UA',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement',
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
      'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
+
     {'Country code': 'AT',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-MEMBER',
@@ -232,34 +239,41 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-MEMBER',
      'TWUK content template label': 'EU-MEMBER'},
+
     {'Country code': 'DZ',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
      'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+
     {'Country code': 'AD',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
-     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+     'TWUK content template label': 'EU-MEMBER'},
+
     {'Country code': 'BA',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
      'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+
     {'Country code': 'SZ',
-     'GOVUK FTA URL': '',
+     'GOVUK FTA URL': 'https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
-     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+     'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'MK',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
      'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+
     {'Country code': 'SM',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
-     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+     'TWUK content template label': 'EU-MEMBER'},
+
     {'Country code': 'XS',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-NON-WTO',
-     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-WTO'},
     {'Country code': 'AL',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-WTO',
@@ -300,6 +314,7 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'EU-NOAGR-FOR-EXIT-WTO',
      'TWUK content template label': 'EU-NOAGR-FOR-EXIT-WTO'},
+
     {'Country code': 'FO',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-faroe-islands-free-trade-agreement-fta',
      'Mendel agreement label': 'FAROE-ISLANDS',
@@ -308,6 +323,7 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/publications/ukgeorgia-strategic-partnership-and-cooperation-agreement-cs-georgia-no12019',
      'Mendel agreement label': 'GEORGIA',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'IS',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'ICELAND-NORWAY',
@@ -316,14 +332,17 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'ICELAND-NORWAY',
      'TWUK content template label': 'ICELAND-NORWAY'},
+
     {'Country code': 'IL',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-israel-trade-and-partnership-agreement',
      'Mendel agreement label': 'ISRAEL',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'JP',
-     'GOVUK FTA URL': '',
+     'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-japan-comprehensive-economic-partnership-agreement',
      'Mendel agreement label': 'JAPAN',
      'TWUK content template label': 'JAPAN'},
+
     {'Country code': 'JO',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-jordan-association-agreement',
      'Mendel agreement label': 'JORDAN',
@@ -339,7 +358,7 @@ trade_data = [
     {'Country code': 'LI',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-switzerland-liechtenstein-trade-agreement',
      'Mendel agreement label': 'LIECHTENSTEIN',
-     'TWUK content template label': 'CH-LI'},
+     'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
     {'Country code': 'MA',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-morocco-association-agreement',
      'Mendel agreement label': 'MOROCCO',
@@ -383,11 +402,12 @@ trade_data = [
     {'Country code': 'CH',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-switzerland-trade-agreement',
      'Mendel agreement label': 'SWITZERLAND',
-     'TWUK content template label': 'CH-LI'},
+     'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
     {'Country code': 'TN',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-tunisia-association-agreement',
      'Mendel agreement label': 'TUNISIA',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
+
     {'Country code': 'TR',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'TURKEY',
@@ -396,6 +416,7 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'VN',
      'TWUK content template label': 'VN'},
+
     {'Country code': 'AF',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
@@ -412,10 +433,12 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
      'TWUK content template label': 'WTO'},
+
     {'Country code': 'AU',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
-     'TWUK content template label': 'WTO'},
+     'TWUK content template label': 'AUSTRALIA'},
+
     {'Country code': 'BH',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
@@ -556,10 +579,12 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
      'TWUK content template label': 'WTO'},
+
     {'Country code': 'NZ',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
-     'TWUK content template label': 'WTO'},
+     'TWUK content template label': 'NEW-ZEALAND'},
+
     {'Country code': 'NE',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
@@ -596,10 +621,12 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
      'TWUK content template label': 'WTO'},
+
     {'Country code': 'WS',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
-     'TWUK content template label': 'WTO'},
+     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+
     {'Country code': 'SA',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
@@ -612,10 +639,12 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
      'TWUK content template label': 'WTO'},
+
     {'Country code': 'SB',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
-     'TWUK content template label': 'WTO'},
+     'TWUK content template label': 'EU-NOAGR-FOR-EXIT-NON-WTO'},
+
     {'Country code': 'LK',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
@@ -648,10 +677,12 @@ trade_data = [
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
      'TWUK content template label': 'WTO'},
+
     {'Country code': 'US',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
-     'TWUK content template label': 'WTO'},
+     'TWUK content template label': 'US'},
+
     {'Country code': 'UY',
      'GOVUK FTA URL': '',
      'Mendel agreement label': 'WTO',
