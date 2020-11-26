@@ -24,10 +24,8 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 ADMIN_ENABLED = env.bool("ADMIN_ENABLED")
 
-CMS_ENABLED = env.bool("CMS_ENABLED", False)
-
-READ_ONLY = env.bool("READ_ONLY", True)
-
+READ_ONLY = True
+CMS_ENABLED = False
 
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
@@ -73,13 +71,6 @@ INSTALLED_APPS = [
     "accessibility",
     "reversion",
 ]
-
-if READ_ONLY:
-    INSTALLED_APPS += ["readonly"]
-    SITE_READ_ONLY = True
-
-if CMS_ENABLED:
-    INSTALLED_APPS += ["cms"]
 
 MIDDLEWARE = [
     "healthcheck.middleware.HealthCheckMiddleware",
