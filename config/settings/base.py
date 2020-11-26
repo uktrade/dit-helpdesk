@@ -71,13 +71,15 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
     "accessibility",
-    "cms",
     "reversion",
 ]
 
 if READ_ONLY:
     INSTALLED_APPS += ["readonly"]
     SITE_READ_ONLY = True
+
+if CMS_ENABLED:
+    INSTALLED_APPS += ["cms"]
 
 MIDDLEWARE = [
     "healthcheck.middleware.HealthCheckMiddleware",
