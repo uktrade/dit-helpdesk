@@ -97,7 +97,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(
             resp.url,
             reverse(
-                "search:search-commodity",
+                "search:search-commodity-new",
                 kwargs={"country_code": "au"},
             ),
         )
@@ -146,7 +146,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(
             resp.url,
             reverse(
-                "search:search-commodity",
+                "search:search-commodity-new",
                 kwargs={"country_code": "xx"},
             ),
         )
@@ -164,7 +164,7 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(
             resp.url,
             reverse(
-                "search:search-commodity",
+                "search:search-commodity-new",
                 kwargs={"country_code": "xx"},
             ),
         )
