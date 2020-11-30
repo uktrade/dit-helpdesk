@@ -22,7 +22,7 @@
                         <p class="govuk-body govuk-!-margin-bottom-2"><span
                                 class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span>
                             United Kingdom</p>
-                        <a href="{% url 'choose-country-new' %}" class="govuk-body">Change</a>
+                        <a href="{% url 'choose-country' %}" class="govuk-body">Change</a>
                         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible govuk-!-margin-top-3">
                     </div>
                 </div>
@@ -32,7 +32,7 @@
 
                 <div class="govuk-grid-column-full">
 
-                    <form id="commodity-search" action="{% url 'search:search-commodity-new' country_code=country_code %}"
+                    <form id="commodity-search" action="{% url 'search:search-commodity' country_code=country_code %}"
                           class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
 
                         {% if form_q_error %}
@@ -157,10 +157,10 @@
 
                            <ul class="govuk-tabs__list govuk-!-margin-bottom-3" role="tablist">
                                <li role="presentation" class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                   <span aria-controls="query_panel_tree" class="govuk-tabs__tab" role="tab" tabindex="0" aria-selected="true"> Browse product types </span>
+                                   <span aria-controls="query_panel_tree" class="govuk-tabs__tab" role="tab" tabindex="0" aria-selected="true"> Browse product types <br><span class="result-count"> ({{ group_result_count }} results) </span></span>
                                </li>
                                <li role="presentation" class="govuk-tabs__list-item ">
-                                   <a aria-controls="query_panel_index" class="govuk-tabs__tab" href="{% url 'search:search-commodity' country_code=request.GET.country %}{% urlparams q=request.GET.q country=country_code toggle_headings=0 sort='ranking' sort_order='desc' page=1 %}" role="tab" tabindex="1" aria-selected="false"> Select individual product </a>
+                                   <a aria-controls="query_panel_index" class="govuk-tabs__tab" href="{% url 'search:search-commodity-old' country_code=request.GET.country %}{% urlparams q=request.GET.q country=country_code toggle_headings=0 sort='ranking' sort_order='desc' page=1 %}" role="tab" tabindex="1" aria-selected="false"> Select individual product <br><span class="result-count"> ({{ total_results }} results) </span></a>
                                </li>
                            </ul>
                         {% endif %}

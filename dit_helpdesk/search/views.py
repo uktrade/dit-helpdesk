@@ -110,7 +110,16 @@ class CommoditySearchView(FormView):
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
                     return self.render_to_response(context)
             else:
-                context.update(helpers.search_by_term(form_data=form_data))
+                term_search_context = helpers.search_by_term(form_data=form_data)
+                context.update(term_search_context)
+
+                hits = term_search_context['_all_results']
+
+                # since we are supplying hits the function will not hit ES again
+                grouped_search_context = helpers.group_search_by_term(
+                    form_data, hits=hits)
+
+                context['group_result_count'] = grouped_search_context['group_result_count']
 
                 curr_url_items = dict((x, y) for x, y in request.GET.items())
 
