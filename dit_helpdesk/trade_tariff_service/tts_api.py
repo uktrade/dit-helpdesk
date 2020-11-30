@@ -230,19 +230,22 @@ class ImportMeasureJson(object):
 
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di["geographical_area"]
-        if geo_area is not None:
-            if (
-                geo_area["id"][0].isalpha()
-                and geo_area["id"] == origin_country_code.upper()
-            ):
-                return True
-            for child_area in geo_area["children_geographical_areas"]:
-                if (
-                    child_area["id"][0].isalpha()
-                    and child_area["id"] == origin_country_code.upper()
-                ):
-                    return True
+        if geo_area is None:
             return False
+
+        def does_area_id_match(area):
+            if not area["id"][0].isalpha():
+                return False
+            return area["id"] == origin_country_code.upper()
+
+        if does_area_id_match(geo_area):
+            return True
+
+        for child_area in geo_area["children_geographical_areas"]:
+            if does_area_id_match(child_area):
+                return True
+
+        return False
 
     @property
     def vue__legal_base_html(self):
