@@ -181,16 +181,20 @@ IMPORT_MEASURE_GROUPS = {
 def get_nomenclature_group_measures(nomenclature_model, group_name, country_code):
     group_measure_type_ids = [
         item
-        for collection in [group[1] for group in IMPORT_MEASURE_GROUPS[group_name]]
+        for collection in [type_id for _, type_id in IMPORT_MEASURE_GROUPS[group_name]]
         for item in collection
     ]
 
-    return [
+    measures = nomenclature_model.tts_obj.get_import_measures(country_code)
+
+    group_measures = [
         measure
-        for measure in nomenclature_model.tts_obj.get_import_measures(country_code)
+        for measure in measures
         if measure.type_id in group_measure_type_ids
         and country_code not in [id for id in measure.excluded_country_area_ids]
     ]
+
+    return group_measures
 
 
 def create_nomenclature_tree(region=settings.PRIMARY_REGION):
