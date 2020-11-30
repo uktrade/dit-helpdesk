@@ -290,7 +290,9 @@ ELASTIC_APM = {
   'SERVER_URL': env.str('APM_SERVER_URL'),
   'ENVIRONMENT': env.str("APM_ENVIRONMENT"),
   'SERVER_TIMEOUT': env.str("APM_TIMEOUT"),
-  'DEBUG': env.str('APM_DEBUG')
+  'DEBUG': env.str("APM_DEBUG"),
+  'ENABLED': env.str("APM_ENABLED", True),
+  'RECORDING': env.str("APM_RECORDING", True),
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN")
