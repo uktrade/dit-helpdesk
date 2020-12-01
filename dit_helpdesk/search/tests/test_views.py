@@ -158,7 +158,10 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = reverse("search:search-commodity", kwargs={"country_code": "au"})
+        self.url = reverse("search:search-commodity-old", kwargs={
+            "country_code": "au"})
+        self.grouped_url = reverse("search:search-commodity", kwargs={
+            "country_code": "au"})
 
     def test_section_1_exists(self):
         self.assertTrue(Section.objects.filter(section_id=10).exists())
@@ -177,7 +180,12 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def test_commodity_search_is_using_the_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "search/grouped_commodity_search.html")
+        self.assertTemplateUsed(response, "search/commodity_search.html")
+
+    def test_grouped_commodity_search_is_using_the_correct_template(self):
+        response = self.client.get(self.grouped_url)
+        self.assertTemplateUsed(
+            response, "search/grouped_commodity_search.html")
 
     def test_search_view_returns_http_200(self):
         response = self.client.get(self.url)

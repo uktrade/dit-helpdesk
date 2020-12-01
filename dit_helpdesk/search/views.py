@@ -316,10 +316,10 @@ class GroupedCommoditySearchView(FormView):
                 context["results"] = results
 
                 search_term = form_data.get('q')
-                total_results = context['total_results']
+                total_results = grouped_context['group_result_count']
 
                 logger.info(
-                    f"Performed search for {search_term}",
+                    f"Performed grouped search for {search_term}",
                     extra={
                         'search_term': search_term,
                         'search_count': total_results,
@@ -327,7 +327,7 @@ class GroupedCommoditySearchView(FormView):
 
                 track_event(
                     "search",
-                    "results",
+                    "grouped_results",
                     search_term,
                     total_results,
                 )
