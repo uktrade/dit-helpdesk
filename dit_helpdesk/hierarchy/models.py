@@ -29,8 +29,11 @@ CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 class RegionHierarchyManager(models.Manager):
     def get_queryset(self):
+        return self.for_region(settings.PRIMARY_REGION)
+
+    def for_region(self, region):
         return super().get_queryset().filter(
-            nomenclature_tree__region=settings.PRIMARY_REGION,
+            nomenclature_tree__region=region,
             nomenclature_tree__end_date__isnull=True
         )
 
@@ -899,7 +902,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.heading_code[:4]
+        url = settings.HEADING_URL.format(self.heading_code[:4])
 
         resp = requests.get(url, timeout=10)
         resp_content = None
@@ -1235,7 +1238,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         commodity's tts_json field
 
         """
-        url = settings.HEADING_URL % self.commodity_code[:4]
+        url = settings.HEADING_URL.format(self.commodity_code[:4])
 
         resp = requests.get(url, timeout=10)
         resp_content = None

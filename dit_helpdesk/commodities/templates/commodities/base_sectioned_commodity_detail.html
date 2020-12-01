@@ -1,0 +1,5 @@
+{% extends 'hierarchy/base_sectioned_commodity_object_detail.html' %}
+
+{% load dotted_format %}
+
+{% block title %}Commodity information for {{ commodity.commodity_code|dotted_format }}{% endblock title %}

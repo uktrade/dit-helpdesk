@@ -10,12 +10,19 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from commodities.models import Commodity
-from commodities.helpers import get_tariff_content_context
+from commodities.helpers import (
+    get_global_tariff_context,
+    get_tariff_content_context,
+)
 from core.helpers import require_feature
 from countries.models import Country
 from regulations.models import RegulationGroup
 
-from .helpers import TABLE_COLUMN_TITLES, get_nomenclature_group_measures
+from .helpers import (
+    get_eu_commodity_link,
+    get_nomenclature_group_measures,
+    TABLE_COLUMN_TITLES,
+)
 from .models import Section, Chapter, Heading, SubHeading
 
 code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
@@ -178,19 +185,27 @@ def hierarchy_data(country_code, node_id="root", content_type="html"):
     return serializer(node="root", expanded=expanded, origin_country=country_code)
 
 
+class Redirect(Exception):
+
+    def __init__(self, redirect_to, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+
+        self.redirect_to = redirect_to
+
+
 class BaseCommodityObjectDetailView(TemplateView):
     context_object_name = None
 
     def get_commodity_object(self, **kwargs):
         raise NotImplementedError("Implement `get_commodity_object`")
 
-    def get(self, request, *args, **kwargs):
+    def initialise(self, request, *args, **kwargs):
         country_code = kwargs["country_code"]
         try:
             self.country = Country.objects.get(country_code=country_code.upper())
         except Country.DoesNotExist:
             messages.error(request, "Invalid originCountry")
-            return redirect("choose-country")
+            raise Redirect(redirect("choose-country"))
 
         try:
             self.commodity_object = self.get_commodity_object(**kwargs)
@@ -199,6 +214,13 @@ class BaseCommodityObjectDetailView(TemplateView):
 
         if self.commodity_object.should_update_content():
             self.commodity_object.update_content()
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.initialise(request, *args, **kwargs)
+        except Redirect as r:
+            messages.error(request, "Invalid originCountry")
+            return r.redirect_to
 
         return super().get(request, *args, **kwargs)
 
@@ -251,6 +273,242 @@ class BaseCommodityObjectDetailView(TemplateView):
         ctx.update(self.get_notes_context_data(self.commodity_object))
 
         return ctx
+
+
+class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
+
+    @property
+    def sections(self):
+        raise NotImplementedError("Add property `sections` as a list of `CommodityDetailSection` classes")
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        sections = []
+        section_menu_items = []
+        modals = {}
+        for section_class in self.sections:
+            section = section_class(self.country, self.commodity_object)
+            if not section.should_be_displayed:
+                continue
+
+            ctx.update(section.get_context_data())
+            sections.append(section)
+
+            section_menu_items += section.get_menu_items()
+
+            for modals_context_data in section.get_modals_context_data():
+                modals.update(modals_context_data)
+
+        ctx["sections"] = sections
+        ctx["section_menu_items"] = section_menu_items
+        ctx["modals"] = modals
+
+        return ctx
+
+
+class CommodityDetailSection:
+    should_be_displayed = True
+
+    def __init__(self, country, commodity_object):
+        self.country = country
+        self.commodity_object = commodity_object
+
+    def get_menu_items(self):
+        raise NotImplementedError("Implement `get_menu_items`")
+
+    def get_modals_context_data(self):
+        return []
+
+    def get_context_data(self):
+        raise NotImplementedError("Implement `get_context_data`")
+
+
+class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_tariffs_and_charges_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.uk_tariffs_and_charges_measures = get_nomenclature_group_measures(
+            self.commodity_object,
+            "Tariffs and charges",
+            self.country.country_code,
+        )
+
+        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
+        self.eu_tariffs_and_charges_measures = get_nomenclature_group_measures(
+            eu_commodity_object,
+            "Tariffs and charges",
+            self.country.country_code,
+        )
+
+    def get_eu_commodity_object(self, commodity_object):
+        raise NotImplementedError("Implement `get_eu_commodity_object`")
+
+    @property
+    def should_be_displayed(self):
+        return bool(self.uk_tariffs_and_charges_measures)
+
+    def get_menu_items(self):
+        return [
+            ("Tariffs and charges", "tariffs_and_charges"),
+        ]
+
+    def get_modals_context_data(self):
+        return [
+            measure_json.measures_modals
+            for measure_json in self.uk_tariffs_and_charges_measures
+        ]
+
+    def _get_table_data(self, charges_and_measures):
+        is_eu = self.country.country_code.upper() == "EU"
+
+        tariffs_and_charges_table_data = (
+            [
+                measure_json.get_table_row()
+                for measure_json in charges_and_measures
+                if measure_json.vat or measure_json.excise
+            ]
+            if is_eu
+            else
+            [
+                measure_json.get_table_row()
+                for measure_json in charges_and_measures
+            ]
+        )
+
+        return tariffs_and_charges_table_data
+
+    def get_context_data(self):
+        ctx = {
+            "uk_tariffs_and_charges_table_data": self._get_table_data(self.uk_tariffs_and_charges_measures),
+            "eu_tariffs_and_charges_table_data": self._get_table_data(self.eu_tariffs_and_charges_measures),
+        }
+
+        if settings.UKGT_ENABLED:
+            ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
+
+        return ctx
+
+
+class QuotasNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_quotas_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.has_quotas_measures = True
+
+        self.quotas_measures = get_nomenclature_group_measures(
+            self.commodity_object,
+            "Quotas",
+            self.country.country_code,
+        )
+
+        try:
+            self.quotas_table_data = self._get_table_data(self.quotas_measures)
+        except Exception as ex:
+            self.has_quotas_measures = False
+            logger.info(ex.args)
+
+    @property
+    def should_be_displayed(self):
+        return self.has_quotas_measures and bool(self.quotas_measures)
+
+    def get_menu_items(self):
+        return [
+            ("Quotas", "quotas"),
+        ]
+
+    def get_modals_context_data(self):
+        return [
+            measure_json.measures_modals
+            for measure_json in self.quotas_measures
+        ]
+
+    def _get_table_data(self, quotas_measures):
+        return [
+            measure_json.get_table_row() for measure_json in quotas_measures
+        ]
+
+    def get_context_data(self):
+        return {
+            "eu_quotas_link": get_eu_commodity_link(self.commodity_object, self.country),
+            "quotas_table_data": self.quotas_table_data,
+        }
+
+
+class OtherMeasuresNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_other_measures_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.has_other_measures = True
+
+        self.other_measures = get_nomenclature_group_measures(
+            commodity_object,
+            "Other measures",
+            country.country_code,
+        )
+
+        try:
+            self.other_measures_table_data = [measure_json.get_table_row() for measure_json in self.other_measures]
+        except Exception as ex:
+            self.has_other_measures = False
+            logger.info(ex.args)
+
+    @property
+    def should_be_displayed(self):
+        return self.has_other_measures and bool(self.other_measures)
+
+    def get_menu_items(self):
+        return [("Other measures", "other_measures")]
+
+    def get_modals_context_data(self):
+        return [
+            measure_json.measures_modals
+            for measure_json in self.other_measures
+        ]
+
+    def get_context_data(self):
+        return {
+            "eu_other_measures_link": get_eu_commodity_link(self.commodity_object, self.country),
+            "other_measures_table": self.other_measures_table_data,
+        }
+
+
+class RulesOfOriginNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_rules_of_origin_northern_ireland.html"
+
+    def get_menu_items(self):
+        return [("Rules of origin", "rules_of_origin")]
+
+    def get_context_data(self):
+        commodity_object = self.commodity_object
+        country = self.country
+
+        rules_of_origin = commodity_object.get_rules_of_origin(
+            country_code=country.country_code,
+        )
+
+        return {
+            "eu_rules_of_origin_link": get_eu_commodity_link(commodity_object, country),
+            "rules_of_origin": rules_of_origin,
+        }
+
+
+class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
+    template = "hierarchy/_product_regulations_northern_ireland.html"
+
+    def get_menu_items(self):
+        return [("Product-specific regulations", "regulations")]
+
+    def get_context_data(self):
+        return {
+            "eu_regulations_link": get_eu_commodity_link(self.commodity_object, self.country),
+        }
 
 
 def section_detail(request, section_id, country_code):
@@ -357,7 +615,7 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     return render(request, "hierarchy/chapter_detail.html", context)
 
 
-class BaseHeadingDetailView(BaseCommodityObjectDetailView):
+class HeadingObjectMixin:
     context_object_name = "heading"
 
     def get_commodity_object(self, **kwargs):
@@ -387,6 +645,14 @@ class BaseHeadingDetailView(BaseCommodityObjectDetailView):
         ctx["section_notes"] = section.section_notes
 
         return ctx
+
+
+class BaseHeadingDetailView(HeadingObjectMixin, BaseCommodityObjectDetailView):
+    pass
+
+
+class BaseSectionedHeadingDetailView(HeadingObjectMixin, BaseSectionedCommodityObjectDetailView):
+    pass
 
 
 class HeadingDetailView(BaseHeadingDetailView):
@@ -475,12 +741,53 @@ class HeadingDetailView(BaseHeadingDetailView):
         return ctx
 
 
+class HeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+
+    def get_eu_commodity_object(self, commodity_object):
+        return Heading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            heading_code=commodity_object.heading_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
-class HeadingDetailNorthernIrelandView(BaseHeadingDetailView):
+class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
+    sections = [
+        HeadingTariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
+        ProductRegulationsNorthernIrelandSection,
+    ]
     template_name = "hierarchy/heading_detail_northern_ireland.html"
 
+    def initialise(self, request, *args, **kwargs):
+        super().initialise(request, *args, **kwargs)
 
-class BaseSubHeadingDetailView(BaseCommodityObjectDetailView):
+        try:
+            self.eu_commodity_object = Heading.objects.for_region(
+                settings.SECONDARY_REGION,
+            ).get(
+                heading_code=self.commodity_object.heading_code,
+                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+            )
+        except Heading.DoesNotExist:
+            self.eu_commodity_object = None
+        else:
+            if self.eu_commodity_object.should_update_content():
+                self.eu_commodity_object.update_content()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["column_titles"] = TABLE_COLUMN_TITLES
+
+        return ctx
+
+
+class SubHeadingObjectMixin:
     context_object_name = "subheading"
 
     def get_commodity_object(self, **kwargs):
@@ -509,6 +816,14 @@ class BaseSubHeadingDetailView(BaseCommodityObjectDetailView):
             "chapter_notes": chapter.chapter_notes,
             "section_notes": section.section_notes,
         }
+
+
+class BaseSubHeadingDetailView(SubHeadingObjectMixin, BaseCommodityObjectDetailView):
+    pass
+
+
+class BaseSectionedSubHeadingDetailView(SubHeadingObjectMixin, BaseSectionedCommodityObjectDetailView):
+    pass
 
 
 class SubHeadingDetailView(BaseSubHeadingDetailView):
@@ -603,9 +918,50 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
         return ctx
 
 
+class SubHeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+
+    def get_eu_commodity_object(self, commodity_object):
+        return SubHeading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_object.commodity_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
-class SubHeadingDetailNorthernIrelandView(BaseSubHeadingDetailView):
+class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
+    sections = [
+        SubHeadingTariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
+        ProductRegulationsNorthernIrelandSection,
+    ]
     template_name = "hierarchy/subheading_detail_northern_ireland.html"
+
+    def initialise(self, request, *args, **kwargs):
+        super().initialise(request, *args, **kwargs)
+
+        try:
+            self.eu_commodity_object = SubHeading.objects.for_region(
+                settings.SECONDARY_REGION,
+            ).get(
+                commodity_code=self.commodity_object.commodity_code,
+                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+            )
+        except SubHeading.DoesNotExist:
+            self.eu_commodity_object = None
+        else:
+            if self.eu_commodity_object.should_update_content():
+                self.eu_commodity_object.update_content()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["column_titles"] = TABLE_COLUMN_TITLES
+
+        return ctx
 
 
 def hierarchy_section_header(reversed_heading_tree):

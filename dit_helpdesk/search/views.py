@@ -70,9 +70,13 @@ class CommoditySearchView(FormView):
 
     def get(self, request, *args, **kwargs):
         self.initial = self.get_initial()
+        country_code = kwargs["country_code"]
+        if not "origin_country" not in request.session:
+            request.session["origin_country"] = country_code
+
         form = self.form_class(request.GET)
 
-        context = self.get_context_data(kwargs={"country_code": kwargs["country_code"]})
+        context = self.get_context_data(kwargs={"country_code": country_code})
         context["title_suffix"] = ""
 
         if form.is_valid():
@@ -213,11 +217,16 @@ class GroupedCommoditySearchView(FormView):
     def get(self, request, *args, **kwargs):
 
         self.initial = self.get_initial()
+
+        country_code = kwargs["country_code"]
+        if "origin_country" not in request.session:
+            request.session["origin_country"] = country_code
+
         form = self.form_class(request.GET)
 
         context = self.get_context_data(
             kwargs={
-                "country_code": kwargs["country_code"],
+                "country_code": country_code,
                 "selected_origin_country": kwargs["country_code"]
             })
         context["title_suffix"] = ""

@@ -1,0 +1,60 @@
+{% load cell_cleaner dotted_format %}
+
+<div id="other_measures" class="govuk-!-margin-bottom-9">
+    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
+    </h3>
+    <div class="govuk-caption-m">
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+    </div>
+
+    <p class="govuk-body">
+        Other UK or EU measures may apply to this product.
+    </p>
+    <p class="govuk-body">
+        Which other measures apply will depend on:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>whether the product is intended for use in the UK or the EU</li>
+        <li>the proportions of each shipment intended for use in the UK and the EU respectively</li>
+        <li>whether UK-intended products may subsequently be imported into the Republic of Ireland</li>
+    </ul>
+
+    <p class="govuk-body">
+        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+    </p>
+
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-other-measures">
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-other-measures-heading">
+                        Other UK measures - {{ commodity.commodity_code|dotted_format }}
+                    </span>
+                </h4>
+            </div>
+            <div id="accordion-uk-other-measures-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-other-measures-heading">
+                {% include "hierarchy/_other_measures_types.html" %}
+                {% include "hierarchy/_other_measures_table_data.html" with other_table_data=other_measures_table %}
+            </div>
+        </div>
+
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-other-measures-heading">
+                        Other EU measures - {{ commodity.commodity_code|dotted_format }}
+                    </span>
+                </h4>
+            </div>
+            <div id="accordion-eu-other-measures-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-other-measures-heading">
+                <p class="govuk-body">
+                    Other European Union measures may apply where goods are exported to Northern Ireland for use in the European Union. These can be found on the European Commission's Access2Markets site.
+                </p>
+                <p class="govuk-body">
+                    <a href="{{ eu_other_measures_link }}">View other EU measures for your goods on the Access2Markets site</a>
+                </p>    
+            </div>
+        </div>
+    </div>
+</div>

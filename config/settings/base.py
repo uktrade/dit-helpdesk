@@ -7,6 +7,8 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import dj_database_url
 import ecs_logging
 
+from collections import namedtuple
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
 
@@ -29,9 +31,9 @@ READ_ONLY = env.bool("READ_ONLY", True)
 
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
-FTA_INFO_SHARING_ENABLED = env.bool("FTA_INFO_SHARING_ENABLED", False)
 NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
 GROUPED_SEARCH_ENABLED = env.bool("GROUPED_SEARCH_ENABLED", False)
+JAPAN_FTA_ENABLED = env.bool("JAPAN_FTA_ENABLED", False)
 
 
 # Application definition
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.admin",
     "django.contrib.contenttypes",
+    "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -220,36 +223,19 @@ CONTACT_MAX_LENGTH = 1000
 
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
-TRADE_TARIFF_SERVICE_BASE_URL = "https://www.trade-tariff.service.gov.uk/trade-tariff/"
-TRADE_TARIFF_SERVICE_COMMODITIES_JSON_PATH = (
-    "commodities/{0}.json?currency=EUR&day=1&month=1&year=2019"
-)
-TRADE_TARIFF_SERVICE_SECTION_URL = (
-    "https://www.trade-tariff.service.gov.uk/trade-tariff/sections/{0}.json"
-)
-TRADE_TARIFF_SERVICE_MODEL_ARGS = [
-    "Section",
-    "Chapter",
-    "Heading",
-    "SubHeading",
-    "Commodity",
-]
+
+TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
+
+SECTION_URL = "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
+CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
+HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/{0}.json"
+COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/{0}.json"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
-
-TRADE_TARIFF_API = {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/{0}"}
-
-SECTION_URL = "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
-
-CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
-
-HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/%s.json"
-
-COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/%s.json"
 
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
 
@@ -262,6 +248,8 @@ SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
+SECURE_BROWSER_XSS_FILTER = env.bool("SECURE_BROWSER_XSS_FILTER", True)
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool("SECURE_CONTENT_TYPE_NOSNIFF", True)
 
 LOG_LEVEL = env("LOG_LEVEL")
 LOG_ECS = env.bool("LOG_ECS", True)
@@ -307,7 +295,9 @@ ELASTIC_APM = {
   'SERVER_URL': env.str('APM_SERVER_URL'),
   'ENVIRONMENT': env.str("APM_ENVIRONMENT"),
   'SERVER_TIMEOUT': env.str("APM_TIMEOUT"),
-  'DEBUG': env.str('APM_DEBUG')
+  'DEBUG': env.str("APM_DEBUG"),
+  'ENABLED': env.str("APM_ENABLED", True),
+  'RECORDING': env.str("APM_RECORDING", True),
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN")
@@ -413,8 +403,20 @@ SECONDARY_REGION = 'EU'
 
 MIGRATION_LINTER_OVERRIDE_MAKEMIGRATIONS = True
 
-
 SUPPORTED_TRADE_SCENARIOS = (
-    'EU-NOAGR-FOR-EXIT-WTO',
-    'EU-AGR-SIGNED-LINK',
+    "ANDEAN-COUNTRIES",
+    "EU-AGR-SIGNED-LINK",
+    "EU-AGR-SIGNED-NO-LINK",
+    "EU-MEMBER",
+    "EU-NOAGR-FOR-EXIT",
+    "ICELAND-NORWAY",
+    "JP",
+    "WTO",
+    "AUSTRALIA",
+    "NEW-ZEALAND",
+    "US",
 )
+
+AGREEMENTS = [
+    ("JP", JAPAN_FTA_ENABLED),
+]

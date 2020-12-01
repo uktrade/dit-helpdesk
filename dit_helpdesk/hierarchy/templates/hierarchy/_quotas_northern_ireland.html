@@ -1,0 +1,67 @@
+{% load cell_cleaner dotted_format %}
+
+<div id="quotas" class="govuk-!-margin-bottom-9">
+    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="quotas"></a>Quotas - {{ commodity.commodity_code|dotted_format }}
+    </h3>
+    <div class="govuk-caption-m">
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+    </div>
+    <p class="govuk-body app-info">
+        Quotas allow limited amounts of specific goods to be imported at a lower duty rate.
+    </p>
+
+    <p class="govuk-body">
+        This product may be subject to either of the following:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>UK quotas</li>
+        <li>EU quotas</li>
+    </ul>
+
+    <p class="govuk-body">
+        Which quotas apply will depend on:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>whether the product is intended for use in the UK or the EU</li>
+        <li>the proportions of each shipment intended for use in the UK and the EU respectively</li>
+        <li>whether UK-intended products may subsequently be imported into the Republic of Ireland</li>
+    </ul>
+
+    <p class="govuk-body">
+        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+    </p>
+
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-quotas">
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-quotas-heading">
+                        UK quotas - {{ commodity.commodity_code|dotted_format }}
+                    </span>
+                </h4>
+            </div>
+            <div id="accordion-uk-quotas-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-quotas-heading">
+                {% include "hierarchy/_quotas_table.html" with column_title=column_titles table_data=quotas_table_data %}
+            </div>
+        </div>
+
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h4 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-quotas-heading">
+                        EU quotas - {{ commodity.commodity_code|dotted_format }}
+                    </span>
+                </h4>
+            </div>
+            <div id="accordion-eu-quotas-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-quotas-heading">
+                <p class="govuk-body">
+                    European Union "out of quota" rates may apply where goods are exported to Northern Ireland for use in the European Union. These can be found on the European Commission's Access2Markets site.
+                </p>
+                <p class="govuk-body">
+                    <a href="{{ eu_quotas_link }}">View quotas for your goods on the Access2Markets site</a>
+                </p>    
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,108 +1,13 @@
-{% load cell_cleaner %}
+<div class="govuk-caption-m">
+    <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+</div>
 
-                         <div class="govuk-caption-m ">
-                             <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
-                         </div>
-                        {% if is_eu_member %}
-                        <p class="govuk-body">
-                            The UK is currently in the same customs union as {{ selected_origin_country_name }} as a fellow EU Member State. This means that no customs duties apply.
-                        </p>
-                        {% endif %}
+{% if is_eu_member %}
+    <p class="govuk-body">
+        The UK is currently in the same customs union as {{ selected_origin_country_name }} as a fellow EU Member State. This means that no customs duties apply.
+    </p>
+{% endif %}
 
-                         <details class="govuk-details govuk-!-margin-bottom-0">
-                            <summary class="govuk-details__summary ">
-                              <span class="govuk-details__summary-text govuk-!-font-size-16">What are the main types of tariffs and charges</span>
-                            </summary>
-                            <div class="govuk-details__text govuk-!-font-size-16">
+{% include "hierarchy/_tariffs_and_charges_glossary.html" %}
 
-                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-                                <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text">
-                                    Supplementary unit
-                                  </span>
-                                </summary>
-                                <div class="govuk-details__text">
-                                  This is used when an additional measurement unit is needed, for example, the weight
-                                    as
-                                    well as the quantity of the products. The importer might need to declare this information. The product
-                                    might not be allowed into the UK if the supplementary unit is not given. <a class="govuk-link"
-                                       href="https://www.uktradeinfo.com/TradeTools/ICN/Pages/ICNSupplementaryUnits.aspx">Check a list of
-                                      supplementary units and their descriptions</a>.
-                                </div>
-                              </details>
-
-                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-                                <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text">Value Added Tax (VAT)</span>
-                                </summary>
-                                <div class="govuk-details__text">
-                                  <a class="govuk-link"
-                                     href="https://www.gov.uk/guidance/vat-imports-acquisitions-and-purchases-from-abroad">VAT</a>
-                                  is a national tax charged in addition to any other duties that apply.
-                                </div>
-                              </details>
-
-                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-                                <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text">Third country duty</span>
-                                </summary>
-                                <div class="govuk-details__text">
-                                  A third country duty is the duty payable in the absence of any other type of tariff measure.
-                                </div>
-                              </details>
-
-                              <details class="govuk-details govuk-!-margin-bottom-2 govuk-!-font-size-16">
-                                <summary class="govuk-details__summary">
-                                  <span class="govuk-details__summary-text">
-                                    Tariff preference
-                                  </span>
-                                </summary>
-                                <div class="govuk-details__text govuk-!-font-size-16">
-                                  A <a class="govuk-link"
-                                     href="https://www.gov.uk/government/publications/notice-826-tariff-preferences-imports/notice-826-tariff-preferences-imports">tariff
-                                    preference</a> means that you pay a lower or nil rate of import duty on your goods. To qualify, goods
-                                  must
-                                  meet the rules of origin.
-                                </div>
-                              </details>
-
-                            </div>
-                          </details>
-
-                         <table class="govuk-table govuk-table__tariffs_and_measures app-flexible-table govuk-!-margin-bottom-6" >
-                            <thead class="govuk-table__head app-flexible-table__head">
-                              <tr class="govuk-table__row">
-                                {% for key in column_titles %}
-                                <th class="govuk-table__header app-flexible-table__header" scope="col">{{ key }}</th>
-                                {% endfor %}
-                              </tr>
-                            </thead>
-                            <tbody class="govuk-table__body app-flexible-table__body">
-                              {% spaceless %}
-                                {% for row in tariffs_and_charges_table_data %}
-                                <tr class="govuk-table__row app-flexible-table__row">
-                                  {% for  col in row %}
-                                    {% if forloop.counter == 1 %}
-                                    <td class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row" data-column-heading="{{ col.0 }}">
-                                      <p>{{ col.1 }}</p>
-                                    </td>
-                                    {% else %}
-                                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="{{ col.0 }}">
-                                      {% if col.1.1.code %}
-                                        <p>{{ col.1.0 | cell_cleaner | safe }}</p>
-                                        <p>Additional code: <strong>{{ col.1.1.code }}</strong></p>
-                                      {% endif %}
-                                      {% if col.1.1.description %}
-                                        <p>{{ col.1.1.description | lower | capfirst }}</p>
-                                      {% endif %}
-                                      {% if not col.1.1.code or not col.1.1.description %}
-                                        <p>{{ col.1 | cell_cleaner | safe }}</p>
-                                      {% endif %}
-                                    </td>
-                                    {% endif %}
-                                  {% endfor %}
-                                </tr>
-                                {% endfor %}
-                              {% endspaceless %}
-                            </tbody>
-                          </table>
+{% include "hierarchy/_tariffs_and_charges_table.html" with column_titles=column_titles table_data=tariffs_and_charges_table_data %}

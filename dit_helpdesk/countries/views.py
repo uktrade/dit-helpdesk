@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.conf import settings
+from django.http import Http404
+from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 
-from countries.models import Country
+from .models import Country
+
+
+def _has_agreement(country_code):
+    agreements = dict(settings.AGREEMENTS)
+
+    return agreements.get(country_code, False)
 
 
 class ChooseCountryView(TemplateView):
@@ -34,13 +41,12 @@ class ChooseCountryView(TemplateView):
                 and Country.objects.filter(country_code=origin_country).exists()
         ):
             request.session["search_version"] = self.search_version
+            request.session["origin_country"] = origin_country
 
-            return redirect(
-                reverse(
-                    self.redirect_to,
-                    kwargs={"country_code": origin_country.lower()},
-                )
-            )
+            if _has_agreement(origin_country):
+                return redirect("country-information", country_code=origin_country.lower())
+
+            return redirect(self.redirect_to, country_code=origin_country.lower())
         else:
             context = {
                 "country_options": [(c.country_code, c.name) for c in self.countries],
@@ -56,3 +62,38 @@ class ChooseCountryOldView(ChooseCountryView):
     redirect_to = "search:search-commodity"
     search_version = "old"
 
+
+class CountryInformationView(TemplateView):
+    template_name = "countries/information.html"
+
+    def get(self, request, *args, **kwargs):
+        country_code = kwargs["country_code"].upper()
+        try:
+            country = Country.objects.get(country_code=country_code)
+        except Country.DoesNotExist:
+            raise Http404
+
+        if not _has_agreement(country.country_code):
+            raise Http404
+
+        self.country = country
+
+        return super().get(request, *args, **kwargs)
+
+    def _get_template_name(self, country, template_name):
+        return f"countries/{country.country_code}/_{template_name}.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        country = self.country
+
+        ctx["country"] = country
+        ctx["country_code"] = country.country_code.lower()
+
+        ctx["trade_agreements_template_name"] = self._get_template_name(country, "trade_agreements")
+        ctx["goods_template_name"] = self._get_template_name(country, "goods")
+        ctx["grow_your_business_template_name"] = self._get_template_name(country, "grow_your_business")
+        ctx["other_information_template_name"] = self._get_template_name(country, "other_information")
+
+        return ctx

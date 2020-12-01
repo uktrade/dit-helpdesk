@@ -13,7 +13,7 @@
             <td class="govuk-table__cell app-flexible-table__cell" scope="row"><p>{{ quota_def.definition.validity_start_date|date:"d F Y" }} - {{ quota_def.definition.validity_end_date|date:"d F Y" }}</p></td>
         </tr>
         <tr class="govuk-table__row app-flexible-table__row">
-            <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row"><p>Initial ammount</p></th>
+            <th class="govuk-table__header app-flexible-table__cell govuk-!-font-weight-regular" scope="row"><p>Initial amount</p></th>
             <td class="govuk-table__cell app-flexible-table__cell" scope="row"><p>{{ quota_def.definition.initial_volume|floatformat:1 }} {{ quota_def.definition.measurement_unit|default_if_none:"" }} {{ quota_def.definition.monetary_unit|default_if_none:"" }}</p></td>
         </tr>
         <tr class="govuk-table__row app-flexible-table__row">

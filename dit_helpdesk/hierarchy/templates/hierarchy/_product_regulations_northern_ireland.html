@@ -1,0 +1,13 @@
+{% load dotted_format %}
+
+<div id="regulations" class="govuk-!-margin-bottom-9">
+    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="regulations"></a>Product-specific regulations - {{ commodity.commodity_code|dotted_format }}
+    </h3>
+    <p class="govuk-body">
+        Product-specific regulations for exporting to Northern Ireland can be found on the European Commission's Access2Markets site.
+    </p>
+    <p class="govuk-body">
+        <a class="govuk-link" href="{{ eu_regulations_link }}">View product requirements for your goods on the Access2Markets site</a>
+    </p>
+</div>

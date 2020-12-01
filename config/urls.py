@@ -40,7 +40,12 @@ urlpatterns = [
     path("choose-country-new/", country_views.ChooseCountryView.as_view(),
          name="choose-country-new"),
     path("choose-country/",
-         country_views.ChooseCountryOldView.as_view(), name="choose-country"),
+         country_views.ChooseCountryView.as_view(), name="choose-country"),
+    re_path(
+        r"^country/(?P<country_code>\w+)/information/$",
+        country_views.CountryInformationView.as_view(),
+        name="country-information",
+    ),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"

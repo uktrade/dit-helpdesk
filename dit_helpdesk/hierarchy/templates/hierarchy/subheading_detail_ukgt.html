@@ -19,7 +19,7 @@
         {% if ni_journey_enabled %}
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    {% url "subheading-detail-northern-ireland" country_code=selected_origin_country commodity_code=subheading.commodity_code nomenclature_sid=subheading.goods_nomenclature_sid as ni_details_url %}
+                    {% url "subheading-detail-northern-ireland" country_code=selected_origin_country|lower commodity_code=subheading.commodity_code nomenclature_sid=subheading.goods_nomenclature_sid as ni_details_url %}
                     {% include "hierarchy/_ni_warning.html" with ni_details_url=ni_details_url %}
                 </div>
             </div>
@@ -34,18 +34,12 @@
                 </nav>
 
                 {% if tariffs_and_charges_table_data %}
+                    {% include "hierarchy/_trade_status.html" %}
+
                     <h3 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">Tariffs and charges - {% for code_segment in subheading.subheading_code_split %}{{ code_segment }}{% if not forloop.last %}.{% endif %}{% endfor %}</h3>
                     <div class="govuk-caption-m ">
                         <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
                     </div>
-
-                    {% if tariff_content_label %}
-                        <div class="govuk-body">
-                        {% with template_name=tariff_content_label|stringformat:"s"|add:".html" %}
-                            {% include "commodities/"|add:template_name %}
-                        {% endwith %}
-                        </div>
-                    {% endif %}
 
                     <div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
                         {% include "commodities/_tariffs_and_charges_ukgt.html" %}

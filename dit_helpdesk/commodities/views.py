@@ -20,15 +20,22 @@ from hierarchy.helpers import (
     get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
-from hierarchy.views import BaseCommodityObjectDetailView
+from hierarchy.views import (
+    BaseCommodityObjectDetailView,
+    BaseTariffAndChargesNorthernIrelandSection,
+    BaseSectionedCommodityObjectDetailView,
+    OtherMeasuresNorthernIrelandSection,
+    ProductRegulationsNorthernIrelandSection,
+    QuotasNorthernIrelandSection,
+    RulesOfOriginNorthernIrelandSection,
+)
 from regulations.models import RegulationGroup
 
 from .models import Commodity
 from .helpers import get_tariff_content_context
 
 
-class BaseCommodityDetailView(BaseCommodityObjectDetailView):
-
+class CommodityObjectMixin:
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
@@ -53,6 +60,14 @@ class BaseCommodityDetailView(BaseCommodityObjectDetailView):
         ctx["section_notes"] = section.section_notes
 
         return ctx
+
+
+class BaseCommodityDetailView(CommodityObjectMixin, BaseCommodityObjectDetailView):
+    pass
+
+
+class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
+    pass
 
 
 class CommodityDetailView(BaseCommodityDetailView):
@@ -128,9 +143,54 @@ class CommodityDetailView(BaseCommodityDetailView):
         return ctx
 
 
+class CommodityEUObjectMixin:
+
+    def get_eu_commodity_object(self, commodity_object):
+        return Commodity.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_object.commodity_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
+class TariffAndChargesNorthernIrelandSection(CommodityEUObjectMixin, BaseTariffAndChargesNorthernIrelandSection):
+    pass
+
+
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
-class CommodityDetailNorthernIrelandView(BaseCommodityDetailView):
+class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
+    sections = [
+        TariffAndChargesNorthernIrelandSection,
+        QuotasNorthernIrelandSection,
+        OtherMeasuresNorthernIrelandSection,
+        RulesOfOriginNorthernIrelandSection,
+        ProductRegulationsNorthernIrelandSection,
+    ]
     template_name = "commodities/commodity_detail_northern_ireland.html"
+
+    def initialise(self, request, *args, **kwargs):
+        super().initialise(request, *args, **kwargs)
+
+        try:
+            self.eu_commodity_object = Commodity.objects.for_region(
+                settings.SECONDARY_REGION,
+            ).get(
+                commodity_code=self.commodity_object.commodity_code,
+                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+            )
+        except Commodity.DoesNotExist:
+            self.eu_commodity_object = None
+        else:
+            if self.eu_commodity_object.should_update_content():
+                self.eu_commodity_object.update_content()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["column_titles"] = TABLE_COLUMN_TITLES
+
+        return ctx
 
 
 def measure_condition_detail(

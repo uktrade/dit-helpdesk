@@ -302,7 +302,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         commodity's tts_json field
 
         """
-        url = settings.COMMODITY_URL % self.commodity_code
+        url = settings.COMMODITY_URL.format(self.commodity_code)
 
         resp = requests.get(url, timeout=10)
         resp_content = None
@@ -310,7 +310,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         if resp.status_code == 200:
             resp_content = resp.content.decode()
         elif resp.status_code == 404:
-            url = settings.HEADING_URL % self.commodity_code[:4]
+            url = settings.HEADING_URL.format(self.commodity_code[:4])
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
                 resp_content = resp.content.decode()

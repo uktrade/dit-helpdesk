@@ -1,0 +1,40 @@
+<div class="govuk-accordion__section">
+    <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button" id="{{ accordion_id }}-customs-regulations-and-procedures-heading">
+                Customs regulations and procedures
+            </span>
+        </h2>
+    </div>
+    <div id="{{ accordion_id }}-customs-regulations-and-procedures-content" class="govuk-accordion__section-content" aria-labelledby="{{ accordion_id }}-customs-regulations-and-procedures-heading">
+        <h3 class="govuk-heading-s">Customs regulations</h3>
+        <p class="govuk-body">
+            You can find details of UK customs regulations for specific goods on this website.
+        </p>
+        <p class="govuk-body">
+            These include:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>tariffs and charges</li>
+            <li>rules of origin</li>
+            <li>import regulations</li>
+            <li>regulations restricting or prohibiting particular goods</p>
+        </ul>
+        <p class="govuk-body">
+            <a class="govuk-link" href="{% url "search:search-commodity" country_code=country_code %}">Search for your goods</a> to find specific UK customs regulations that apply to them.
+        </p>
+
+        <h3 class="govuk-heading-s">Customs procedures</h3>
+        <p class="govuk-body">
+            Find detailed information on <a class="govuk-link" href="https://www.gov.uk/topic/business-tax/import-export">import, export and customs for businesses</a> including tools to help businesses exporting to or from the UK. It includes guidance on customs procedures for businesses already established in the UK.
+        </p>
+
+        <h3 class="govuk-heading-s">Contact us about customs queries</h3>
+        <p class="govuk-body">
+            You can contact the UK’s Department for International Trade for information about trade and investment.
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="{% url 'contact-view' %}">Contact us</a>
+        </p>
+    </div>
+</div>
