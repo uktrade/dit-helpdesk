@@ -198,7 +198,7 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
             mock_get_alias_from_hit.return_value = "chapter"
             mock_hit = mock.MagicMock()
-            mock_hit.meta = {"index": "commodity"}
+            mock_hit.meta = {"index": "commodity", "score": 1}
             mock_hit.__getitem__.return_value = lambda x: "1234"
             hits = [mock_hit for _ in range(10)]
             mock_search_by_term.return_value = {
