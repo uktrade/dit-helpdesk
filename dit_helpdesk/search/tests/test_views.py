@@ -200,8 +200,10 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
             mock_hit = mock.MagicMock()
             mock_hit.meta = {"index": "commodity"}
             mock_hit.__getitem__.return_value = lambda x: "1234"
+            hits = [mock_hit for _ in range(10)]
             mock_search_by_term.return_value = {
-                "results": [mock_hit for _ in range(10)],
+                "results": hits,
+                "_all_results": hits,
                 "page_range_start": 1,
                 "page_range_end": 1,
                 "total_pages": 1,
