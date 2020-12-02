@@ -223,7 +223,6 @@ IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
 TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
 
-SECTION_URL = "https://www.trade-tariff.service.gov.uk/api/v1/sections/{0}"
 CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
 HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
 COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
