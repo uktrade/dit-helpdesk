@@ -277,25 +277,6 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         for child in children:
             tree[level].append(child)
 
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-
-        obj = json.loads(resp_content)
-        if "import_measures" in obj:
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
-
     def update_content(self):
         """
         gets the Commodity content from the trade tariff service url as json response and stores it in the
