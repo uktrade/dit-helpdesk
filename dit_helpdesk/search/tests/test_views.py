@@ -158,7 +158,10 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = reverse("search:search-commodity", kwargs={"country_code": "au"})
+        self.url = reverse("search:search-commodity-old", kwargs={
+            "country_code": "au"})
+        self.grouped_url = reverse("search:search-commodity", kwargs={
+            "country_code": "au"})
 
     def test_section_1_exists(self):
         self.assertTrue(Section.objects.filter(section_id=10).exists())
@@ -179,6 +182,11 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "search/commodity_search.html")
 
+    def test_grouped_commodity_search_is_using_the_correct_template(self):
+        response = self.client.get(self.grouped_url)
+        self.assertTemplateUsed(
+            response, "search/grouped_commodity_search.html")
+
     def test_search_view_returns_http_200(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -190,10 +198,12 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
             mock_get_alias_from_hit.return_value = "chapter"
             mock_hit = mock.MagicMock()
-            mock_hit.meta = {"index": "commodity"}
+            mock_hit.meta = {"index": "commodity", "score": 1}
             mock_hit.__getitem__.return_value = lambda x: "1234"
+            hits = [mock_hit for _ in range(10)]
             mock_search_by_term.return_value = {
-                "results": [mock_hit for _ in range(10)],
+                "results": hits,
+                "_all_results": hits,
                 "page_range_start": 1,
                 "page_range_end": 1,
                 "total_pages": 1,
