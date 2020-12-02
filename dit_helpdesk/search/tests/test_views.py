@@ -400,7 +400,8 @@ class GenerateCommodityCodeHTMLTestCase(TestCase):
         code = _commodity_code_html("4104115900")
         self.assertEqual(
             code,
-            '<span class="app-commodity-code app-hierarchy-tree__commodity-code"><span class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">11</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4">59</span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>',
+            '<span class="app-commodity-code app-hierarchy-tree__commodity-code" aria-label="Commodity code"><span '
+            'class="app-commodity-code__highlight app-commodity-code__highlight--1">41</span><span class="app-commodity-code__highlight app-commodity-code__highlight--2">04</span><span class="app-commodity-code__highlight app-commodity-code__highlight--3">11</span><span class="app-commodity-code__highlight app-commodity-code__highlight--4">59</span><span class="app-commodity-code__highlight app-commodity-code__highlight--5"><span class="app-commodity-code__is-blank">00</span></span></span>',
         )
 
 
