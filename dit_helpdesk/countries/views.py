@@ -15,7 +15,7 @@ def _has_agreement(country_code):
 class ChooseCountryView(TemplateView):
 
     template_name = "countries/choose_country.html"
-    redirect_to = "search:search-commodity-new"
+    redirect_to = "search:search-commodity"
     search_version = "new"
 
     countries = Country.objects.all()
