@@ -1040,7 +1040,8 @@ def _commodity_code_html(item, ignore_duplicate=True):
         leaf = True
 
     commodity_code_html = (
-        '<span class="app-commodity-code app-hierarchy-tree__commodity-code">'
+        '<span class="app-commodity-code app-hierarchy-tree__commodity-code" '
+        'aria-label="Commodity code">'
     )
 
     if len(code) > 2 and code.isdigit():
