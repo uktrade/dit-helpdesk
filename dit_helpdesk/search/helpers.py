@@ -148,6 +148,7 @@ def search_by_term(form_data=None, page_size=None):
     request = request[0:total]
 
     hits = request[start:end].execute()
+    all_hits = request[0:total].execute()
 
     for hit in hits:
         try:
@@ -163,6 +164,7 @@ def search_by_term(form_data=None, page_size=None):
 
     return {
         "results": hits,
+        "_all_results": all_hits,
         "page_range_start": page_range_start,
         "page_range_end": page_range_end,
         "total_pages": total_pages,
@@ -176,21 +178,23 @@ def _sorted_dict_keys_by_values(d):
     return [k for k, v in sorted_tuples]
 
 
-def group_search_by_term(form_data=None, page_size=None):
-
+def group_search_by_term(form_data=None, page_size=None, hits=None):
     sort_key = form_data.get("sort")
 
-    request = _build_search_request(
-        sort_key=sort_key,
-        sort_order=form_data.get("sort_order"),
-        query=form_data.get("q"),
-        filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False
-    )
+    if not hits:
+        request = _build_search_request(
+            sort_key=sort_key,
+            sort_order=form_data.get("sort_order"),
+            query=form_data.get("q"),
+            filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False
+        )
 
-    total_results = len(list(request.scan()))
-    total = request.count()
-    request = request[0:total]
-    hits = request.execute()
+        total_results = len(list(request.scan()))
+        total = request.count()
+        request = request[0:total]
+        hits = request.execute()
+    else:
+        total_results = len(hits)
 
     score_strategy = _no_score if sort_key == 'commodity_code' else _choose_max_score
 
@@ -213,6 +217,7 @@ def group_search_by_term(form_data=None, page_size=None):
         "grouped_hits": grouped_hits,
         "group_chapters": group_chapters,
         "group_headings": group_headings,
+        "group_result_count": len(group_chapters) + len(group_headings),
         "chapter_sort_order": chapter_sort_order,
         "heading_sort_order": heading_sort_order,
         "hits": hits,

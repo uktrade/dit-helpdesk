@@ -8,14 +8,14 @@ app_name = "search"
 
 urlpatterns = [
     re_path(
-        r"new/country/(?P<country_code>\w+)/$",
+        r"grouped/country/(?P<country_code>\w+)/$",
         views.GroupedCommoditySearchView.as_view(),
-        name="search-commodity-new",
+        name="search-commodity",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/$",
         views.CommoditySearchView.as_view(),
-        name="search-commodity",
+        name="search-commodity-old",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/hierarchy/(?P<node_id>.+)",
