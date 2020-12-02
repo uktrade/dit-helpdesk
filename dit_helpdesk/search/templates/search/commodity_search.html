@@ -157,10 +157,10 @@
                                 </h2>
                                     <ul class="govuk-tabs__list govuk-!-margin-bottom-3" role="tablist">
                                        <li role="presentation" class="govuk-tabs__list-item">
-                                           <a aria-controls="query_panel_tree" class="govuk-tabs__tab" href="{% url 'search:search-commodity' country_code=request.GET.country %}{% urlparams q=request.GET.q country=country_code toggle_headings=0 sort='ranking' sort_order='desc' page=1 %}" role="tab" tabindex="0" aria-selected="true"> Browse product types <br><span class="result-count"> ({{ group_result_count }} results) </span></a>
+                                           <a aria-controls="query_panel_tree" class="govuk-tabs__tab" href="{% url 'search:search-commodity' country_code=request.GET.country %}{% urlparams q=request.GET.q country=country_code toggle_headings=0 sort='ranking' sort_order='desc' page=1 %}" role="tab" tabindex="0" aria-selected="true"> Browse product types <br><span class="govuk-!-font-size-16"> ({{ group_result_count }} results) </span></a>
                                        </li>
                                        <li role="presentation" class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                           <span aria-controls="query_panel_index" class="govuk-tabs__tab" role="tab" tabindex="1" aria-selected="false"> Select individual product <br><span class="result-count"> ({{ total_results }} results) </span></span>
+                                           <span aria-controls="query_panel_index" class="govuk-tabs__tab" role="tab" tabindex="1" aria-selected="false"> Select individual product <br><span class="govuk-!-font-size-16"> ({{ total_results }} results) </span></span>
                                        </li>
                                     </ul>
                             {% endif %}
