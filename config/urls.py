@@ -37,8 +37,6 @@ urlpatterns = [
     # redirects to start page
     path("", index.IndexRedirect.as_view(), name="index"),
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
-    path("choose-country-new/", country_views.ChooseCountryView.as_view(),
-         name="choose-country-new"),
     path("choose-country/",
          country_views.ChooseCountryView.as_view(), name="choose-country"),
     re_path(

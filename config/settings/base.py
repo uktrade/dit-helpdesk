@@ -219,10 +219,10 @@ IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
 TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
 
-SECTION_URL = "https://www.trade-tariff.service.gov.uk/sections/{0}.json"
-CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/chapters/{0}.json"
-HEADING_URL = "https://www.trade-tariff.service.gov.uk/headings/{0}.json"
-COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/commodities/{0}.json"
+SECTION_URL = "https://www.trade-tariff.service.gov.uk/api/v1/sections/{0}"
+CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
+HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
+COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
