@@ -171,6 +171,25 @@ class BaseHierarchyModel(models.Model):
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
 
+    @staticmethod
+    def _amend_measure_conditions(resp_content):
+        """
+        Modifies the structure of the json to find and display related import measures in the template
+        :param resp_content: json data from api call
+        :return: json string
+        """
+
+        obj = json.loads(resp_content)
+        if "import_measures" in obj:
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
+
+        return json.dumps(obj)
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
@@ -454,25 +473,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
-
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-
-        obj = json.loads(resp_content)
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
 
     @property
     def commodity_code(self):
@@ -914,24 +914,6 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         self.tts_json = resp_content
         self.save_cache()
 
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-        obj = json.loads(resp_content)
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
-
     def is_duplicate_heading(self):
         children = self.get_hierarchy_children()
         duplicate_child = [
@@ -1251,26 +1233,6 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         self.tts_json = resp_content
 
         self.save_cache()
-
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-
-        obj = json.loads(resp_content)
-
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
 
     @property
     def tts_obj(self):
