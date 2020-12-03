@@ -1,6 +1,5 @@
 import os
 import sys
-import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -9,11 +8,10 @@ import ecs_logging
 
 from collections import namedtuple
 
+from .env import env
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
-
-env = environ.Env(DEBUG=(bool, False))
-env.read_env()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
