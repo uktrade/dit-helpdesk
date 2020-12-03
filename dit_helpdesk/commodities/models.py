@@ -5,14 +5,15 @@ import json
 import logging
 import re
 
-import requests
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
 from hierarchy.models import (
-    BaseHierarchyModel, Heading, RulesOfOriginMixin, SubHeading, Chapter, NomenclatureTree,
-    RegionHierarchyManager, TreeSelectorMixin, RulesOfOriginMixin,
+    BaseHierarchyModel,
+    Heading,
+    RulesOfOriginMixin,
+    TreeSelectorMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
 
@@ -23,11 +24,6 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     commodity_code = models.CharField(max_length=10)
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
@@ -277,29 +273,18 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         for child in children:
             tree[level].append(child)
 
-    def update_content(self):
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.COMMODITY, self.commodity_code)
+        except tts_client.NotFound:
+            try:
+                tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.commodity_code[:4])
+            except tts_client.NotFound:
+                return None
 
-        """
-        url = settings.COMMODITY_URL.format(self.commodity_code)
+        tts_content = self._amend_measure_conditions(tts_content)
 
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-        elif resp.status_code == 404:
-            url = settings.HEADING_URL.format(self.commodity_code[:4])
-            resp = requests.get(url, timeout=10)
-            if resp.status_code == 200:
-                resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-
-        self.tts_json = resp_content
-        self.save_cache()
+        return tts_content
 
     def get_hierarchy_children(self):
         return []

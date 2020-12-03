@@ -1,14 +1,16 @@
 import logging
 import re
+import requests
+
 from datetime import datetime
 
 from django.db import connection
-from django.template import loader, Context
+from django.template import loader
 from dateutil.parser import parse as parse_dt
 from django.conf import settings
-from django.urls import reverse
 
 from countries.models import Country
+from hierarchy.tts_api import BaseTTSClient
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -24,6 +26,23 @@ COMMODITY_DETAIL_TABLE_KEYS = [
     # ("excluded_countries", "Excluded countries"),
     ("start_end_date", "Start date"),
 ]
+
+
+class Client(BaseTTSClient):
+    def get_content(self, commodity_type, commodity_code):
+        url_template = {
+            self.CommodityType.CHAPTER: settings.TTS_CHAPTER_URL,
+            self.CommodityType.HEADING: settings.TTS_HEADING_URL,
+            self.CommodityType.COMMODITY: settings.TTS_COMMODITY_URL,
+        }.get(commodity_type)
+        url = url_template.format(commodity_code)
+
+        response = requests.get(url, timeout=self.TIMEOUT)
+
+        if response.status_code != 200:
+            raise self.NotFound()
+
+        return response.content.decode()
 
 
 class CommodityJson(object):

@@ -248,7 +248,7 @@ class CommodityTestCase(TestCase):
         self.assertTrue(self.commodity._append_path_children)
 
     def test_commodity_update_content(self):
-        self.commodity.update_content()
+        self.commodity.update_tts_content()
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
         self.assertAlmostEqual(
@@ -260,7 +260,7 @@ class CommodityTestCase(TestCase):
     def test_heading_leaf_update_content(self):
         commodity = mixer.blend(Commodity, commodity_code="0510000000", nomenclature_tree=self.tree)
 
-        commodity.update_content()
+        commodity.update_tts_content()
         content = json.loads(commodity.tts_json)
         self.assertEqual(content["goods_nomenclature_item_id"], "0510000000")
 
