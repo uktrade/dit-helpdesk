@@ -128,7 +128,7 @@ class ImportMeasureJson(object):
 
     def get_commodity_sid(self):
         """
-        get nomenclature sid direct from db. used by vue__conditions_html and vue__quota_html to build the correct url
+        get nomenclature sid direct from db. used by conditions_html and quota_html to build the correct url
         for modal fallback page
         :return:
         """
@@ -267,18 +267,7 @@ class ImportMeasureJson(object):
         return False
 
     @property
-    def vue__legal_base_html(self):
-
-        if not self.di.get("legal_acts", []):  # todo: make this a property method
-            return "-"
-        hrefs = []
-        for d in self.di["legal_acts"]:
-            reg_url, reg_code = d["regulation_url"], d["regulation_code"]
-            hrefs.append('<a href="%s">%s</a>' % (reg_url, reg_code))
-        return ", ".join(hrefs)
-
-    @property
-    def vue__conditions_html(self):
+    def conditions_html(self):
 
         if not self.num_conditions:
             html = "-"
@@ -354,22 +343,6 @@ class ImportMeasureJson(object):
         rendered = template.render(context)
         return rendered
 
-    @property
-    def vue__footnotes_html(self):
-        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the
-        # presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation
-        # (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject
-        # to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with
-        # Regulation (EU) 2017/1585.'}
-        if not self.di["footnotes"]:
-            return "-"
-
-        hrefs = []
-        for d in self.di["footnotes"]:
-            code, url = d["code"], "#"
-            hrefs.append('<a href="%s">%s</a>' % (url, code))
-        return ", ".join(hrefs)
-
     def get_table_dict(self):
 
         country = self.di["geographical_area"]["description"]
@@ -386,7 +359,7 @@ class ImportMeasureJson(object):
             measure_description = self.di["measure_type"]["description"]
 
         if self.di["order_number"]:
-            order_str = self.vue__quota_html()
+            order_str = self.quota_html()
             measure_description = measure_description + "\n" + order_str
 
         measure_value = self.di["duty_expression"]["base"]
@@ -403,15 +376,13 @@ class ImportMeasureJson(object):
         return {
             "country": country,
             "measure_description": measure_description,
-            "conditions_html": self.vue__conditions_html,
+            "conditions_html": self.conditions_html,
             "measure_value": measure_value,
             "excluded_countries": excluded_countries,
             "start_end_date": start_end_date,
-            "legal_base_html": self.vue__legal_base_html,
-            "footnotes_html": self.vue__footnotes_html,
         }
 
-    def vue__quota_html(self):
+    def quota_html(self):
         """
         generate an html link for quota order number that supports javascript enable modal and no javascript backup
         also generates the matching modal html and appends it to a class dictionary variable

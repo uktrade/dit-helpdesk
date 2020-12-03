@@ -241,19 +241,9 @@ class ImportMeasureJsonTestCase(TestCase):
             isinstance(self.import_measure.is_relevant_for_origin_country("AF"), bool)
         )
 
-    def test_vue__legal_base_html(self):
-        self.assertEqual(self.import_measure.vue__legal_base_html, "-")
-        self.assertTrue(isinstance(self.import_measure.vue__legal_base_html, str))
-
-    def test_vue__conditions_html(self):
-        self.assertEqual(self.import_measure.vue__conditions_html, "-")
-        self.assertTrue(isinstance(self.import_measure.vue__conditions_html, str))
-
-    def test_vue__footnotes_html(self):
-        self.assertEqual(
-            self.import_measure.vue__footnotes_html, '<a href="#">03020</a>'
-        )
-        self.assertTrue(isinstance(self.import_measure.vue__footnotes_html, str))
+    def test_conditions_html(self):
+        self.assertEqual(self.import_measure.conditions_html, "-")
+        self.assertTrue(isinstance(self.import_measure.conditions_html, str))
 
     def test_get_table_dict(self):
         self.assertEqual(
@@ -265,8 +255,6 @@ class ImportMeasureJsonTestCase(TestCase):
                 "measure_value": "20.00 %",
                 "excluded_countries": "",
                 "start_end_date": "2015-02-01",
-                "legal_base_html": "-",
-                "footnotes_html": '<a href="#">03020</a>',
             },
         )
         self.assertTrue(isinstance(self.import_measure.get_table_dict(), dict))
