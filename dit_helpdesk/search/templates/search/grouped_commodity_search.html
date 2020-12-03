@@ -61,8 +61,11 @@
                         {% if not request.GET.q %}
 
                             <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                                {% if importer_journey_enabled %}
+                                <label for="search">Search for the goods you are importing</label>
+                                {% else %}
                                 <label for="search">Search for the goods you are exporting</label>
-                            </h2>
+                                {% endif %}                            </h2>
                             <div class="govuk-form-group{% if form_q_error %} govuk-form-group--error{% endif %}">
                             <div class="govuk-hint">
                                 You can search using either:
@@ -81,8 +84,11 @@
                         {% if request.GET.q and not results %}
 
                             <h2 class="govuk-visually-hidden">
+                                {% if importer_journey_enabled %}
+                                <label for="search">Search for the goods you are importing</label>
+                                {% else %}
                                 <label for="search">Search for the goods you are exporting</label>
-                            </h2>
+                                {% endif %}                            </h2>
                             <h3 class="govuk-heading-xl govuk-!-margin-bottom-3">There are no results
                                 for {{ request.GET.q }}</h3>
 
