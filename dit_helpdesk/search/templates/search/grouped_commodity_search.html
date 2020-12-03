@@ -17,8 +17,13 @@
                     <div class="govuk-grid-column-two-thirds">
                         <h3 class="govuk-heading-s ">Previous answer</h3>
                         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-3 govuk-!-margin-bottom-3">
-                        <p class="govuk-body govuk-!-padding-bottom-0 govuk-!-margin-bottom-0">Where are you exporting
-                            from?</p>
+                        <p class="govuk-body govuk-!-padding-bottom-0 govuk-!-margin-bottom-0">
+                            {% if importer_journey_enabled %}
+                                Where are you importing from?
+                            {% else %}
+                                Where are you exporting from?
+                            {% endif %}
+                        </p>
                         <p class="govuk-body govuk-!-margin-bottom-2"><span
                                 class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span>
                             United Kingdom</p>
@@ -62,8 +67,13 @@
                             <div class="govuk-hint">
                                 You can search using either:
                                 <ul>
-                                    <li>the name of what you are exporting</li>
-                                    <li>the commodity code of what you are exporting</li>
+                                    {% if importer_journey_enabled %}
+                                        <li>the name of what you are importing</li>
+                                        <li>the commodity code of what you are importing</li>
+                                    {% else %}
+                                        <li>the name of what you are exporting</li>
+                                        <li>the commodity code of what you are exporting</li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         {% endif %}

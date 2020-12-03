@@ -24,15 +24,7 @@
                     {% include "search/_new_search_link.html" %}
 
                     <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
-                        {% if chapter.leaf %}
-                            Product export information for
-                            {{ chapter.commodity_code|dotted_format }}
-                            from {{ selected_origin_country_name }} to the United Kingdom
-                        {% else %}
-                            Continue to classify
-                            {{ chapter.commodity_code|dotted_format }}
-                            from {{ selected_origin_country_name }} to the United Kingdom
-                        {% endif %}
+                        {% include "hierarchy/_hierarchy_header.html" with object=chapter %}
                     </h2>
 
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">

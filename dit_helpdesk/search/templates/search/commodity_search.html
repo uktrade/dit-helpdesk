@@ -62,8 +62,13 @@
                             <div class="govuk-hint">
                                 You can search using either:
                                 <ul>
-                                    <li>the name of what you are exporting</li>
-                                    <li>the commodity code of what you are exporting</li>
+                                    {% if importer_journey_enabled %}
+                                        <li>the name of what you are importing</li>
+                                        <li>the commodity code of what you are importing</li>
+                                    {% else %}
+                                        <li>the name of what you are exporting</li>
+                                        <li>the commodity code of what you are exporting</li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         {% endif %}
