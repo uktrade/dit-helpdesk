@@ -19,6 +19,7 @@ env.read_env()
 DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+IMPORTER_JOURNEY_HOST = env.str("IMPORTER_JOURNEY_HOST", '')
 
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 

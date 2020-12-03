@@ -9,7 +9,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     {% block  ga_gta_head %}{% endblock ga_gta_head %}
 
-    <title>{% block title %}{% endblock %} - Trade with the UK: look up tariffs, taxes and rules</title>
+    <title>{% block title %}{% endblock %} - {% if importer_journey_enabled %}UK Tariff Preview: look up codes, tariffs and taxes{% else %}Trade with the UK: look up tariffs, taxes and rules{% endif %}</title>
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
     <meta name="twitter:dnt" content="on">
     <meta name="format-detection" content="telephone=no">
@@ -87,7 +87,11 @@
         </div>
         <div class="govuk-header__content">
           <a href="{% url 'choose-country' %}" class="govuk-header__link govuk-header__link--service-name">
-            Trade with the UK: look up tariffs, taxes and rules
+            {% if importer_journey_enabled %}
+              UK Tariff Preview: look up codes, tariffs and taxes
+            {% else %}
+              Trade with the UK: look up tariffs, taxes and rules
+            {% endif %}
           </a>
         </div>
       </div>

@@ -58,3 +58,12 @@ def require_feature(feature_switch):
             return func(request, *args, **kwargs)
         return inner
     return decorator
+
+
+def _is_importer_journey(request):
+    host = request.META.get('HTTP_HOST')
+
+    if host and host == settings.IMPORTER_JOURNEY_HOST:
+        return True
+
+    return False
