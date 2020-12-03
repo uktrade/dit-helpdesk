@@ -87,7 +87,11 @@
         </div>
         <div class="govuk-header__content">
           <a href="{% url 'choose-country' %}" class="govuk-header__link govuk-header__link--service-name">
-            Trade with the UK: look up tariffs, taxes and rules
+            {% if importer_journey_enabled %}
+              UK Tariff Preview: look up codes, tariffs and taxes
+            {% else %}
+              Trade with the UK: look up tariffs, taxes and rules
+            {% endif %}
           </a>
         </div>
       </div>
