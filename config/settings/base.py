@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl_drf",
     "accessibility",
     "cms",
+    "alt_trade_tariff_service",
 ]
 
 if READ_ONLY:
