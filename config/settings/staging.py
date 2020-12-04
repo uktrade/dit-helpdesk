@@ -1,13 +1,7 @@
 from .base import *
-import json
-
-VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES"))
-
-ES_URL = VCAP_SERVICES["elasticsearch"][0]["credentials"]["uri"]
+from .vcap import *
 
 ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
-
-REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 
 CACHES = {
     "default": {

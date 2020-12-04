@@ -1,13 +1,10 @@
 import logging
 
-import dateutil.parser
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from hierarchy.models import NomenclatureTree, Section, Chapter, Heading, SubHeading
 from commodities.models import Commodity
-from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
+from hierarchy.models import NomenclatureTree, Section, Chapter, Heading, SubHeading
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -21,25 +18,35 @@ class Command(BaseCommand):
         with different data
 
         Expected usage:
-        python3 manage.py copy_section_hierarchy --source_tree_id 1 --start_date 2020-12-31T23:00 --region UK --start_date 2020-12-31T23:00Z
+        python3 manage.py copy_section_hierarchy --source_tree_id 1 --region UK-FUTURE
     """
 
     def add_arguments(self, parser):
-        parser.add_argument("--source_tree_id", nargs=1, required=True, type=int,
+        parser.add_argument("--source_tree_id", nargs=1, type=int,
                             help="ID of tree to copy")
-        parser.add_argument("--start_date", nargs=1, required=True, type=dateutil.parser.parse,
-                            help="When the target tree starts")
+        parser.add_argument("--region", nargs=1, required=True, type=str,
+                            help="Region for cloned tree")
+        parser.add_argument("--tts_source", nargs="?", type=str, const="original", choices=["original", "alt"],
+                            help="TTS source for cloned tree")
 
     def handle(self, *args, **options):
-        source_tree_id = options['source_tree_id'][0]
-        start_date = options['start_date'][0]
+        source_tree_id = options['source_tree_id']
+        if source_tree_id is not None:
+            source_tree_id = options['source_tree_id'][0]
+        region = options["region"][0]
+        tts_source = options["tts_source"]
 
         with transaction.atomic():
-            existing_tree = NomenclatureTree.objects.get(id=source_tree_id)
+            if source_tree_id:
+                existing_tree = NomenclatureTree.objects.get(pk=source_tree_id)
+            else:
+                existing_tree = NomenclatureTree.get_active_tree()
+
             new_tree = NomenclatureTree.objects.create(
-                region=existing_tree.region,
-                start_date=options['start_date'],
+                region=region,
+                start_date=existing_tree.start_date,
                 end_date=None,
+                source=tts_source,
             )
 
             # There is some recursion below to deal with the SubHeading tree structure. However,
@@ -57,7 +64,7 @@ class Command(BaseCommand):
 
             def copy_chapters(from_section_id, to_section_id):
                 for chapter in Chapter.objects.filter(section_id=from_section_id):
-                    logger.info('Copying  %s', chapter)
+                    logger.info('Copying %s', chapter)
                     from_chapter_id = chapter.pk
                     chapter.nomenclature_tree = new_tree
                     chapter.section_id = to_section_id
