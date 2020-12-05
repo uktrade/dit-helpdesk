@@ -32,10 +32,12 @@ indices = {
     CommodityDocument: commodity_index,
 }
 
+ALIAS_PATTERN = settings.ELASTICSEARCH_ALIAS_PATTERN
+
 # this pattern is used to discern index names {alias}-{datetime} - e.g. section-20200615123123
 # by using e.g. `section-*` in ElasticSearch calls we can reassign the alias without worrying what
 # was the actual datetime in the name of the index
-PATTERN = "{}-*"
+INDEX_PATTERN = "{}-*"
 
 
 timer = Timer()
@@ -51,7 +53,7 @@ def swap_index_name(document, new_name):
     document._index._name = old_name
 
 
-def rebuild():
+def rebuild(tree):
     """Create a new index with a unique name, populate it with objects from database and
     create / reassign an alias once the population is done.
     From inside the application only the alias should be referred to.
@@ -65,22 +67,23 @@ def rebuild():
     new_aliases = []
 
     for doc, old_index_or_alias in indices.items():
-        alias = old_index_or_alias._name
-        pattern = PATTERN.format(alias)     # e.g. `section-*`
+        old_alias = old_index_or_alias._name
+        new_alias = ALIAS_PATTERN.format(model_name=old_alias, region=tree.region)
 
-        # check if the alias name is actually an alias - if this is run for the first time and there
-        # are no aliases but only concrete indices named like e.g. `section` the we'll know the
-        # difference here
-        is_alias = es.indices.exists_alias(name=alias)
+        old_pattern = INDEX_PATTERN.format(old_alias)     # e.g. `section-*`
+        new_pattern = INDEX_PATTERN.format(new_alias)     # e.g. `section-uk-*`
 
         # get old concrete index(es) the alias was pointing to previously so that we can delete
         # it if we want. We can also just keep them even if the alias does not point to them
         # anymore
-        old_indices = list(es.indices.get(index=pattern).keys())
-        indices_names_to_remove_conditionally.extend(old_indices)
+        old_indices_by_old_alias = list(es.indices.get(index=old_pattern).keys())
+        old_indices_by_new_alias = list(es.indices.get(index=new_pattern).keys())
+
+        indices_names_to_remove_conditionally.extend(old_indices_by_old_alias)
+        indices_names_to_remove_conditionally.extend(old_indices_by_new_alias)
 
         # build a concrete index name from the pattern
-        new_index_name = pattern.replace("*", dt.datetime.now().strftime("%Y%m%d%H%M%S"))
+        new_index_name = new_pattern.replace("*", dt.datetime.now().strftime("%Y%m%d%H%M%S"))
         new_index = old_index_or_alias.clone(new_index_name)
         logger.info("Creating new index %s..", new_index_name)
         new_index.save()
@@ -92,23 +95,28 @@ def rebuild():
 
         with swap_index_name(doc_inst, new_index_name):
             doc_inst._index._name = new_index_name
-            qs = doc_inst.get_queryset()
+            model = doc.Django.model
+            qs = model.all_objects.filter(nomenclature_tree=tree)
 
             doc_inst.update(qs)
         logger.info("Done!")
 
-        if is_alias:
+        if tree.region == settings.PRIMARY_REGION:
+            # to maintain backwards compatibility, at least at first, keep the old style alias for
+            # the primary region index (i.e. UK would have both `section` and `section-uk` aliases)
             update_aliases_actions.extend(
                 [
-                    {"remove": {"alias": alias, "index": pattern}},
-                    {"add": {"alias": alias, "index": new_index_name}},
+                    {"remove": {"alias": old_alias, "index": "*"}},
+                    {"add": {"alias": old_alias, "index": new_index_name}},
                 ]
             )
 
-        else:
-            if old_index_or_alias.exists():
-                indices_to_remove_before_creating_alias.append(old_index_or_alias)
-            new_aliases.append((new_index_name, alias))
+        update_aliases_actions.extend(
+            [
+                {"remove": {"alias": new_alias, "index": new_pattern}},
+                {"add": {"alias": new_alias, "index": new_index_name}},
+            ]
+        )
 
     # the only time frame during which results could be slightly inconsistent (i.e. new results
     # in search, old in detail) - is between this point and the point when the transaction
@@ -137,6 +145,44 @@ def rebuild():
     return indices_names_to_remove_conditionally
 
 
+def swap_rebuild_single_index(latest_tree, keep_old_trees=False, keep_old_indices=False):
+
+    with transaction.atomic():
+        # get latest tree - not yet active because we want to activate it only immediately after
+        # finishing reindexing (and swapping index aliases)
+        new_tree = latest_tree
+
+        # get active (but not latest) tree
+        prev_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
+
+        if prev_tree:
+            prev_tree.end_date = timezone.now()
+            prev_tree.save()
+
+        # activate the latest tree so that ES indexes objects from that tree (but it's not
+        # yet visible in the app since the transaction didn't finish)
+        new_tree.end_date = None
+        new_tree.save()
+        indices_names_to_remove_conditionally = rebuild(new_tree)
+
+    timer.stop()
+
+    logger.info("Time spent in inconsistent state: %sms", timer.elapsed() * 1000)
+
+    # once transaction finishes both ES index and DB objects should point to the new objects
+
+    if not keep_old_trees:
+        with transaction.atomic():
+            delete_all_inactive_trees(latest_tree.region)
+
+    if not keep_old_indices:
+        es = connections.get_connection()
+
+        for index in indices_names_to_remove_conditionally:
+            logger.info("Removing index %s", index)
+            es.indices.delete(index=index)
+
+
 class Command(BaseCommand):
 
     help = "Populate ElasticSearch index with data from the most recently created NomenclatureTree"
@@ -153,38 +199,9 @@ class Command(BaseCommand):
         # initiate the default connection to elasticsearch
         connections.create_connection(hosts=settings.ES_URL)
 
-        with transaction.atomic():
-            # get latest tree - not yet active because we want to activate it only immediately after
-            # finishing reindexing (and swapping index aliases)
-            new_tree = NomenclatureTree.objects.filter(
-                region=settings.PRIMARY_REGION).latest('start_date')
-
-            # get active (but not latest) tree
-            prev_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
-
-            if prev_tree:
-                prev_tree.end_date = timezone.now()
-                prev_tree.save()
-
-            # activate the latest tree so that ES indexes objects from that tree (but it's not
-            # yet visible in the app since the transaction didn't finish)
-            new_tree.end_date = None
-            new_tree.save()
-            indices_names_to_remove_conditionally = rebuild()
-        timer.stop()
-
-        logger.info("Time spent in inconsistent state: %sms", timer.elapsed() * 1000)
-
-        # once transaction finishes both ES index and DB objects should point to the new objects
-
-        if not options["keep_old_trees"]:
-            with transaction.atomic():
-                delete_all_inactive_trees(settings.PRIMARY_REGION)
-                delete_all_inactive_trees(settings.SECONDARY_REGION)
-
-        if not options["keep_old_indices"]:
-            es = connections.get_connection()
-
-            for index in indices_names_to_remove_conditionally:
-                logger.info("Removing index %s", index)
-                es.indices.delete(index=index)
+        for latest_tree in NomenclatureTree.get_all_latest_trees():
+            swap_rebuild_single_index(
+                latest_tree,
+                keep_old_trees=options['keep_old_trees'],
+                keep_old_indices=options['keep_old_indices']
+            )

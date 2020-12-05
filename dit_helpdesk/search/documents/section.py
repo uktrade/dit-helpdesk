@@ -5,6 +5,7 @@ from hierarchy.models import Section
 from search.documents.util import html_strip
 
 alias = settings.ELASTICSEARCH_INDEX_NAMES[__name__]
+alias_pattern = settings.ELASTICSEARCH_ALIAS_PATTERN.format(model_name=alias)
 INDEX = Index(alias)
 
 # See Elasticsearch Indices API reference for available settings

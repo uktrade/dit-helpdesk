@@ -17,11 +17,14 @@ from hierarchy.models import (
     Chapter,
 )
 
-from search.documents.section import INDEX as section_index
-from search.documents.chapter import INDEX as chapter_index
-from search.documents.heading import INDEX as heading_index
-from search.documents.subheading import INDEX as sub_heading_index
-from search.documents.commodity import INDEX as commodity_index
+from search.documents.section import INDEX as section_index, alias_pattern as section_pattern
+from search.documents.chapter import INDEX as chapter_index, alias_pattern as chapter_pattern
+from search.documents.heading import INDEX as heading_index, alias_pattern as heading_pattern
+from search.documents.subheading import (
+    INDEX as sub_heading_index,
+    alias_pattern as subheading_pattern
+)
+from search.documents.commodity import INDEX as commodity_index, alias_pattern as commodity_pattern
 
 
 logger = logging.getLogger(__name__)
@@ -30,6 +33,12 @@ logger.setLevel(logging.INFO)
 
 indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
 alias_names = [idx._name for idx in indices]
+alias_patterns = (
+    section_pattern, chapter_pattern, heading_pattern, subheading_pattern, commodity_pattern)
+
+
+def get_aliases_by_region(region=settings.PRIMARY_REGION):
+    return (pattern.format(region=region) for pattern in alias_patterns)
 
 
 class HierarchyIntegrityError(Exception):
@@ -51,7 +60,7 @@ def _build_search_request(query, sort_key, sort_order, filter_on_leaf=None):
 
     request = (
         Search()
-        .index(*alias_names)
+        .index(*get_aliases_by_region())
         .using(client)
         .query(query_object)
         .sort(sort_object)
@@ -294,7 +303,8 @@ def get_alias_from_hit(hit: Hit) -> str:
     """The indexes are named (by our convention) in the form of {alias}-{datetime}.
     Given an ElasticSearch hit return the alias of index"""
 
-    alias = hit.meta["index"].split("-")[0]
+    alias_parts = hit.meta["index"].split("-")[:-1]
+    alias = "-".join(alias_parts)
     return alias
 
 
