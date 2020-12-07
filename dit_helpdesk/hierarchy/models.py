@@ -131,7 +131,7 @@ class NomenclatureTree(models.Model):
     @classmethod
     def get_all_latest_trees(cls):
         # a latest tree may not yet be active, as is happening during data load
-        qs = NomenclatureTree.objects.order_by('region', '-date').distinct('region')
+        qs = NomenclatureTree.objects.order_by('region', '-start_date').distinct('region')
         return qs
 
     def __str__(self):

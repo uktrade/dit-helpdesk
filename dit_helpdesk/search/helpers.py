@@ -38,7 +38,7 @@ alias_patterns = (
 
 
 def get_aliases_by_region(region=settings.PRIMARY_REGION):
-    return (pattern.format(region=region) for pattern in alias_patterns)
+    return (pattern.format(region=region.lower()) for pattern in alias_patterns)
 
 
 class HierarchyIntegrityError(Exception):
@@ -94,11 +94,13 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
         commodity_code = hit["commodity_code"]
         score = hit.meta["score"]
 
-        index = get_alias_from_hit(hit)
-        if index == 'section':
+        alias = get_alias_from_hit(hit)
+        model_name = get_model_name_from_alias(alias)
+
+        if model_name == 'section':
             continue
 
-        if index == 'chapter':
+        if model_name == 'chapter':
             hits_by_chapter_heading[commodity_code] = defaultdict(list)
             chapter_scores[commodity_code] = score_strategy(chapter_scores[commodity_code], score)
             continue
@@ -124,7 +126,7 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
             heading_data = next(item for item in flattened_context if item["type"] == "heading")
             heading_code = heading_data["commodity_code"]
         except StopIteration as e:
-            if index == 'heading':
+            if model_name == 'heading':
                 heading_code = commodity_code
             else:
                 raise HierarchyIntegrityError(
@@ -308,6 +310,13 @@ def get_alias_from_hit(hit: Hit) -> str:
     return alias
 
 
+def get_model_name_from_alias(alias) -> str:
+    parts = alias.split("-")
+    model_name = parts[0]
+
+    return model_name
+
+
 INDEX_TO_MODEL_CLASS_MAP = {
     "chapter": Chapter,
     "heading": Heading,
@@ -323,7 +332,8 @@ class ObjectNotFoundFromHit(Exception):
 def get_object_from_hit(hit: Hit) -> Union[Chapter, Heading, SubHeading, Commodity]:
     """Returns the commodity object related to a hit."""
     alias = get_alias_from_hit(hit)
-    model_class = INDEX_TO_MODEL_CLASS_MAP[alias]
+    model_name = get_model_name_from_alias(alias)
+    model_class = INDEX_TO_MODEL_CLASS_MAP[model_name]
 
     try:
         model = model_class.objects.get(

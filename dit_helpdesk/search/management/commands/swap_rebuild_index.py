@@ -1,6 +1,7 @@
 import datetime as dt
 import logging
 import contextlib
+import re
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -39,6 +40,8 @@ ALIAS_PATTERN = settings.ELASTICSEARCH_ALIAS_PATTERN
 # was the actual datetime in the name of the index
 INDEX_PATTERN = "{}-*"
 
+OLD_STYLE_INDEX_PATTERN = r"{}-\d+"
+
 
 timer = Timer()
 
@@ -51,6 +54,17 @@ def swap_index_name(document, new_name):
     yield
 
     document._index._name = old_name
+
+
+def select_old_style_indices(index_list, model_name):
+    """ES can only match on `*` wildcard, but not any more advanced regex.
+    Here we want to match on digits as well.
+
+    """
+    pattern = OLD_STYLE_INDEX_PATTERN.format(model_name)
+    regex = re.compile(pattern)
+
+    return [val for val in index_list if regex.match(val)]
 
 
 def rebuild(tree):
@@ -67,8 +81,11 @@ def rebuild(tree):
     new_aliases = []
 
     for doc, old_index_or_alias in indices.items():
+        model = doc.Django.model
+        model_name = model.__name__.lower()
+
         old_alias = old_index_or_alias._name
-        new_alias = ALIAS_PATTERN.format(model_name=old_alias, region=tree.region)
+        new_alias = ALIAS_PATTERN.format(model_name=old_alias, region=tree.region.lower())
 
         old_pattern = INDEX_PATTERN.format(old_alias)     # e.g. `section-*`
         new_pattern = INDEX_PATTERN.format(new_alias)     # e.g. `section-uk-*`
@@ -77,6 +94,7 @@ def rebuild(tree):
         # it if we want. We can also just keep them even if the alias does not point to them
         # anymore
         old_indices_by_old_alias = list(es.indices.get(index=old_pattern).keys())
+        old_indices_by_old_alias = select_old_style_indices(old_indices_by_old_alias, model_name)
         old_indices_by_new_alias = list(es.indices.get(index=new_pattern).keys())
 
         indices_names_to_remove_conditionally.extend(old_indices_by_old_alias)
@@ -95,7 +113,6 @@ def rebuild(tree):
 
         with swap_index_name(doc_inst, new_index_name):
             doc_inst._index._name = new_index_name
-            model = doc.Django.model
             qs = model.all_objects.filter(nomenclature_tree=tree)
 
             doc_inst.update(qs)

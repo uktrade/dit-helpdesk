@@ -137,7 +137,7 @@ ELASTICSEARCH_INDEX_NAMES = {
 }
 ELASTICSEARCH_ALIAS_PATTERN = "{model_name}-{region}"
 ELASTICSEARCH_ALIAS_PATTERNS = {
-    key: ELASTICSEARCH_ALIAS_PATTERN.format(model_name=val)
+    key: ELASTICSEARCH_ALIAS_PATTERN.format(model_name=val, region="{region}")
     for key, val in ELASTICSEARCH_INDEX_NAMES.items()
 }
 ELASTICSEARCH_DSL_AUTO_REFRESH = False
