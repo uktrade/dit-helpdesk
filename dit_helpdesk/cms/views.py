@@ -8,6 +8,7 @@ from django.views.generic import CreateView, DetailView, ListView
 
 from commodities.models import Commodity
 from hierarchy.models import (
+    NomenclatureTree,
     Chapter,
     Heading,
     SubHeading,
@@ -38,7 +39,6 @@ from .forms import (
 
 class BaseCMSMixin(object):
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -94,6 +94,14 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
                 "pk": self.object.pk,
             },
         )
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        return_value = super().form_valid(form)
+        self.object.nomenclature_trees.add(NomenclatureTree.get_active_tree())
+        self.object.save()
+
+        return return_value
 
 
 class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
@@ -230,7 +238,8 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         regulation_form_class = self.get_regulation_form_class()
         regulation_form = regulation_form_class(regulation_group, request.POST)
         if regulation_form.is_valid():
-            regulation_form.save()
+            regulation = regulation_form.save()
+            regulation.nomenclature_trees.add(NomenclatureTree.get_active_tree())
             return redirect(
                 "cms:regulation-group-detail",
                 pk=regulation_group.pk,
