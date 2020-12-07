@@ -212,8 +212,8 @@ class BaseCommodityObjectDetailView(TemplateView):
         except ObjectDoesNotExist:
             raise Http404
 
-        if self.commodity_object.should_update_content():
-            self.commodity_object.update_content()
+        if self.commodity_object.should_update_tts_content():
+            self.commodity_object.update_tts_content()
 
     def get(self, request, *args, **kwargs):
         try:
@@ -531,8 +531,8 @@ def section_detail(request, section_id, country_code):
 
     section = get_object_or_404(Heading, heading_code=section_id)
 
-    if section.should_update_content():
-        section.update_content()
+    if section.should_update_tts_content():
+        section.update_tts_content()
 
     import_measures = section.tts_obj.get_import_measures(country.country_code)
 
@@ -594,8 +594,8 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     accordion_title = hierarchy_section_header(chapter_path)
 
     try:
-        if chapter.should_update_content():
-            chapter.update_content()
+        if chapter.should_update_tts_content():
+            chapter.update_tts_content()
 
     except Exception as ex:
         logger.info("chapter notes: ", ex.args)
@@ -776,8 +776,8 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
         except Heading.DoesNotExist:
             self.eu_commodity_object = None
         else:
-            if self.eu_commodity_object.should_update_content():
-                self.eu_commodity_object.update_content()
+            if self.eu_commodity_object.should_update_tts_content():
+                self.eu_commodity_object.update_tts_content()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -953,8 +953,8 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
         except SubHeading.DoesNotExist:
             self.eu_commodity_object = None
         else:
-            if self.eu_commodity_object.should_update_content():
-                self.eu_commodity_object.update_content()
+            if self.eu_commodity_object.should_update_tts_content():
+                self.eu_commodity_object.update_tts_content()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

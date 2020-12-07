@@ -3,15 +3,7 @@
 {% load dotted_format %}
 
 {% block heading %}
-    {% if heading.leaf %}
-        Product export information for
-        {{ heading.commodity_code|dotted_format }}
-        from {{ selected_origin_country_name }} to the United Kingdom
-    {% else %}
-        Continue to classify
-        {{ heading.commodity_code|dotted_format }}
-        from {{ selected_origin_country_name }} to the United Kingdom
-    {% endif %}
+    {% include "hierarchy/_hierarchy_header.html" with object=heading %}
 {% endblock %}
 
 {% block details %}

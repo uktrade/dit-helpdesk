@@ -1,6 +1,5 @@
 import os
 import sys
-import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -9,16 +8,16 @@ import ecs_logging
 
 from collections import namedtuple
 
+from .env import env
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
-
-env = environ.Env(DEBUG=(bool, False))
-env.read_env()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+IMPORTER_JOURNEY_HOST = env.str("IMPORTER_JOURNEY_HOST", '')
 
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
@@ -70,6 +69,8 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl_drf",
     "accessibility",
     "reversion",
+    "cms",
+    "alt_trade_tariff_service",
 ]
 
 MIDDLEWARE = [
@@ -219,10 +220,12 @@ IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
 TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
 
-SECTION_URL = "https://www.trade-tariff.service.gov.uk/api/v1/sections/{0}"
-CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
-HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
-COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
+# We don't have this at the section level due to not requiring any information from the trade tariff service at this level
+TTS_CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
+TTS_HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
+# We don't have this at the sub-heading level as there is no concept of a sub-heading in trade tariff in the same way
+# that we have it as a separate model
+TTS_COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]

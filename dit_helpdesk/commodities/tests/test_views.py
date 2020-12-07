@@ -199,9 +199,9 @@ class CommodityViewTestCase(TestCase):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
         commodity.save()
 
-        with patch.object(Commodity, "should_update_content") as mock_should_update_content, \
-            patch.object(Commodity, "update_content") as mock_update_content:
-            mock_should_update_content.return_value = True
+        with patch.object(Commodity, "should_update_tts_content") as mock_should_update_tts_content, \
+            patch.object(Commodity, "update_tts_content") as mock_update_tts_content:
+            mock_should_update_tts_content.return_value = True
 
             resp = self.client.get(
                 reverse(
@@ -215,8 +215,8 @@ class CommodityViewTestCase(TestCase):
             )
 
         self.assertEqual(resp.status_code, 200)
-        mock_should_update_content.assert_called_once()
-        mock_update_content.assert_called_once()
+        mock_should_update_tts_content.assert_called_once()
+        mock_update_tts_content.assert_called_once()
 
     def test_commodity_detail_with_rules_or_origin(self):
         rules_group = mixer.blend(RulesGroup, description="test rules group")

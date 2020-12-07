@@ -15,9 +15,15 @@ from django.core.cache import cache
 
 from backports.datetime_fromisoformat import MonkeyPatch
 
+from alt_trade_tariff_service.tts_api import Client as AltTTSClient
 from countries.models import Country
 from rules_of_origin.models import Rule, RuleItem, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
-from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+from trade_tariff_service.tts_api import (
+    Client as OriginalTTSClient,
+    ChapterJson,
+    HeadingJson,
+    SubHeadingJson,
+)
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -102,6 +108,7 @@ class NomenclatureTree(models.Model):
     region = models.CharField(max_length=2)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True)
+    source = models.CharField(default="original", max_length=255)
 
     @classmethod
     def get_active_tree(cls, region=settings.PRIMARY_REGION):
@@ -116,11 +123,23 @@ class NomenclatureTree(models.Model):
 
         return prev_tree
 
+    def get_tts_api_client(self):
+        client_class = {
+            "original": OriginalTTSClient,
+            "alt": AltTTSClient,
+        }[self.source]
+
+        return client_class()
+
     def __str__(self):
         return f"{self.region} {self.start_date} - {self.end_date}"
 
 
 class BaseHierarchyModel(models.Model):
+    objects = RegionHierarchyManager()
+    all_objects = models.Manager()
+
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
         super(BaseHierarchyModel, self).__init__(*args, **kwargs)
@@ -163,7 +182,7 @@ class BaseHierarchyModel(models.Model):
 
         self._temp_cache = None
 
-    def should_update_content(self):
+    def should_update_tts_content(self):
         is_stale_tts_json = (
             not self.last_updated
             or self.last_updated < dt.datetime.now(timezone.utc) - dt.timedelta(days=1)
@@ -171,15 +190,38 @@ class BaseHierarchyModel(models.Model):
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
 
+    def get_tts_content(self):
+        raise NotImplementedError("Implement `get_tts_content`")
+
+    def update_tts_content(self):
+        client = self.nomenclature_tree.get_tts_api_client()
+        self.tts_json = self.get_tts_content(client)
+        self.save_cache()
+
+    @staticmethod
+    def _amend_measure_conditions(resp_content):
+        """
+        Modifies the structure of the json to find and display related import measures in the template
+        :param resp_content: json data from api call
+        :return: json string
+        """
+
+        obj = json.loads(resp_content)
+        if "import_measures" in obj:
+            for idx, measure in enumerate(obj["import_measures"]):
+                measure["measure_id"] = idx
+                for i, condition in enumerate(measure["measure_conditions"]):
+                    if isinstance(condition, dict):
+                        condition["measure_id"] = idx
+                        condition["condition_id"] = i
+
+        return json.dumps(obj)
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
     section_id = models.IntegerField()
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
@@ -429,11 +471,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -454,25 +491,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
-
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-
-        obj = json.loads(resp_content)
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
 
     @property
     def commodity_code(self):
@@ -644,16 +662,13 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             if code_match_obj.group(i) != "00"
         ]
 
-    def update_content(self):
-        url = settings.CHAPTER_URL.format(self.chapter_code[:2])
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.CHAPTER, self.chapter_code[:2])
+        except tts_client.NotFound:
+            return None
 
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        self.tts_json = resp_content
-        self.save_cache()
+        return tts_content
 
     @property
     def tts_obj(self):
@@ -732,11 +747,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
 
 
 class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -896,41 +906,13 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
         return reverse("search:search-hierarchy", kwargs=kwargs)
 
-    def update_content(self):
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.heading_code[:4])
+        except tts_client.NotFound:
+            return None
 
-        """
-        url = settings.HEADING_URL.format(self.heading_code[:4])
-
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-        self.tts_json = resp_content
-        self.save_cache()
-
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-        obj = json.loads(resp_content)
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
+        return self._amend_measure_conditions(tts_content)
 
     def is_duplicate_heading(self):
         children = self.get_hierarchy_children()
@@ -1017,11 +999,6 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
 
 class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     productline_suffix = models.CharField(max_length=2)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10)
     parent_goods_nomenclature_sid = models.CharField(max_length=10)
@@ -1232,45 +1209,13 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
         return tree
 
-    def update_content(self):
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.commodity_code[:4])
+        except tts_client.NotFound:
+            return None
 
-        """
-        url = settings.HEADING_URL.format(self.commodity_code[:4])
-
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-
-        self.tts_json = resp_content
-
-        self.save_cache()
-
-    @staticmethod
-    def _amend_measure_conditions(resp_content):
-        """
-        Modifies the structure of the json to find and display related import measures in the template
-        :param resp_content: json data from api call
-        :return: json string
-        """
-
-        obj = json.loads(resp_content)
-
-        if "import_measures" in obj.keys():
-            for idx, measure in enumerate(obj["import_measures"]):
-                measure["measure_id"] = idx
-                for i, condition in enumerate(measure["measure_conditions"]):
-                    if isinstance(condition, dict):
-                        condition["measure_id"] = idx
-                        condition["condition_id"] = i
-
-        return json.dumps(obj)
+        return self._amend_measure_conditions(tts_content)
 
     @property
     def tts_obj(self):

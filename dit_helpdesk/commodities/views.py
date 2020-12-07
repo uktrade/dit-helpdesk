@@ -182,8 +182,8 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
         except Commodity.DoesNotExist:
             self.eu_commodity_object = None
         else:
-            if self.eu_commodity_object.should_update_content():
-                self.eu_commodity_object.update_content()
+            if self.eu_commodity_object.should_update_tts_content():
+                self.eu_commodity_object.update_tts_content()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
