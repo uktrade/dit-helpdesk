@@ -170,7 +170,7 @@ def swap_rebuild_single_index(latest_tree, keep_old_trees=False, keep_old_indice
         new_tree = latest_tree
 
         # get active (but not latest) tree
-        prev_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
+        prev_tree = NomenclatureTree.get_active_tree(latest_tree.region)
 
         if prev_tree:
             prev_tree.end_date = timezone.now()

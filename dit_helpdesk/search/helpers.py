@@ -158,8 +158,8 @@ def search_by_term(form_data=None, page_size=None):
     total = request.count()
     request = request[0:total]
 
-    hits = request[start:end].execute()
     all_hits = request[0:total].execute()
+    hits = all_hits[start:end]
 
     for hit in hits:
         try:
