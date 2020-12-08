@@ -3,6 +3,124 @@ from django.db import models
 from countries.models import Country
 
 
+class Old_RulesGroup(models.Model):
+    """
+    Rules of Origin Group
+    """
+
+    description = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        verbose_name_plural = "rules of origin"
+
+    def __str__(self):
+        return self.description
+
+
+class Old_RulesGroupMember(models.Model):
+    """
+    Rules of Origin Group
+    """
+
+    rules_group = models.ForeignKey("Old_RulesGroup", on_delete=models.CASCADE)
+    country = models.ForeignKey("countries.Country", on_delete=models.CASCADE)
+    start_date = models.DateField()
+    finish_date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "rules of origin group members"
+        unique_together = ("country", "rules_group", "start_date")
+
+    def __str__(self):
+        return "{1} Rules group member {0}".format(
+            self.country.country_code, self.rules_group.description
+        )
+
+
+class Old_RulesDocument(models.Model):
+    """
+    Rules Of Origin Document optionally related to a Country Group
+    """
+
+    description = models.TextField()
+    rules_group = models.ForeignKey(
+        "Old_RulesGroup", on_delete=models.CASCADE, null=True, blank=True
+    )
+    source_url = models.URLField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "rules of origin documents"
+        unique_together = ("rules_group", "source_url")
+
+    def __str__(self):
+        return self.description
+
+
+class Old_Rule(models.Model):
+    """
+    Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
+    """
+
+    rule_id = models.CharField(max_length=255)
+    is_exclusion = models.BooleanField(default=False)
+    rules_document = models.ForeignKey(
+        "Old_RulesDocument", on_delete=models.CASCADE, null=True, blank=True
+    )
+    chapter = models.ForeignKey(
+        "hierarchy.Chapter",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="old_rules_of_origin",
+    )
+
+    class Meta:
+        verbose_name_plural = "rules of origin"
+
+    def __str__(self):
+        return self.rule_id
+
+    def get_child_rules(self):
+        """
+        get child Rules if Chapter level rule
+        :return: list of rules
+        """
+        return [
+            rule
+            for rule in self.chapter.old_rules_of_origin.all()
+            if self.chapter is not None
+        ]
+
+
+class Old_RuleItem(models.Model):
+    rule = models.ForeignKey("Old_Rule", on_delete=models.CASCADE)
+    order = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    working_or_processing = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["order"]
+
+
+class Old_RulesDocumentFootnote(models.Model):
+    """
+    Rules of origin document footnotes
+    """
+
+    number = models.PositiveSmallIntegerField()
+    link_html = models.TextField()
+    note = models.TextField()
+    rules_document = models.ForeignKey(
+        "Old_RulesDocument", on_delete=models.CASCADE, related_name="footnotes"
+    )
+
+    class Meta:
+        verbose_name_plural = "rules document footnotes"
+
+    def __str__(self):
+        return "Footnote {0}".format(self.number)
+
+
 class RulesDocument(models.Model):
     """
     Rules Of Origin Document optionally related to a Country Group
