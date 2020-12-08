@@ -305,7 +305,12 @@ def get_alias_from_hit(hit: Hit) -> str:
     """The indexes are named (by our convention) in the form of {alias}-{datetime}.
     Given an ElasticSearch hit return the alias of index"""
 
-    alias_parts = hit.meta["index"].split("-")[:-1]
+    index = hit.meta["index"]
+
+    alias_parts = index.split("-")[:-1]
+    if not alias_parts:
+        return index
+
     alias = "-".join(alias_parts)
     return alias
 
