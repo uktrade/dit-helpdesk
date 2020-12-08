@@ -105,7 +105,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return CommodityJson(json.loads(self.tts_json))
+        return CommodityJson(self, json.loads(self.tts_json))
 
     def get_chapter(self):
         """
