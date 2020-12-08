@@ -122,9 +122,7 @@ const bundle = filename => {
 }
 
 const compileGovukFrontend = () => bundle("global")
-
 const compileCMS = () => bundle("cms")
-
 const compileLocationAutocomplete = () => bundle("location-autocomplete")
 
 const copyGOVUKFrontendAssets = () => {
