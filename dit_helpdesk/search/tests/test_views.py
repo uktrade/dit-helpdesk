@@ -287,6 +287,8 @@ class CommodityKeywordSearchViewTestCase(TestCase):
     def setUpClass(cls):
         super(CommodityKeywordSearchViewTestCase, cls).setUpClass()
         for index in indices:
+            default_region_index_name = f"{index._name}-uk"
+            index._name = default_region_index_name
             if not index.exists():
                 index.save()
 

@@ -134,6 +134,11 @@ ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.subheading": "test_subheadings",
     "search.documents.commodity": "test_commodities",
 }
+ELASTICSEARCH_ALIAS_PATTERN = "{model_name}-{region}"
+ELASTICSEARCH_ALIAS_PATTERNS = {
+    key: ELASTICSEARCH_ALIAS_PATTERN.format(model_name=val, region="{region}")
+    for key, val in ELASTICSEARCH_INDEX_NAMES.items()
+}
 ES_URL = "http://es:9200"
 ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 
