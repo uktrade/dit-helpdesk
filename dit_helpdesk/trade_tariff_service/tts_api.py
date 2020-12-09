@@ -45,7 +45,8 @@ class Client(BaseTTSClient):
 
 
 class BaseCommodityJson:
-    def __init__(self, di):
+    def __init__(self, commodity_obj, di):
+        self.commodity_obj = commodity_obj
         self.di = di
 
     @property
@@ -58,6 +59,9 @@ class BaseCommodityJson:
 
     @property
     def footnotes(self):
+        if "footnotes" not in self.di:
+            return []
+
         return self.di["footnotes"]
 
     def get_import_measures(self, origin_country, vat=None, excise=None):
@@ -65,7 +69,7 @@ class BaseCommodityJson:
             return []
 
         measures = [
-            ImportMeasureJson(d, self.code, self.title, origin_country)
+            ImportMeasureJson(self.commodity_obj, d, self.code, self.title, origin_country)
             for d in self.di["import_measures"]
         ]
 
@@ -124,7 +128,8 @@ class SubHeadingJson(BaseCommodityJson):
 
 
 class ImportMeasureJson:
-    def __init__(self, di, commodity_code, commodity_title, country_code):
+    def __init__(self, commodity_obj, di, commodity_code, commodity_title, country_code):
+        self.commodity_obj = commodity_obj
         self.di = di
         self.commodity_code = commodity_code
         self.commodity_title = commodity_title
@@ -133,30 +138,12 @@ class ImportMeasureJson:
 
     def get_commodity_sid(self):
         """
-        get nomenclature sid direct from db. used by conditions_html and quota_html to build the correct url
+        get nomenclature sid. used by conditions_html and quota_html to build the correct url
         for modal fallback page
         :return:
         """
 
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT goods_nomenclature_sid "
-                "FROM commodities_commodity "
-                "WHERE commodity_code = %s "
-                "AND description = %s",
-                [self.commodity_code, self.commodity_title.replace("|", "")],
-            )
-            row = cursor.fetchone()
-        if not row:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT goods_nomenclature_sid, description "
-                    "FROM commodities_commodity "
-                    "WHERE commodity_code = %s",
-                    [self.commodity_code],
-                )
-                row = cursor.fetchone()
-        return row
+        return self.commodity_obj.goods_nomenclature_sid
 
     def __repr__(self):
         return "ImportMeasureJson %s %s" % (self.commodity_code, self.type_id)
@@ -229,7 +216,7 @@ class ImportMeasureJson:
         else:
             commodity_sid = self.get_commodity_sid()
             url = "{0}/import-measure/{1}/conditions".format(
-                commodity_sid[0], self.measure_id
+                commodity_sid, self.measure_id
             )
             modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
             html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
@@ -243,7 +230,7 @@ class ImportMeasureJson:
 
     def get_modal(self, modal_id, modal_body):
         template = loader.get_template("core/modal_base.html")
-        country = Country.objects.get(country_code=self.country_code)
+        country = Country.objects.get(country_code=self.country_code.upper())
         context = {
             "modal_id": modal_id,
             "modal_body": modal_body,
@@ -343,7 +330,7 @@ class ImportMeasureJson:
         also generates the matching modal html and appends it to a class dictionary variable
         :return: the html of the link
         """
-        commodity_sid = self.get_commodity_sid()[0]
+        commodity_sid = self.get_commodity_sid()
         html = ""
         order_number = self.di["order_number"]["number"]
         if commodity_sid:
