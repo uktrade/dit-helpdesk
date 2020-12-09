@@ -585,6 +585,8 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
     chapter = Chapter.objects.get(
         chapter_code=chapter_code, goods_nomenclature_sid=nomenclature_sid
     )
+    if chapter.should_update_tts_content():
+        chapter.update_tts_content()
 
     chapter_path = chapter.get_path()
     chapter_path.insert(0, [chapter])
@@ -1101,8 +1103,12 @@ def measure_condition_detail(
         return redirect(reverse("choose-country"))
 
     heading = Heading.objects.get(
-        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+        heading_code=heading_code,
+        goods_nomenclature_sid=nomenclature_sid,
     )
+    if heading.should_update_tts_content():
+        heading.update_tts_content()
+
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -1141,8 +1147,12 @@ def measure_quota_detail(
         return redirect(reverse("choose-country"))
 
     heading = Heading.objects.get(
-        heading_code=heading_code, goods_nomenclature_sid=nomenclature_sid
+        heading_code=heading_code,
+        goods_nomenclature_sid=nomenclature_sid,
     )
+    if heading.should_update_tts_content():
+        heading.update_tts_content()
+
     import_measure = heading.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
