@@ -124,11 +124,10 @@ trade_data = [
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-cote-divoire-stepping-stone-economic-partnership-agreement',
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
      'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
-
     {'Country code': 'UA',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement',
      'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
-     'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
+     'TWUK content template label': 'EU-AGR-SIGNED-LINK'},
 
     {'Country code': 'EU',
      'GOVUK FTA URL': '',

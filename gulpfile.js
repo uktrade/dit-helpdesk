@@ -37,7 +37,6 @@ const paths = {
   javascripts: {
     watch: './assets/javascript/**/*.js',
     source: './assets/javascript/**/*.js',
-    accessibleAutocomplete: './node_modules/govuk-country-and-territory-autocomplete/dist/*.(js|js.map)',
     destination: './dit_helpdesk/static_collected/js/'
   },
   govukFrontendAssets: {
@@ -96,17 +95,17 @@ const buildJavascripts = () => {
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const compileGovukFrontend = () => {
+const bundle = filename => {
   var b = browserify({
     entries: [
-      './assets/javascript/global.js'
+      "./assets/javascript/" + filename + ".js"
     ],
     debug: true,
     standalone: 'DITGlobals'
   });
 
   return b.bundle()
-    .pipe(source('global.js'))
+    .pipe(source(filename + ".js"))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     // Add transformation tasks to the pipeline here.
@@ -116,14 +115,12 @@ const compileGovukFrontend = () => {
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
+const compileGovukFrontend = () => bundle("global")
+const compileLocationAutocomplete = () => bundle("location-autocomplete")
+
 const copyGOVUKFrontendAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
-}
-
-const copyAccessibleAutocomplete = () => {
-  return gulp.src(paths.javascripts.accessibleAutocomplete)
-    .pipe(gulp.dest(paths.javascripts.destination))
 }
 
 const watchStyles = () => {
@@ -136,9 +133,9 @@ const watchJavascripts = () => {
 
 const buildStyles = gulp.parallel(buildStylesForModernBrowsers, buildStylesForOldIE)
 
-const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
-const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend)
-const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend)
+const copy = gulp.parallel(copyGOVUKFrontendAssets)
+const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend, compileLocationAutocomplete)
+const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend, compileLocationAutocomplete)
 
 gulp.task('default', taskListing)
 gulp.task('copyExternalAssets', copy)
