@@ -1,3 +1,5 @@
+import datetime as dt
+
 from django.db import models
 
 from countries.models import Country
@@ -125,11 +127,13 @@ class RulesDocument(models.Model):
     """
     Rules Of Origin Document optionally related to a Country Group
     """
+    nomenclature_tree = models.ForeignKey(
+        "hierarchy.NomenclatureTree", on_delete=models.CASCADE, null=True)
 
     description = models.TextField()
     countries = models.ManyToManyField(Country, related_name='rules_documents')
     source_url = models.URLField(null=True, blank=True)
-    start_date = models.DateField(auto_now=True)
+    start_date = models.DateField(default=dt.datetime.now)
     end_date = models.DateField(null=True)
 
     class Meta:
@@ -153,6 +157,7 @@ class Rule(models.Model):
     )
     rule_text = models.TextField(null=True, blank=True)
     alt_rule_text = models.TextField(null=True, blank=True)
+
     chapters = models.ManyToManyField(
         "hierarchy.Chapter",
         related_name="rules_of_origin",
@@ -161,12 +166,20 @@ class Rule(models.Model):
         "hierarchy.Heading",
         related_name="rules_of_origin",
     )
+    subheadings = models.ManyToManyField(
+        "hierarchy.SubHeading",
+        related_name="rules_of_origin",
+    )
 
     class Meta:
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
         return self.description
+
+    @property
+    def num_rules(self):
+        return 1 + self.subrules.count()
 
     def get_child_rules(self):
         """
@@ -181,7 +194,7 @@ class Rule(models.Model):
 
 
 class SubRule(models.Model):
-    rule = models.ForeignKey("Rule", on_delete=models.CASCADE)
+    rule = models.ForeignKey("Rule", on_delete=models.CASCADE, related_name='subrules')
     order = models.IntegerField()
     description = models.TextField(null=True, blank=True)
     rule_text = models.TextField(null=True, blank=True)

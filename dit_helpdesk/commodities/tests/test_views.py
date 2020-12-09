@@ -241,8 +241,8 @@ class CommodityViewTestCase(TestCase):
             )
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue("rules_of_origin" in resp.context)
-        self.assertTrue(resp.context["rules_of_origin"])
+        self.assertTrue("old_rules_of_origin" in resp.context)
+        self.assertTrue(resp.context["old_rules_of_origin"])
 
     def test_commodity_code_html_for_commodity(self):
         html = _commodity_code_html(self.commodity.commodity_code)

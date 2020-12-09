@@ -1,12 +1,15 @@
+from typing import Union
+import datetime as dt
 import logging
 
 from django.db.models import Q
+from django.conf import settings
 
 from rules_of_origin.models import (
     RulesDocument, RulesDocumentFootnote,
     Rule, SubRule,
 )
-from hierarchy.models import Chapter, Heading
+from hierarchy.models import NomenclatureTree, Chapter, Heading, SubHeading
 from countries.models import Country
 
 from .parser import parse_file
@@ -23,14 +26,14 @@ class MultipleStartDatesException(InvalidDocumentException):
     pass
 
 
-def _create_document(name, countries_with_dates):
+def _create_document(name, countries_with_dates, region):
     start_dates = [d['validFrom'] for d in countries_with_dates]
     country_codes = [d['code'] for d in countries_with_dates]
 
     if len(set(start_dates)) != 1:
         raise MultipleStartDatesException
 
-    start_date = start_dates[0]
+    start_date = dt.datetime.strptime(start_dates[0], '%Y-%m-%d')
 
     countries = Country.objects.filter(
         country_code__in=country_codes
@@ -42,7 +45,10 @@ def _create_document(name, countries_with_dates):
             f"Couldn't find countries with country codes: {missing_codes}")
 
     logger.info("Creating document %s..", name)
+    nomenclature_tree = NomenclatureTree.get_active_tree(region)
+
     rules_document = RulesDocument.objects.create(
+        nomenclature_tree=nomenclature_tree,
         description=name,
         start_date=start_date,
     )
@@ -72,8 +78,14 @@ def _commodity_code_to_int(heading_code):
     return int(heading_code.lstrip('0'))
 
 
+def _fill_zeros(code: Union[int, str]) -> str:
+    code = str(code)
+
+    return code.ljust(10, '0')
+
+
 def _int_to_code(code: int, original_length):
-    return str(code).rjust(original_length).ljust(10, '0')
+    return _fill_zeros(str(code).rjust(original_length))
 
 
 def _normalise_code(code: str):
@@ -81,13 +93,28 @@ def _normalise_code(code: str):
         return code.replace(".", "")
 
 
-def _get_objects_for_range(hs_type, hs_from, hs_to):
+def _determine_range_model(hs_type, hs_from):
+    if hs_type == 'CH':
+        return Chapter
+    elif hs_type == 'PO':
+        if len(hs_from) == 4:
+            return Heading
+        elif len(hs_from) == 6:
+            return SubHeading
+
+
+def _get_objects_for_range(hs_type, hs_from, hs_to, region):
     hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
     if hs_to and len(hs_from) != len(hs_to):
         raise InvalidDocumentException(
             f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes")
 
-    hs_range = [hs_from]
+    range_model = _determine_range_model(hs_type, hs_from)
+    if not range_model:
+        raise InvalidDocumentException(
+            f"Unsupported HS range for hs_type {hs_type} and length {len(hs_from)}")
+
+    hs_range = [_fill_zeros(hs_from)]
 
     initial_hs_int = _commodity_code_to_int(hs_from)
 
@@ -99,51 +126,51 @@ def _get_objects_for_range(hs_type, hs_from, hs_to):
         ]
 
     arg_name_map = {
-        'PO': 'heading_code__in',
-        'CH': 'chapter_code__in',
+        SubHeading: 'commodity_code__in',
+        Heading: 'heading_code__in',
+        Chapter: 'chapter_code__in',
     }
-    arg_name = arg_name_map[hs_type]
+    arg_name = arg_name_map[range_model]
     query = Q(**{arg_name: hs_range})
 
-    model_map = {
-        'PO': Heading,
-        'CH': Chapter,
-    }
-    model = model_map[hs_type]
+    objects = range_model.objects.for_region(region).filter(query)
 
-    objects = model.objects.filter(query)
-
-    return objects
+    return range_model, objects
 
 
-def _process_inclusions(rule, inclusions):
+def _process_inclusion(rule, inclusion, region):
 
-    rule.is_exclusion = inclusions.get('ex') == 'true'
+    rule.is_exclusion = inclusion.get('ex') == 'true'
 
-    hs_type = inclusions['hsFromType']
-    hs_to_type = inclusions.get('hsToType')
+    hs_type = inclusion['hsFromType']
+    hs_to_type = inclusion.get('hsToType')
     if hs_to_type and hs_type != hs_to_type:
         raise InvalidDocumentException(
-            f"RoO HS range has to be defined in consistent units: {inclusions}"
+            f"RoO HS range has to be defined in consistent units: {inclusion}"
         )
 
-    objects_to_bind = _get_objects_for_range(
+    range_model, objects_to_bind = _get_objects_for_range(
         hs_type=hs_type,
-        hs_from=inclusions['hsFrom'],
-        hs_to=inclusions.get('hsTo')
+        hs_from=inclusion['hsFrom'],
+        hs_to=inclusion.get('hsTo'),
+        region=region,
     )
 
-    if hs_type == 'CH':
-        rule.chapters.set(objects_to_bind)
-    elif hs_type == 'PO':
-        rule.headings.set(objects_to_bind)
+    rule_m2m_mapping = {
+        Chapter: rule.chapters,
+        Heading: rule.headings,
+        SubHeading: rule.subheadings,
+    }
+
+    m2m_set = rule_m2m_mapping[range_model]
+    m2m_set.set(objects_to_bind)
 
     rule.save()
 
     return objects_to_bind
 
 
-def _create_rules(rules_document, positions):
+def _create_rules(rules_document, positions, region):
 
     for position in positions:
 
@@ -158,7 +185,7 @@ def _create_rules(rules_document, positions):
             alt_rule_text=position['rule2'],
         )
 
-        _process_inclusions(rule, position['inclusions'])
+        _process_inclusion(rule, position['inclusion'], region)
 
         _create_subrules(rule, position['subpositions'])
 
@@ -181,17 +208,18 @@ def _create_notes(rules_document, notes):
     return note_objects
 
 
-def import_roo(f):
-    logger.info("Imprting file %s..", f)
+def import_roo(f, region=settings.PRIMARY_REGION):
+    logger.info("Importing file %s..", f)
 
     roo_data = parse_file(f)
 
     rules_document = _create_document(
         name=roo_data['name'],
-        countries_with_dates=roo_data['countries_with_dates']
+        countries_with_dates=roo_data['countries_with_dates'],
+        region=region,
     )
 
-    _create_rules(rules_document, roo_data['positions'])
+    _create_rules(rules_document, roo_data['positions'], region=region)
 
     _create_notes(rules_document, roo_data['notes'])
 

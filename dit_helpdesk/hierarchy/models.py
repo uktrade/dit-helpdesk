@@ -9,6 +9,7 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.core.cache import cache
@@ -17,13 +18,19 @@ from backports.datetime_fromisoformat import MonkeyPatch
 
 from alt_trade_tariff_service.tts_api import Client as AltTTSClient
 from countries.models import Country
-from rules_of_origin.models import OldRule, OldRuleItem, OldRulesDocument, OldRulesDocumentFootnote, OldRulesGroup, OldRulesGroupMember
+from rules_of_origin.models import (
+    OldRule, OldRuleItem, OldRulesDocument,
+    OldRulesDocumentFootnote, OldRulesGroup, OldRulesGroupMember,
+    Rule, SubRule, RulesDocumentFootnote,
+)
 from trade_tariff_service.tts_api import (
     Client as OriginalTTSClient,
     ChapterJson,
     HeadingJson,
     SubHeadingJson,
 )
+from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+from core.helpers import flatten
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -68,7 +75,7 @@ class RulesOfOriginMixin:
     def get_chapter():
         raise NotImplementedError()
 
-    def get_rules_of_origin(self, country_code):
+    def get_old_rules_of_origin(self, country_code):
         """
         Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
         country code parameter.
@@ -93,7 +100,63 @@ class RulesOfOriginMixin:
         groups = {}
         for rule in rules:
             rules_of_origin["rules"].add(rule)
-            group_name = rule.old_rules_document.old_rules_group.description
+            group_name = rule.rules_document.rules_group.description
+            groups[group_name] = rules_of_origin
+
+        return groups
+
+    def get_rules_of_origin(self, country_code):
+        """
+        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
+        country code parameter.
+        the dictionary has two keys one for the list of rules and one for the related footnotes
+        :param country_code: string
+        :return: dictionary
+        """
+
+        tree = NomenclatureTree.get_active_tree()
+        country = Country.objects.get(country_code=country_code)
+
+        chapter_id, heading_id, subheading_id = self.get_hierarchy_context_ids()
+
+        document_filter = Q(
+            rules_document__start_date__lte=dt.datetime.now(),
+            rules_document__countries=country,
+            rules_document__nomenclature_tree=tree,
+        )
+        rule_filter = (
+            Q(chapters__id=chapter_id)
+            | Q(headings__id=heading_id)
+            | Q(subheadings__id=subheading_id)
+        )
+
+        rules = Rule.objects.prefetch_related('subrules').filter(
+            document_filter & rule_filter
+        )
+
+        chapter_rules = [r for r in rules if r.chapters.exists()]
+        heading_rules = [r for r in rules if r.headings.exists()]
+        subheading_rules = [r for r in rules if r.subheadings.exists()]
+
+        # reorder so that they are in hierarchy descending order
+        rules = chapter_rules + heading_rules + subheading_rules
+
+        any_non_ex_subheading = any(not r.is_exclusion for r in subheading_rules)
+        any_non_ex_heading = any(not r.is_exclusion for r in heading_rules)
+
+        if any_non_ex_heading or any_non_ex_subheading:
+            # if any lower level rule is non-ex, then ignore the higher level ex rules
+            rules = [r for r in rules if not r.is_exclusion]
+
+        footnotes = RulesDocumentFootnote.objects.filter(
+            rules_document__countries=country,
+        ).order_by("id")
+        rules_of_origin = {"rules": set(), "footnotes": footnotes}
+
+        groups = {}
+        for rule in rules:
+            rules_of_origin["rules"].add(rule)
+            group_name = rule.rules_document.description
             groups[group_name] = rules_of_origin
 
         return groups
@@ -912,7 +975,12 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         except tts_client.NotFound:
             return None
 
-        return self._amend_measure_conditions(tts_content)
+    def get_hierarchy_context_ids(self):
+        chapter_id = self.chapter_id
+        heading_id = self.id
+        subheading_id = None
+
+        return chapter_id, heading_id, subheading_id
 
     def is_duplicate_heading(self):
         children = self.get_hierarchy_children()
@@ -1095,6 +1163,20 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             kwargs["country_code"] = country_code.lower()
 
         return reverse("search:search-hierarchy", kwargs=kwargs)
+
+    def get_hierarchy_context_ids(self):
+        hierarchy_context = flatten(
+            reversed(self.get_ancestor_data()))
+
+        chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
+        heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
+
+        try:
+            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'subheading')
+        except StopIteration:
+            subheading_id = self.id
+
+        return chapter_id, heading_id, subheading_id
 
     def get_hierarchy_children(self):
         """

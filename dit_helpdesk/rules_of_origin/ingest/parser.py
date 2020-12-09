@@ -33,26 +33,27 @@ def _process_positions(positions: Element) -> List[Dict]:
     positions_list = []
 
     for position in positions:
-        description = position.find('description').text
+        inclusions = position.find('positionCodeXml').findall('inclusions')
 
-        rule1 = position.find('rule1')
-        rule1 = _get_text_from_rule(rule1)
-        rule2 = position.find('rule2')
-        rule2 = _get_text_from_rule(rule2)
+        for inclusion in inclusions:
+            description = position.find('description').text
 
-        inclusions = position.find('positionCodeXml').find('inclusions')
+            rule1 = position.find('rule1')
+            rule1 = _get_text_from_rule(rule1)
+            rule2 = position.find('rule2')
+            rule2 = _get_text_from_rule(rule2)
 
-        subpositions = position.findall('subPosition')
-        subpositions_list = _process_subpositions(subpositions)
+            subpositions = position.findall('subPosition')
+            subpositions_list = _process_subpositions(subpositions)
 
-        positions_list.append({
-            'code': position.attrib['positionCode'],
-            'description': description,
-            'rule1': rule1,
-            'rule2': rule2,
-            'subpositions': subpositions_list,
-            'inclusions': inclusions.attrib,
-        })
+            positions_list.append({
+                'code': position.attrib['positionCode'],
+                'description': description,
+                'rule1': rule1,
+                'rule2': rule2,
+                'subpositions': subpositions_list,
+                'inclusion': inclusion.attrib,
+            })
 
     return positions_list
 
