@@ -408,9 +408,9 @@ class QuotasNorthernIrelandSection(CommodityDetailSection):
 
         try:
             self.quotas_table_data = self._get_table_data(self.quotas_measures)
-        except Exception as ex:
+        except Exception as exc:
             self.has_quotas_measures = False
-            logger.info(ex.args)
+            logger.error("Quotas error", exc_info=exc)
 
     @property
     def should_be_displayed(self):
@@ -455,9 +455,9 @@ class OtherMeasuresNorthernIrelandSection(CommodityDetailSection):
 
         try:
             self.other_measures_table_data = [measure_json.get_table_row() for measure_json in self.other_measures]
-        except Exception as ex:
+        except Exception as exc:
             self.has_other_measures = False
-            logger.info(ex.args)
+            logger.error("Other measures error", exc_info=exc)
 
     @property
     def should_be_displayed(self):
@@ -593,12 +593,8 @@ def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
 
     accordion_title = hierarchy_section_header(chapter_path)
 
-    try:
-        if chapter.should_update_tts_content():
-            chapter.update_tts_content()
-
-    except Exception as ex:
-        logger.info("chapter notes: ", ex.args)
+    if chapter.should_update_tts_content():
+        chapter.update_tts_content()
 
     context = {
         "selected_origin_country": country.country_code,
@@ -717,8 +713,8 @@ class HeadingDetailView(BaseHeadingDetailView):
             for measure_json in other_measures:
                 modals_dict.update(measure_json.measures_modals)
 
-        except Exception as ex:
-            logger.info(ex.args)
+        except Exception as exc:
+            logger.error("Heading detail error", exc_info=exc)
 
         rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
 
@@ -888,9 +884,8 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
             ]
             for measure_json in other_measures:
                 modals_dict.update(measure_json.measures_modals)
-
-        except Exception as ex:
-            logger.info("subheading 2: ", ex.args)
+        except Exception as exc:
+            logger.error("Subheading detail error", exc_info=exc)
 
         rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
