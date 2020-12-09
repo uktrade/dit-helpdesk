@@ -330,18 +330,22 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.uk_tariffs_and_charges_measures = get_nomenclature_group_measures(
-            self.commodity_object,
+        self.uk_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(commodity_object, country)
+        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
+        self.eu_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(eu_commodity_object, country)
+
+    def _get_tariffs_and_charges_measures(self, commodity_object, country):
+        tariffs_and_charges_measures = get_nomenclature_group_measures(
+            commodity_object,
             "Tariffs and charges",
-            self.country.country_code,
+            country.country_code,
         )
 
-        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
-        self.eu_tariffs_and_charges_measures = get_nomenclature_group_measures(
-            eu_commodity_object,
-            "Tariffs and charges",
-            self.country.country_code,
-        )
+        is_eu = self.country.country_code.upper() == "EU"
+        if is_eu:
+            tariffs_and_charges_measures = [m for m in tariffs_and_charges_measures if m.vat or m.excise]
+
+        return tariffs_and_charges_measures
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
@@ -362,21 +366,10 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
         ]
 
     def _get_table_data(self, charges_and_measures):
-        is_eu = self.country.country_code.upper() == "EU"
-
-        tariffs_and_charges_table_data = (
-            [
-                measure_json.get_table_row()
-                for measure_json in charges_and_measures
-                if measure_json.vat or measure_json.excise
-            ]
-            if is_eu
-            else
-            [
-                measure_json.get_table_row()
-                for measure_json in charges_and_measures
-            ]
-        )
+        tariffs_and_charges_table_data = [
+            measure_json.get_table_row()
+            for measure_json in charges_and_measures
+        ]
 
         return tariffs_and_charges_table_data
 
