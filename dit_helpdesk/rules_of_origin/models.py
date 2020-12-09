@@ -3,7 +3,7 @@ from django.db import models
 from countries.models import Country
 
 
-class Old_RulesGroup(models.Model):
+class OldRulesGroup(models.Model):
     """
     Rules of Origin Group
     """
@@ -17,54 +17,54 @@ class Old_RulesGroup(models.Model):
         return self.description
 
 
-class Old_RulesGroupMember(models.Model):
+class OldRulesGroupMember(models.Model):
     """
     Rules of Origin Group
     """
 
-    rules_group = models.ForeignKey("Old_RulesGroup", on_delete=models.CASCADE)
+    old_rules_group = models.ForeignKey("OldRulesGroup", on_delete=models.CASCADE)
     country = models.ForeignKey("countries.Country", on_delete=models.CASCADE)
     start_date = models.DateField()
     finish_date = models.DateField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "rules of origin group members"
-        unique_together = ("country", "rules_group", "start_date")
+        unique_together = ("country", "old_rules_group", "start_date")
 
     def __str__(self):
-        return "{1} Rules group member {0}".format(
+        return "{1} Old rules group member {0}".format(
             self.country.country_code, self.rules_group.description
         )
 
 
-class Old_RulesDocument(models.Model):
+class OldRulesDocument(models.Model):
     """
     Rules Of Origin Document optionally related to a Country Group
     """
 
     description = models.TextField()
-    rules_group = models.ForeignKey(
-        "Old_RulesGroup", on_delete=models.CASCADE, null=True, blank=True
+    old_rules_group = models.ForeignKey(
+        "OldRulesGroup", on_delete=models.CASCADE, null=True, blank=True
     )
     source_url = models.URLField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "rules of origin documents"
-        unique_together = ("rules_group", "source_url")
+        unique_together = ("old_rules_group", "source_url")
 
     def __str__(self):
         return self.description
 
 
-class Old_Rule(models.Model):
+class OldRule(models.Model):
     """
     Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
     """
 
     rule_id = models.CharField(max_length=255)
     is_exclusion = models.BooleanField(default=False)
-    rules_document = models.ForeignKey(
-        "Old_RulesDocument", on_delete=models.CASCADE, null=True, blank=True
+    old_rules_document = models.ForeignKey(
+        "OldRulesDocument", on_delete=models.CASCADE, null=True, blank=True
     )
     chapter = models.ForeignKey(
         "hierarchy.Chapter",
@@ -92,8 +92,8 @@ class Old_Rule(models.Model):
         ]
 
 
-class Old_RuleItem(models.Model):
-    rule = models.ForeignKey("Old_Rule", on_delete=models.CASCADE)
+class OldRuleItem(models.Model):
+    old_rule = models.ForeignKey("OldRule", on_delete=models.CASCADE)
     order = models.IntegerField()
     description = models.TextField(null=True, blank=True)
     working_or_processing = models.TextField(null=True, blank=True)
@@ -102,7 +102,7 @@ class Old_RuleItem(models.Model):
         ordering = ["order"]
 
 
-class Old_RulesDocumentFootnote(models.Model):
+class OldRulesDocumentFootnote(models.Model):
     """
     Rules of origin document footnotes
     """
@@ -110,8 +110,8 @@ class Old_RulesDocumentFootnote(models.Model):
     number = models.PositiveSmallIntegerField()
     link_html = models.TextField()
     note = models.TextField()
-    rules_document = models.ForeignKey(
-        "Old_RulesDocument", on_delete=models.CASCADE, related_name="footnotes"
+    old_rules_document = models.ForeignKey(
+        "OldRulesDocument", on_delete=models.CASCADE, related_name="footnotes"
     )
 
     class Meta:

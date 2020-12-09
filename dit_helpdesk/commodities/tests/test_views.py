@@ -14,7 +14,7 @@ from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _commodity_code_html
 from hierarchy.helpers import create_nomenclature_tree
-from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocument
+from rules_of_origin.models import OldRule, OldRulesGroup, OldRulesGroupMember, OldRulesDocument
 
 logger = logging.getLogger(__name__)
 
@@ -219,17 +219,17 @@ class CommodityViewTestCase(TestCase):
         mock_update_tts_content.assert_called_once()
 
     def test_commodity_detail_with_rules_or_origin(self):
-        rules_group = mixer.blend(RulesGroup, description="test rules group")
+        rules_group = mixer.blend(OldRulesGroup, description="test rules group")
         rules_group_member = mixer.blend(
-            RulesGroupMember,
+            OldRulesGroupMember,
             rules_group=rules_group,
             country=Country.objects.get(country_code="AF"),
         )
         rules_document = mixer.blend(
-            RulesDocument, description="test rules document", rules_group=rules_group
+            OldRulesDocument, description="test rules document", rules_group=rules_group
         )
 
-        rule = mixer.blend(Rule, rules_document=rules_document, chapter=self.chapter)
+        rule = mixer.blend(OldRule, rules_document=rules_document, chapter=self.chapter)
         resp = self.client.get(
             reverse(
                 "commodity-detail",

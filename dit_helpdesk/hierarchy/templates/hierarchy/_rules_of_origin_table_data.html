@@ -15,10 +15,10 @@
             <tbody class="govuk-table__body app-flexible-table__body">
                 {% spaceless %}
                     {% for rule in group.1.rules %}
-                        {% for rule_item in rule.ruleitem_set.all %}
+                        {% for rule_item in rule.oldruleitem_set.all %}
                             <tr class="govuk-table__row app-flexible-table__row">
                                 {% if forloop.first %}
-                                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Harmonised System heading" rowspan="{{ rule.ruleitem_set.count }}">
+                                    <td class="govuk-table__cell app-flexible-table__cell" data-column-heading="Harmonised System heading" rowspan="{{ rule.oldruleitem_set.count }}">
                                         <p>{{ rule.rule_id }}</p>
                                     </td>
                                 {% endif %}

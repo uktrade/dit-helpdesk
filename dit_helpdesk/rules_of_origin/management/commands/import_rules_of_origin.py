@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
+from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
 from rules_of_origin.ingest.importer import import_roo
 
 from hierarchy.helpers import process_swapped_tree
@@ -24,7 +24,7 @@ class Command(BaseCommand):
         path = settings.RULES_OF_ORIGIN_DATA_PATH
 
         if options["reset"]:
-            for cls in Rule, RulesDocument, RulesDocumentFootnote:
+            for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
                 cls.objects.all().delete()
 
         if os.path.isdir(path):

@@ -17,7 +17,7 @@ from backports.datetime_fromisoformat import MonkeyPatch
 
 from alt_trade_tariff_service.tts_api import Client as AltTTSClient
 from countries.models import Country
-from rules_of_origin.models import Rule, RuleItem, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
+from rules_of_origin.models import OldRule, OldRuleItem, OldRulesDocument, OldRulesDocumentFootnote, OldRulesGroup, OldRulesGroupMember
 from trade_tariff_service.tts_api import (
     Client as OriginalTTSClient,
     ChapterJson,
@@ -80,20 +80,20 @@ class RulesOfOriginMixin:
         country = Country.objects.get(country_code=country_code)
 
         chapter = self.get_chapter()
-        rules = Rule.objects.filter(
+        rules = OldRule.objects.filter(
             chapter=chapter,
-            rules_document__rules_group__rulesgroupmember__country=country,
-        ).select_related("rules_document__rules_group").prefetch_related("ruleitem_set")
+            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
+        ).select_related("old_rules_document__old_rules_group").prefetch_related("oldruleitem_set")
 
-        footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__rules_group__rulesgroupmember__country=country,
+        footnotes = OldRulesDocumentFootnote.objects.filter(
+            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
         ).order_by("id")
         rules_of_origin = {"rules": set(), "footnotes": footnotes}
 
         groups = {}
         for rule in rules:
             rules_of_origin["rules"].add(rule)
-            group_name = rule.rules_document.rules_group.description
+            group_name = rule.old_rules_document.old_rules_group.description
             groups[group_name] = rules_of_origin
 
         return groups

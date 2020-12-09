@@ -97,7 +97,7 @@ class DocxScraper:
         self.table_dict = {"chapters": []}
         self.table_heading = None
         self.footnotes = []
-        self.data_path = settings.RULES_OF_ORIGIN_DATA_PATH
+        self.data_path = settings.OLD_RULES_OF_ORIGIN_DATA_PATH
 
     def load(self, docx_file):
         """

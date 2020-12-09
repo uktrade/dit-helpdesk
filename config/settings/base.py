@@ -233,6 +233,7 @@ TTS_COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
+OLD_RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
