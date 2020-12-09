@@ -120,7 +120,15 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        tree = create_nomenclature_tree('UK')
+        commodity = mixer.blend(
+            Commodity,
+            commodity_code=settings.TEST_COMMODITY_CODE,
+            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            nomenclature_tree=tree,
+        )
         self.import_measure = ImportMeasureJson(
+            commodity,
             get_data(settings.IMPORTMEASUREJSON_DATA),
             settings.TEST_COMMODITY_CODE,
             settings.TEST_COMMODITY_DESCRIPTION,
