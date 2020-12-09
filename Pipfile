@@ -86,6 +86,7 @@ django-db-readonly = "*"
 backports-datetime-fromisoformat = "*"
 django-migration-linter = "*"
 requests-aws4auth = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.6"
