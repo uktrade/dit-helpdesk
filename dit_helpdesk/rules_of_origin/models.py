@@ -33,7 +33,7 @@ class OldRulesGroupMember(models.Model):
 
     def __str__(self):
         return "{1} Old rules group member {0}".format(
-            self.country.country_code, self.rules_group.description
+            self.country.country_code, self.old_rules_group.description
         )
 
 
