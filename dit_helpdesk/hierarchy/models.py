@@ -126,9 +126,11 @@ class RulesOfOriginMixin:
         )
         rule_filter = (
             Q(chapters__id=chapter_id)
-            | Q(headings__id=heading_id)
-            | Q(subheadings__id=subheading_id)
         )
+        if heading_id:
+            rule_filter = rule_filter | Q(headings__id=heading_id)
+        if subheading_id:
+            rule_filter = rule_filter | Q(subheadings__id=subheading_id)
 
         rules = Rule.objects.prefetch_related('subrules').filter(
             document_filter & rule_filter
@@ -151,15 +153,15 @@ class RulesOfOriginMixin:
         footnotes = RulesDocumentFootnote.objects.filter(
             rules_document__countries=country,
         ).order_by("id")
-        rules_of_origin = {"rules": set(), "footnotes": footnotes}
+        rules_of_origin = {"rules": rules, "footnotes": footnotes}
 
-        groups = {}
-        for rule in rules:
-            rules_of_origin["rules"].add(rule)
-            group_name = rule.rules_document.description
-            groups[group_name] = rules_of_origin
+        roo_data = {}
 
-        return groups
+        if rules:
+            fta_name = rules[0].rules_document.description
+            roo_data[fta_name] = rules_of_origin
+
+        return roo_data
 
 
 class NomenclatureTree(models.Model):

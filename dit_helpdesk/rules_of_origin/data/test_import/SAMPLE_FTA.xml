@@ -67,6 +67,17 @@
             </subPosition>
         </position>
 
+        <position positionCode="ex Chapter 15">
+            <description><![CDATA[Animal or vegetable fats and oils and their cleavage products; prepared edible fats; animal or vegetable waxes; except for:]]></description>
+            <rule1>
+                <rule><![CDATA[Manufacture from materials of any heading, except that of the product]]></rule>
+
+            </rule1>
+            <positionCodeXml>
+                <inclusions ex="true" hsFromType="CH" hsFrom="15"/>
+            </positionCodeXml>
+        </position>
+
         <position positionCode="1507 to 1515">
             <description><![CDATA[Vegetable oils and their fractions:]]></description>
             <positionCodeXml>
