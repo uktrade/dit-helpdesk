@@ -677,7 +677,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return ChapterJson(json.loads(self.tts_json))
+        return ChapterJson(self, json.loads(self.tts_json))
 
     @property
     def chapter_notes(self):
@@ -780,7 +780,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return HeadingJson(json.loads(self.tts_json))
+        return HeadingJson(self, json.loads(self.tts_json))
 
     def get_chapter(self):
         return self.chapter
@@ -1224,7 +1224,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return SubHeadingJson(json.loads(self.tts_json))
+        return SubHeadingJson(self, json.loads(self.tts_json))
 
     def get_path(self, parent=None, tree=None, level=0):
         """
