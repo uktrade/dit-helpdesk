@@ -111,7 +111,7 @@ class OldRulesDocumentFootnote(models.Model):
     link_html = models.TextField()
     note = models.TextField()
     old_rules_document = models.ForeignKey(
-        "OldRulesDocument", on_delete=models.CASCADE, related_name="footnotes"
+        "OldRulesDocument", on_delete=models.CASCADE, related_name="old_footnotes"
     )
 
     class Meta:
