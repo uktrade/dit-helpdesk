@@ -58,6 +58,9 @@ class BaseCommodityJson:
 
     @property
     def footnotes(self):
+        if "footnotes" not in self.di:
+            return []
+
         return self.di["footnotes"]
 
     def get_import_measures(self, origin_country, vat=None, excise=None):

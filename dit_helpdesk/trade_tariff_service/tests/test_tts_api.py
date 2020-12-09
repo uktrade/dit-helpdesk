@@ -44,10 +44,11 @@ class CommodityJsonTestCase(TestCase):
             heading=self.heading,
             nomenclature_tree=self.tree,
         )
+        self.commodity_data = get_data(settings.COMMODITY_DATA)
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            tts_json=json.dumps(self.commodity_data),
             parent_subheading=self.subheading,
             nomenclature_tree=self.tree,
         )
@@ -98,6 +99,19 @@ class CommodityJsonTestCase(TestCase):
         self.assertEqual(
             self.commodity.tts_obj.get_import_measure_by_id(10, "AF"), None
         )
+
+    def test_footnotes(self):
+        self.assertEqual(
+            self.commodity.tts_obj.footnotes,
+            self.commodity_data['footnotes'],
+        )
+
+    def test_footnotes_does_not_exist(self):
+        commodity_data = self.commodity_data
+        del commodity_data["footnotes"]
+        self.commodity.tts_json = json.dumps(self.commodity_data)
+        self.commodity.save()
+        self.assertEqual(self.commodity.tts_obj.footnotes, [])
 
 
 class ImportMeasureJsonTestCase(TestCase):
