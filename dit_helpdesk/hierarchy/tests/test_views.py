@@ -9,7 +9,6 @@ from countries.models import Country
 
 from ..helpers import create_nomenclature_tree
 from ..models import Section, Chapter, Heading, SubHeading
-from ..views import _get_expanded_context
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -104,96 +103,3 @@ class HierarchyViewTestCase(TestCase):
 
     def test_commodity_data_exists(self):
         self.assertTrue(Commodity.objects.count() > 0)
-
-    def test_hierarchy_data_is_valid(self):
-        response = self.client.get("/search/country/au/hierarchy/root")
-        self.assertEqual(response.status_code, 200)
-
-    def test_hierarchy_data_at_root(self):
-        response = self.client.get("/search/country/au/hierarchy/root")
-        self.assertInHTML(
-            "Live animals; animal products", response.context["hierarchy_html"]
-        )
-        self.assertEqual(
-            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
-        )
-
-    def test_hierarchy_data_at_section(self):
-        response = self.client.get("/search/country/au/hierarchy/section-2#section-2")
-        self.assertInHTML(
-            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertEqual(
-            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
-        )
-
-    def test_hierarchy_data_at_chapter(self):
-        chapter_id = Chapter.objects.get(
-            chapter_code=settings.TEST_CHAPTER_CODE
-        ).goods_nomenclature_sid
-        response = self.client.get(
-            "/search/country/au/hierarchy/chapter-{0}#chapter-{0}".format(chapter_id)
-        )
-        logger.debug(response.context["hierarchy_html"])
-        self.assertInHTML(
-            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertEqual(
-            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
-        )
-
-    def test_hierarchy_data_at_heading(self):
-        heading_id = Heading.objects.get(
-            heading_code=settings.TEST_HEADING_CODE
-        ).goods_nomenclature_sid
-        response = self.client.get(
-            "/search/country/au/hierarchy/heading-{0}#heading-{0}".format(heading_id)
-        )
-        self.assertInHTML(
-            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_HEADING_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertEqual(
-            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
-        )
-
-    def test_hierarchy_data_at_subheading(self):
-        subheading_id = SubHeading.objects.get(
-            commodity_code=TEST_SUBHEADING_CODE
-        ).goods_nomenclature_sid
-        response = self.client.get(
-            "/search/country/au/hierarchy/sub_heading-{0}#sub_heading-{0}".format(
-                subheading_id
-            )
-        )
-        self.assertInHTML(
-            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_HEADING_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertInHTML(
-            settings.TEST_SUBHEADING_DESCRIPTION, response.context["hierarchy_html"]
-        )
-        self.assertEqual(
-            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
-        )
-
-    def test_expanded_context_with_subheading_node(self):
-        subheading_id = SubHeading.objects.get(
-            commodity_code=settings.TEST_SUBHEADING_CODE
-        ).pk
-        node_id = "#sub_heading-{0}".format(subheading_id)
-        logger.debug(_get_expanded_context(node_id))
-        self.assertFalse(_get_expanded_context(node_id))
