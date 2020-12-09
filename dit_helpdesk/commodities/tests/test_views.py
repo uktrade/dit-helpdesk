@@ -222,14 +222,14 @@ class CommodityViewTestCase(TestCase):
         rules_group = mixer.blend(OldRulesGroup, description="test rules group")
         rules_group_member = mixer.blend(
             OldRulesGroupMember,
-            rules_group=rules_group,
+            old_rules_group=rules_group,
             country=Country.objects.get(country_code="AF"),
         )
         rules_document = mixer.blend(
-            OldRulesDocument, description="test rules document", rules_group=rules_group
+            OldRulesDocument, description="test rules document", old_rules_group=rules_group
         )
 
-        rule = mixer.blend(OldRule, rules_document=rules_document, chapter=self.chapter)
+        rule = mixer.blend(OldRule, old_rules_document=rules_document, chapter=self.chapter)
         resp = self.client.get(
             reverse(
                 "commodity-detail",
