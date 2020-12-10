@@ -87,6 +87,7 @@ backports-datetime-fromisoformat = "*"
 django-migration-linter = "*"
 requests-aws4auth = "*"
 freezegun = "*"
+boto3 = "*"
 
 [requires]
 python_version = "3.6"
