@@ -1,3 +1,4 @@
+import json
 import logging
 
 from unittest import mock
@@ -11,7 +12,7 @@ from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.helpers import create_nomenclature_tree
-from hierarchy.views import _get_hierarchy_level_html, _commodity_code_html
+from hierarchy.views import _commodity_code_html
 from search.forms import CommoditySearchForm
 from search.views import search_hierarchy
 from search.helpers import process_commodity_code
@@ -430,10 +431,6 @@ class TestSearchHierarchyTestCase(TestCase):
         resp = search_hierarchy(request=request, node_id="section-1", country_code="au")
         self.assertEqual(resp.status_code, 200)
 
-    def test__get_hierarchy_level_html(self):
-        resp = _get_hierarchy_level_html("root", ["section-1"], "au")
-        self.assertIn('class="app-hierarchy-tree"', format(resp))
-
     def test_search_hierarchy_when_country_code_is_None(self):
         request = RequestFactory().get(
             reverse(
@@ -448,6 +445,157 @@ class TestSearchHierarchyTestCase(TestCase):
 
         resp = search_hierarchy(request=request, node_id="section-1", country_code=None)
         self.assertEqual(resp.status_code, 302)
+
+
+def get_data(file_path, tree):
+    with open(file_path) as f:
+        json_data = json.load(f)
+
+    json_data["nomenclature_tree_id"] = tree.pk
+
+    return json_data
+
+
+def create_instance(data, model_class):
+    skip_attributes = ["tts_json"]
+    filtered_data = {
+        k: v
+        for k, v in data.items()
+        if k not in skip_attributes
+    }
+    instance = model_class(**filtered_data)
+    instance.save()
+    return instance
+
+
+class TestHierarchyData(TestCase):
+
+    fixtures = [settings.COUNTRIES_DATA]
+
+    def setUp(self):
+        """
+        To test fully test a commodity we need to load a parent subheading and its parent heading and save the
+        relationships between the three model instances
+        :return:
+        """
+        self.tree = create_nomenclature_tree(region='UK')
+
+        self.section = create_instance(
+            get_data(settings.SECTION_STRUCTURE, self.tree), Section
+        )
+
+        self.chapter = create_instance(
+            get_data(settings.CHAPTER_STRUCTURE, self.tree), Chapter
+        )
+        self.chapter.section_id = self.section.pk
+        self.chapter.save()
+
+        self.heading = create_instance(
+            get_data(settings.HEADING_STRUCTURE, self.tree), Heading
+        )
+        self.heading.chapter_id = self.chapter.pk
+        self.heading.save()
+
+        self.subheading = create_instance(
+            get_data(settings.SUBHEADING_STRUCTURE, self.tree), SubHeading
+        )
+        self.subheading.heading_id = self.heading.id
+        self.subheading.save()
+
+        self.commodity = create_instance(
+            get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
+        )
+        self.commodity.parent_subheading_id = self.subheading.id
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
+
+        self.commodity.save()
+
+        self.client = Client()
+
+    def test_hierarchy_data_is_valid(self):
+        response = self.client.get("/search/country/au/hierarchy/root")
+        self.assertEqual(response.status_code, 200)
+
+    def test_hierarchy_data_at_root(self):
+        response = self.client.get("/search/country/au/hierarchy/root")
+        self.assertInHTML(
+            "Live animals; animal products", response.context["hierarchy_html"]
+        )
+        self.assertEqual(
+            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
+        )
+
+    def test_hierarchy_data_at_section(self):
+        response = self.client.get("/search/country/au/hierarchy/section-2#section-2")
+        self.assertInHTML(
+            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertEqual(
+            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
+        )
+
+    def test_hierarchy_data_at_chapter(self):
+        chapter_id = Chapter.objects.get(
+            chapter_code=settings.TEST_CHAPTER_CODE
+        ).goods_nomenclature_sid
+        response = self.client.get(
+            "/search/country/au/hierarchy/chapter-{0}#chapter-{0}".format(chapter_id)
+        )
+        logger.debug(response.context["hierarchy_html"])
+        self.assertInHTML(
+            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertEqual(
+            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
+        )
+
+    def test_hierarchy_data_at_heading(self):
+        heading_id = Heading.objects.get(
+            heading_code=settings.TEST_HEADING_CODE
+        ).goods_nomenclature_sid
+        response = self.client.get(
+            "/search/country/au/hierarchy/heading-{0}#heading-{0}".format(heading_id)
+        )
+        self.assertInHTML(
+            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_HEADING_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertEqual(
+            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
+        )
+
+    def test_hierarchy_data_at_subheading(self):
+        subheading_id = SubHeading.objects.get(
+            commodity_code="0101210000"
+        ).goods_nomenclature_sid
+        response = self.client.get(
+            "/search/country/au/hierarchy/sub_heading-{0}#sub_heading-{0}".format(
+                subheading_id
+            )
+        )
+        self.assertInHTML(
+            settings.TEST_SECTION_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_CHAPTER_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_HEADING_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertInHTML(
+            settings.TEST_SUBHEADING_DESCRIPTION, response.context["hierarchy_html"]
+        )
+        self.assertEqual(
+            response.context["country_code"], settings.TEST_COUNTRY_CODE.lower()
+        )
 
 
 class TestSearchHierarchyAPITestCase(CommoditySetupTestCase):
