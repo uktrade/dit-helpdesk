@@ -15,12 +15,12 @@ from numpy import nan
 from countries.models import Country
 from hierarchy.models import Chapter, Heading, SubHeading
 from rules_of_origin.models import (
-    Rule,
-    RuleItem,
-    RulesDocument,
-    RulesGroup,
-    RulesGroupMember,
-    RulesDocumentFootnote,
+    OldRule,
+    OldRuleItem,
+    OldRulesDocument,
+    OldRulesGroup,
+    OldRulesGroupMember,
+    OldRulesDocumentFootnote,
 )
 
 logger = logging.getLogger(__name__)
@@ -152,7 +152,7 @@ class RulesOfOriginImporter:
 
         """
 
-        rules_group, created = RulesGroup.objects.get_or_create(
+        rules_group, created = OldRulesGroup.objects.get_or_create(
             description=self.working_group_name
         )
 
@@ -168,8 +168,8 @@ class RulesOfOriginImporter:
                 try:
                     country = Country.objects.get(country_code=country_code)
 
-                    group_member, created = RulesGroupMember.objects.get_or_create(
-                        rules_group=rules_group,
+                    group_member, created = OldRulesGroupMember.objects.get_or_create(
+                        old_rules_group=rules_group,
                         country=country,
                         start_date=datetime.today(),
                     )
@@ -202,9 +202,9 @@ class RulesOfOriginImporter:
             )
             doc_url = None
 
-        rules_document, created = RulesDocument.objects.get_or_create(
+        rules_document, created = OldRulesDocument.objects.get_or_create(
             description="{0} Rules of Origin Document".format(self.working_group_name),
-            rules_group=rules_group,
+            old_rules_group=rules_group,
             source_url=doc_url,
         )
 
@@ -218,11 +218,11 @@ class RulesOfOriginImporter:
         if self.footnotes:
             for footnote in self.footnotes:
 
-                footnote, created = RulesDocumentFootnote.objects.get_or_create(
+                footnote, created = OldRulesDocumentFootnote.objects.get_or_create(
                     number=footnote,
                     link_html=self.footnotes[footnote]["anchor"],
                     note=self.footnotes[footnote]["note"],
-                    rules_document=rules_document,
+                    old_rules_document=rules_document,
                 )
 
                 if created:
@@ -253,11 +253,11 @@ class RulesOfOriginImporter:
                         related_chapter = None
 
                     try:
-                        rule_instance, created = Rule.objects.get_or_create(
+                        rule_instance, created = OldRule.objects.get_or_create(
                             rule_id=rule["id"],
                             is_exclusion=rule["exclusion"],
                             chapter=related_chapter,
-                            rules_document=rules_document,
+                            old_rules_document=rules_document,
                         )
                         if created:
                             logger.debug(
@@ -273,13 +273,14 @@ class RulesOfOriginImporter:
                             )
                         rule_details = zip_longest(rule["description"], rule["workingLeft"])
                         for description, working_or_processing in rule_details:
-                            highest_ordered_rule = rule_instance.ruleitem_set.order_by('-order').first()
+                            highest_ordered_rule = rule_instance.oldruleitem_set.order_by(
+                                '-order').first()
                             if highest_ordered_rule:
                                 order = highest_ordered_rule.order + 1
                             else:
                                 order = 1
 
-                            rule_instance.ruleitem_set.get_or_create(
+                            rule_instance.oldruleitem_set.get_or_create(
                                 description=description,
                                 working_or_processing=working_or_processing,
                                 defaults={
@@ -351,14 +352,14 @@ class RulesOfOriginImporter:
 
         self.set_group_documents(
             self.data_loader(
-                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                settings.OLD_RULES_OF_ORIGIN_DATA_PATH.format(
                     "reference/group_documents.csv"
                 )
             )
         )
         self.set_rules_groups(
             self.data_loader(
-                settings.RULES_OF_ORIGIN_DATA_PATH.format(
+                settings.OLD_RULES_OF_ORIGIN_DATA_PATH.format(
                     "reference/country_groups_v3.csv"
                 )
             )

@@ -124,9 +124,14 @@ class CommodityDetailView(BaseCommodityDetailView):
         for measure_json in other_measures:
             modals_dict.update(measure_json.measures_modals)
 
-        rules_of_origin = commodity.get_rules_of_origin(country_code=country.country_code)
+        old_rules_of_origin = commodity.get_old_rules_of_origin(
+            country_code=country.country_code)
+        rules_of_origin = commodity.get_rules_of_origin(
+            country_code=country.country_code
+        )
 
         ctx.update({
+            "old_rules_of_origin": old_rules_of_origin,
             "rules_of_origin": rules_of_origin,
             "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
             "quotas_table_data": quotas_table_data,
