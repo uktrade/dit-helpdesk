@@ -134,7 +134,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
         chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
         heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
-        subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'subheading')
+        subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
 
         return chapter_id, heading_id, subheading_id
 

@@ -100,7 +100,7 @@ class RulesOfOriginMixin:
         groups = {}
         for rule in rules:
             rules_of_origin["rules"].add(rule)
-            group_name = rule.rules_document.rules_group.description
+            group_name = rule.old_rules_document.old_rules_group.description
             groups[group_name] = rules_of_origin
 
         return groups
@@ -1174,7 +1174,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
 
         try:
-            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'subheading')
+            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
         except StopIteration:
             subheading_id = self.id
 
