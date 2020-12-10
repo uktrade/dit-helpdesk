@@ -220,8 +220,12 @@ def measure_condition_detail(
         return redirect(reverse("choose-country"))
 
     commodity = Commodity.objects.get(
-        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
+        commodity_code=commodity_code,
+        goods_nomenclature_sid=nomenclature_sid,
     )
+    if commodity.should_update_tts_content():
+        commodity.update_tts_content()
+
     import_measure = commodity.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
@@ -274,6 +278,9 @@ def measure_quota_detail(
     commodity = Commodity.objects.get(
         commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
     )
+    if commodity.should_update_tts_content():
+        commodity.update_tts_content()
+
     import_measure = commodity.tts_obj.get_import_measure_by_id(
         int(measure_id), country_code=country_code
     )
