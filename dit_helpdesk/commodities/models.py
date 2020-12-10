@@ -16,6 +16,7 @@ from hierarchy.models import (
     TreeSelectorMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
+from core.helpers import flatten
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +126,17 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         while type(obj) is not Heading:
             obj = obj.get_parent()
         return obj
+
+    def get_hierarchy_context_ids(self):
+        hierarchy_context = flatten(
+            reversed(self.get_ancestor_data())
+        )
+
+        chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
+        heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
+        subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
+
+        return chapter_id, heading_id, subheading_id
 
     def get_path(self, parent=None, tree=None, level=0):
         """

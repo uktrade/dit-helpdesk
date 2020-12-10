@@ -67,3 +67,11 @@ def _is_importer_journey(request):
         return True
 
     return False
+
+
+def flatten(list_of_lists):
+    return [
+        item
+        for inner_list in list_of_lists
+        for item in inner_list
+    ]

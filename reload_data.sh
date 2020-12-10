@@ -8,7 +8,7 @@ python manage.py pull_api_update
 python manage.py prepare_import_data
 python manage.py prepare_search_data
 python manage.py scrape_section_hierarchy
-python manage.py import_rules_of_origin --data_path "import"
+python manage.py import_old_rules_of_origin --data_path "import"
 python manage.py import_initial_regulations
 
 # add this (and remove import_initial_regulations) once we have to migrate

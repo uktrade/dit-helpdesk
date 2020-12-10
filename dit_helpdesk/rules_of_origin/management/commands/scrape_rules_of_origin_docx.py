@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 "\nNo value has been provided for the argument --docx_path.\n\n"
             )
 
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(options["docx_path"])
+        path = settings.OLD_RULES_OF_ORIGIN_DATA_PATH.format(options["docx_path"])
 
         if os.path.isfile(path) and not path.endswith(".docx"):
             raise CommandError(
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 "\nThe file path below does not exist."
                 "\n\n\t{0}\n"
                 "\nPlease provide a correct path relative to that shown below and run the command again"
-                "\n\n\t{1}\n\n".format(path, settings.RULES_OF_ORIGIN_DATA_PATH[:-3])
+                "\n\n\t{1}\n\n".format(path, settings.OLD_RULES_OF_ORIGIN_DATA_PATH[:-3])
             )
 
         else:
