@@ -64,7 +64,11 @@ class Command(BaseCommand):
             for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
                 cls.objects.all().delete()
 
-        if not s3_bucket and local_path:
-            self._import_local(local_path)
-        else:
+        if not any([local_path, s3_bucket]):
+            raise ValueError(
+                "At least one of `RULES_OF_ORIGIN_DATA_PATH` or `ROO_S3_BUCKET_NAME` has to be set")
+
+        if s3_bucket:
             self._import_from_s3()
+        else:
+            self._import_local(local_path)
