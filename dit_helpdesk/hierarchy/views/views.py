@@ -90,52 +90,34 @@ def section_detail(request, section_id, country_code):
     return render(request, "hierarchy/section_detail.html", context)
 
 
-def chapter_detail(request, chapter_code, country_code, nomenclature_sid):
-    """
-    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
-    display and the two character country code to provide the exporter geographical context which is
-    used to display the appropriate related supporting content
+class ChapterDetailView(BaseCommodityObjectDetailView):
+    context_object_name = "chapter"
+    template_name = "hierarchy/chapter_detail.html"
 
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :return:
-    """
-    country = Country.objects.filter(country_code=country_code.upper()).first()
+    def get_commodity_object(self, **kwargs):
+        chapter_code = kwargs["chapter_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
 
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
+        return Chapter.objects.get(
+            chapter_code=chapter_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
+        )
 
-    chapter = Chapter.objects.get(
-        chapter_code=chapter_code, goods_nomenclature_sid=nomenclature_sid
-    )
-    if chapter.should_update_tts_content():
-        chapter.update_tts_content()
+    def get_commodity_object_path(self, chapter):
+        chapter_path = chapter.get_path()
+        chapter_path.insert(0, [chapter])
+        if chapter.get_hierarchy_children_count() > 0:
+            chapter_path.insert(0, chapter.get_hierarchy_children())
 
-    chapter_path = chapter.get_path()
-    chapter_path.insert(0, [chapter])
-    if chapter.get_hierarchy_children_count() > 0:
-        chapter_path.insert(0, chapter.get_hierarchy_children())
+        return chapter_path
 
-    accordion_title = hierarchy_section_header(chapter_path)
+    def get_notes_context_data(self, chapter):
+        ctx = {}
 
-    if chapter.should_update_tts_content():
-        chapter.update_tts_content()
+        ctx["chapter_notes"] = chapter.chapter_notes
+        ctx["section_notes"] = chapter.section.section_notes
 
-    context = {
-        "selected_origin_country": country.country_code,
-        "chapter": chapter,
-        "selected_origin_country_name": country.name,
-        "chapter_notes": chapter.chapter_notes,
-        "section_notes": chapter.section.section_notes,
-        "accordion_title": accordion_title,
-        "chapter_hierarchy_context": get_hierarchy_context(
-            chapter_path, country.country_code, chapter_code, chapter
-        ),
-    }
-
-    return render(request, "hierarchy/chapter_detail.html", context)
+        return ctx
 
 
 class HeadingObjectMixin:

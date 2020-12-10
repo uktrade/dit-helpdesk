@@ -11,7 +11,7 @@ from .sections import (
     RulesOfOriginNorthernIrelandSection,
 )
 from .views import (
-    chapter_detail,
+    ChapterDetailView,
     HeadingDetailNorthernIrelandView,
     HeadingDetailView,
     measure_condition_detail,
