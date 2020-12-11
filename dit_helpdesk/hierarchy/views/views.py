@@ -225,6 +225,7 @@ class HeadingDetailView(BaseHeadingDetailView):
         except Exception as exc:
             logger.error("Heading detail error", exc_info=exc)
 
+        old_rules_of_origin = heading.get_old_rules_of_origin(country_code=country.country_code)
         rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
 
         tariff_content_context = get_tariff_content_context(country, heading)
@@ -239,6 +240,7 @@ class HeadingDetailView(BaseHeadingDetailView):
                     "column_titles": TABLE_COLUMN_TITLES,
                     "modals": modals_dict,
                     "rules_of_origin": rules_of_origin,
+                    "old_rules_of_origin": old_rules_of_origin,
                     "regulation_groups": RegulationGroup.objects.inherited(heading).order_by('title'),
                 }
             )
@@ -385,6 +387,7 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
         except Exception as exc:
             logger.error("Subheading detail error", exc_info=exc)
 
+        old_rules_of_origin = subheading.get_old_rules_of_origin(country_code=country.country_code)
         rules_of_origin = subheading.get_rules_of_origin(country_code=country.country_code)
 
         tariff_content_context = get_tariff_content_context(country, subheading)
@@ -403,6 +406,7 @@ class SubHeadingDetailView(BaseSubHeadingDetailView):
                     "other_table_data": other_table_data,
                     "column_titles": TABLE_COLUMN_TITLES,
                     "modals": modals_dict,
+                    "old_rules_of_origin": old_rules_of_origin,
                     "rules_of_origin": rules_of_origin,
                     "regulation_groups": RegulationGroup.objects.inherited(subheading).order_by('title'),
                 }
