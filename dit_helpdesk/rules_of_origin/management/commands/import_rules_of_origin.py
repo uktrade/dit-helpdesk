@@ -60,15 +60,14 @@ class Command(BaseCommand):
         local_path = settings.RULES_OF_ORIGIN_DATA_PATH
         s3_bucket = settings.ROO_S3_BUCKET_NAME
 
-        if options["reset"]:
+        if any([local_path, s3_bucket]) and options["reset"]:
             for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
                 cls.objects.all().delete()
 
-        if not any([local_path, s3_bucket]):
-            raise ValueError(
-                "At least one of `RULES_OF_ORIGIN_DATA_PATH` or `ROO_S3_BUCKET_NAME` has to be set")
-
         if s3_bucket:
             self._import_from_s3()
-        else:
+        elif local_path:
             self._import_local(local_path)
+        else:
+            self.stdout.write(
+                "Neither S3 credentials nor local path for RoO files provided, skipping.")

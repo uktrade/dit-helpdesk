@@ -238,7 +238,8 @@
 
     {% if old_rules_of_origin %}
       <div class="govuk-grid-column-full" id="rules-of-origin">
-        <h3 class="govuk-heading-m">Rules of origin for tariff preference</h3>
+        <h3 class="govuk-heading-m">Current rules of origin for tariff
+          preference</h3>
         <p class="govuk-body">If any material in the product is not wholly from or processed in the country of origin -
           ‘non-originating’ - it must meet the <a class="govuk-link"
             href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules
@@ -312,7 +313,8 @@
         {% for group in old_rules_of_origin.items %}
           <h3 class="govuk-heading-m govuk-!-margin-top-4">{{ group.0|replace }}</h3>
           <table class="govuk-table app-flexible-table">
-            <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
+            <caption
+                    class="govuk-table__caption govuk-visually-hidden">Current rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-flexible-table__head">
               <tr class="govuk-table__row">
                 <th class="govuk-table__header app-flexible-table__header"
