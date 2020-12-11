@@ -75,6 +75,8 @@
     {% if commodity.leaf %}
         <div class="govuk-width-container">
             <main id="main-content" class="govuk-main-wrapper">
+                {% block warning %}
+                {% endblock %}
                 {% block details %}
                 {% endblock %}
             </main>

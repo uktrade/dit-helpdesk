@@ -17,25 +17,31 @@ from countries.models import Country
 
 from core.helpers import require_feature
 from hierarchy.helpers import (
-    get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
-from hierarchy.views import (
-    BaseCommodityObjectDetailView,
+from hierarchy.views.sections import (
     BaseTariffAndChargesNorthernIrelandSection,
-    BaseSectionedCommodityObjectDetailView,
+    OtherMeasuresSection,
     OtherMeasuresNorthernIrelandSection,
+    ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
+    QuotasSection,
     QuotasNorthernIrelandSection,
+    RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
+    TariffAndChargesSection,
+    TradeStatusSection,
+    UKGTTariffAndChargesSection,
 )
-from regulations.models import RegulationGroup
+from hierarchy.views.base import (
+    BaseCommodityObjectDetailView,
+    BaseSectionedCommodityObjectDetailView,
+)
 
 from .models import Commodity
-from .helpers import get_tariff_content_context
 
 
-class CommodityObjectMixin:
+class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
@@ -62,94 +68,24 @@ class CommodityObjectMixin:
         return ctx
 
 
-class BaseCommodityDetailView(CommodityObjectMixin, BaseCommodityObjectDetailView):
-    pass
+class CommodityDetailView(BaseSectionedCommodityDetailView):
+    template_name = "commodities/commodity_detail.html"
 
+    @property
+    def sections(self):
+        ukgt_enabled = settings.UKGT_ENABLED
 
-class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
-    pass
-
-
-class CommodityDetailView(BaseCommodityDetailView):
-
-    def get_template_names(self):
-        if settings.UKGT_ENABLED:
-            template = "commodities/commodity_detail_ukgt.html"
-        else:
-            template = "commodities/commodity_detail.html"
-
-        return [template]
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        country = self.country
-        commodity = self.commodity_object
-
-        modals_dict = {}
-
-        tariffs_and_charges_measures = get_nomenclature_group_measures(
-            commodity, "Tariffs and charges", country.country_code
-        )
-        tariffs_and_charges_table_data = (
-            [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
-                if measure_json.vat or measure_json.excise
-            ]
-            if country.country_code.upper() == "EU"
-            else [
-                measure_json.get_table_row()
-                for measure_json in tariffs_and_charges_measures
-            ]
-        )
-
-        for measure_json in tariffs_and_charges_measures:
-            modals_dict.update(measure_json.measures_modals)
-
-        quotas_measures = get_nomenclature_group_measures(
-            commodity, "Quotas", country.country_code
-        )
-
-        quotas_table_data = [
-            measure_json.get_table_row() for measure_json in quotas_measures
+        return [
+            TradeStatusSection,
+            UKGTTariffAndChargesSection if ukgt_enabled else TariffAndChargesSection,
+            QuotasSection,
+            OtherMeasuresSection,
+            RulesOfOriginSection,
+            ProductRegulationsSection,
         ]
-        for measure_json in quotas_measures:
-            modals_dict.update(measure_json.measures_modals)
-
-        other_measures = get_nomenclature_group_measures(
-            commodity, "Other measures", country.country_code
-        )
-        other_table_data = [measure_json.get_table_row() for measure_json in other_measures]
-        for measure_json in other_measures:
-            modals_dict.update(measure_json.measures_modals)
-
-        old_rules_of_origin = commodity.get_old_rules_of_origin(
-            country_code=country.country_code)
-        rules_of_origin = commodity.get_rules_of_origin(
-            country_code=country.country_code
-        )
-
-        ctx.update({
-            "old_rules_of_origin": old_rules_of_origin,
-            "rules_of_origin": rules_of_origin,
-            "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
-            "quotas_table_data": quotas_table_data,
-            "other_table_data": other_table_data,
-            "column_titles": TABLE_COLUMN_TITLES,
-            "regulation_groups": RegulationGroup.objects.inherited(commodity).order_by('title'),
-            "modals": modals_dict,
-            "is_eu_member": country.country_code.upper() == "EU",
-        })
-
-        tariff_content_context = get_tariff_content_context(country, commodity)
-        ctx.update(tariff_content_context)
-
-        return ctx
 
 
-class CommodityEUObjectMixin:
-
+class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
     def get_eu_commodity_object(self, commodity_object):
         return Commodity.objects.for_region(
             settings.SECONDARY_REGION,
@@ -157,10 +93,6 @@ class CommodityEUObjectMixin:
             commodity_code=commodity_object.commodity_code,
             goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
         )
-
-
-class TariffAndChargesNorthernIrelandSection(CommodityEUObjectMixin, BaseTariffAndChargesNorthernIrelandSection):
-    pass
 
 
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
