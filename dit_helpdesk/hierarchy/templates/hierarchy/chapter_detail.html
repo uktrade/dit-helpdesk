@@ -1,73 +1,19 @@
-{% extends 'core/base.html' %}
+{% extends 'hierarchy/base_commodity_object_detail.html' %}
 
-{% comment %}
-# -----------------------------------------------------------------------------
-# NOTE - table column headers.
-# -----------------------------------------------------------------------------
-# If the table columns headings are changed, they also need to be updated in
-# the SCSS file `_flexible-tables.scss` - otherwise the card-based layout for
-# smaller screens will break.
-# -----------------------------------------------------------------------------
-{% endcomment %}
-
-{% load static staticfiles i18n cell_cleaner replace dotted_format %}
+{% load dotted_format %}
 
 {% block title %}Chapter information for {% for commodity_code_segment in chapter.commodity_code_split %}{{ commodity_code_segment }} {% endfor %}{% endblock title %}
 
-{% block content %}
+{% block heading %}
+    {% include "hierarchy/_hierarchy_header.html" with object=chapter %}
+{% endblock %}
 
-<div class="app-commodity-summary">
-    <div class="govuk-width-container">
-        <div id="app-commodity-overview">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    {% include "search/_new_search_link.html" %}
+{% block subheading %}
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
+        Choose a commodity code to see more information
+    </h3>
 
-                    <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
-                        {% include "hierarchy/_hierarchy_header.html" with object=chapter %}
-                    </h2>
-
-                    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        Choose a commodity code to see more information
-                    </h3>
-
-                    <p class="govuk-body">
-                        If your item is not listed by name, it may be shown under what it's used for, what it's made from or 'other'.
-                    </p>
-
-                    <div id="app-hierarchy-context">
-                        <div class="app-hierarchy-context__wrapper">
-                            <div class="helpdesk-breadcrumbs">
-                                <p class="govuk-body govuk-!-font-size-16">{{accordion_title}}</p>
-                                    {{ chapter_hierarchy_context | safe }}
-                            </div>
-                        </div>
-
-                        {% if chapter_notes or section_notes %}
-                        <div id="app-commodity-notes">
-                            <details class="govuk-details govuk-!-margin-bottom-0">
-                                <summary class="govuk-details__summary">
-                                    <span class="govuk-details__summary-text govuk-!-font-size-16"><a name="notes"></a>Notes</span>
-                                </summary>
-                                <div class="govuk-details__text ">
-                                    {% if chapter_notes %}
-                                        <h3>Chapter notes</h3>
-                                        {% include "hierarchy/_chapter_notes.html" %}
-                                    {% endif %}
-                                    {%  if section_notes %}
-                                        <h3>Section notes</h3>
-                                        {% include "hierarchy/_section_notes.html" %}
-                                    {% endif %}
-                                </div>
-                            </details>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+    <p class="govuk-body">
+        If your item is not listed by name, it may be shown under what it's used for, what it's made from or 'other'.
+    </p>
 {% endblock %}

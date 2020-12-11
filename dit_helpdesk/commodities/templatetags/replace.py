@@ -7,3 +7,10 @@ register = template.Library()
 def cell_cleaner(value):
 
     return value.replace("_", " ")
+
+
+@register.filter(name="blank_none")
+def blank_none(value):
+    if value is None:
+        return ''
+    return value

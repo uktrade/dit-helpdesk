@@ -15,7 +15,7 @@ from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from analytics.track import track_event
 from countries.models import Country
 from hierarchy.models import Chapter, Heading
-from hierarchy.views import hierarchy_data, _commodity_code_html
+from hierarchy.views import _commodity_code_html
 from search import helpers
 
 from search.documents.commodity import CommodityDocument
@@ -47,7 +47,7 @@ def search_hierarchy(request, node_id="root", country_code=None):
     country = Country.objects.get(country_code=country_code.upper())
 
     context = {
-        "hierarchy_html": hierarchy_data(country_code, node_id),
+        "hierarchy_html": helpers.hierarchy_data(country_code, node_id),
         "country_code": country_code,
         "selected_origin_country_name": country.name,
     }
@@ -186,7 +186,7 @@ class CommoditySearchView(FormView):
 
         country = Country.objects.get(country_code=country_code.upper())
 
-        context["hierarchy_html"] = hierarchy_data(country_code)
+        context["hierarchy_html"] = helpers.hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
         context["selected_origin_country"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
@@ -353,7 +353,7 @@ class GroupedCommoditySearchView(FormView):
 
         country = Country.objects.get(country_code=country_code.upper())
 
-        context["hierarchy_html"] = hierarchy_data(country_code)
+        context["hierarchy_html"] = helpers.hierarchy_data(country_code)
         context["country_code"] = country_code.lower()
         context["selected_origin_country"] = country_code.lower()
         context["selected_origin_country_name"] = country.name
@@ -400,7 +400,7 @@ class HierarchySearchAPIView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        hierarchy = hierarchy_data(
+        hierarchy = helpers.hierarchy_data(
             country_code=serializer.validated_data["country_code"],
             node_id=serializer.validated_data["node_id"],
             content_type="json",

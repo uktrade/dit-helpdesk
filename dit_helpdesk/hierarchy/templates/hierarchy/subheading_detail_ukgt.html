@@ -61,8 +61,8 @@
                 {% endif %}
             </div>
 
-            {% if rules_of_origin %}
-                {% include "commodities/_rules_of_origin.html" %}
+            {% if old_roo_enabled and old_rules_of_origin %}
+                {% include "commodities/_rules_of_origin_pre21.html" %}
             {% endif %}
 
             {% if regulation_groups %}

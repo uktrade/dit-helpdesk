@@ -13,6 +13,6 @@ def feature_flag_processor(request):
         "ukgt_enabled": settings.UKGT_ENABLED,
         "japan_fta_enabled": settings.JAPAN_FTA_ENABLED,
         "ni_journey_enabled": settings.NI_JOURNEY_ENABLED,
-        "grouped_search_enabled": settings.GROUPED_SEARCH_ENABLED,
+        "old_roo_enabled": settings.OLD_ROO_ENABLED,
         "importer_journey_enabled": _is_importer_journey(request),
     }

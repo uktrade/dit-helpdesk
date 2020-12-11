@@ -29,8 +29,8 @@ CMS_ENABLED = False
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
 NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
-GROUPED_SEARCH_ENABLED = env.bool("GROUPED_SEARCH_ENABLED", False)
 JAPAN_FTA_ENABLED = env.bool("JAPAN_FTA_ENABLED", False)
+OLD_ROO_ENABLED = env.bool("OLD_ROO_ENABLED", True)
 
 
 # Application definition
@@ -229,7 +229,8 @@ TTS_COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
-RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
+OLD_RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
+RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
@@ -415,3 +416,7 @@ SUPPORTED_TRADE_SCENARIOS = (
 AGREEMENTS = [
     ("JP", JAPAN_FTA_ENABLED),
 ]
+
+ROO_S3_BUCKET_NAME = env.str('ROO_S3_BUCKET_NAME', '')
+ROO_S3_ACCESS_KEY_ID = env.str('ROO_S3_ACCESS_KEY_ID', '')
+ROO_S3_SECRET_ACCESS_KEY = env.str('ROO_S3_SECRET_ACCESS_KEY', '')
