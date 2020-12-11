@@ -24,6 +24,10 @@
                             </td>
                             <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
                                 <p>{{ rule.rule_text|blank_none|safe }}</p>
+                                {% if rule.alt_rule_text %}
+                                    or
+                                    <p>{{ rule.alt_rule_text|safe }}</p>
+                                {% endif %}
                             </td>
                             {% for subrule in rule.subrules.all %}
                                 <tr class="govuk-table__row app-flexible-table__row">
