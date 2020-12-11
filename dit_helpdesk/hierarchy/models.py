@@ -259,7 +259,7 @@ class BaseHierarchyModel(models.Model):
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
 
-    def get_tts_content(self):
+    def get_tts_content(self, tts_client):
         raise NotImplementedError("Implement `get_tts_content`")
 
     def update_tts_content(self):
@@ -980,6 +980,8 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.heading_code[:4])
         except tts_client.NotFound:
             return None
+
+        return self._amend_measure_conditions(tts_content)
 
     def get_hierarchy_context_ids(self):
         chapter_id = self.chapter_id
