@@ -9,6 +9,10 @@ from django.conf import settings
 from django.http import Http404
 from django.test import override_settings
 from django.urls import clear_url_caches
+from django.db.models import Q
+
+
+always_true_Q = ~Q(pk__in=[])
 
 
 class Timer:
