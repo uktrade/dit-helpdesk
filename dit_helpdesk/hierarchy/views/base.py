@@ -6,6 +6,8 @@ from django.views.generic import TemplateView
 
 from countries.models import Country
 
+from ..helpers import TABLE_COLUMN_TITLES
+
 from .exceptions import Redirect
 from .helpers import get_hierarchy_context
 
@@ -88,6 +90,8 @@ class BaseCommodityObjectDetailView(TemplateView):
         ctx["is_eu_member"] = country.country_code.upper() == "EU"
 
         ctx.update(self.get_notes_context_data(self.commodity_object))
+
+        ctx["column_titles"] = TABLE_COLUMN_TITLES
 
         return ctx
 
