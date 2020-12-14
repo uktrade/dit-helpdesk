@@ -272,18 +272,28 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
 class ProductRegulationsSection(CommodityDetailSection):
     template = "hierarchy/_product_regulations.html"
 
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.regulation_groups = RegulationGroup.objects.inherited(commodity_object)
+
+    @property
+    def should_be_displayed(self):
+        return self.regulation_groups.exists()
+
     def get_menu_items(self):
         return [("Product-specific regulations", "regulations")]
 
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["regulation_groups"] = RegulationGroup.objects.inherited(self.commodity_object).order_by('title')
+        ctx["regulation_groups"] = self.regulation_groups.order_by('title')
 
         return ctx
 
 
 class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
+    should_be_displayed = True
     template = "hierarchy/_product_regulations_northern_ireland.html"
 
     def get_menu_items(self):
