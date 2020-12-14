@@ -34,7 +34,6 @@ from hierarchy.views.sections import (
     UKGTTariffAndChargesSection,
 )
 from hierarchy.views.base import (
-    BaseCommodityObjectDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 
