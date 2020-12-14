@@ -164,16 +164,22 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
 
     @property
     def sections(self):
-        ukgt_enabled = settings.UKGT_ENABLED
+        specific = [TariffAndChargesSection]
 
-        return [
-            TradeStatusSection,
-            UKGTTariffAndChargesSection if ukgt_enabled else TariffAndChargesSection,
+        if settings.UKGT_ENABLED:
+            specific = [
+                TradeStatusSection,
+                UKGTTariffAndChargesSection,
+            ]
+
+        common = [
             QuotasSection,
             OtherMeasuresSection,
             RulesOfOriginSection,
             ProductRegulationsSection,
         ]
+
+        return specific + common
 
 
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
