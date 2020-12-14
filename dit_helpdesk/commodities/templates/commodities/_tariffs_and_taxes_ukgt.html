@@ -1,7 +1,7 @@
 {% load cell_cleaner %}
 
 <h4 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-    <a name="tariffs_and_charges"></a>Current tariffs and charges
+    <a name="tariffs_and_taxes"></a>Current tariffs and charges
 </h4>
 
 {% if is_eu_member %}
@@ -68,7 +68,7 @@
     </thead>
     <tbody class="govuk-table__body app-flexible-table__body">
         {% spaceless %}
-            {% for row in tariffs_and_charges_table_data %}
+            {% for row in tariffs_and_taxes_table_data %}
                 <tr class="govuk-table__row app-flexible-table__row">
                     {% for col in row %}
                         {% if forloop.counter == 1 %}

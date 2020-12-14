@@ -17,7 +17,7 @@ from countries.models import Country
 
 from core.helpers import require_feature
 from hierarchy.views.sections import (
-    BaseTariffAndChargesNorthernIrelandSection,
+    BaseTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresSection,
     OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
@@ -26,9 +26,9 @@ from hierarchy.views.sections import (
     QuotasNorthernIrelandSection,
     RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
-    TariffAndChargesSection,
+    TariffsAndTaxesSection,
     TradeStatusSection,
-    UKGTTariffAndChargesSection,
+    UKGTTariffsAndTaxesSection,
 )
 from hierarchy.views.base import (
     BaseSectionedCommodityObjectDetailView,
@@ -69,12 +69,12 @@ class CommodityDetailView(BaseSectionedCommodityDetailView):
 
     @property
     def sections(self):
-        specific = [TariffAndChargesSection]
+        specific = [TariffsAndTaxesSection]
 
         if settings.UKGT_ENABLED:
             specific = [
                 TradeStatusSection,
-                UKGTTariffAndChargesSection,
+                UKGTTariffsAndTaxesSection,
             ]
 
         common = [
@@ -87,7 +87,7 @@ class CommodityDetailView(BaseSectionedCommodityDetailView):
         return specific + common
 
 
-class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+class TariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
     def get_eu_commodity_object(self, commodity_object):
         return Commodity.objects.for_region(
             settings.SECONDARY_REGION,
@@ -100,7 +100,7 @@ class TariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIreland
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
-        TariffAndChargesNorthernIrelandSection,
+        TariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
         OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
