@@ -30,7 +30,7 @@ from trade_tariff_service.tts_api import (
     SubHeadingJson,
 )
 from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
-from core.helpers import flatten
+from core.helpers import flatten, always_true_Q
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -105,7 +105,7 @@ class RulesOfOriginMixin:
 
         return groups
 
-    def get_rules_of_origin(self, country_code):
+    def get_rules_of_origin(self, country_code, starting_before=None):
         """
         Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
         country code parameter.
@@ -120,10 +120,14 @@ class RulesOfOriginMixin:
         chapter_id, heading_id, subheading_id = self.get_hierarchy_context_ids()
 
         document_filter = Q(
-            rules_document__start_date__lte=dt.datetime.now(),
             rules_document__countries=country,
             rules_document__nomenclature_tree=tree,
         )
+        date_filter = (
+            Q(rules_document__start_date__lte=starting_before) if starting_before
+            else always_true_Q
+        )
+
         rule_filter = (
             Q(chapters__id=chapter_id)
         )
@@ -133,7 +137,7 @@ class RulesOfOriginMixin:
             rule_filter = rule_filter | Q(subheadings__id=subheading_id)
 
         rules = Rule.objects.prefetch_related('subrules').filter(
-            document_filter & rule_filter
+            document_filter & date_filter & rule_filter
         )
 
         chapter_rules = [r for r in rules if r.chapters.exists()]
@@ -255,7 +259,7 @@ class BaseHierarchyModel(models.Model):
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
 
-    def get_tts_content(self):
+    def get_tts_content(self, tts_client):
         raise NotImplementedError("Implement `get_tts_content`")
 
     def update_tts_content(self):
@@ -976,6 +980,8 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.heading_code[:4])
         except tts_client.NotFound:
             return None
+
+        return self._amend_measure_conditions(tts_content)
 
     def get_hierarchy_context_ids(self):
         chapter_id = self.chapter_id

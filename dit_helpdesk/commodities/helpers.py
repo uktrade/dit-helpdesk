@@ -38,8 +38,12 @@ def get_global_tariff_context(commodity):
     return context
 
 
+def has_trade_scenario(country):
+    return country.scenario in settings.SUPPORTED_TRADE_SCENARIOS
+
+
 def get_tariff_content_context(country, commodity):
-    if country.scenario in settings.SUPPORTED_TRADE_SCENARIOS:
+    if has_trade_scenario(country):
         tariff_content_label = f"_content_{country.scenario.replace('-', '_')}"
     else:
         tariff_content_label = ''

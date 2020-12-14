@@ -2,7 +2,12 @@ import logging
 
 from django.conf import settings
 
-from commodities.helpers import get_global_tariff_context
+from commodities.helpers import (
+    get_global_tariff_context,
+    get_tariff_content_context,
+    has_trade_scenario,
+)
+from regulations.models import RegulationGroup
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
 from ..models import Heading, SubHeading
@@ -25,18 +30,16 @@ class CommodityDetailSection:
         return []
 
     def get_context_data(self):
-        raise NotImplementedError("Implement `get_context_data`")
+        return {}
 
 
-class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
-    template = "hierarchy/_tariffs_and_charges_northern_ireland.html"
+class TariffAndChargesSection(CommodityDetailSection):
+    template = "hierarchy/_tariffs_and_charges.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
         self.uk_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(commodity_object, country)
-        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
-        self.eu_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(eu_commodity_object, country)
 
     def _get_tariffs_and_charges_measures(self, commodity_object, country):
         tariffs_and_charges_measures = get_nomenclature_group_measures(
@@ -50,9 +53,6 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
             tariffs_and_charges_measures = [m for m in tariffs_and_charges_measures if m.vat or m.excise]
 
         return tariffs_and_charges_measures
-
-    def get_eu_commodity_object(self, commodity_object):
-        raise NotImplementedError("Implement `get_eu_commodity_object`")
 
     @property
     def should_be_displayed(self):
@@ -78,10 +78,9 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
         return tariffs_and_charges_table_data
 
     def get_context_data(self):
-        ctx = {
-            "uk_tariffs_and_charges_table_data": self._get_table_data(self.uk_tariffs_and_charges_measures),
-            "eu_tariffs_and_charges_table_data": self._get_table_data(self.eu_tariffs_and_charges_measures),
-        }
+        ctx = super().get_context_data()
+
+        ctx["uk_tariffs_and_charges_table_data"] = self._get_table_data(self.uk_tariffs_and_charges_measures)
 
         if settings.UKGT_ENABLED:
             ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
@@ -89,8 +88,38 @@ class BaseTariffAndChargesNorthernIrelandSection(CommodityDetailSection):
         return ctx
 
 
-class QuotasNorthernIrelandSection(CommodityDetailSection):
-    template = "hierarchy/_quotas_northern_ireland.html"
+class UKGTTariffAndChargesSection(TariffAndChargesSection):
+    template = "hierarchy/_tariffs_and_charges_ukgt.html"
+
+    def get_menu_items(self):
+        return [
+            ("Current tariffs and charges", "tariffs_and_charges"),
+            ("Tariffs after transition", "tariffs_after_transition"),
+        ]
+
+
+class BaseTariffAndChargesNorthernIrelandSection(TariffAndChargesSection):
+    template = "hierarchy/_tariffs_and_charges_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
+        self.eu_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(eu_commodity_object, country)
+
+    def get_eu_commodity_object(self, commodity_object):
+        raise NotImplementedError("Implement `get_eu_commodity_object`")
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+
+        ctx["eu_tariffs_and_charges_table_data"] = self._get_table_data(self.eu_tariffs_and_charges_measures)
+
+        return ctx
+
+
+class QuotasSection(CommodityDetailSection):
+    template = "hierarchy/_quotas.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
@@ -130,14 +159,26 @@ class QuotasNorthernIrelandSection(CommodityDetailSection):
         ]
 
     def get_context_data(self):
-        return {
-            "eu_quotas_link": get_eu_commodity_link(self.commodity_object, self.country),
-            "quotas_table_data": self.quotas_table_data,
-        }
+        ctx = super().get_context_data()
+
+        ctx["quotas_table_data"] = self.quotas_table_data
+
+        return ctx
 
 
-class OtherMeasuresNorthernIrelandSection(CommodityDetailSection):
-    template = "hierarchy/_other_measures_northern_ireland.html"
+class QuotasNorthernIrelandSection(QuotasSection):
+    template = "hierarchy/_quotas_northern_ireland.html"
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+
+        ctx["eu_quotas_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+
+        return ctx
+
+
+class OtherMeasuresSection(CommodityDetailSection):
+    template = "hierarchy/_other_measures.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
@@ -170,33 +211,89 @@ class OtherMeasuresNorthernIrelandSection(CommodityDetailSection):
         ]
 
     def get_context_data(self):
-        return {
-            "eu_other_measures_link": get_eu_commodity_link(self.commodity_object, self.country),
-            "other_measures_table": self.other_measures_table_data,
-        }
+        ctx = super().get_context_data()
+
+        ctx["other_measures_table"] = self.other_measures_table_data
+
+        return ctx
 
 
-class RulesOfOriginNorthernIrelandSection(CommodityDetailSection):
-    template = "hierarchy/_rules_of_origin_northern_ireland.html"
+class OtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
+    template = "hierarchy/_other_measures_northern_ireland.html"
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+
+        ctx["eu_other_measures_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+
+        return ctx
+
+
+class RulesOfOriginSection(CommodityDetailSection):
+    template = "hierarchy/_rules_of_origin.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.old_rules_of_origin = commodity_object.get_old_rules_of_origin(
+            country_code=country.country_code,
+        )
+        self.rules_of_origin = commodity_object.get_rules_of_origin(
+            country_code=country.country_code,
+        )
+
+    @property
+    def should_be_displayed(self):
+        return bool(self.old_rules_of_origin) or bool(self.rules_of_origin)
 
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
 
     def get_context_data(self):
-        commodity_object = self.commodity_object
-        country = self.country
+        ctx = super().get_context_data()
 
-        rules_of_origin = commodity_object.get_rules_of_origin(
-            country_code=country.country_code,
-        )
+        ctx["old_rules_of_origin"] = self.old_rules_of_origin
+        ctx["rules_of_origin"] = self.rules_of_origin
 
-        return {
-            "eu_rules_of_origin_link": get_eu_commodity_link(commodity_object, country),
-            "rules_of_origin": rules_of_origin,
-        }
+        return ctx
+
+
+class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
+    template = "hierarchy/_rules_of_origin_northern_ireland.html"
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+
+        ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+
+        return ctx
+
+
+class ProductRegulationsSection(CommodityDetailSection):
+    template = "hierarchy/_product_regulations.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.regulation_groups = RegulationGroup.objects.inherited(commodity_object)
+
+    @property
+    def should_be_displayed(self):
+        return self.regulation_groups.exists()
+
+    def get_menu_items(self):
+        return [("Product-specific regulations", "regulations")]
+
+    def get_context_data(self):
+        ctx = super().get_context_data()
+
+        ctx["regulation_groups"] = self.regulation_groups.order_by('title')
+
+        return ctx
 
 
 class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
+    should_be_displayed = True
     template = "hierarchy/_product_regulations_northern_ireland.html"
 
     def get_menu_items(self):
@@ -228,3 +325,17 @@ class HeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthern
             heading_code=commodity_object.heading_code,
             goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
         )
+
+
+class TradeStatusSection(CommodityDetailSection):
+    template = "hierarchy/_trade_status.html"
+
+    @property
+    def should_be_displayed(self):
+        return has_trade_scenario(self.country)
+
+    def get_menu_items(self):
+        return [("Trade status", "trade_status")]
+
+    def get_context_data(self):
+        return get_tariff_content_context(self.country, self.commodity_object)

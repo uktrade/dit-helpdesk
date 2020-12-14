@@ -125,10 +125,6 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
 
-    def test_commodity_detail_view_is_using_the_correct_template(self):
-        resp = self.client.get(self.url)
-        self.assertTemplateUsed(resp, "commodities/commodity_detail.html")
-
     def test_commodity_detail_template_has_the_correct_data(self):
         resp = self.client.get(self.url)
         self.assertInHTML(
@@ -151,13 +147,6 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(self.url)
         self.assertEqual(
             resp.context["selected_origin_country_name"], settings.TEST_COUNTRY_NAME
-        )
-
-    def test_commodity_column_titles_are_correct(self):
-        resp = self.client.get(self.url)
-        self.assertEqual(
-            resp.context["column_titles"],
-            ["Country", "Measure type", "Value", "Conditions", "Start date"],
         )
 
     def test_commodity_detail_without_country_code(self):

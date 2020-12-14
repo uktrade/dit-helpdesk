@@ -1,5 +1,6 @@
 import logging
 import os
+import datetime as dt
 
 from unittest import mock
 
@@ -122,7 +123,8 @@ class ImporterTestCase(TestCase):
 
         with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
             mock_context_ids.return_value = self.chapter15.id, h1509.id, None
-            roo_data = h1509.get_rules_of_origin(country_code='TC')
+            roo_data = h1509.get_rules_of_origin(
+                country_code='TC', starting_before=dt.datetime.now())
 
         self.assertFalse(roo_data)
 
