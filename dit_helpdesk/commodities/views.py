@@ -16,9 +16,6 @@ from django.utils.decorators import method_decorator
 from countries.models import Country
 
 from core.helpers import require_feature
-from hierarchy.helpers import (
-    TABLE_COLUMN_TITLES,
-)
 from hierarchy.views.sections import (
     BaseTariffAndChargesNorthernIrelandSection,
     OtherMeasuresSection,
@@ -120,13 +117,6 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
         else:
             if self.eu_commodity_object.should_update_tts_content():
                 self.eu_commodity_object.update_tts_content()
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx["column_titles"] = TABLE_COLUMN_TITLES
-
-        return ctx
 
 
 def measure_condition_detail(

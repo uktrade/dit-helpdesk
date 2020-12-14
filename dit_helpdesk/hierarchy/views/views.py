@@ -27,10 +27,17 @@ from .helpers import (
 from .sections import (
     HeadingTariffAndChargesNorthernIrelandSection,
     OtherMeasuresNorthernIrelandSection,
+    ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
+    QuotasSection,
     QuotasNorthernIrelandSection,
+    OtherMeasuresSection,
+    RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
     SubHeadingTariffAndChargesNorthernIrelandSection,
+    TariffAndChargesSection,
+    TradeStatusSection,
+    UKGTTariffAndChargesSection,
 )
 
 logger = logging.getLogger(__name__)
@@ -120,7 +127,7 @@ class ChapterDetailView(BaseCommodityObjectDetailView):
         return ctx
 
 
-class HeadingObjectMixin:
+class BaseSectionedHeadingDetailView(BaseSectionedCommodityObjectDetailView):
     context_object_name = "heading"
 
     def get_commodity_object(self, **kwargs):
@@ -152,100 +159,21 @@ class HeadingObjectMixin:
         return ctx
 
 
-class BaseHeadingDetailView(HeadingObjectMixin, BaseCommodityObjectDetailView):
-    pass
+class HeadingDetailView(BaseSectionedHeadingDetailView):
+    template_name = "hierarchy/heading_detail.html"
 
+    @property
+    def sections(self):
+        ukgt_enabled = settings.UKGT_ENABLED
 
-class BaseSectionedHeadingDetailView(HeadingObjectMixin, BaseSectionedCommodityObjectDetailView):
-    pass
-
-
-class HeadingDetailView(BaseHeadingDetailView):
-
-    def get_template_names(self):
-        if settings.UKGT_ENABLED:
-            template = "hierarchy/heading_detail_ukgt.html"
-        else:
-            template = "hierarchy/heading_detail.html"
-
-        return [template]
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        country = self.country
-        heading = self.commodity_object
-
-        import_measures = []
-        tariffs_and_charges_table_data = []
-        quotas_table_data = []
-        other_table_data = []
-        modals_dict = {}
-
-        try:
-            import_measures = heading.tts_obj.get_import_measures(country.country_code)
-
-            tariffs_and_charges_measures = get_nomenclature_group_measures(
-                heading, "Tariffs and charges", country.country_code
-            )
-            tariffs_and_charges_table_data = (
-                [
-                    measure_json.get_table_row()
-                    for measure_json in tariffs_and_charges_measures
-                    if measure_json.vat or measure_json.excise
-                ]
-                if country.country_code.upper() == "EU"
-                else [
-                    measure_json.get_table_row()
-                    for measure_json in tariffs_and_charges_measures
-                ]
-            )
-
-            for measure_json in tariffs_and_charges_measures:
-                modals_dict.update(measure_json.measures_modals)
-
-            quotas_measures = get_nomenclature_group_measures(
-                heading, "Quotas", country.country_code
-            )
-            quotas_table_data = [
-                measure_json.get_table_row() for measure_json in quotas_measures
-            ]
-            for measure_json in quotas_measures:
-                modals_dict.update(measure_json.measures_modals)
-
-            other_measures = get_nomenclature_group_measures(
-                heading, "Other measures", country.country_code
-            )
-            other_table_data = [
-                measure_json.get_table_row() for measure_json in other_measures
-            ]
-            for measure_json in other_measures:
-                modals_dict.update(measure_json.measures_modals)
-
-        except Exception as exc:
-            logger.error("Heading detail error", exc_info=exc)
-
-        old_rules_of_origin = heading.get_old_rules_of_origin(country_code=country.country_code)
-        rules_of_origin = heading.get_rules_of_origin(country_code=country.country_code)
-
-        tariff_content_context = get_tariff_content_context(country, heading)
-        ctx.update(tariff_content_context)
-
-        if import_measures:
-            ctx.update(
-                {
-                    "tariffs_and_charges_table_data": tariffs_and_charges_table_data,
-                    "quotas_table_data": quotas_table_data,
-                    "other_table_data": other_table_data,
-                    "column_titles": TABLE_COLUMN_TITLES,
-                    "modals": modals_dict,
-                    "rules_of_origin": rules_of_origin,
-                    "old_rules_of_origin": old_rules_of_origin,
-                    "regulation_groups": RegulationGroup.objects.inherited(heading).order_by('title'),
-                }
-            )
-
-        return ctx
+        return [
+            TradeStatusSection,
+            UKGTTariffAndChargesSection if ukgt_enabled else TariffAndChargesSection,
+            QuotasSection,
+            OtherMeasuresSection,
+            RulesOfOriginSection,
+            ProductRegulationsSection,
+        ]
 
 
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
@@ -274,13 +202,6 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
         else:
             if self.eu_commodity_object.should_update_tts_content():
                 self.eu_commodity_object.update_tts_content()
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx["column_titles"] = TABLE_COLUMN_TITLES
-
-        return ctx
 
 
 class SubHeadingObjectMixin:
@@ -441,13 +362,6 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
         else:
             if self.eu_commodity_object.should_update_tts_content():
                 self.eu_commodity_object.update_tts_content()
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx["column_titles"] = TABLE_COLUMN_TITLES
-
-        return ctx
 
 
 def measure_condition_detail(
