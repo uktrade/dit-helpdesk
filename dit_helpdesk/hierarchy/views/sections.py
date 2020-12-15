@@ -244,7 +244,7 @@ class RulesOfOriginSection(CommodityDetailSection):
 
     @property
     def should_be_displayed(self):
-        return bool(self.old_rules_of_origin) or bool(self.rules_of_origin)
+        return self.country.has_uk_trade_agreement
 
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
