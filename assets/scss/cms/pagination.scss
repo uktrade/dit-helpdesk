@@ -1,0 +1,27 @@
+.app-pagination {
+    display: flex;
+
+    &__links {
+        margin-left: auto;
+    }
+
+    &__previous {
+        margin-right: 10px;
+
+        &:before {
+            content: "< ";
+        }
+    }
+
+    &__page {
+        margin: 0 2px;
+    }
+
+    &__next {
+        margin-left: 10px;
+
+        &:after {
+            content: " >";
+        }
+    }
+}

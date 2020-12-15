@@ -32,3 +32,34 @@ class RegulationTestCase(TestCase):
 
     def test_str(self):
         self.assertEquals(self.regulation.__str__(), self.regulation.url)
+
+    def test_regulation_number(self):
+        regulation = mixer.blend(
+            Regulation,
+            url='http://www.legislation.gov.uk/eur/2010/64/contents',
+        )
+        self.assertEqual(regulation.regulation_number, "64/2010")
+
+        regulation = mixer.blend(
+            Regulation,
+            url='http://www.legislation.gov.uk/eur/2010/640/contents',
+        )
+        self.assertEqual(regulation.regulation_number, "640/2010")
+
+        regulation = mixer.blend(
+            Regulation,
+            url='http://www.legislation.gov.uk/eur/2010/6409402/contents',
+        )
+        self.assertEqual(regulation.regulation_number, "6409402/2010")
+
+        regulation = mixer.blend(
+            Regulation,
+            url='http://www.legislation.gov.uk/eudr/2010/6409402/contents',
+        )
+        self.assertEqual(regulation.regulation_number, "6409402/2010")
+
+        regulation = mixer.blend(
+            Regulation,
+            url='http://www.legislation.gov.uk/eudn/2010/6409402/contents',
+        )
+        self.assertEqual(regulation.regulation_number, "6409402/2010")

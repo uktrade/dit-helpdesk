@@ -138,3 +138,5 @@ ES_URL = "http://es:9200"
 ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 
 SITE_READ_ONLY = False
+
+INSTALLED_APPS += ["cms"]
