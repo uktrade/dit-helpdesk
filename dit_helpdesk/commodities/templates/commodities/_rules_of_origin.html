@@ -1,15 +1,24 @@
 {% load dotted_format %}
 
 <div class="govuk-!-margin-bottom-9" id="rules-of-origin">
-    <h3 class="govuk-heading-m"><a name="rules_of_origin"></a>Current rules of origin for tariff preference - {{ commodity.commodity_code|dotted_format }}</h3>
+    <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
 
     <p class="govuk-body">
-        If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.
-    </p>
-    <p class="govuk-body">
-        Also <a class="govuk-link" href="https://www.gov.uk/guidance/signed-uk-trade-agreements-transitioned-from-the-eu">check the trade agreements the UK has with the country you are exporting from</a>.
+        If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the rules of origin to qualify for a tariff preference.
     </p>
 
-    {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
-    {% include "hierarchy/_rules_of_origin_table_data.html" %}
+    <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/guidance/check-your-goods-meet-the-rules-of-origin">Read guidance about rules of origin here</a>.
+    </p>
+
+    {% block rules_of_origin %}
+        {% if rules_of_origin %}
+            {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
+            {% include "hierarchy/_rules_of_origin_table_data.html" %}
+        {% endif %}
+    {% endblock %}
+
+    <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">Read the UK's full rules of origin</a>.
+    </p>
 </div>
