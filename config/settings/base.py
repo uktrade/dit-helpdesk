@@ -23,10 +23,8 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 ADMIN_ENABLED = env.bool("ADMIN_ENABLED")
 
-CMS_ENABLED = env.bool("CMS_ENABLED", False)
-
-READ_ONLY = env.bool("READ_ONLY", True)
-
+READ_ONLY = True
+CMS_ENABLED = False
 
 # Feature flags
 UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
@@ -44,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "elasticapm.contrib.django",
     "formtools",
     "core",
@@ -69,13 +68,9 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
     "accessibility",
-    "cms",
+    "reversion",
     "alt_trade_tariff_service",
 ]
-
-if READ_ONLY:
-    INSTALLED_APPS += ["readonly"]
-    SITE_READ_ONLY = True
 
 MIDDLEWARE = [
     "healthcheck.middleware.HealthCheckMiddleware",
@@ -87,6 +82,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
     "core.middleware.CheckCountryUrlMiddleware",

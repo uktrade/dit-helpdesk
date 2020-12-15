@@ -1,0 +1,57 @@
+{% extends "cms/regulations/base_regulationgroup_detail.html" %}
+
+{% block panel_heading %}
+    <div class="app-panel-heading">
+        <h3 class="govuk-heading-m">Associated commodities ({{ regulationgroup.commodities.count }})</h4>
+        <p class="govuk-inset-text">
+            Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+        </p>
+        <nav>
+            <ul class="app-regulation-sub-nav">
+                <li>
+                    <a class="govuk-link" href="{% url 'cms:regulation-group-commodity-add' pk=regulationgroup.pk %}">
+                        Add a link to other commodities
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block panel_content %}
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">ID</th>
+                <th scope="col" class="govuk-table__header">Title</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                    <span class="govuk-visually-hidden">
+                        Actions
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for commodity in regulationgroup.commodities.all %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ commodity.commodity_code }}</th>
+                    <td class="govuk-table__cell">{{ commodity.description }}</td>
+                    <td class="govuk-table__cell app-table__cell--actions">
+                        <a
+                            class="govuk-link"
+                            href="{% url "cms:regulation-group-commodity-remove" regulationgroup.pk commodity.pk %}"
+                        >Remove</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
+                        <em>
+                            Not associated to any commodities.
+                        </em>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

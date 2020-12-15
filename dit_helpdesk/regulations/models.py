@@ -1,3 +1,6 @@
+import re
+import reversion
+
 from django.db import models
 
 from .managers import RegulationGroupManager
@@ -5,6 +8,7 @@ from .managers import RegulationGroupManager
 from hierarchy.models import NomenclatureTree
 
 
+@reversion.register()
 class RegulationGroup(models.Model):
     """
     Regulation group model
@@ -25,6 +29,7 @@ class RegulationGroup(models.Model):
         return self.title
 
 
+@reversion.register()
 class Regulation(models.Model):
     """
     Regulation model
@@ -38,5 +43,13 @@ class Regulation(models.Model):
     celex = models.CharField(max_length=20)
     url = models.URLField()
 
+    VALID_URL_REGEX = r"^http:\/\/www.legislation.gov.uk\/(eur|eudn|eudr)\/(?P<year>\d{4})\/(?P<number>\d+)\/contents$"
+
     def __str__(self):
         return self.url
+
+    @property
+    def regulation_number(self):
+        matches = re.match(self.VALID_URL_REGEX, self.url)
+
+        return f"{matches['number']}/{matches['year']}"
