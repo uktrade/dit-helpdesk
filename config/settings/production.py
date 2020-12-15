@@ -3,7 +3,10 @@ from .vcap import *
 
 assert (
     not ADMIN_ENABLED
-    and env.str("DJANGO_SETTINGS_MODULE") == "config.settings.production"
+    and env.str("DJANGO_SETTINGS_MODULE") in [
+        "config.settings.production",
+        "config.settings.cms_production",
+    ],
 )
 
 ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
