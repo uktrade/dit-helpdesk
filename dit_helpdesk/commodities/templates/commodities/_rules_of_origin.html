@@ -15,6 +15,8 @@
         {% if rules_of_origin %}
             {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
             {% include "hierarchy/_rules_of_origin_table_data.html" %}
+        {% else %}
+            {% include "hierarchy/_rules_of_origin_error.html" %}
         {% endif %}
     {% endblock %}
 
