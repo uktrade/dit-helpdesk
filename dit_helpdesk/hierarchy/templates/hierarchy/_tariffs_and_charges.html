@@ -1,8 +1,0 @@
-{% load dotted_format %}
-
-<div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="tariffs_and_charges"></a>Tariffs and charges - {{ commodity.commodity_code|dotted_format }}
-    </h3>
-    {% include "commodities/_current_tariffs_and_charges.html" with tariffs_and_charges_table_data=uk_tariffs_and_charges_table_data %}
-</div>
