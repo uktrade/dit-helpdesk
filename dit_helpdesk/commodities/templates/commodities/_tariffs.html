@@ -1,0 +1,7 @@
+{% if is_eu_member %}
+    <p class="govuk-body">
+        The UK is currently in the same customs union as {{ selected_origin_country_name }} as a fellow EU Member State. This means that no customs duties apply.
+    </p>
+{% else %}
+    {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=tariffs_table_data %}
+{% endif %}

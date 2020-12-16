@@ -1,0 +1,28 @@
+{% load dotted_format %}
+
+<div id="tariffs_and_taxes" class="govuk-!-margin-bottom-9">
+    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="tariffs_and_taxes"></a>Tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
+    </h2>
+    <div class="govuk-caption-m">
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+    </div>
+
+    <div class="govuk-!-margin-bottom-3">
+        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+    </div>
+
+    <div class="govuk-!-margin-bottom-9">
+        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+            Tariffs
+        </h3>
+        {% include "commodities/_tariffs.html" %}
+    </div>
+
+    <div>
+        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+            Taxes
+        </h3>
+        {% include "commodities/_taxes.html" %}
+    </div>
+</div>
