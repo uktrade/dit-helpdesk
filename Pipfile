@@ -88,6 +88,7 @@ django-migration-linter = "*"
 requests-aws4auth = "*"
 freezegun = "*"
 boto3 = "*"
+django-flags = "*"
 
 [requires]
 python_version = "3.6"

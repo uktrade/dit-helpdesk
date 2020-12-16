@@ -13,6 +13,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 
+from flags.state import flag_enabled
+
 from countries.models import Country
 
 from core.helpers import require_feature
@@ -71,7 +73,7 @@ class CommodityDetailView(BaseSectionedCommodityDetailView):
     def sections(self):
         specific = [TariffAndChargesSection]
 
-        if settings.UKGT_ENABLED:
+        if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
                 UKGTTariffAndChargesSection,
