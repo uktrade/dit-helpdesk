@@ -265,6 +265,7 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
         ctx = super().get_context_data()
 
         ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+        ctx["should_display_eu_rules_of_origin"] = bool(self.country.has_eu_trade_agreement)
 
         return ctx
 
