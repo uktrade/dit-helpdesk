@@ -9,7 +9,12 @@ from .models import Country
 def _has_agreement(country_code):
     agreements = dict(settings.AGREEMENTS)
 
-    return agreements.get(country_code, False)
+    has_agreement = agreements.get(country_code, False)
+
+    if callable(has_agreement):
+        has_agreement = has_agreement()
+
+    return has_agreement
 
 
 class ChooseCountryView(TemplateView):

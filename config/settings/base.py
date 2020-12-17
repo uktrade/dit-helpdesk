@@ -5,8 +5,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 import dj_database_url
 import ecs_logging
-
-from collections import namedtuple
+from flags.state import flag_enabled
 
 from .env import env
 
@@ -27,10 +26,11 @@ READ_ONLY = True
 CMS_ENABLED = False
 
 # Feature flags
-UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
-NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
-JAPAN_FTA_ENABLED = env.bool("JAPAN_FTA_ENABLED", False)
-OLD_ROO_ENABLED = env.bool("OLD_ROO_ENABLED", True)
+FLAGS = {
+    "NI_JOURNEY": [],
+    "JAPAN_FTA": [],
+    "PRE21": [],
+}
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "elasticapm.contrib.django",
     "formtools",
+    "flags",
     "core",
     "commodities",
     "cookies",
@@ -414,7 +415,7 @@ SUPPORTED_TRADE_SCENARIOS = (
 )
 
 AGREEMENTS = [
-    ("JP", JAPAN_FTA_ENABLED),
+    ("JP", lambda: flag_enabled("JAPAN_FTA")),
 ]
 
 ROO_S3_BUCKET_NAME = env.str('ROO_S3_BUCKET_NAME', '')

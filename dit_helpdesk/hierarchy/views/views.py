@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 
+from flags.state import flag_enabled
+
 from core.helpers import require_feature
 from countries.models import Country
 from commodities.helpers import get_tariff_content_context
@@ -25,7 +27,7 @@ from .helpers import (
     hierarchy_section_header,
 )
 from .sections import (
-    HeadingTariffAndChargesNorthernIrelandSection,
+    HeadingTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
@@ -34,10 +36,10 @@ from .sections import (
     OtherMeasuresSection,
     RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
-    SubHeadingTariffAndChargesNorthernIrelandSection,
-    TariffAndChargesSection,
+    SubHeadingTariffsAndTaxesNorthernIrelandSection,
+    TariffsAndTaxesSection,
     TradeStatusSection,
-    UKGTTariffAndChargesSection,
+    UKGTTariffsAndTaxesSection,
 )
 
 logger = logging.getLogger(__name__)
@@ -164,12 +166,12 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
 
     @property
     def sections(self):
-        specific = [TariffAndChargesSection]
+        specific = [TariffsAndTaxesSection]
 
-        if settings.UKGT_ENABLED:
+        if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
-                UKGTTariffAndChargesSection,
+                UKGTTariffsAndTaxesSection,
             ]
 
         common = [
@@ -185,7 +187,7 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
-        HeadingTariffAndChargesNorthernIrelandSection,
+        HeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
         OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
@@ -246,12 +248,12 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
 
     @property
     def sections(self):
-        specific = [TariffAndChargesSection]
+        specific = [TariffsAndTaxesSection]
 
-        if settings.UKGT_ENABLED:
+        if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
-                UKGTTariffAndChargesSection,
+                UKGTTariffsAndTaxesSection,
             ]
 
         common = [
@@ -267,7 +269,7 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
-        SubHeadingTariffAndChargesNorthernIrelandSection,
+        SubHeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
         OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,

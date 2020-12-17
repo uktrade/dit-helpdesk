@@ -1,14 +1,8 @@
 {% load dotted_format %}
 
-{% if ukgt_enabled %}
-    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
-    </h2>
-{% else %}
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
-    </h3>
-{% endif %}
+<h2 class="govuk-heading-l">
+    <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
+</h2>
 
 <div class="govuk-caption-m ">
     <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
