@@ -17,7 +17,6 @@ from flags.state import flag_enabled
 
 from countries.models import Country
 
-from core.helpers import require_feature
 from hierarchy.views.sections import (
     BaseTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresSection,
