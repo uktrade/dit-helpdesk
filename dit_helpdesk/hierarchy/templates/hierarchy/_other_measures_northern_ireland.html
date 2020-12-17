@@ -48,12 +48,8 @@
                 </h4>
             </div>
             <div id="accordion-eu-other-measures-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-other-measures-heading">
-                <p class="govuk-body">
-                    Other European Union measures may apply where goods are exported to Northern Ireland for use in the European Union. These can be found on the European Commission's Access2Markets site.
-                </p>
-                <p class="govuk-body">
-                    <a href="{{ eu_other_measures_link }}">View other EU measures for your goods on the Access2Markets site</a>
-                </p>    
+                {% include "hierarchy/_other_measures_types.html" %}
+                {% include "hierarchy/_other_measures_table_data.html" with other_table_data=eu_other_measures_table %}
             </div>
         </div>
     </div>
