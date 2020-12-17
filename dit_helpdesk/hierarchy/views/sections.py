@@ -237,7 +237,7 @@ class RulesOfOriginSection(CommodityDetailSection):
 
     @property
     def should_be_displayed(self):
-        return bool(self.old_rules_of_origin) or bool(self.rules_of_origin)
+        return self.country.has_uk_trade_agreement
 
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
@@ -258,6 +258,7 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
         ctx = super().get_context_data()
 
         ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+        ctx["should_display_eu_rules_of_origin"] = bool(self.country.has_eu_trade_agreement)
 
         return ctx
 
