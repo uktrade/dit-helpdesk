@@ -121,6 +121,28 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
         return ctx
 
 
+class SubHeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
+
+    def get_eu_commodity_object(self, commodity_object):
+        return SubHeading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_object.commodity_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
+class HeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
+
+    def get_eu_commodity_object(self, commodity_object):
+        return Heading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            heading_code=commodity_object.heading_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
 class QuotasSection(CommodityDetailSection):
     template = "hierarchy/_quotas.html"
 
@@ -300,28 +322,6 @@ class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
         return {
             "eu_regulations_link": get_eu_commodity_link(self.commodity_object, self.country),
         }
-
-
-class SubHeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
-
-    def get_eu_commodity_object(self, commodity_object):
-        return SubHeading.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
-            commodity_code=commodity_object.commodity_code,
-            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
-        )
-
-
-class HeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
-
-    def get_eu_commodity_object(self, commodity_object):
-        return Heading.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
-            heading_code=commodity_object.heading_code,
-            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
-        )
 
 
 class TradeStatusSection(CommodityDetailSection):
