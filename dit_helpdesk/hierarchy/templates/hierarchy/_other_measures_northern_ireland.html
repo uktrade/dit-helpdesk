@@ -1,27 +1,15 @@
 {% load cell_cleaner dotted_format %}
 
 <div id="other_measures" class="govuk-!-margin-bottom-9">
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
         <a name="other_measures"></a>Other measures - {{ commodity.commodity_code|dotted_format }}
-    </h3>
+    </h2>
     <div class="govuk-caption-m">
-        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> Northern Ireland</p>
     </div>
 
     <p class="govuk-body">
-        Other UK or EU measures may apply to this product.
-    </p>
-    <p class="govuk-body">
-        Which other measures apply will depend on:
-    </p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>whether the product is intended for use in the UK or the EU</li>
-        <li>the proportions of each shipment intended for use in the UK and the EU respectively</li>
-        <li>whether UK-intended products may subsequently be imported into the Republic of Ireland</li>
-    </ul>
-
-    <p class="govuk-body">
-        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+        The other measures that apply to your product will depend on whether it is intended for use in the UK, or is considered ‘at risk’ of entering the EU. If some or all of the product is ‘at risk’ of entering an EU country (such as Ireland), it may be subject to EU measures.
     </p>
 
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-other-measures">
