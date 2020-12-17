@@ -3,17 +3,13 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.utils.decorators import method_decorator
 
 from flags.state import flag_enabled
 
-from core.helpers import require_feature
 from countries.models import Country
-from commodities.helpers import get_tariff_content_context
 from regulations.models import RegulationGroup
 
 from ..helpers import (
-    get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
 from ..models import Chapter, Heading, SubHeading
@@ -184,7 +180,6 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
         return specific + common
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffsAndTaxesNorthernIrelandSection,
@@ -266,7 +261,6 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
         return specific + common
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffsAndTaxesNorthernIrelandSection,

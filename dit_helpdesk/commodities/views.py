@@ -17,7 +17,6 @@ from flags.state import flag_enabled
 
 from countries.models import Country
 
-from core.helpers import require_feature
 from hierarchy.views.sections import (
     BaseTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresSection,
@@ -99,7 +98,6 @@ class TariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSe
         )
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffsAndTaxesNorthernIrelandSection,
