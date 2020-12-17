@@ -99,7 +99,6 @@ class TariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSe
         )
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffsAndTaxesNorthernIrelandSection,

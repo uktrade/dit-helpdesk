@@ -184,7 +184,6 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
         return specific + common
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffsAndTaxesNorthernIrelandSection,
@@ -266,7 +265,6 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
         return specific + common
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffsAndTaxesNorthernIrelandSection,
