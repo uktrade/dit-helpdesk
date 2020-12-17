@@ -35,6 +35,7 @@ def delete_flags(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('flags', '0013_add_required_field')
     ]
 
     operations = [
