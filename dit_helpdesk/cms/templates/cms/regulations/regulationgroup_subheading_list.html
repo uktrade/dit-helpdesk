@@ -1,0 +1,57 @@
+{% extends "cms/regulations/base_regulationgroup_detail.html" %}
+
+{% block panel_heading %}
+    <div class="app-panel-heading">
+        <h3 class="govuk-heading-m">Associated subheadings ({{ regulationgroup.subheadings.count }})</h4>
+        <p class="govuk-inset-text">
+            Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+        </p>
+        <nav>
+            <ul class="app-regulation-sub-nav">
+                <li>
+                    <a class="govuk-link" href="{% url 'cms:regulation-group-subheading-add' pk=regulationgroup.pk %}">
+                        Add a link to other subheadings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block panel_content %}
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">ID</th>
+                <th scope="col" class="govuk-table__header">Title</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                    <span class="govuk-visually-hidden">
+                        Actions
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for subheading in regulationgroup.subheadings.all %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ subheading.commodity_code }}</th>
+                    <td class="govuk-table__cell">{{ subheading.description }}</td>
+                    <td class="govuk-table__cell app-table__cell--actions">
+                        <a
+                            class="govuk-link"
+                            href="{% url "cms:regulation-group-subheading-remove" regulationgroup.pk subheading.pk %}"
+                        >Remove</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
+                        <em>
+                            Not associated to any subheadings.
+                        </em>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

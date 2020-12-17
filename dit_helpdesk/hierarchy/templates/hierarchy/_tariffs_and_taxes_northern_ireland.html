@@ -1,8 +1,8 @@
 {% load dotted_format %}
 
-<div id="tariffs_and_charges" class="govuk-!-margin-bottom-9">
+<div id="tariffs_and_taxes" class="govuk-!-margin-bottom-9">
     <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="tariffs_and_charges"></a>Tariffs and charges - {{ commodity.commodity_code|dotted_format }}
+        <a name="tariffs_and_taxes"></a>Tariffs and charges - {{ commodity.commodity_code|dotted_format }}
     </h3>
     <div class="govuk-caption-m ">
         <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
@@ -33,28 +33,51 @@
             <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
                     <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
-                        UK tariffs and charges - {{ commodity.commodity_code|dotted_format }}
+                        UK tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
                     </span>
                 </h2>
             </div>
             <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
                 {% if ukgt_enabled %}
-                    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                        Current tariffs
-                    </h3>
-                    {% include "hierarchy/_tariffs_and_charges_glossary.html" %}
-                    {% include "hierarchy/_tariffs_and_charges_table.html" with column_titles=column_titles table_data=uk_tariffs_and_charges_table_data %}
+                    <div class="govuk-!-margin-bottom-6">
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Current tariffs
+                        </h3>
+                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                        {% include "commodities/_tariffs.html" %}
+                    </div>
 
-                    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                        Tariffs after 1 January 2021
-                    </h3>
-                    {% include "hierarchy/_tariffs_and_charges_glossary.html" %}
-                    {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
-                        {% include "hierarchy/_tariffs_and_charges_ukgt_future_table_data.html" with global_tariff_data=global_tariff_data.result %}
-                    {% endif %}
+                    <div class="govuk-!-margin-bottom-6">
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Tariffs after 1 January 2021
+                        </h3>
+                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                        {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
+                            {% include "hierarchy/_tariffs_and_taxes_ukgt_future_table_data.html" with global_tariff_data=global_tariff_data.result %}
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Taxes
+                        </h3>
+                        {% include "commodities/_taxes.html" %}
+                    </div>
                 {% else %}
-                    {% include "hierarchy/_tariffs_and_charges_glossary.html" %}
-                    {% include "hierarchy/_tariffs_and_charges_table.html" with column_titles=column_titles table_data=uk_tariffs_and_charges_table_data %}
+                    <div class="govuk-!-margin-bottom-6">
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Tariffs
+                        </h3>
+                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                        {% include "commodities/_tariffs.html" %}
+                    </div>
+
+                    <div>
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Taxes
+                        </h3>
+                        {% include "commodities/_taxes.html" %}
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -63,13 +86,13 @@
             <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
                     <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
-                        EU tariffs and charges - {{ commodity.commodity_code|dotted_format }}
+                        EU tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
                     </span>
                 </h2>
             </div>
             <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
-                {% include "hierarchy/_tariffs_and_charges_glossary.html" %}
-                {% include "hierarchy/_tariffs_and_charges_table.html" with column_titles=column_titles table_data=eu_tariffs_and_charges_table_data %}
+                {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
             </div>
         </div>
     </div>

@@ -148,7 +148,7 @@ if settings.ADMIN_ENABLED:
 
 if settings.CMS_ENABLED:
     urlpatterns += [
-        path("cms/", include("cms.urls", namespace="cms")),
+        path("cms/", include("cms.urls")),
     ]
 
 

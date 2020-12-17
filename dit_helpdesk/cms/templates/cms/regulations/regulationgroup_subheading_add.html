@@ -1,0 +1,78 @@
+{% extends "cms/regulations/base_regulationgroup_detail.html" %}
+
+{% load l10n %}
+
+{% block panel_heading %}
+    <div class="app-panel-heading">
+        <h3 class="govuk-heading-m">Link other subheadings to the group</h4>
+        <p class="govuk-inset-text">
+            Regulations are automatically inherited by all the children of the sections, chapters, headings and subheadings added.
+        </p>
+        <form>
+            <div class="govuk-form-group govuk-!-margin-bottom-2">
+                <label for="{{ search_form.subheading_codes.id_for_label }}">
+                    {{ search_form.subheading_codes.label }}
+                </label>
+                <div class="govuk-hint">
+                    {{ search_form.subheading_codes.help_text }}
+                </div>
+                <input class="govuk-input" id="{{ search_form.subheading_codes.id_for_label }}" name="{{ search_form.subheading_codes.name }}" type="text" value="{{ search_form.subheading_codes.value|default:"" }}" />
+            </div>
+
+            <div class="govuk-!-margin-top-6">
+                <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
+                    Find subheadings
+                </button>
+                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-group-subheading-list' pk=regulationgroup.pk %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block panel_content %}
+    {% if searching %}
+        <form method="post">
+            {% csrf_token %}
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">ID</th>
+                        <th scope="col" class="govuk-table__header">Title</th>
+                        <th scope="col" class="govuk-table__header">
+                            <span class="govuk-visually-hidden">Already associated?</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for subheading in search_results %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                {{ subheading.commodity_code }}
+                                <input name="{{ add_form.subheadings.name }}" type="hidden" value="{{ subheading.pk|unlocalize }}" />
+                            </th>
+                            <td class="govuk-table__cell">{{ subheading.description }}</td>
+                            <td class="govuk-table__cell">
+                                {% if subheading.is_already_associated %}
+                                    <em>Already applies via ancestor</em>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell app-table__cell--no-results" colspan="3">
+                                <em>
+                                    No subheadings found.
+                                </em>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="govuk-button" data-module="govuk-button">
+                Attach subheadings
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}

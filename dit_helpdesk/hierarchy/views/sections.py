@@ -1,3 +1,4 @@
+import itertools
 import logging
 
 from django.conf import settings
@@ -35,54 +36,59 @@ class CommodityDetailSection:
         return {}
 
 
-class TariffAndChargesSection(CommodityDetailSection):
-    template = "hierarchy/_tariffs_and_charges.html"
+class TariffsAndTaxesSection(CommodityDetailSection):
+    template = "hierarchy/_tariffs_and_taxes.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.uk_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(commodity_object, country)
+        self.tariffs, self.taxes = self._get_tariffs_and_taxes(commodity_object, country)
 
-    def _get_tariffs_and_charges_measures(self, commodity_object, country):
-        tariffs_and_charges_measures = get_nomenclature_group_measures(
+    def _get_tariffs_and_taxes(self, commodity_object, country):
+        measures = get_nomenclature_group_measures(
             commodity_object,
             "Tariffs and charges",
             country.country_code,
         )
 
-        is_eu = self.country.country_code.upper() == "EU"
-        if is_eu:
-            tariffs_and_charges_measures = [m for m in tariffs_and_charges_measures if m.vat or m.excise]
+        tariffs = []
+        taxes = []
+        for measure in measures:
+            if measure.vat or measure.excise:
+                taxes.append(measure)
+            else:
+                tariffs.append(measure)
 
-        return tariffs_and_charges_measures
+        return tariffs, taxes
 
     @property
     def should_be_displayed(self):
-        return bool(self.uk_tariffs_and_charges_measures)
+        return bool(self.taxes) or bool(self.tariffs)
 
     def get_menu_items(self):
         return [
-            ("Tariffs and charges", "tariffs_and_charges"),
+            ("Tariffs and taxes", "tariffs_and_taxes"),
         ]
 
     def get_modals_context_data(self):
         return [
             measure_json.measures_modals
-            for measure_json in self.uk_tariffs_and_charges_measures
+            for measure_json in itertools.chain(self.tariffs, self.taxes)
         ]
 
-    def _get_table_data(self, charges_and_measures):
-        tariffs_and_charges_table_data = [
+    def _get_table_data(self, measures):
+        table_data = [
             measure_json.get_table_row()
-            for measure_json in charges_and_measures
+            for measure_json in measures
         ]
 
-        return tariffs_and_charges_table_data
+        return table_data
 
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["uk_tariffs_and_charges_table_data"] = self._get_table_data(self.uk_tariffs_and_charges_measures)
+        ctx["tariffs_table_data"] = self._get_table_data(self.tariffs)
+        ctx["taxes_table_data"] = self._get_table_data(self.taxes)
 
         if flag_enabled("PRE21"):
             ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
@@ -90,24 +96,18 @@ class TariffAndChargesSection(CommodityDetailSection):
         return ctx
 
 
-class UKGTTariffAndChargesSection(TariffAndChargesSection):
-    template = "hierarchy/_tariffs_and_charges_ukgt.html"
-
-    def get_menu_items(self):
-        return [
-            ("Current tariffs and charges", "tariffs_and_charges"),
-            ("Tariffs after transition", "tariffs_after_transition"),
-        ]
+class UKGTTariffsAndTaxesSection(TariffsAndTaxesSection):
+    template = "hierarchy/_tariffs_and_taxes_ukgt.html"
 
 
-class BaseTariffAndChargesNorthernIrelandSection(TariffAndChargesSection):
-    template = "hierarchy/_tariffs_and_charges_northern_ireland.html"
+class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
+    template = "hierarchy/_tariffs_and_taxes_northern_ireland.html"
 
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
         eu_commodity_object = self.get_eu_commodity_object(commodity_object)
-        self.eu_tariffs_and_charges_measures = self._get_tariffs_and_charges_measures(eu_commodity_object, country)
+        self.eu_tariffs, self.eu_taxes = self._get_tariffs_and_taxes(eu_commodity_object, country)
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
@@ -115,7 +115,7 @@ class BaseTariffAndChargesNorthernIrelandSection(TariffAndChargesSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_tariffs_and_charges_table_data"] = self._get_table_data(self.eu_tariffs_and_charges_measures)
+        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(itertools.chain(self.eu_tariffs, self.eu_taxes))
 
         return ctx
 
@@ -307,7 +307,7 @@ class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
         }
 
 
-class SubHeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+class SubHeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
 
     def get_eu_commodity_object(self, commodity_object):
         return SubHeading.objects.for_region(
@@ -318,7 +318,7 @@ class SubHeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorth
         )
 
 
-class HeadingTariffAndChargesNorthernIrelandSection(BaseTariffAndChargesNorthernIrelandSection):
+class HeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
 
     def get_eu_commodity_object(self, commodity_object):
         return Heading.objects.for_region(

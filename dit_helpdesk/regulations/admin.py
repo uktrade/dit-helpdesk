@@ -1,3 +1,15 @@
+from reversion.admin import VersionAdmin
+
 from django.contrib import admin
 
-# Register your models here.
+from .models import Regulation, RegulationGroup
+
+
+@admin.register(RegulationGroup)
+class RegulationGroupAdmin(VersionAdmin):
+    pass
+
+
+@admin.register(Regulation)
+class RegulationAdmin(VersionAdmin):
+    pass

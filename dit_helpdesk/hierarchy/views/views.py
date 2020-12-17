@@ -27,7 +27,7 @@ from .helpers import (
     hierarchy_section_header,
 )
 from .sections import (
-    HeadingTariffAndChargesNorthernIrelandSection,
+    HeadingTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
@@ -36,10 +36,10 @@ from .sections import (
     OtherMeasuresSection,
     RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
-    SubHeadingTariffAndChargesNorthernIrelandSection,
-    TariffAndChargesSection,
+    SubHeadingTariffsAndTaxesNorthernIrelandSection,
+    TariffsAndTaxesSection,
     TradeStatusSection,
-    UKGTTariffAndChargesSection,
+    UKGTTariffsAndTaxesSection,
 )
 
 logger = logging.getLogger(__name__)
@@ -166,12 +166,12 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
 
     @property
     def sections(self):
-        specific = [TariffAndChargesSection]
+        specific = [TariffsAndTaxesSection]
 
         if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
-                UKGTTariffAndChargesSection,
+                UKGTTariffsAndTaxesSection,
             ]
 
         common = [
@@ -187,7 +187,7 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
-        HeadingTariffAndChargesNorthernIrelandSection,
+        HeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
         OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
@@ -248,12 +248,12 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
 
     @property
     def sections(self):
-        specific = [TariffAndChargesSection]
+        specific = [TariffsAndTaxesSection]
 
         if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
-                UKGTTariffAndChargesSection,
+                UKGTTariffsAndTaxesSection,
             ]
 
         common = [
@@ -269,7 +269,7 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
 @method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
-        SubHeadingTariffAndChargesNorthernIrelandSection,
+        SubHeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
         OtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
