@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 
+from flags.state import flag_enabled
+
 from core.helpers import require_feature
 from countries.models import Country
 from commodities.helpers import get_tariff_content_context
@@ -166,7 +168,7 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
     def sections(self):
         specific = [TariffsAndTaxesSection]
 
-        if settings.UKGT_ENABLED:
+        if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
                 UKGTTariffsAndTaxesSection,
@@ -248,7 +250,7 @@ class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
     def sections(self):
         specific = [TariffsAndTaxesSection]
 
-        if settings.UKGT_ENABLED:
+        if flag_enabled("PRE21"):
             specific = [
                 TradeStatusSection,
                 UKGTTariffsAndTaxesSection,
