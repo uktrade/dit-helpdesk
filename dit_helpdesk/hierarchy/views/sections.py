@@ -87,6 +87,7 @@ class TariffsAndTaxesSection(CommodityDetailSection):
 
         ctx["tariffs_table_data"] = self._get_table_data(self.tariffs)
         ctx["taxes_table_data"] = self._get_table_data(self.taxes)
+        ctx["has_multiple_vat_entries"] = len([t for t in self.taxes if t.vat]) > 1
 
         if settings.UKGT_ENABLED:
             ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
