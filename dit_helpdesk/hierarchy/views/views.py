@@ -9,11 +9,9 @@ from flags.state import flag_enabled
 
 from core.helpers import require_feature
 from countries.models import Country
-from commodities.helpers import get_tariff_content_context
 from regulations.models import RegulationGroup
 
 from ..helpers import (
-    get_nomenclature_group_measures,
     TABLE_COLUMN_TITLES,
 )
 from ..models import Chapter, Heading, SubHeading
@@ -27,8 +25,8 @@ from .helpers import (
     hierarchy_section_header,
 )
 from .sections import (
+    HeadingOtherMeasuresNorthernIrelandSection,
     HeadingTariffsAndTaxesNorthernIrelandSection,
-    OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
     QuotasSection,
@@ -36,6 +34,7 @@ from .sections import (
     OtherMeasuresSection,
     RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
+    SubHeadingOtherMeasuresNorthernIrelandSection,
     SubHeadingTariffsAndTaxesNorthernIrelandSection,
     TariffsAndTaxesSection,
     TradeStatusSection,
@@ -189,7 +188,7 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
-        OtherMeasuresNorthernIrelandSection,
+        HeadingOtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
@@ -271,7 +270,7 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
-        OtherMeasuresNorthernIrelandSection,
+        SubHeadingOtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]

@@ -121,6 +121,34 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
         return ctx
 
 
+class HeadingEUCommodityObjectMixin:
+    def get_eu_commodity_object(self, commodity_object):
+        return Heading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            heading_code=commodity_object.heading_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
+class SubHeadingEUCommodityObjectMixin:
+    def get_eu_commodity_object(self, commodity_object):
+        return SubHeading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_object.commodity_code,
+            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
+        )
+
+
+class HeadingTariffsAndTaxesNorthernIrelandSection(HeadingEUCommodityObjectMixin, BaseTariffsAndTaxesNorthernIrelandSection):
+    pass
+
+
+class SubHeadingTariffsAndTaxesNorthernIrelandSection(SubHeadingEUCommodityObjectMixin, BaseTariffsAndTaxesNorthernIrelandSection):
+    pass
+
+
 class QuotasSection(CommodityDetailSection):
     template = "hierarchy/_quotas.html"
 
@@ -214,15 +242,38 @@ class OtherMeasuresSection(CommodityDetailSection):
         return ctx
 
 
-class OtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
+class BaseOtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
     template = "hierarchy/_other_measures_northern_ireland.html"
+
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        eu_commodity_object = self.get_eu_commodity_object(commodity_object)
+        self.eu_other_measures = get_nomenclature_group_measures(
+            eu_commodity_object,
+            "Other measures",
+            country.country_code,
+        )
+        self.eu_other_measures_table_data = [measure_json.get_table_row() for measure_json in self.eu_other_measures]
+
+    def get_eu_commodity_object(self, commodity_object):
+        raise NotImplementedError("Implement `get_eu_commodity_object`")
 
     def get_context_data(self):
         ctx = super().get_context_data()
 
         ctx["eu_other_measures_link"] = get_eu_commodity_link(self.commodity_object, self.country)
+        ctx["eu_other_measures_table"] = self.eu_other_measures_table_data
 
         return ctx
+
+
+class HeadingOtherMeasuresNorthernIrelandSection(HeadingEUCommodityObjectMixin, BaseOtherMeasuresNorthernIrelandSection):
+    pass
+
+
+class SubHeadingOtherMeasuresNorthernIrelandSection(SubHeadingEUCommodityObjectMixin, BaseOtherMeasuresNorthernIrelandSection):
+    pass
 
 
 class RulesOfOriginSection(CommodityDetailSection):
@@ -300,28 +351,6 @@ class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
         return {
             "eu_regulations_link": get_eu_commodity_link(self.commodity_object, self.country),
         }
-
-
-class SubHeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
-
-    def get_eu_commodity_object(self, commodity_object):
-        return SubHeading.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
-            commodity_code=commodity_object.commodity_code,
-            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
-        )
-
-
-class HeadingTariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
-
-    def get_eu_commodity_object(self, commodity_object):
-        return Heading.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
-            heading_code=commodity_object.heading_code,
-            goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
-        )
 
 
 class TradeStatusSection(CommodityDetailSection):
