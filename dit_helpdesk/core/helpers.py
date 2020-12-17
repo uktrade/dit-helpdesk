@@ -52,18 +52,6 @@ def reset_urls_for_settings(urlconf=None, **kwargs):
     reload_urls(urlconf)
 
 
-def require_feature(feature_switch):
-    def decorator(func):
-        @wraps(func)
-        def inner(request, *args, **kwargs):
-            if not getattr(settings, feature_switch, False):
-                raise Http404
-
-            return func(request, *args, **kwargs)
-        return inner
-    return decorator
-
-
 def _is_importer_journey(request):
     host = request.META.get('HTTP_HOST')
 
