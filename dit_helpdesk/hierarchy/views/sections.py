@@ -169,13 +169,6 @@ class QuotasSection(CommodityDetailSection):
 class QuotasNorthernIrelandSection(QuotasSection):
     template = "hierarchy/_quotas_northern_ireland.html"
 
-    def get_context_data(self):
-        ctx = super().get_context_data()
-
-        ctx["eu_quotas_link"] = get_eu_commodity_link(self.commodity_object, self.country)
-
-        return ctx
-
 
 class OtherMeasuresSection(CommodityDetailSection):
     template = "hierarchy/_other_measures.html"
