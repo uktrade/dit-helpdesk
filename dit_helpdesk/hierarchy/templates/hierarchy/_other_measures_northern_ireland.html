@@ -36,8 +36,14 @@
                 </h4>
             </div>
             <div id="accordion-eu-other-measures-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-other-measures-heading">
-                {% include "hierarchy/_other_measures_types.html" %}
-                {% include "hierarchy/_other_measures_table_data.html" with other_table_data=eu_other_measures_table %}
+                {% if eu_fallback_enabled %}
+                    <p class="govuk-body">
+                        Tariff data for the EU is temporarily unavailable from HMRC. In the short term, please check the <a class="govuk-link" href="{{ eu_other_measures_link }}">EU's Access2Markets for this commodity</a>.
+                    </p>
+                {% else %}
+                    {% include "hierarchy/_other_measures_types.html" %}
+                    {% include "hierarchy/_other_measures_table_data.html" with other_table_data=eu_other_measures_table %}
+                {% endif %}
             </div>
         </div>
     </div>

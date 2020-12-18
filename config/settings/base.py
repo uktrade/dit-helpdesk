@@ -30,6 +30,7 @@ FLAGS = {
     "NI_JOURNEY": [],
     "JAPAN_FTA": [],
     "PRE21": [],
+    "EU_FALLBACK": [],
 }
 
 

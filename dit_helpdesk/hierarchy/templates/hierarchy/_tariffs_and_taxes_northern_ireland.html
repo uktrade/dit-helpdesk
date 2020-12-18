@@ -44,11 +44,19 @@
             <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
                     <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
-                        UK tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
+                        UK tariffs
                     </span>
                 </h2>
             </div>
             <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
+                <p class="govuk-body">
+                    UK tariffs apply where goods are exported to Northern Ireland for use only in Northern Ireland, or other parts of the UK, and are considered to be ‘not at risk’ of being exported to the EU. These are shown in the table.
+                </p>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021">Read guidance on whether goods are ‘at risk’ or not</a>.
+                </p>
+
                 {% if ukgt_enabled %}
                     <div class="govuk-!-margin-bottom-6">
                         <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
@@ -67,27 +75,9 @@
                             {% include "hierarchy/_tariffs_and_taxes_ukgt_future_table_data.html" with global_tariff_data=global_tariff_data.result %}
                         {% endif %}
                     </div>
-
-                    <div>
-                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                            Taxes
-                        </h3>
-                        {% include "commodities/_taxes.html" %}
-                    </div>
                 {% else %}
                     <div class="govuk-!-margin-bottom-6">
-                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                            Tariffs
-                        </h3>
-                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
                         {% include "commodities/_tariffs.html" %}
-                    </div>
-
-                    <div>
-                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                            Taxes
-                        </h3>
-                        {% include "commodities/_taxes.html" %}
                     </div>
                 {% endif %}
             </div>
@@ -97,13 +87,57 @@
             <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
                     <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
-                        EU tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
+                        EU tariffs
                     </span>
                 </h2>
             </div>
             <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
-                {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
-                {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
+                {% if eu_fallback_enabled %}
+                    <p class="govuk-body">
+                        Tariff data for the EU is temporarily unavailable from HMRC. In the short term, please check the <a class="govuk-link" href="{{ eu_other_measures_link }}">EU's Access2Markets for this commodity</a>.
+                    </p>
+                {% else %}
+                    <p class="govuk-body">
+                        EU tariffs may apply where goods are exported to Northern Ireland for use in the EU (including Ireland), or are considered ‘at risk’ of being exported to the EU. These are shown in the table.
+                    </p>
+                    <p class="govuk-body">
+                        Meursing codes are used in the EU to apply variable specific duties to compound agri-goods (such as confectionary and bakery products), depending on the relative content of sugar, flour and milk starch in the product being imported.
+                    </p>
+                    <p class="govuk-body">
+                        You will need to work out the additional code using the <a class="govuk-link" href="https://www.gov.uk/additional-commodity-code">Meursing code tool</a>. To calculate the duty rate, enter the meursing code (without the 7 at the start) into the <a class="govuk-link" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&amp;SimDate=20201208&amp;Taric=1704907500&amp;LangDescr=en">Meursing calculator</a> to find variable duty elements such as AE, ADFM and ADSZ.
+                    </p>
+
+                    <div class="govuk-!-margin-bottom-6">
+                        {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-taxes-heading">
+                        Taxes
+                    </span>
+                </h2>
+            </div>
+            <div id="accordion-taxes-content" class="govuk-accordion__section-content" aria-labelledby="accordion-taxes-heading">
+                <p class="govuk-body">
+                    The tax information in the table below is for UK taxes only. In certain circumstances, EU taxes may apply instead.
+                </p>
+
+                <div class="govuk-!-margin-bottom-6">
+                    {% include "commodities/_taxes.html" %}
+                </div>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/government/publications/accounting-for-vat-on-goods-moving-between-great-britain-and-northern-ireland-from-1-january-2021">VAT rules under the Northern Ireland Protocol</a>
+                </p>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/government/publications/moving-excise-goods-as-freight-under-the-northern-ireland-protocol-from-1-january-2021">Moving excise goods as freight under the Northern Ireland Protocol from 1 January 2021</a>
+                </p>
             </div>
         </div>
     </div>
