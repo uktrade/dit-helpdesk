@@ -92,19 +92,25 @@
                 </h2>
             </div>
             <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
-                <p class="govuk-body">
-                    EU tariffs may apply where goods are exported to Northern Ireland for use in the EU (including Ireland), or are considered ‘at risk’ of being exported to the EU. These are shown in the table.
-                </p>
-                <p class="govuk-body">
-                    Meursing codes are used in the EU to apply variable specific duties to compound agri-goods (such as confectionary and bakery products), depending on the relative content of sugar, flour and milk starch in the product being imported.
-                </p>
-                <p class="govuk-body">
-                    You will need to work out the additional code using the <a class="govuk-link" href="https://www.gov.uk/additional-commodity-code">Meursing code tool</a>. To calculate the duty rate, enter the meursing code (without the 7 at the start) into the <a class="govuk-link" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&amp;SimDate=20201208&amp;Taric=1704907500&amp;LangDescr=en">Meursing calculator</a> to find variable duty elements such as AE, ADFM and ADSZ.
-                </p>
+                {% if eu_fallback_enabled %}
+                    <p class="govuk-body">
+                        Tariff data for the EU is temporarily unavailable from HMRC. In the short term, please check the <a class="govuk-link" href="{{ eu_other_measures_link }}">EU's Access2Markets for this commodity</a>.
+                    </p>
+                {% else %}
+                    <p class="govuk-body">
+                        EU tariffs may apply where goods are exported to Northern Ireland for use in the EU (including Ireland), or are considered ‘at risk’ of being exported to the EU. These are shown in the table.
+                    </p>
+                    <p class="govuk-body">
+                        Meursing codes are used in the EU to apply variable specific duties to compound agri-goods (such as confectionary and bakery products), depending on the relative content of sugar, flour and milk starch in the product being imported.
+                    </p>
+                    <p class="govuk-body">
+                        You will need to work out the additional code using the <a class="govuk-link" href="https://www.gov.uk/additional-commodity-code">Meursing code tool</a>. To calculate the duty rate, enter the meursing code (without the 7 at the start) into the <a class="govuk-link" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&amp;SimDate=20201208&amp;Taric=1704907500&amp;LangDescr=en">Meursing calculator</a> to find variable duty elements such as AE, ADFM and ADSZ.
+                    </p>
 
-                <div class="govuk-!-margin-bottom-6">
-                    {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
-                </div>
+                    <div class="govuk-!-margin-bottom-6">
+                        {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
