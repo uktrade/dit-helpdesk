@@ -11,13 +11,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.utils.decorators import method_decorator
 
 from flags.state import flag_enabled
 
 from countries.models import Country
 
-from core.helpers import require_feature
 from hierarchy.views.sections import (
     BaseOtherMeasuresNorthernIrelandSection,
     BaseTariffsAndTaxesNorthernIrelandSection,
@@ -107,7 +105,6 @@ class OtherMeasuresNorthernIrelandSection(CommodityEUCommodityObjectMixin, BaseO
     pass
 
 
-@method_decorator(require_feature("NI_JOURNEY_ENABLED"), name="dispatch")
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     sections = [
         TariffsAndTaxesNorthernIrelandSection,
