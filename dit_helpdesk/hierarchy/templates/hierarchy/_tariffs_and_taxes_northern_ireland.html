@@ -1,31 +1,42 @@
 {% load dotted_format %}
 
 <div id="tariffs_and_taxes" class="govuk-!-margin-bottom-9">
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="tariffs_and_taxes"></a>Tariffs and charges - {{ commodity.commodity_code|dotted_format }}
-    </h3>
+    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="tariffs_and_taxes"></a>Tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
+    </h2>
+
     <div class="govuk-caption-m ">
-        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> Northern Ireland</p>
     </div>
+
     <p class="govuk-body">
-        This product may be subject to either of the following:
+        If your product is only intended for use in the UK (including Northern Ireland) it will normally be subject to UK tariffs and charges. EU regulations apply to all goods in Northern Ireland.
+    </p>
+
+    <p class="govuk-body">
+        If a proportion of the shipment is also intended to be used in the EU (such as Ireland), it may be considered ‘at risk’ and charged EU rates, partly depending on the amount or type of product. Some goods entering Northern Ireland may be automatically deemed ‘at risk’ and EU tariffs apply.
+    </p>
+
+    <p class="govuk-body">
+        Some further information on how to determine whether your goods are ‘at risk’ or not can be found on our <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021">guidance page</a>. This page also details how to declare your goods ‘not at risk’, if you consider them to be so.
+    </p>
+
+    <p class="govuk-body">
+        If you need more information about which tariffs and charges apply to your shipment, you can contact:
     </p>
     <ul class="govuk-list govuk-list--bullet">
-        <li>UK tariffs and charges</li>
-        <li>EU tariffs and charges</li>
+        <li>your customs agent</li>
+        <li>your freight forwarder</li>
+        <li>your importer</li>
+        <li>the <a class="govuk-link" href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a></li>
     </ul>
 
     <p class="govuk-body">
-        Which set of tariffs and charges apply will depend on:
+        Your importer may be able to reclaim the difference between the EU and UK tariff if they can show that goods were only used within the UK.
     </p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>whether the product is intended for use in the UK or the EU</li>
-        <li>the proportions of each shipment intended for use in the UK and the EU respectively</li>
-        <li>whether UK-intended products may subsequently be imported into the Republic of Ireland</li>
-    </ul>
 
     <p class="govuk-body">
-        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+        The Trader Support Service is a useful source of information about trading into and out of Northern Ireland. You can <a class="govuk-link" href="https://www.gov.uk/guidance/trader-support-service">visit their site</a> for more detailed information about trading and Northern Ireland.
     </p>
 
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-tariffs-and-charges">
