@@ -9,16 +9,16 @@ def forward_update_trade_agreements(apps, schema_editor):
     # (SCENARIO, HAS_UK, HAS_EU)
     mapping = [
         ("ANDEAN-COUNTRIES", True, True),
+        ("AUSTRALIA", False, False),
         ("EU-AGR-SIGNED-LINK", True, True),
         ("EU-AGR-SIGNED-NO-LINK", True, True),
-        ("EU-MEMBER", False, False),
-        ("EU-NOAGR-FOR-EXIT", False, False),
-        ("ICELAND-NORWAY", False, False),
+        ("EU-MEMBER", False, True),
+        ("EU-NOAGR-FOR-EXIT", False, True),
+        ("ICELAND-NORWAY", True, True),
         ("JP", True, True),
-        ("WTO", False, False),
-        ("AUSTRALIA", False, False),
         ("NEW-ZEALAND", False, False),
         ("US", False, False),
+        ("WTO", False, False),
     ]
 
     for scenario, has_uk_trade_agreement, has_eu_trade_agreement in mapping:
