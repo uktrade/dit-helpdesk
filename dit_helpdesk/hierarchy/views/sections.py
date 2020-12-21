@@ -49,6 +49,7 @@ class TariffsAndTaxesSection(CommodityDetailSection):
             commodity_object,
             "Tariffs and charges",
             country.country_code,
+            is_eu=country.is_eu,
         )
 
         tariffs = []
@@ -161,6 +162,7 @@ class QuotasSection(CommodityDetailSection):
             self.commodity_object,
             "Quotas",
             self.country.country_code,
+            is_eu=country.is_eu,
         )
 
         try:
@@ -213,6 +215,7 @@ class OtherMeasuresSection(CommodityDetailSection):
             commodity_object,
             "Other measures",
             country.country_code,
+            is_eu=country.is_eu,
         )
 
         try:
@@ -253,6 +256,7 @@ class BaseOtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
             eu_commodity_object,
             "Other measures",
             country.country_code,
+            is_eu=country.is_eu
         )
         self.eu_other_measures_table_data = [measure_json.get_table_row() for measure_json in self.eu_other_measures]
 

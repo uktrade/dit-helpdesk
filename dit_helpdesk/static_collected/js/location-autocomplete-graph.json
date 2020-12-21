@@ -142,6 +142,19 @@
             "from": []
         }
     },
+    "at": {
+        "names": {
+            "en-GB": "Austria"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "au": {
         "names": {
             "en-GB": "Australia"
@@ -220,9 +233,35 @@
             "from": []
         }
     },
+    "be": {
+        "names": {
+            "en-GB": "Belgium"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "bf": {
         "names": {
             "en-GB": "Burkina Faso"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "bg": {
+        "names": {
+            "en-GB": "Bulgaria"
         },
         "meta": {
             "canonical": true,
@@ -649,9 +688,61 @@
             "from": []
         }
     },
+    "cy": {
+        "names": {
+            "en-GB": "Cyprus"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "cz": {
+        "names": {
+            "en-GB": "Czechia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "de": {
+        "names": {
+            "en-GB": "Germany"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "dj": {
         "names": {
             "en-GB": "Djibouti"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "dk": {
+        "names": {
+            "en-GB": "Denmark"
         },
         "meta": {
             "canonical": true,
@@ -714,6 +805,19 @@
             "from": []
         }
     },
+    "ee": {
+        "names": {
+            "en-GB": "Estonia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "eg": {
         "names": {
             "en-GB": "Egypt"
@@ -753,6 +857,19 @@
             "from": []
         }
     },
+    "es": {
+        "names": {
+            "en-GB": "Spain"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "et": {
         "names": {
             "en-GB": "Ethiopia"
@@ -769,6 +886,19 @@
     "eu": {
         "names": {
             "en-GB": "European Union"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "fi": {
+        "names": {
+            "en-GB": "Finland"
         },
         "meta": {
             "canonical": true,
@@ -821,6 +951,19 @@
     "fo": {
         "names": {
             "en-GB": "Faroe Islands"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "fr": {
+        "names": {
+            "en-GB": "France"
         },
         "meta": {
             "canonical": true,
@@ -948,6 +1091,19 @@
             "from": []
         }
     },
+    "gr": {
+        "names": {
+            "en-GB": "Greece"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "gs": {
         "names": {
             "en-GB": "South Georgia and South Sandwich Islands"
@@ -1052,6 +1208,19 @@
             "from": []
         }
     },
+    "hr": {
+        "names": {
+            "en-GB": "Croatia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "ht": {
         "names": {
             "en-GB": "Haiti"
@@ -1065,9 +1234,35 @@
             "from": []
         }
     },
+    "hu": {
+        "names": {
+            "en-GB": "Hungary"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "id": {
         "names": {
             "en-GB": "Indonesia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "ie": {
+        "names": {
+            "en-GB": "Ireland"
         },
         "meta": {
             "canonical": true,
@@ -1146,6 +1341,19 @@
     "is": {
         "names": {
             "en-GB": "Iceland"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "it": {
+        "names": {
+            "en-GB": "Italy"
         },
         "meta": {
             "canonical": true,
@@ -1429,6 +1637,45 @@
             "from": []
         }
     },
+    "lt": {
+        "names": {
+            "en-GB": "Lithuania"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "lu": {
+        "names": {
+            "en-GB": "Luxembourg"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "lv": {
+        "names": {
+            "en-GB": "Latvia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "ly": {
         "names": {
             "en-GB": "Libya"
@@ -1598,6 +1845,19 @@
             "from": []
         }
     },
+    "mt": {
+        "names": {
+            "en-GB": "Malta"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "mu": {
         "names": {
             "en-GB": "Mauritius"
@@ -1744,6 +2004,19 @@
     "ni": {
         "names": {
             "en-GB": "Nicaragua"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "nl": {
+        "names": {
+            "en-GB": "Netherlands"
         },
         "meta": {
             "canonical": true,
@@ -1910,6 +2183,19 @@
             "from": []
         }
     },
+    "pl": {
+        "names": {
+            "en-GB": "Poland"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "pm": {
         "names": {
             "en-GB": "St Pierre and Miquelon"
@@ -1949,6 +2235,19 @@
             "from": []
         }
     },
+    "pt": {
+        "names": {
+            "en-GB": "Portugal"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "pw": {
         "names": {
             "en-GB": "Palau"
@@ -1978,6 +2277,19 @@
     "qa": {
         "names": {
             "en-GB": "Qatar"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "ro": {
+        "names": {
+            "en-GB": "Romania"
         },
         "meta": {
             "canonical": true,
@@ -2066,6 +2378,19 @@
             "from": []
         }
     },
+    "se": {
+        "names": {
+            "en-GB": "Sweden"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
     "sg": {
         "names": {
             "en-GB": "Singapore"
@@ -2082,6 +2407,32 @@
     "sh": {
         "names": {
             "en-GB": "Saint Helena, Ascension and Tristan da Cunha"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "si": {
+        "names": {
+            "en-GB": "Slovenia"
+        },
+        "meta": {
+            "canonical": true,
+            "canonical-mask": 1,
+            "stable-name": true
+        },
+        "edges": {
+            "from": []
+        }
+    },
+    "sk": {
+        "names": {
+            "en-GB": "Slovakia"
         },
         "meta": {
             "canonical": true,
@@ -2690,409 +3041,43 @@
             "from": []
         }
     },
-    "nym:austria": {
+    "xk": {
         "names": {
-            "en-GB": "Austria"
+            "en-GB": "Kosovo"
         },
         "meta": {
-            "canonical": false,
+            "canonical": true,
             "canonical-mask": 1,
             "stable-name": true
         },
         "edges": {
-            "from": [
-                "eu"
-            ]
+            "from": []
         }
     },
-    "nym:belgium": {
+    "mk": {
         "names": {
-            "en-GB": "Belgium"
+            "en-GB": "North Macedonia"
         },
         "meta": {
-            "canonical": false,
+            "canonical": true,
             "canonical-mask": 1,
             "stable-name": true
         },
         "edges": {
-            "from": [
-                "eu"
-            ]
+            "from": []
         }
     },
-    "nym:bulgaria": {
+    "xs": {
         "names": {
-            "en-GB": "Bulgaria"
+            "en-GB": "Serbia"
         },
         "meta": {
-            "canonical": false,
+            "canonical": true,
             "canonical-mask": 1,
             "stable-name": true
         },
         "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:croatia": {
-        "names": {
-            "en-GB": "Croatia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:cyprus": {
-        "names": {
-            "en-GB": "Cyprus"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:czechia": {
-        "names": {
-            "en-GB": "Czechia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:denmark": {
-        "names": {
-            "en-GB": "Denmark"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:estonia": {
-        "names": {
-            "en-GB": "Estonia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:finland": {
-        "names": {
-            "en-GB": "Finland"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:france": {
-        "names": {
-            "en-GB": "France"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:germany": {
-        "names": {
-            "en-GB": "Germany"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:greece": {
-        "names": {
-            "en-GB": "Greece"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:hungary": {
-        "names": {
-            "en-GB": "Hungary"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:ireland": {
-        "names": {
-            "en-GB": "Ireland"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:italy": {
-        "names": {
-            "en-GB": "Italy"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:latvia": {
-        "names": {
-            "en-GB": "Latvia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:lithuania": {
-        "names": {
-            "en-GB": "Lithuania"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:luxembourg": {
-        "names": {
-            "en-GB": "Luxembourg"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:malta": {
-        "names": {
-            "en-GB": "Malta"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:netherlands": {
-        "names": {
-            "en-GB": "Netherlands"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:poland": {
-        "names": {
-            "en-GB": "Poland"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:portugal": {
-        "names": {
-            "en-GB": "Portugal"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:romania": {
-        "names": {
-            "en-GB": "Romania"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:slovakia": {
-        "names": {
-            "en-GB": "Slovakia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:slovenia": {
-        "names": {
-            "en-GB": "Slovenia"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:spain": {
-        "names": {
-            "en-GB": "Spain"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
-        }
-    },
-    "nym:sweden": {
-        "names": {
-            "en-GB": "Sweden"
-        },
-        "meta": {
-            "canonical": false,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": [
-                "eu"
-            ]
+            "from": []
         }
     }
 }
