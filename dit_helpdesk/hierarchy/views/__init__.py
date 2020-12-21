@@ -4,8 +4,8 @@ from .base import (
 )
 from .helpers import _commodity_code_html
 from .sections import (
+    BaseOtherMeasuresNorthernIrelandSection,
     BaseTariffsAndTaxesNorthernIrelandSection,
-    OtherMeasuresNorthernIrelandSection,
     ProductRegulationsNorthernIrelandSection,
     QuotasNorthernIrelandSection,
     RulesOfOriginNorthernIrelandSection,

@@ -208,11 +208,15 @@ class CommodityViewTestCase(TestCase):
         mock_update_tts_content.assert_called_once()
 
     def test_commodity_detail_with_rules_or_origin(self):
+        country = Country.objects.get(country_code="AF")
+        country.has_uk_trade_agreement = True
+        country.save()
+
         rules_group = mixer.blend(OldRulesGroup, description="test rules group")
         rules_group_member = mixer.blend(
             OldRulesGroupMember,
             old_rules_group=rules_group,
-            country=Country.objects.get(country_code="AF"),
+            country=country,
         )
         rules_document = mixer.blend(
             OldRulesDocument, description="test rules document", old_rules_group=rules_group
@@ -223,9 +227,9 @@ class CommodityViewTestCase(TestCase):
             reverse(
                 "commodity-detail",
                 kwargs={
-                    "commodity_code": settings.TEST_COMMODITY_CODE,
-                    "country_code": "AF",
-                    "nomenclature_sid": 12345,
+                    "commodity_code": self.commodity.commodity_code,
+                    "country_code": country.country_code,
+                    "nomenclature_sid": self.commodity.goods_nomenclature_sid,
                 },
             )
         )

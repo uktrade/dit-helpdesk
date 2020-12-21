@@ -1,20 +1,18 @@
+{% extends "commodities/_rules_of_origin.html" %}
+
 {% load dotted_format %}
 
-<div class="govuk-!-margin-bottom-9" id="rules-of-origin">
-    <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Current rules of origin for tariff preference - {{ commodity.commodity_code|dotted_format }}</h2>
-
-    <p class="govuk-body">
-        If any material in the product is not wholly from or processed in the country of origin - ‘non-originating’ - it must meet the <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">rules of origin</a> to qualify for a tariff preference.
-    </p>
-    <p class="govuk-body">
-        Also <a class="govuk-link" href="https://www.gov.uk/guidance/uk-trade-agreements-with-non-eu-countries">check the trade agreements the UK has with the country you are exporting from</a>.
-    </p>
-
-    {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
-    {% include "hierarchy/_old_rules_of_origin_table_data.html" %}
+{% block rules_of_origin %}
+    {% if old_rules_of_origin %}
+        {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
+        {% include "hierarchy/_old_rules_of_origin_table_data.html" %}
+    {% else %}
+        {% include "hierarchy/_rules_of_origin_error.html" %}
+    {% endif %}
 
     {% if rules_of_origin %}
-        <h3 class="govuk-heading-m"><a name="rules_of_origin"></a>Rules of origin from 1 January 2021 for tariff preference - {{ commodity.commodity_code|dotted_format }}</h3>
+        <h3 class="govuk-heading-m"><a name="rules_of_origin"></a>Rules of origin from 1 January 2021 - {{ commodity.commodity_code|dotted_format }}</h3>
+        {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
         {% include "hierarchy/_rules_of_origin_table_data.html" %}
     {% endif %}
-</div>
+{% endblock %}
