@@ -11,16 +11,15 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.utils.decorators import method_decorator
 
 from flags.state import flag_enabled
 
 from countries.models import Country
 
 from hierarchy.views.sections import (
+    BaseOtherMeasuresNorthernIrelandSection,
     BaseTariffsAndTaxesNorthernIrelandSection,
     OtherMeasuresSection,
-    OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
     QuotasSection,
@@ -88,7 +87,7 @@ class CommodityDetailView(BaseSectionedCommodityDetailView):
         return specific + common
 
 
-class TariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSection):
+class CommodityEUCommodityObjectMixin:
     def get_eu_commodity_object(self, commodity_object):
         return Commodity.objects.for_region(
             settings.SECONDARY_REGION,
@@ -96,6 +95,14 @@ class TariffsAndTaxesNorthernIrelandSection(BaseTariffsAndTaxesNorthernIrelandSe
             commodity_code=commodity_object.commodity_code,
             goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
         )
+
+
+class TariffsAndTaxesNorthernIrelandSection(CommodityEUCommodityObjectMixin, BaseTariffsAndTaxesNorthernIrelandSection):
+    pass
+
+
+class OtherMeasuresNorthernIrelandSection(CommodityEUCommodityObjectMixin, BaseOtherMeasuresNorthernIrelandSection):
+    pass
 
 
 class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):

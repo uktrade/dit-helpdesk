@@ -1,15 +1,12 @@
 {% load dotted_format %}
 
 <div id="rules_of_origin" class="govuk-!-margin-bottom-9">
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="rules_of_origin"></a>Rules of origin for tariff preference - {{ commodity.commodity_code|dotted_format }}
-    </h3>
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-3">
+        <a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}
+    </h2>
 
     <p class="govuk-body">
-        Depending on where it is intended that this product be used, it may qualify for a tariff preference with either the UK or the EU.
-    </p>
-    <p class="govuk-body">
-        Which (if either) tariff preference it qualifies for will depend on:
+        The rate of duty that must be paid on your goods will depend on 3 things:
     </p>
     <ul class="govuk-list govuk-list--bullet">
         <li>whether the product is intended for use in the UK or the EU</li>
@@ -18,11 +15,15 @@
     </ul>
 
     <p class="govuk-body">
-        Non-originating products must meet the rules of origin for either the UK or the EU to qualify for a tariff preference. Non-originating products are those with any material not wholly from or processed in the country of origin.
+        Products are ‘non-originating’ if any of the materials used to make them are not wholly from or processed in the country of origin.
     </p>
 
     <p class="govuk-body">
-        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariffs and charges apply to your shipment. Otherwise, please contact the <a href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+        If your product is solely intended for use in the UK it may qualify for a UK tariff preference. However, if a proportion of the shipment is also intended to be used in the EU (such as Ireland), it may qualify for EU preferences, depending on the amount or type of product.
+    </p>
+
+    <p class="govuk-body">
+        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariff preferences and rules of origin apply to your shipment. Otherwise, please contact the <a class="govuk-link" href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
     </p>
 
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-rules-of-origin">
@@ -30,38 +31,39 @@
             <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
                     <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-rules-of-origin-heading">
-                        UK rules of origin for tariff preference - {{ commodity.commodity_code|dotted_format }}
+                        UK rules of origin
                     </span>
                 </h2>
             </div>
             <div id="accordion-uk-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-rules-of-origin-heading">
-                <p class="govuk-body">
-                    The UK's <a class="govuk-link" href="https://www.gov.uk/government/publications/notice-828-tariff-preferences-rules-of-origin-for-various-countries/notice-828-tariff-preferences-rules-of-origin-for-various-countries">general rules of origin</a> will apply unless indicated otherwise below.
-                </p>
-                <p class="govuk-body">
-                    Also <a class="govuk-link" href="https://www.gov.uk/guidance/uk-trade-agreements-with-non-eu-countries">check the trade agreements the UK has with the country you are exporting from</a>.
-                </p>
-                {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
-                {% include "hierarchy/_rules_of_origin_table_data.html" %}
+                <div class="govuk-!-margin-bottom-3">
+                    {% if old_roo_enabled %}
+                        {% include "commodities/_rules_of_origin_pre21.html" %}
+                    {% elif not old_roo_enabled %}
+                        {% include "commodities/_rules_of_origin.html" %}
+                    {% endif %}
+                </div>
             </div>
         </div>
 
-        <div class="govuk-accordion__section">
-            <div class="govuk-accordion__section-header">
-                <h2 class="govuk-accordion__section-heading">
-                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-rules-of-origin-heading">
-                        EU rules of origin tariff preference - {{ commodity.commodity_code|dotted_format }}
-                    </span>
-                </h2>
+        {% if should_display_eu_rules_of_origin %}
+            <div class="govuk-accordion__section">
+                <div class="govuk-accordion__section-header">
+                    <h2 class="govuk-accordion__section-heading">
+                        <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-rules-of-origin-heading">
+                            EU rules of origin
+                        </span>
+                    </h2>
+                </div>
+                <div id="accordion-eu-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-rules-of-origin-heading">
+                    <p class="govuk-body">
+                        EU rules of origin will apply if any part of your shipment will be exported to Northern Ireland before being shipped on to an EU country (such as Ireland).
+                    </p>
+                    <p class="govuk-body">
+                        You can find more information by going to the <a href="{{ eu_rules_of_origin_link }}">EU’s Access2Markets website</a>, and clicking the ‘Rules of origin’ section.
+                    </p>    
+                </div>
             </div>
-            <div id="accordion-eu-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-rules-of-origin-heading">
-                <p class="govuk-body">
-                    European Union rules of origin apply where goods are exported to Northern Ireland for use in the European Union. These can be found on the European Commission's Access2Markets site.
-                </p>
-                <p class="govuk-body">
-                    <a href="{{ eu_rules_of_origin_link }}">View rules of origin for your goods on the Access2Markets site</a>
-                </p>    
-            </div>
-        </div>
+        {% endif %}
     </div>
 </div>

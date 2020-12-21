@@ -23,8 +23,8 @@ from .helpers import (
     hierarchy_section_header,
 )
 from .sections import (
+    HeadingOtherMeasuresNorthernIrelandSection,
     HeadingTariffsAndTaxesNorthernIrelandSection,
-    OtherMeasuresNorthernIrelandSection,
     ProductRegulationsSection,
     ProductRegulationsNorthernIrelandSection,
     QuotasSection,
@@ -32,6 +32,7 @@ from .sections import (
     OtherMeasuresSection,
     RulesOfOriginSection,
     RulesOfOriginNorthernIrelandSection,
+    SubHeadingOtherMeasuresNorthernIrelandSection,
     SubHeadingTariffsAndTaxesNorthernIrelandSection,
     TariffsAndTaxesSection,
     TradeStatusSection,
@@ -184,7 +185,7 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     sections = [
         HeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
-        OtherMeasuresNorthernIrelandSection,
+        HeadingOtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
@@ -265,7 +266,7 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     sections = [
         SubHeadingTariffsAndTaxesNorthernIrelandSection,
         QuotasNorthernIrelandSection,
-        OtherMeasuresNorthernIrelandSection,
+        SubHeadingOtherMeasuresNorthernIrelandSection,
         RulesOfOriginNorthernIrelandSection,
         ProductRegulationsNorthernIrelandSection,
     ]
