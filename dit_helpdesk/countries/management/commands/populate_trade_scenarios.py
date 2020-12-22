@@ -11,7 +11,7 @@ trade_data = [
     {'Country code': 'EC',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement',
      'Mendel agreement label': 'ANDEAN-COUNTRIES',
-     'TWUK content template label': 'ANDEAN-COUNTRIES'},
+     'TWUK content template label': 'ANDEAN-COUNTRIES-RATIFIED'},
     {'Country code': 'PE',
      'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement',
      'Mendel agreement label': 'ANDEAN-COUNTRIES',
