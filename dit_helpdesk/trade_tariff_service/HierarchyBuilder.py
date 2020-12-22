@@ -5,13 +5,13 @@ import os
 import sys
 from typing import Optional
 
-import requests
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Model
 from django.core.exceptions import ObjectDoesNotExist
 
 from commodities.models import Commodity
+from hierarchy.clients import get_hierarchy_client
 from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
 from hierarchy.helpers import create_nomenclature_tree, fill_tree_in_json_data
 from .utils import createDir
@@ -55,6 +55,8 @@ class HierarchyBuilder:
             self.region = region
 
         self._new_tree = new_tree
+
+        self.hierarchy_client = get_hierarchy_client(self.region)
 
     @property
     def new_tree(self):
@@ -265,66 +267,77 @@ class HierarchyBuilder:
             json_data = json.load(f)
         return json_data
 
-    def get_type_data_from_api(self, data_type=None):
+    def get_type_data_from_api(self, data_type):
+        hierarchy_client = self.hierarchy_client
+        data_type_mapper = {
+            "sections": hierarchy_client.CommodityType.SECTION,
+            "chapters": hierarchy_client.CommodityType.CHAPTER,
+        }
 
-        data = []
+        if data_type not in data_type_mapper:
+            return []
 
-        logger.info("Getting {0} data".format(data_type))
-        url = settings.TRADE_TARIFF_API_BASE_URL.format(data_type)
-        resp = requests.get(url)
+        logger.info("Getting %s data", data_type)
+        data_type_json = self.hierarchy_client.get_type_data(data_type_mapper[data_type])
 
-        if resp.status_code == 200:
-            data_type_json = resp.json()
-
-            if data_type == "sections":
-                data_type_ids = [item["id"] for item in data_type_json["data"]]
-            elif data_type == "chapters":
-                data_type_ids = [
-                    item["attributes"]["goods_nomenclature_item_id"][:2]
-                    for item in data_type_json["data"]
-                ]
-
-            data = self.get_item_data_from_api(data_type, data_type_ids)
-
+        if data_type == "sections":
+            data_type_ids = [item["id"] for item in data_type_json["data"]]
+        elif data_type == "chapters":
+            data_type_ids = [
+                item["attributes"]["goods_nomenclature_item_id"][:2]
+                for item in data_type_json["data"]
+            ]
         else:
-            logger.debug("{0} returned a {1} error".format(url, resp.status_code))
+            raise ValueError(f"Invalid data type {data_type}")
+
+        data = self.get_item_data_from_api(data_type, data_type_ids)
 
         return data
 
-    def get_item_data_from_api(self, data_type=None, item_ids=None):
-
+    def get_item_data_from_api(self, data_type, item_ids):
         data = []
         child_data = []
+
+        hierarchy_client = self.hierarchy_client
+        data_type_mapper = {
+            "sections": hierarchy_client.CommodityType.SECTION,
+            "chapters": hierarchy_client.CommodityType.CHAPTER,
+            "headings": hierarchy_client.CommodityType.HEADING,
+            "subheadings": hierarchy_client.CommodityType.COMMODITY,
+            "commodities": hierarchy_client.CommodityType.COMMODITY,
+        }
+
+        if data_type not in data_type_mapper:
+            raise ValueError(f"Invalid data type {data_type}")
+
         for item_id in item_ids:
-            path = "{0}/{1}".format(
-                "commodities" if data_type == "subheadings" else data_type, item_id
-            )
-            url = settings.TRADE_TARIFF_API_BASE_URL.format(path)
+            try:
+                item_json = hierarchy_client.get_item_data(
+                    data_type_mapper[data_type],
+                    item_id,
+                )
+            except hierarchy_client.NotFound as e:
+                logger.debug("Not found", exc_info=e)
+                continue
 
-            resp = requests.get(url)
+            data.append(item_json)
+            if data_type == "chapters":
+                child_data.extend(
+                    [
+                        item["attributes"]["goods_nomenclature_item_id"][:4]
+                        for item in item_json["included"]
+                        if item["type"] == "heading"
+                    ]
+                )
+            elif data_type == "headings":
+                child_data.extend(
+                    [
+                        item["attributes"]["goods_nomenclature_item_id"]
+                        for item in item_json["included"]
+                        if item["type"] == "commodity"
+                    ]
+                )
 
-            if resp.status_code == 200:
-                item_json = resp.json()
-                data.append(item_json)
-
-                if data_type == "chapters":
-                    child_data.extend(
-                        [
-                            item["attributes"]["goods_nomenclature_item_id"][:4]
-                            for item in item_json["included"]
-                            if item["type"] == "heading"
-                        ]
-                    )
-                elif data_type == "headings":
-                    child_data.extend(
-                        [
-                            item["attributes"]["goods_nomenclature_item_id"]
-                            for item in item_json["included"]
-                            if item["type"] == "commodity"
-                        ]
-                    )
-            else:
-                logger.debug("{0} returned a {1} error".format(url, resp.status_code))
         return data, child_data
 
     def build_import_data(self):
@@ -665,8 +678,10 @@ class HierarchyBuilder:
         for f in previous_files:
             os.rename(os.path.join(download_dir, f), os.path.join(previous_dir, f))
 
+        hierarchy_client = self.hierarchy_client
+
         data_type = "sections"
-        sections, _ = self.get_type_data_from_api(data_type=data_type)
+        sections, _ = self.get_type_data_from_api(data_type)
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
             sections,
@@ -674,7 +689,7 @@ class HierarchyBuilder:
         )
 
         data_type = "chapters"
-        chapters, heading_ids = self.get_type_data_from_api(data_type=data_type)
+        chapters, heading_ids = self.get_type_data_from_api(data_type)
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
             chapters,

@@ -1,17 +1,14 @@
 from enum import Enum
 
 
-class NotFound(Exception):
-    pass
-
-
 class BaseTTSClient:
     class CommodityType(Enum):
         CHAPTER = "CHAPTER"
         HEADING = "HEADING"
         COMMODITY = "COMMODITY"
 
-    NotFound = NotFound
+    class NotFound(Exception):
+        pass
 
     TIMEOUT = 10
 
