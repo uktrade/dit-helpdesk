@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import sys
-import datetime as dt
 from typing import Optional
 
 import requests
