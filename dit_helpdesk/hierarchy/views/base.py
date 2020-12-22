@@ -87,7 +87,7 @@ class BaseCommodityObjectDetailView(TemplateView):
         if self.context_object_name:
             ctx[self.context_object_name] = commodity_object
 
-        ctx["is_eu_member"] = country.country_code.upper() == "EU"
+        ctx["is_eu_member"] = country.is_eu
         ctx["eu_regulations_link"] = get_eu_commodity_link(commodity_object, country)
 
         ctx.update(self.get_notes_context_data(self.commodity_object))

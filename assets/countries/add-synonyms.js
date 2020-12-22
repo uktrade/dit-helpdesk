@@ -1,75 +1,10 @@
 const fs = require('fs')
 
-const countriesToAddSynonymsTo = [
-  {
-    // This is the country code of that all of the synonyms will redirect to.
-    countryCode: 'EU',
-    // An array of strings containing all of the synonyms that will redirect to `countryCode`.
-    synonyms: [
-      'Austria',
-      'Belgium',
-      'Bulgaria',
-      'Croatia',
-      'Cyprus',
-      'Czechia',
-      'Denmark',
-      'Estonia',
-      'Finland',
-      'France',
-      'Germany',
-      'Greece',
-      'Hungary',
-      'Ireland',
-      'Italy',
-      'Latvia',
-      'Lithuania',
-      'Luxembourg',
-      'Malta',
-      'Netherlands',
-      'Poland',
-      'Portugal',
-      'Romania',
-      'Slovakia',
-      'Slovenia',
-      'Spain',
-      'Sweden'
-    ]
-  }
-]
+const countriesToAddSynonymsTo = []
 
 const countriesToRemove = [
-  'AT',
-  'BE',
-  'BG',
-  'HR',
-  'CY',
-  'CZ',
-  'DK',
-  'EE',
-  'FI',
-  'FR',
-  'DE',
-  'GR',
-  'HU',
-  'IE',
-  'IT',
-  'LV',
-  'LT',
-  'LU',
-  'MT',
-  'NL',
-  'PL',
-  'PT',
-  'RO',
-  'SK',
-  'SI',
-  'ES',
-  'SE',
-  'XC',
-  'XK',
-  'MK',
-  'XL',
-  'XS',
+  'XC', // Ceuta
+  'XL'  // Melilla
 ]
 
 const countriesData = require('./countries-data.json')
@@ -90,7 +25,9 @@ countriesData.forEach((country, i) => {
   }
 })
 
-fs.writeFileSync('./dit_helpdesk/countries/fixtures/countries_data.json', JSON.stringify(removed))
+fs.writeFileSync(
+    './dit_helpdesk/countries/fixtures/countries_data.json',
+    JSON.stringify(removed, null, 4))
 
 let graph = {}
 
@@ -133,4 +70,6 @@ countriesToAddSynonymsTo.forEach((countryToSynonymise) => {
   })
 })
 
-fs.writeFileSync('./dit_helpdesk/static_collected/js/location-autocomplete-graph.json', JSON.stringify(graph))
+fs.writeFileSync(
+    './dit_helpdesk/static_collected/js/location-autocomplete-graph.json',
+    JSON.stringify(graph, null, 4))

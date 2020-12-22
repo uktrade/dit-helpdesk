@@ -87,7 +87,6 @@ MIDDLEWARE = [
     "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
-    "core.middleware.CheckCountryUrlMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
