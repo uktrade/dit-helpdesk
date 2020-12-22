@@ -193,7 +193,10 @@ IMPORT_MEASURE_GROUPS = {
 }
 
 
-def get_nomenclature_group_measures(nomenclature_model, group_name, country_code):
+def get_nomenclature_group_measures(nomenclature_model, group_name, country_code, is_eu=None):
+    if is_eu:
+        country_code = 'EU'
+
     group_measure_type_ids = [
         item
         for collection in [type_id for _, type_id in IMPORT_MEASURE_GROUPS[group_name]]
