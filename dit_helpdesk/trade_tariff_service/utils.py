@@ -1,5 +1,5 @@
 import os
 
+
 def createDir(path):
-    if not os.path.exists(path):
-        os.mkdir(path)
+    os.makedirs(path, exist_ok=True)

@@ -67,8 +67,7 @@ class HierarchyBuilder:
 
         return self._new_tree
 
-    @staticmethod
-    def file_loader(model_name, tree: Optional[NomenclatureTree] = None) -> dict:
+    def file_loader(self, model_name, tree: Optional[NomenclatureTree] = None) -> dict:
         """
         given a model name load json data from the file system to import
         :param model_name:
@@ -76,7 +75,7 @@ class HierarchyBuilder:
         """
 
         file_name = settings.HIERARCHY_MODEL_MAP[model_name]["file_name"]
-        file_path = settings.IMPORT_DATA_PATH.format(file_name)
+        file_path = self.get_data_path(file_name)
 
         with open(file_path) as f:
             json_data = json.load(f)
@@ -240,6 +239,11 @@ class HierarchyBuilder:
         self.data[model_name]["data"] = json_data
         return json_data
 
+    def get_data_path(self, file_name):
+        file_name = f"{self.region}/{file_name}"
+
+        return settings.IMPORT_DATA_PATH.format(file_name)
+
     def write_data_to_file(self, data, file_path):
         """
         Write data to data to json file on disk
@@ -330,18 +334,18 @@ class HierarchyBuilder:
         generate import json files for section, chapters, headings, subheadings and commodities with correct
         parent child relationships and removing duplication
         """
-        
-        createDir(settings.IMPORT_DATA_PATH.format('prepared'))
+
+        createDir(self.get_data_path("prepared"))
 
         # read serialized api data from the filesystem
         sections = self.read_api_from_file(
-            settings.IMPORT_DATA_PATH.format("downloaded/sections.json")
+            self.get_data_path("downloaded/sections.json"),
         )
         chapters = self.read_api_from_file(
-            settings.IMPORT_DATA_PATH.format("downloaded/chapters.json")
+            self.get_data_path("downloaded/chapters.json"),
         )
         headings = self.read_api_from_file(
-            settings.IMPORT_DATA_PATH.format("downloaded/headings.json")
+            self.get_data_path("downloaded/headings.json"),
         )
 
         headings = self.remove_duplicate_headings_from_api(headings)
@@ -599,21 +603,24 @@ class HierarchyBuilder:
 
         # serialize to filesystem
         self.write_data_to_file(
-            sections_data, settings.IMPORT_DATA_PATH.format("prepared/sections.json")
+            sections_data,
+            self.get_data_path("prepared/sections.json"),
         )
         self.write_data_to_file(
-            chapters_data, settings.IMPORT_DATA_PATH.format("prepared/chapters.json")
+            chapters_data,
+            self.get_data_path("prepared/chapters.json"),
         )
         self.write_data_to_file(
-            headings_data, settings.IMPORT_DATA_PATH.format("prepared/headings.json")
+            headings_data,
+            self.get_data_path("prepared/headings.json"),
         )
         self.write_data_to_file(
             sub_headings_data,
-            settings.IMPORT_DATA_PATH.format("prepared/sub_headings.json"),
+            self.get_data_path("prepared/sub_headings.json")
         )
         self.write_data_to_file(
             commodities_data,
-            settings.IMPORT_DATA_PATH.format("prepared/commodities.json"),
+            self.get_data_path("prepared/commodities.json"),
         )
 
     @staticmethod
@@ -643,9 +650,9 @@ class HierarchyBuilder:
             "This will retrieve the json data for Sections, Chapters and Headings from the trade tariff api"
             " service and save the json files to the filesystem."
         )
-        download_dir = settings.IMPORT_DATA_PATH.format("downloaded")
-        previous_dir = "{0}/previous".format(download_dir)
-        
+        download_dir = self.get_data_path("downloaded")
+        previous_dir = f"{download_dir}/previous"
+
         createDir(download_dir)
         createDir(previous_dir)
 
@@ -663,7 +670,7 @@ class HierarchyBuilder:
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
             sections,
-            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+            self.get_data_path(f"downloaded/{data_type}.json"),
         )
 
         data_type = "chapters"
@@ -671,7 +678,7 @@ class HierarchyBuilder:
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
             chapters,
-            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+            self.get_data_path(f"downloaded/{data_type}.json"),
         )
 
         data_type = "headings"
@@ -681,7 +688,7 @@ class HierarchyBuilder:
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
             headings,
-            settings.IMPORT_DATA_PATH.format("downloaded/{0}.json".format(data_type)),
+            self.get_data_path(f"downloaded/{data_type}.json"),
         )
 
     def lookup_parent(self, parent_model, child_parent_code):
@@ -718,7 +725,7 @@ class HierarchyBuilder:
         ]
         data = []
         for item in file_list:
-            data.extend(self.load_json_file(settings.IMPORT_DATA_PATH.format(item)))
+            data.extend(self.load_json_file(self.get_data_path(item)))
             # self.convert_json_to_csv(file_name=item[0], json_file=item[1])
         data = sorted(data, key=lambda i: i["goods_nomenclature_item_id"])
 
