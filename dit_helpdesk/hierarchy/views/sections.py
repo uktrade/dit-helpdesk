@@ -288,9 +288,6 @@ class RulesOfOriginSection(CommodityDetailSection):
         self.rules_of_origin = commodity_object.get_rules_of_origin(
             country_code=country.country_code,
         )
-        self.has_tariff_preference = self.get_has_tariff_preference(
-            country, commodity_object,
-        )
 
     @property
     def should_be_displayed(self):
@@ -299,7 +296,7 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
 
-    def has_gsp_measure(self, country, commodity_object):
+    def get_has_gsp_tariff_preference(self, country, commodity_object):
         measures = get_nomenclature_group_measures(
             commodity_object,
             "Tariffs and charges",
@@ -308,18 +305,15 @@ class RulesOfOriginSection(CommodityDetailSection):
 
         return any(m.is_gsp for m in measures)
 
-    def get_has_tariff_preference(self, country, commodity_object):
-        has_trade_agreement = self.country.has_uk_trade_agreement
-        has_gsp_measure = self.has_gsp_measure(country, commodity_object)
-
-        return has_trade_agreement or has_gsp_measure
-
     def get_context_data(self):
         ctx = super().get_context_data()
 
         ctx["old_rules_of_origin"] = self.old_rules_of_origin
         ctx["rules_of_origin"] = self.rules_of_origin
-        ctx["has_tariff_preference"] = self.has_tariff_preference
+        ctx["has_uk_trade_agreement"] = self.country.has_uk_trade_agreement
+        ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
+            self.country, self.commodity_object,
+        )
 
         return ctx
 
@@ -330,8 +324,12 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(self.commodity_object, self.country)
-        ctx["should_display_eu_rules_of_origin"] = bool(self.country.has_eu_trade_agreement)
+        commodity_object = self.commodity_object
+        country = self.country
+
+        ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(commodity_object, country)
+        ctx["has_eu_trade_agreement"] = country.has_eu_trade_agreement
+        ctx["has_both_trade_agreements"] = country.has_uk_trade_agreement and country.has_eu_trade_agreement
 
         return ctx
 
