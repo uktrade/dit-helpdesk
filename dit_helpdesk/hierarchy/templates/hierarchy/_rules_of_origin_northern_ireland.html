@@ -26,6 +26,10 @@
         <p class="govuk-body">
             If a proportion of the shipment is intended to be used in the EU (such as Ireland), or is considered ‘at risk’, it may qualify for EU preferences, depending on the amount or type of product.
         </p>
+    {% elif has_uk_trade_agreement %}
+        <p class="govuk-body">
+            If your product is solely intended for use in the UK, it may qualify for a UK tariff preference.
+        </p>
     {% endif %}
 
     <p class="govuk-body">
@@ -60,27 +64,29 @@
             </div>
         </div>
 
-        <div class="govuk-accordion__section">
-            <div class="govuk-accordion__section-header">
-                <h2 class="govuk-accordion__section-heading">
-                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-rules-of-origin-heading">
-                        EU rules of origin
-                    </span>
-                </h2>
-            </div>
-            <div id="accordion-eu-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-rules-of-origin-heading">
-                <p class="govuk-body">
-                    EU general rules of origin will apply if any part of your shipment is considered ‘at risk’ of entering an EU country (such as Ireland).
-                </p>
+        {% if has_eu_trade_agreement %}
+            <div class="govuk-accordion__section">
+                <div class="govuk-accordion__section-header">
+                    <h2 class="govuk-accordion__section-heading">
+                        <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-eu-rules-of-origin-heading">
+                            EU rules of origin
+                        </span>
+                    </h2>
+                </div>
+                <div id="accordion-eu-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-eu-rules-of-origin-heading">
+                    <p class="govuk-body">
+                        EU general rules of origin will apply if any part of your shipment is considered ‘at risk’ of entering an EU country (such as Ireland).
+                    </p>
 
-                <p class="govuk-body">
-                    ‘At risk’ goods must meet product-specific rules of origin to qualify for a tariff preference.
-                </p>
+                    <p class="govuk-body">
+                        ‘At risk’ goods must meet product-specific rules of origin to qualify for a tariff preference.
+                    </p>
 
-                <p class="govuk-body">
-                    You can find more information by going to the <a href="{{ eu_rules_of_origin_link }}">EU’s Access2Markets website</a>, and clicking the ‘Rules of origin’ section.
-                </p>
+                    <p class="govuk-body">
+                        You can find more information by going to the <a href="{{ eu_rules_of_origin_link }}">EU’s Access2Markets website</a>, and clicking the ‘Rules of origin’ section.
+                    </p>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 </div>
