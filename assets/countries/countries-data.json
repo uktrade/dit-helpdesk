@@ -613,15 +613,6 @@
     },
     {
         "model": "countries.country",
-        "pk": 68,
-        "fields": {
-            "country_code": "EU",
-            "name": "European Union",
-            "is_eu": false
-        }
-    },
-    {
-        "model": "countries.country",
         "pk": 69,
         "fields": {
             "country_code": "FI",

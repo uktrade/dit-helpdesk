@@ -883,19 +883,6 @@
             "from": []
         }
     },
-    "eu": {
-        "names": {
-            "en-GB": "European Union"
-        },
-        "meta": {
-            "canonical": true,
-            "canonical-mask": 1,
-            "stable-name": true
-        },
-        "edges": {
-            "from": []
-        }
-    },
     "fi": {
         "names": {
             "en-GB": "Finland"
