@@ -329,7 +329,7 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
 
         ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(commodity_object, country)
         ctx["has_eu_trade_agreement"] = country.has_eu_trade_agreement
-        ctx["has_any_trade_agreement"] = country.has_uk_trade_agreement and country.has_eu_trade_agreement
+        ctx["has_both_trade_agreements"] = country.has_uk_trade_agreement and country.has_eu_trade_agreement
 
         return ctx
 
