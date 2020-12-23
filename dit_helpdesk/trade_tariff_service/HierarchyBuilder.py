@@ -678,8 +678,6 @@ class HierarchyBuilder:
         for f in previous_files:
             os.rename(os.path.join(download_dir, f), os.path.join(previous_dir, f))
 
-        hierarchy_client = self.hierarchy_client
-
         data_type = "sections"
         sections, _ = self.get_type_data_from_api(data_type)
         logger.info("Writing {0} data".format(data_type))
