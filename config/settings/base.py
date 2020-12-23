@@ -71,7 +71,6 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl_drf",
     "accessibility",
     "reversion",
-    "alt_trade_tariff_service",
 ]
 
 MIDDLEWARE = [
@@ -221,13 +220,6 @@ CONTACT_MAX_LENGTH = 1000
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
 TRADE_TARIFF_CONFIG = env.json("TRADE_TARIFF_CONFIG")
-
-# We don't have this at the section level due to not requiring any information from the trade tariff service at this level
-TTS_CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
-TTS_HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
-# We don't have this at the sub-heading level as there is no concept of a sub-heading in trade tariff in the same way
-# that we have it as a separate model
-TTS_COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]

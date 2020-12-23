@@ -5,6 +5,43 @@ from enum import Enum
 from django.conf import settings
 
 
+class JSONObjClient:
+    class CommodityType(Enum):
+        CHAPTER = "CHAPTER"
+        HEADING = "HEADING"
+        COMMODITY = "COMMODITY"
+
+    class NotFound(Exception):
+        pass
+
+    TIMEOUT = 10
+
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+    def get_content(self, commodity_type, commodity_code):
+        path = {
+            self.CommodityType.CHAPTER: "chapters",
+            self.CommodityType.HEADING: "headings",
+            self.CommodityType.COMMODITY: "commodities",
+        }[commodity_type]
+        url = f"{self.base_url}{path}/{commodity_code}"
+
+        response = requests.get(url, timeout=self.TIMEOUT)
+
+        if response.status_code != 200:
+            raise self.NotFound()
+
+        return response.content.decode()
+
+
+def get_json_obj_client(region):
+    config = settings.TRADE_TARIFF_CONFIG[region]["JSON_OBJ"]
+    base_url = config["BASE_URL"]
+
+    return JSONObjClient(base_url)
+
+
 class HierarchyClient:
     class CommodityType(Enum):
         SECTION = "SECTION"
