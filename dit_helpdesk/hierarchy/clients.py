@@ -1,8 +1,26 @@
 import requests
 
+from requests.auth import HTTPBasicAuth
+
 from enum import Enum
 
 from django.conf import settings
+
+
+def get_auth(config):
+    try:
+        config = config["AUTH"]
+    except KeyError:
+        return None
+
+    auth_type = config["type"]
+    if auth_type == "basic":
+        return HTTPBasicAuth(
+            config["username"],
+            config["password"],
+        )
+
+    raise ValueError(f"Unknown auth type {auth_type}")
 
 
 class JSONObjClient:
@@ -16,8 +34,9 @@ class JSONObjClient:
 
     TIMEOUT = 10
 
-    def __init__(self, base_url):
+    def __init__(self, base_url, auth=None):
         self.base_url = base_url
+        self.auth = auth
 
     def get_content(self, commodity_type, commodity_code):
         path = {
@@ -27,7 +46,7 @@ class JSONObjClient:
         }[commodity_type]
         url = f"{self.base_url}{path}/{commodity_code}"
 
-        response = requests.get(url, timeout=self.TIMEOUT)
+        response = requests.get(url, auth=self.auth, timeout=self.TIMEOUT)
 
         if response.status_code != 200:
             raise self.NotFound()
@@ -37,9 +56,11 @@ class JSONObjClient:
 
 def get_json_obj_client(region):
     config = settings.TRADE_TARIFF_CONFIG[region]["JSON_OBJ"]
-    base_url = config["BASE_URL"]
 
-    return JSONObjClient(base_url)
+    base_url = config["BASE_URL"]
+    auth = get_auth(config)
+
+    return JSONObjClient(base_url, auth=auth)
 
 
 class HierarchyClient:
@@ -52,8 +73,9 @@ class HierarchyClient:
     class NotFound(Exception):
         pass
 
-    def __init__(self, base_url):
+    def __init__(self, base_url, auth=None):
         self.base_url = base_url
+        self.auth = auth
 
     def _get_type_data_url(self, commodity_type):
         url_mapping = {
@@ -65,7 +87,7 @@ class HierarchyClient:
         return url
 
     def _make_request(self, url):
-        response = requests.get(url)
+        response = requests.get(url, auth=self.auth)
         if response.status_code != 200:
             raise self.NotFound(url)
 
@@ -97,6 +119,8 @@ class HierarchyClient:
 
 def get_hierarchy_client(region):
     config = settings.TRADE_TARIFF_CONFIG[region]["TREE"]
-    base_url = config["BASE_URL"]
 
-    return HierarchyClient(base_url)
+    base_url = config["BASE_URL"]
+    auth = get_auth(config)
+
+    return HierarchyClient(base_url, auth=auth)
