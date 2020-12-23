@@ -109,15 +109,21 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
         super().__init__(country, commodity_object)
 
         eu_commodity_object = self.get_eu_commodity_object(commodity_object)
-        self.eu_tariffs, self.eu_taxes = self._get_tariffs_and_taxes(eu_commodity_object, country)
+        self.eu_tariffs, _ = self._get_tariffs_and_taxes(eu_commodity_object, country)
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
 
+    def _get_meursing_calculator_link(self, commodity_object):
+        commodity_code = commodity_object.commodity_code
+
+        return f"https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20201208&Taric={commodity_code}&LangDescr=en"
+
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(itertools.chain(self.eu_tariffs, self.eu_taxes))
+        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(self.eu_tariffs)
+        ctx["meursing_calculator_link"] = self._get_meursing_calculator_link(self.commodity_object)
 
         return ctx
 
@@ -295,16 +301,29 @@ class RulesOfOriginSection(CommodityDetailSection):
 
     @property
     def should_be_displayed(self):
-        return self.country.has_uk_trade_agreement
+        return True
 
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
+
+    def get_has_gsp_tariff_preference(self, country, commodity_object):
+        measures = get_nomenclature_group_measures(
+            commodity_object,
+            "Tariffs and charges",
+            country.country_code,
+        )
+
+        return any(m.is_gsp for m in measures)
 
     def get_context_data(self):
         ctx = super().get_context_data()
 
         ctx["old_rules_of_origin"] = self.old_rules_of_origin
         ctx["rules_of_origin"] = self.rules_of_origin
+        ctx["has_uk_trade_agreement"] = self.country.has_uk_trade_agreement
+        ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
+            self.country, self.commodity_object,
+        )
 
         return ctx
 
@@ -315,8 +334,12 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(self.commodity_object, self.country)
-        ctx["should_display_eu_rules_of_origin"] = bool(self.country.has_eu_trade_agreement)
+        commodity_object = self.commodity_object
+        country = self.country
+
+        ctx["eu_rules_of_origin_link"] = get_eu_commodity_link(commodity_object, country)
+        ctx["has_eu_trade_agreement"] = country.has_eu_trade_agreement
+        ctx["has_both_trade_agreements"] = country.has_uk_trade_agreement and country.has_eu_trade_agreement
 
         return ctx
 
