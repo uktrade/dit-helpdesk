@@ -109,7 +109,7 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
         super().__init__(country, commodity_object)
 
         eu_commodity_object = self.get_eu_commodity_object(commodity_object)
-        self.eu_tariffs, self.eu_taxes = self._get_tariffs_and_taxes(eu_commodity_object, country)
+        self.eu_tariffs, _ = self._get_tariffs_and_taxes(eu_commodity_object, country)
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
@@ -117,7 +117,7 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(itertools.chain(self.eu_tariffs, self.eu_taxes))
+        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(self.eu_tariffs)
 
         return ctx
 
