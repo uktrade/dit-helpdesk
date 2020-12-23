@@ -10,30 +10,16 @@
     </p>
     <ul class="govuk-list govuk-list--bullet">
         <li>the type of goods</li>
-        <li>the country the goods are being imported into</li>
         <li>where they are judged to have ‘originated’ from</li>
+        <li>the country the goods are being imported into</li>
     </ul>
 
     <p class="govuk-body">
         Products are ‘non-originating’ if any of the materials used to make them are not wholly from or processed in the country of origin.
     </p>
 
-    {% if has_both_trade_agreements or has_gsp_tariff_preference %}
-        <p class="govuk-body">
-            If your product is solely intended for use in the UK, it may qualify for a UK tariff preference. If a proportion of the shipment is intended to be used in the EU (such as Ireland), or is considered ‘at risk’, it may qualify for EU preferences, depending on the type or amount of product.
-        </p>
-    {% elif has_eu_trade_agreement %}
-        <p class="govuk-body">
-            If a proportion of the shipment is intended to be used in the EU (such as Ireland), or is considered ‘at risk’, it may qualify for EU preferences, depending on the amount or type of product.
-        </p>
-    {% elif has_uk_trade_agreement %}
-        <p class="govuk-body">
-            If your product is solely intended for use in the UK, it may qualify for a UK tariff preference.
-        </p>
-    {% endif %}
-
     <p class="govuk-body">
-        If you have a customs agent, freight forwarder or importer, they should be able to tell you which tariff preferences and rules of origin apply to your shipment. Otherwise, you can contact the <a class="govuk-link" href="https://www.gov.uk/guidance/trader-support-service">Trader Support Service</a> for more information.
+        Please follow the <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021#when-goods-are-not-at-risk-of-onward-movement-to-the-eu">guidance on when goods are not at risk</a> for detailed rules of origin information for Northern Ireland.
     </p>
 
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-rules-of-origin">
