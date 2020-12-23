@@ -5,8 +5,6 @@ import datetime as dt
 
 import requests
 
-from collections import defaultdict
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -19,9 +17,10 @@ from backports.datetime_fromisoformat import MonkeyPatch
 from alt_trade_tariff_service.tts_api import Client as AltTTSClient
 from countries.models import Country
 from rules_of_origin.models import (
-    OldRule, OldRuleItem, OldRulesDocument,
-    OldRulesDocumentFootnote, OldRulesGroup, OldRulesGroupMember,
-    Rule, SubRule, RulesDocumentFootnote,
+    OldRule,
+    OldRulesDocumentFootnote,
+    Rule,
+    RulesDocumentFootnote,
 )
 from trade_tariff_service.tts_api import (
     Client as OriginalTTSClient,
@@ -29,7 +28,6 @@ from trade_tariff_service.tts_api import (
     HeadingJson,
     SubHeadingJson,
 )
-from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
 from core.helpers import flatten, always_true_Q
 
 

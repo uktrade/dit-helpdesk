@@ -1,10 +1,23 @@
 <div class="helpdesk-ni-warning">
     <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            <p>If some or all of your goods are destined for Northern Ireland, then tariffs, charges, rules of origin and regulations may be different from those listed below.</p>
-            <p><a href="{{ ni_details_url }}">View the charges, rules and regulations for exports to Northern Ireland</a></p>
-        </strong>
+        {% if is_eu_member %}
+            <div class="govuk-warning-text__text">
+                <p class="govuk-body govuk-!-margin-bottom-3">If you are exporting directly to Northern Ireland from the European Union, there will be no tariffs. You can view taxes and other measures on this page. However <a class="govuk-link" href="{{ eu_regulations_link }}">EU regulations</a> will apply.</p>
+                <p class="govuk-body govuk-!-margin-bottom-3">Read <a class="govuk-link" href="https://www.gov.uk/guidance/trading-and-moving-goods-in-and-out-of-northern-ireland-from-1-january-2021">guidance on trading and moving goods in and out of Northern Ireland</a> if you are moving goods:</p>
+                <ul class="govuk-list govuk-list--bullet govuk-body govuk-!-margin-bottom-0">
+                    <li>between the rest of the UK and Northern Ireland</li>
+                    <li>between Northern Ireland and the rest of the UK</li>
+                    <li>through the rest of the UK to Northern Ireland</li>
+                    <li>through Northern Ireland to the rest of the UK</li>
+                </ul>
+            </div>
+        {% else %}
+            <strong class="govuk-warning-text__text">
+                <p>If you are exporting to Northern Ireland, tariffs, charges, rules of origin and regulations may be different from the rest of the UK*.</p>
+                <p><a href="{{ ni_details_url }}">View the charges, rules and regulations for exports to Northern Ireland</a></p>
+                <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-top-3">*If you are exporting to the rest of the UK with subsequent transportation to Northern Ireland, additional rules will apply for certain goods at the point when they are moved to Northern Ireland.</p>
+            </strong>
+        {% endif %}
     </div>
 </div>
