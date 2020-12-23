@@ -24,7 +24,7 @@ mock_hierarchy_model_map = {
 }
 
 
-@override_settings(HIERARCHY_MODEL_MAP=mock_hierarchy_model_map) 
+@override_settings(HIERARCHY_MODEL_MAP=mock_hierarchy_model_map)
 class HierarchyBuilderTestCase(TestCase):
     """
     Test Hierarchy Importer
@@ -34,13 +34,13 @@ class HierarchyBuilderTestCase(TestCase):
         self.tree = create_nomenclature_tree(region='UK')
 
     def test_file_loader(self):
-        sections = HierarchyBuilder().file_loader(model_name="Section", tree=self.tree)
+        sections = HierarchyBuilder(region=self.tree.region).file_loader(model_name="Section", tree=self.tree)
         self.assertTrue(isinstance(sections, list))
         self.assertTrue(set(["section_id" in item.keys() for item in sections]))
 
     def test_instance_builder_for_section(self):
         model_name = "Section"
-        data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
             app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
@@ -58,14 +58,14 @@ class HierarchyBuilderTestCase(TestCase):
 
     def test_instance_builder_for_chapter(self):
         chapter_model_name = "Chapter"
-        chapter_data = HierarchyBuilder.file_loader(model_name=chapter_model_name, tree=self.tree)
+        chapter_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=chapter_model_name, tree=self.tree)
         chapter_model = apps.get_model(
             app_label="hierarchy", model_name=chapter_model_name
         )
 
         # load section data
         section_model_name = "Section"
-        section_data = HierarchyBuilder.file_loader(model_name=section_model_name, tree=self.tree)
+        section_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=section_model_name, tree=self.tree)
         section_model = apps.get_model(
             app_label="hierarchy", model_name=section_model_name
         )
@@ -91,7 +91,7 @@ class HierarchyBuilderTestCase(TestCase):
 
     def test_instance_builder_for_heading(self):
         model_name = "Heading"
-        data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
             app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
@@ -113,7 +113,7 @@ class HierarchyBuilderTestCase(TestCase):
     def test_instance_builder_for_subheading(self):
 
         model_name = "SubHeading"
-        data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
 
         model = apps.get_model(
             app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
@@ -135,7 +135,7 @@ class HierarchyBuilderTestCase(TestCase):
 
     def test_instance_builder_for_commodity(self):
         model_name = "Commodity"
-        data = HierarchyBuilder.file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
         model = apps.get_model(
             app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
         )
@@ -157,7 +157,7 @@ class HierarchyBuilderTestCase(TestCase):
         model_name = "Section"
         builder = HierarchyBuilder(new_tree=self.tree)
         builder.load_data(model_name)
-        file_data = HierarchyBuilder().file_loader(model_name=model_name, tree=builder.new_tree)
+        file_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=builder.new_tree)
         self.assertEqual(builder.data[model_name]["data"], file_data)
         self.assertTrue(isinstance(builder.data[model_name]["data"], list))
 
