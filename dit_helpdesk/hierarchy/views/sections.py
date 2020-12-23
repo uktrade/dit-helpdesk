@@ -114,10 +114,16 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
 
+    def _get_meursing_calculator_link(self, commodity_object):
+        commodity_code = commodity_object.commodity_code
+
+        return f"https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20201208&Taric={commodity_code}&LangDescr=en"
+
     def get_context_data(self):
         ctx = super().get_context_data()
 
         ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(itertools.chain(self.eu_tariffs, self.eu_taxes))
+        ctx["meursing_calculator_link"] = self._get_meursing_calculator_link(self.commodity_object)
 
         return ctx
 
