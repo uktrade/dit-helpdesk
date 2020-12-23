@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from countries.models import Country
 
-from ..helpers import TABLE_COLUMN_TITLES
+from ..helpers import get_eu_commodity_link, TABLE_COLUMN_TITLES
 
 from .exceptions import Redirect
 from .helpers import get_hierarchy_context
@@ -88,6 +88,7 @@ class BaseCommodityObjectDetailView(TemplateView):
             ctx[self.context_object_name] = commodity_object
 
         ctx["is_eu_member"] = country.is_eu
+        ctx["eu_regulations_link"] = get_eu_commodity_link(commodity_object, country)
 
         ctx.update(self.get_notes_context_data(self.commodity_object))
 

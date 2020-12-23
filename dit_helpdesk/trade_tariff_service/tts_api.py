@@ -189,6 +189,18 @@ class ImportMeasureJson:
     def num_conditions(self):
         return len(self.di["measure_conditions"])
 
+    @property
+    def geographical_area_description(self):
+        geographical_area_description = self.di["geographical_area"]["description"]
+        if self.di["geographical_area"]["id"][0].isalpha():
+            geographical_area_description = geographical_area_description + " (%s)" % self.di["geographical_area"]["id"]
+
+        return geographical_area_description
+
+    @property
+    def is_gsp(self):
+        return self.geographical_area_description.startswith("GSP")
+
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di["geographical_area"]
         if geo_area is None:
@@ -286,11 +298,7 @@ class ImportMeasureJson:
         return rendered
 
     def get_table_dict(self):
-
-        country = self.di["geographical_area"]["description"]
-
-        if self.di["geographical_area"]["id"][0].isalpha():
-            country = country + " (%s)" % self.di["geographical_area"]["id"]
+        country = self.geographical_area_description
 
         try:
             measure_description = (
