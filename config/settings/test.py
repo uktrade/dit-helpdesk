@@ -140,3 +140,22 @@ ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 SITE_READ_ONLY = False
 
 INSTALLED_APPS += ["cms"]
+
+TRADE_TARIFF_CONFIG = {
+    "UK": {
+        "TREE": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+        },
+        "JSON_OBJ": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+        }
+    },
+    "EU": {
+        "TREE": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+        },
+        "JSON_OBJ": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+        }
+    }
+}
