@@ -15,12 +15,15 @@ class HierarchyClient:
     class NotFound(Exception):
         pass
 
+    def __init__(self, base_url):
+        self.base_url = base_url
+
     def _get_type_data_url(self, commodity_type):
         url_mapping = {
             self.CommodityType.SECTION: "sections",
             self.CommodityType.CHAPTER: "chapters",
         }
-        url = settings.TRADE_TARIFF_API_BASE_URL.format(url_mapping[commodity_type])
+        url = f"{self.base_url}{url_mapping[commodity_type]}"
 
         return url
 
@@ -44,7 +47,7 @@ class HierarchyClient:
             self.CommodityType.HEADING: "headings",
         }
         item_path = f"{url_mapping[commodity_type]}/{item_id}"
-        url = settings.TRADE_TARIFF_API_BASE_URL.format(item_path)
+        url = f"{self.base_url}{item_path}"
 
         return url
 
@@ -56,4 +59,7 @@ class HierarchyClient:
 
 
 def get_hierarchy_client(region):
-    return HierarchyClient()
+    config = settings.TRADE_TARIFF_CONFIG[region]["TREE"]
+    base_url = config["BASE_URL"]
+
+    return HierarchyClient(base_url)
