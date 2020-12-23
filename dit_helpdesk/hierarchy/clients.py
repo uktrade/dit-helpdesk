@@ -1,3 +1,4 @@
+import logging
 import requests
 
 from requests.auth import HTTPBasicAuth
@@ -5,6 +6,11 @@ from requests.auth import HTTPBasicAuth
 from enum import Enum
 
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 
 def get_auth(config):
@@ -46,6 +52,7 @@ class JSONObjClient:
         }[commodity_type]
         url = f"{self.base_url}{path}/{commodity_code}"
 
+        logger.debug(url)
         response = requests.get(url, auth=self.auth, timeout=self.TIMEOUT)
 
         if response.status_code != 200:
@@ -87,6 +94,7 @@ class HierarchyClient:
         return url
 
     def _make_request(self, url):
+        logger.debug(url)
         response = requests.get(url, auth=self.auth)
         if response.status_code != 200:
             raise self.NotFound(url)
