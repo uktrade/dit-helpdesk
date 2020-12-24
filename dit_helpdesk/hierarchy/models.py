@@ -14,8 +14,8 @@ from django.core.cache import cache
 
 from backports.datetime_fromisoformat import MonkeyPatch
 
-from alt_trade_tariff_service.tts_api import Client as AltTTSClient
 from countries.models import Country
+from hierarchy.clients import get_json_obj_client
 from rules_of_origin.models import (
     OldRule,
     OldRulesDocumentFootnote,
@@ -23,7 +23,6 @@ from rules_of_origin.models import (
     RulesDocumentFootnote,
 )
 from trade_tariff_service.tts_api import (
-    Client as OriginalTTSClient,
     ChapterJson,
     HeadingJson,
     SubHeadingJson,
@@ -191,12 +190,7 @@ class NomenclatureTree(models.Model):
         return prev_tree
 
     def get_tts_api_client(self):
-        client_class = {
-            "original": OriginalTTSClient,
-            "alt": AltTTSClient,
-        }[self.source]
-
-        return client_class()
+        return get_json_obj_client(self.region)
 
     def __str__(self):
         return f"{self.region} {self.start_date} - {self.end_date}"
