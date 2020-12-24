@@ -10,12 +10,13 @@ from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFo
 from rules_of_origin.ingest.importer import import_roo
 from rules_of_origin.ingest.s3 import _get_s3_bucket
 
+from hierarchy.models import NomenclatureTree
 from hierarchy.helpers import process_swapped_tree
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument("--reset", action="store_true")
+        parser.add_argument("--reset-all", action="store_true")
 
     def handle(self, *args, **options):
         with process_swapped_tree():
@@ -60,9 +61,14 @@ class Command(BaseCommand):
         local_path = settings.RULES_OF_ORIGIN_DATA_PATH
         s3_bucket = settings.ROO_S3_BUCKET_NAME
 
-        if any([local_path, s3_bucket]) and options["reset"]:
-            for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
-                cls.objects.all().delete()
+        active_tree = NomenclatureTree.get_active_tree()
+
+        if any([local_path, s3_bucket]):
+            RulesDocument.objects.filter(nomenclature_tree=active_tree).all().delete()
+
+            if options["reset_all"]:
+                for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
+                    cls.objects.all().delete()
 
         if s3_bucket:
             self._import_from_s3()

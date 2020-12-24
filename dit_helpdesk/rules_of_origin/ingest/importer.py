@@ -228,7 +228,8 @@ def _create_rules(rules_document, positions, region):
     for position in positions:
 
         description = position['description']
-        logger.info("Creating rule %s..", description[:25])
+        logger.info(
+            "Creating rule %s..", description[:25] if description else "(empty description)")
 
         rule = Rule.objects.create(
             rules_document=rules_document,
