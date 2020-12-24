@@ -84,8 +84,14 @@ def _fill_zeros(code: Union[int, str]) -> str:
     return code.ljust(10, '0')
 
 
-def _int_to_code(code: int, original_length):
-    return _fill_zeros(str(code).rjust(original_length))
+def _left_fill_zeros(code: Union[int, str], length) -> str:
+    code = str(code)
+
+    return code.rjust(length, '0')
+
+
+def _int_to_code(code: int, left_pad=0):
+    return _fill_zeros(_left_fill_zeros(str(code), left_pad))
 
 
 def _normalise_code(code: str):
@@ -103,7 +109,7 @@ def _determine_range_model(hs_type, hs_from):
             return SubHeading
 
 
-def _get_objects_for_range(hs_type, hs_from, hs_to, region):
+def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
     hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
     if hs_to and len(hs_from) != len(hs_to):
         raise InvalidDocumentException(
@@ -118,10 +124,10 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
 
     initial_hs_int = _commodity_code_to_int(hs_from)
 
-    if hs_to:
+    if hs_to and hs_to != hs_from:
         hs_delta = _commodity_code_to_int(hs_to) - initial_hs_int
         hs_range = [
-            _int_to_code(initial_hs_int + increment, original_length=len(hs_from))
+            _int_to_code(initial_hs_int + increment, left_pad=len(hs_from))
             for increment in range(hs_delta + 1)
         ]
 
@@ -138,6 +144,52 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
     return range_model, objects
 
 
+def _higher_level_prefix(hs_code):
+    return hs_code[:-2]
+
+
+def _get_objects_for_range(hs_type, hs_from, hs_to, region):
+    """The tricky case is when hsTo and hsFrom are defined on different levels of hierarchy.
+    If that's the case, split the range into two consistent ranges.
+    E.g. 3205.50 to 3207 => (3205.50 to 3205.99) + (3206 to 3207)
+
+    Or 3510 to 3512.50 => (3510 to 3511) + (3512.00 to 3512.50)
+
+    """
+
+    hs_from = _normalise_code(hs_from)
+    hs_to = _normalise_code(hs_to)
+
+    if not hs_to or len(hs_from) == len(hs_to):
+        return [_get_same_level_objects_for_range(hs_type, hs_from, hs_to, region)]
+
+    if len(hs_from) > len(hs_to):
+        subheadings_to = _higher_level_prefix(hs_from) + "99"
+        headings_from = _left_fill_zeros(
+            int(_higher_level_prefix(hs_from)) + 1,
+            length=4
+        )
+
+        subheadings_range = _get_same_level_objects_for_range(
+            hs_type, hs_from, subheadings_to, region)
+        headings_range = _get_same_level_objects_for_range(
+            hs_type, headings_from, hs_to, region)
+
+    elif len(hs_to) > len(hs_from):
+        headings_to = _left_fill_zeros(
+            int(_higher_level_prefix(hs_to)) - 1,
+            length=4
+        )
+        subheadings_from = _higher_level_prefix(hs_to) + "00"     # beginning of subheading range
+
+        subheadings_range = _get_same_level_objects_for_range(
+            hs_type, subheadings_from, hs_to, region)
+        headings_range = _get_same_level_objects_for_range(
+            hs_type, hs_from, headings_to, region)
+
+    return [subheadings_range, headings_range]
+
+
 def _process_inclusion(rule, inclusion, region):
 
     rule.is_exclusion = inclusion.get('ex') == 'true'
@@ -149,7 +201,7 @@ def _process_inclusion(rule, inclusion, region):
             f"RoO HS range has to be defined in consistent units: {inclusion}"
         )
 
-    range_model, objects_to_bind = _get_objects_for_range(
+    ranges_objects = _get_objects_for_range(
         hs_type=hs_type,
         hs_from=inclusion['hsFrom'],
         hs_to=inclusion.get('hsTo'),
@@ -162,12 +214,13 @@ def _process_inclusion(rule, inclusion, region):
         SubHeading: rule.subheadings,
     }
 
-    m2m_set = rule_m2m_mapping[range_model]
-    m2m_set.set(objects_to_bind)
+    for range_model, objects_to_bind in ranges_objects:
+        m2m_set = rule_m2m_mapping[range_model]
+        m2m_set.set(objects_to_bind)
 
     rule.save()
 
-    return objects_to_bind
+    return ranges_objects
 
 
 def _create_rules(rules_document, positions, region):
