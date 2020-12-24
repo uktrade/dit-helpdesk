@@ -44,6 +44,9 @@ class JSONObjClient:
         self.base_url = base_url
         self.auth = auth
 
+    def __repr__(self):
+        return f"<JSONObjClient {self.base_url}>"
+
     def get_content(self, commodity_type, commodity_code):
         path = {
             self.CommodityType.CHAPTER: "chapters",
@@ -84,6 +87,9 @@ class HierarchyClient:
         self.base_url = base_url
         self.auth = auth
 
+    def __repr__(self):
+        return f"<HierarchyClient {self.base_url}>"
+
     def _get_type_data_url(self, commodity_type):
         url_mapping = {
             self.CommodityType.SECTION: "sections",
@@ -96,8 +102,9 @@ class HierarchyClient:
     def _make_request(self, url):
         logger.debug(url)
         response = requests.get(url, auth=self.auth)
+        status_code = response.status_code
         if response.status_code != 200:
-            raise self.NotFound(url)
+            raise self.NotFound(f"Not found: {url} ({status_code})")
 
         return response
 
