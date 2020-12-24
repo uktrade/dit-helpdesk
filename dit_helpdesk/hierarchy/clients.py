@@ -38,6 +38,12 @@ class JSONObjClient:
     class NotFound(Exception):
         pass
 
+    class ServerError(Exception):
+        pass
+
+    class UnknownError(Exception):
+        pass
+
     TIMEOUT = 10
 
     def __init__(self, base_url, auth=None):
@@ -57,9 +63,15 @@ class JSONObjClient:
 
         logger.debug(url)
         response = requests.get(url, auth=self.auth, timeout=self.TIMEOUT)
+        status_code = response.status_code
+        if status_code != 200:
+            if 500 > status_code >= 400:
+                raise self.NotFound(f"Not found {url} ({status_code})")
 
-        if response.status_code != 200:
-            raise self.NotFound()
+            if status_code >= 500:
+                raise self.ServerError(f"Server error {url} ({status_code})")
+
+            raise self.UnknownError(f"Unknown {url} ({status_code})")
 
         return response.content.decode()
 
@@ -83,6 +95,12 @@ class HierarchyClient:
     class NotFound(Exception):
         pass
 
+    class ServerError(Exception):
+        pass
+
+    class UnknownError(Exception):
+        pass
+
     def __init__(self, base_url, auth=None):
         self.base_url = base_url
         self.auth = auth
@@ -103,8 +121,14 @@ class HierarchyClient:
         logger.debug(url)
         response = requests.get(url, auth=self.auth)
         status_code = response.status_code
-        if response.status_code != 200:
-            raise self.NotFound(f"Not found: {url} ({status_code})")
+        if status_code != 200:
+            if 500 > status_code >= 400:
+                raise self.NotFound(f"Not found {url} ({status_code})")
+
+            if status_code >= 500:
+                raise self.ServerError(f"Server error {url} ({status_code})")
+
+            raise self.UnknownError(f"Unknown {url} ({status_code})")
 
         return response
 

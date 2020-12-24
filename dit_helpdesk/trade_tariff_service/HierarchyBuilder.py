@@ -57,7 +57,8 @@ class HierarchyBuilder:
         self._new_tree = new_tree
 
         self.hierarchy_client = get_hierarchy_client(self.region)
-        self.hierarchy_client_errors = []
+        self.hierarchy_client_not_found_errors = []
+        self.hierarchy_client_server_errors = []
 
     @property
     def new_tree(self):
@@ -318,8 +319,12 @@ class HierarchyBuilder:
                     item_id,
                 )
             except hierarchy_client.NotFound as e:
-                self.hierarchy_client_errors.append(e)
+                self.hierarchy_client_not_found_errors.append(e)
                 logger.debug("Not found", exc_info=e)
+                continue
+            except hierarchy_client.ServerError as e:
+                self.hierarchy_client_server_errors.append(e)
+                logger.debug("Server error", exc_info=e)
                 continue
 
             data.append(item_json)
@@ -706,11 +711,18 @@ class HierarchyBuilder:
             self.get_data_path(f"downloaded/{data_type}.json"),
         )
 
-        if self.hierarchy_client_errors:
+        if self.hierarchy_client_not_found_errors:
             logger.error(
-                "%s: %d error(s) found when saving API data for %s",
+                "%s: %d not found error(s) found when saving API data for %s",
                 self.hierarchy_client,
-                len(self.hierarchy_client_errors),
+                len(self.hierarchy_client_not_found_errors),
+                self.region,
+            )
+        if self.hierarchy_client_server_errors:
+            logger.error(
+                "%s: %d server error(s) found when saving API data for %s",
+                self.hierarchy_client,
+                len(self.hierarchy_client_server_errors),
                 self.region,
             )
 
