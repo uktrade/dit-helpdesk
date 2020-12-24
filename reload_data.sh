@@ -2,7 +2,6 @@ set -e
 
 python manage.py collectstatic --noinput
 python manage.py migrate
-python manage.py populate_trade_scenarios
 python manage.py pull_api_update
 python manage.py prepare_import_data
 python manage.py prepare_search_data
