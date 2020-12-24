@@ -50,6 +50,24 @@ aliases:
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: .
     FEEDBACK_DESTINATION_EMAIL: going@to.com
+    TRADE_TARIFF_CONFIG: '{
+        "UK": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+            }
+        },
+        "EU": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+            }
+        }
+    }'
 
 
 

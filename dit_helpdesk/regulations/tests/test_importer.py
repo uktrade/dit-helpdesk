@@ -32,7 +32,7 @@ class RegulationsImporterTestCase(TestCase):
     )
     def test_regulation_groups_attached_to_commodity_objects(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder = HierarchyBuilder()
+        builder = HierarchyBuilder(region=settings.PRIMARY_REGION)
         builder.data_scanner(model_names)
         data_path = settings.APPS_DIR + "/regulations/tests/data/{0}"
 
@@ -78,7 +78,7 @@ class RegulationsImporterTestCase(TestCase):
     )
     def test_sets_celex_data(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder = HierarchyBuilder()
+        builder = HierarchyBuilder(region=settings.PRIMARY_REGION)
         builder.data_scanner(model_names)
         data_path = settings.APPS_DIR + "/regulations/tests/data/{0}"
 
@@ -114,7 +114,7 @@ class RegulationsImporterTestCase(TestCase):
     )
     def test_updated_celex_data_saves_against_existing(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        builder = HierarchyBuilder()
+        builder = HierarchyBuilder(region=settings.PRIMARY_REGION)
         builder.data_scanner(model_names)
         data_path = settings.APPS_DIR + "/regulations/tests/data/{0}"
 
