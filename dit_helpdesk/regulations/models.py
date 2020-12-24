@@ -43,13 +43,16 @@ class Regulation(models.Model):
     celex = models.CharField(max_length=20)
     url = models.URLField()
 
-    VALID_URL_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/(eur|eudn|eudr|uksi)\/(?P<year>\d{4})\/(?P<number>\d+)\/contents(\/made)?$"
+    VALID_URL_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/"
+    REGULATION_NUMBER_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/(eur|eudn|eudr|uksi|ukpga)\/(?P<year>\d{4})\/(?P<number>\d+)\/"
 
     def __str__(self):
         return self.url
 
     @property
     def regulation_number(self):
-        matches = re.match(self.VALID_URL_REGEX, self.url)
+        matches = re.match(self.REGULATION_NUMBER_REGEX, self.url)
+        if not matches:
+            return "-"
 
         return f"{matches['number']}/{matches['year']}"
