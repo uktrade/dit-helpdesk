@@ -46,6 +46,11 @@ urlpatterns = [
         country_views.CountryInformationView.as_view(),
         name="country-information",
     ),
+    path(
+        "country/location-autocomplete-graph.json",
+        country_views.LocationAutocompleteView.as_view(),
+        name="location-autocomplete",
+    ),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
