@@ -13,7 +13,7 @@
                         Information on exporting to the UK from {{ country.name }}
                     </h1>
 
-                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country.country_code|lower %}">
                         Search for your goods
                     </a>
 
@@ -73,7 +73,7 @@
 
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-full">
-                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country.country_code|lower %}">
                         Search for your goods
                     </a>
                 </div>
