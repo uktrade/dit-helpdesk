@@ -81,13 +81,14 @@ class CountryInformationView(TemplateView):
         except Country.DoesNotExist:
             raise Http404
 
-        country_code = "EU" if country.is_eu else country.country_code
+        if country.is_eu:
+            country = Country.objects.get(country_code="EU")
 
-        if not _has_agreement(country_code):
+        if not _has_agreement(country.country_code):
             raise Http404
 
         self.country = country
-        self.country_code = country_code
+        self.country_code = country.country_code
 
         return super().get(request, *args, **kwargs)
 
@@ -100,6 +101,7 @@ class CountryInformationView(TemplateView):
         country = self.country
 
         ctx["country"] = country
+        ctx["country_name"] = "the European Union" if country.country_code == "EU" else country.name
 
         ctx["trade_agreements_template_name"] = self._get_template_name(self.country_code, "trade_agreements")
         ctx["goods_template_name"] = self._get_template_name(self.country_code, "goods")
