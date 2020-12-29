@@ -29,6 +29,10 @@ def get_auth(config):
     raise ValueError(f"Unknown auth type {auth_type}")
 
 
+def get_params(config):
+    return config.get("PARAMS", {})
+
+
 class JSONObjClient:
     class CommodityType(Enum):
         CHAPTER = "CHAPTER"
@@ -46,9 +50,10 @@ class JSONObjClient:
 
     TIMEOUT = 10
 
-    def __init__(self, base_url, auth=None):
+    def __init__(self, base_url, auth=None, params=None):
         self.base_url = base_url
         self.auth = auth
+        self.params = params
 
     def __repr__(self):
         return f"<JSONObjClient {self.base_url}>"
@@ -62,7 +67,12 @@ class JSONObjClient:
         url = f"{self.base_url}{path}/{commodity_code}"
 
         logger.debug(url)
-        response = requests.get(url, auth=self.auth, timeout=self.TIMEOUT)
+        response = requests.get(
+            url,
+            auth=self.auth,
+            timeout=self.TIMEOUT,
+            params=self.params,
+        )
         status_code = response.status_code
         if status_code != 200:
             if 500 > status_code >= 400:
@@ -81,8 +91,9 @@ def get_json_obj_client(region):
 
     base_url = config["BASE_URL"]
     auth = get_auth(config)
+    params = get_params(config)
 
-    return JSONObjClient(base_url, auth=auth)
+    return JSONObjClient(base_url, auth=auth, params=params)
 
 
 class HierarchyClient:
@@ -101,9 +112,10 @@ class HierarchyClient:
     class UnknownError(Exception):
         pass
 
-    def __init__(self, base_url, auth=None):
+    def __init__(self, base_url, auth=None, params=None):
         self.base_url = base_url
         self.auth = auth
+        self.params = params
 
     def __repr__(self):
         return f"<HierarchyClient {self.base_url}>"
@@ -119,7 +131,11 @@ class HierarchyClient:
 
     def _make_request(self, url):
         logger.debug(url)
-        response = requests.get(url, auth=self.auth)
+        response = requests.get(
+            url,
+            auth=self.auth,
+            params=self.params,
+        )
         status_code = response.status_code
         if status_code != 200:
             if 500 > status_code >= 400:
@@ -161,5 +177,6 @@ def get_hierarchy_client(region):
 
     base_url = config["BASE_URL"]
     auth = get_auth(config)
+    params = get_params(config)
 
-    return HierarchyClient(base_url, auth=auth)
+    return HierarchyClient(base_url, auth=auth, params=params)
