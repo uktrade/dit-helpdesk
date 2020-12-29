@@ -2,7 +2,7 @@ var openregisterLocationPicker = require("govuk-country-and-territory-autocomple
 
 openregisterLocationPicker({
     selectElement: document.getElementById('country-picker'),
-    url: '/assets/js/location-autocomplete-graph.json',
+    url: '/country/location-autocomplete-graph.json',
     defaultValue: '',
     displayMenu: 'overlay'
 })
