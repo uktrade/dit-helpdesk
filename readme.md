@@ -421,13 +421,6 @@ it will also generate the following reports into folder `reports` :
 - xml coverage report file
 - html coverage report
 
-## Country synonyms
-
-The list of all countries that need to be listed is in `assets/countries/countries-data.json`. If the countries and/or
-synonyms need to be updated, change the `countries-data.json` to add countries; and change `add-synonyms.js` file to
-add synonyms. Then run `npm run update-countries`. You should see the updated
-files in `dit_helpdesk/static_collected/js/`.
-
 
 ### Install locally
 
@@ -539,28 +532,7 @@ If the select is present, but the autocomplete isn’t working:
 
 ```bash
 Run `npm run build`
-Run `npm run update-countries`
 Run `python dit_helpdesk/manage.py loaddata countries_data`
-```
-
-If the autocomplete is not using the correct synonyms:
-Open `assets/countries/add-synonyms.js` and check that the `countriesToAddSynonymsTo` array of objects is correct.
-If any corrections are needed, make them - then run
-
-```bash
-npm run build
-```
-
-followed by
-
-```bash
-npm run update-countries
-```
-
-and then
-
-```bash
-python dit_helpdesk/manage.py loaddata countries_data
 ```
 
 If the autocomplete is not displaying properly run

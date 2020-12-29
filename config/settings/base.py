@@ -380,6 +380,14 @@ EU_COUNTRY_CODES = [
     "SE",
 ]
 
+COUNTRIES_TO_REMOVE = ["XC", "XL"]
+# Example:
+# {
+#     "EU": ["Europe (France)", "République française"],
+#     "DE": ["Deutschland"],
+# }
+COUNTRY_SYNONYMS = {}
+
 HIERARCHY_MODEL_MAP = {
     "Commodity": {"file_name": "prepared/commodities.json", "app_name": "commodities"},
     "Chapter": {"file_name": "prepared/chapters.json", "app_name": "hierarchy"},
