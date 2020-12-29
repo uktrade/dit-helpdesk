@@ -24,8 +24,5 @@ export DJANGO_SETTINGS_MODULE=config.settings.development
 # 1. Run migrations
 python manage.py migrate
 
-# 2. add countries to DB
-python manage.py loaddata assets/countries/countries-data.json
-
-# 3. create a superuser
+# 2. create a superuser
 python manage.py createsuperuser
