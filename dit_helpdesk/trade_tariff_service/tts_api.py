@@ -46,6 +46,10 @@ class BaseCommodityJson:
 
         return self.di["footnotes"]
 
+    @property
+    def is_meursing_code(self):
+        return self.di.get("meursing_code", False)
+
     def get_import_measures(self, origin_country, vat=None, excise=None):
         if "import_measures" not in self.di:
             return []
