@@ -219,24 +219,27 @@ CONTACT_MAX_LENGTH = 1000
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
-TRADE_TARIFF_CONFIG = {
-    "UK": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+def get_trade_tariff_config():
+    return {
+        "UK": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+            }
         },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
-        }
-    },
-    "EU": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
-        },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+        "EU": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+            }
         }
     }
-}
+
+TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
