@@ -67,3 +67,15 @@ def flatten(list_of_lists):
         for inner_list in list_of_lists
         for item in inner_list
     ]
+
+
+def unique_maintain_order(iterable):
+    out = []
+    seen = set()
+
+    for val in iterable:
+        if val not in seen:
+            out.append(val)
+            seen.add(val)
+
+    return out

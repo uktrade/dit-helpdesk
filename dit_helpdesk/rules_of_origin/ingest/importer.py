@@ -1,4 +1,6 @@
-from typing import Union
+from typing import Union, Iterable
+from itertools import chain
+from collections import defaultdict
 import datetime as dt
 import logging
 
@@ -10,6 +12,7 @@ from rules_of_origin.models import (
     Rule, SubRule,
 )
 from hierarchy.models import NomenclatureTree, Chapter, Heading, SubHeading
+from commodities.models import Commodity
 from countries.models import Country
 
 from .parser import parse_file
@@ -99,24 +102,37 @@ def _normalise_code(code: str):
         return code.replace(".", "")
 
 
-def _determine_range_model(hs_type, hs_from):
+def _determine_range_models(hs_type, hs_from):
     if hs_type == 'CH':
-        return Chapter
+        return [Chapter]
     elif hs_type == 'PO':
         if len(hs_from) == 4:
-            return Heading
+            return [Heading]
         elif len(hs_from) == 6:
-            return SubHeading
+            return [SubHeading, Commodity]
+
+
+def _group_by_class(iterable: Iterable) -> dict:
+    grouped = defaultdict(list)
+
+    for obj in iterable:
+        grouped[obj.__class__].append(obj)
+
+    return grouped
 
 
 def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
+    """Treat subheading/commodity as the same level, as it's not possible to differentiate them
+    from Mendel data only.
+
+    """
     hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
     if hs_to and len(hs_from) != len(hs_to):
         raise InvalidDocumentException(
             f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes")
 
-    range_model = _determine_range_model(hs_type, hs_from)
-    if not range_model:
+    range_models = _determine_range_models(hs_type, hs_from)
+    if not range_models:
         raise InvalidDocumentException(
             f"Unsupported HS range for hs_type {hs_type} and length {len(hs_from)}")
 
@@ -132,16 +148,20 @@ def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
         ]
 
     arg_name_map = {
+        Commodity: 'commodity_code__in',
         SubHeading: 'commodity_code__in',
         Heading: 'heading_code__in',
         Chapter: 'chapter_code__in',
     }
-    arg_name = arg_name_map[range_model]
-    query = Q(**{arg_name: hs_range})
 
-    objects = range_model.objects.for_region(region).filter(query)
+    objects = []
+    for range_model in range_models:
+        arg_name = arg_name_map[range_model]
+        query = Q(**{arg_name: hs_range})
 
-    return range_model, objects
+        objects = chain(objects, range_model.objects.for_region(region).filter(query))
+
+    return objects
 
 
 def _higher_level_prefix(hs_code):
@@ -161,7 +181,8 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
     hs_to = _normalise_code(hs_to)
 
     if not hs_to or len(hs_from) == len(hs_to):
-        return [_get_same_level_objects_for_range(hs_type, hs_from, hs_to, region)]
+        return _group_by_class(
+            _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region))
 
     if len(hs_from) > len(hs_to):
         subheadings_to = _higher_level_prefix(hs_from) + "99"
@@ -187,7 +208,8 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
         headings_range = _get_same_level_objects_for_range(
             hs_type, hs_from, headings_to, region)
 
-    return [subheadings_range, headings_range]
+    return _group_by_class(
+        chain(subheadings_range, headings_range))
 
 
 def _process_inclusion(rule, inclusion, region):
@@ -212,9 +234,10 @@ def _process_inclusion(rule, inclusion, region):
         Chapter: rule.chapters,
         Heading: rule.headings,
         SubHeading: rule.subheadings,
+        Commodity: rule.commodities,
     }
 
-    for range_model, objects_to_bind in ranges_objects:
+    for range_model, objects_to_bind in ranges_objects.items():
         m2m_set = rule_m2m_mapping[range_model]
         m2m_set.set(objects_to_bind)
 
