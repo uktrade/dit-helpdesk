@@ -81,6 +81,8 @@ class CountryInformationView(TemplateView):
         except Country.DoesNotExist:
             raise Http404
 
+        self.origin_country = country
+
         if country.is_eu:
             country = Country.objects.get(country_code="EU")
 
@@ -100,6 +102,7 @@ class CountryInformationView(TemplateView):
 
         country = self.country
 
+        ctx["original_country"] = self.origin_country
         ctx["country"] = country
         ctx["country_name"] = "the European Union" if country.country_code == "EU" else country.name
 
