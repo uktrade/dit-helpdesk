@@ -141,7 +141,9 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         except StopIteration:
             subheading_id = None
 
-        return chapter_id, heading_id, subheading_id
+        commodity_id = self.id
+
+        return chapter_id, heading_id, subheading_id, commodity_id
 
     def get_path(self, parent=None, tree=None, level=0):
         """

@@ -170,6 +170,10 @@ class Rule(models.Model):
         "hierarchy.SubHeading",
         related_name="rules_of_origin",
     )
+    commodities = models.ManyToManyField(
+        "commodities.Commodity",
+        related_name="rules_of_origin",
+    )
 
     class Meta:
         verbose_name_plural = "rules of origin"

@@ -27,7 +27,7 @@ from trade_tariff_service.tts_api import (
     HeadingJson,
     SubHeadingJson,
 )
-from core.helpers import flatten, always_true_Q
+from core.helpers import flatten, always_true_Q, unique_maintain_order
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -114,7 +114,7 @@ class RulesOfOriginMixin:
         tree = NomenclatureTree.get_active_tree()
         country = Country.objects.get(country_code=country_code)
 
-        chapter_id, heading_id, subheading_id = self.get_hierarchy_context_ids()
+        chapter_id, heading_id, subheading_id, commodity_id = self.get_hierarchy_context_ids()
 
         document_filter = Q(
             rules_document__countries=country,
@@ -132,22 +132,34 @@ class RulesOfOriginMixin:
             rule_filter = rule_filter | Q(headings__id=heading_id)
         if subheading_id:
             rule_filter = rule_filter | Q(subheadings__id=subheading_id)
+        if commodity_id:
+            rule_filter = rule_filter | Q(commodities__id=commodity_id)
 
-        rules = Rule.objects.prefetch_related('subrules').filter(
+        rules = Rule.objects.prefetch_related(
+            'subrules',
+            'chapters',
+            'headings',
+            'subheadings',
+            'commodities'
+        ).select_related(
+            'rules_document'
+        ).filter(
             document_filter & date_filter & rule_filter
         )
 
         chapter_rules = [r for r in rules if r.chapters.exists()]
         heading_rules = [r for r in rules if r.headings.exists()]
         subheading_rules = [r for r in rules if r.subheadings.exists()]
+        commodity_rules = [r for r in rules if r.commodities.exists()]
 
         # reorder so that they are in hierarchy descending order
-        rules = chapter_rules + heading_rules + subheading_rules
+        rules = chapter_rules + heading_rules + subheading_rules + commodity_rules
+        rules = unique_maintain_order(rules)
 
-        any_non_ex_subheading = any(not r.is_exclusion for r in subheading_rules)
-        any_non_ex_heading = any(not r.is_exclusion for r in heading_rules)
+        lower_level_rules = heading_rules + subheading_rules + commodity_rules
+        any_non_ex_lower_level = any(not r.is_exclusion for r in lower_level_rules)
 
-        if any_non_ex_heading or any_non_ex_subheading:
+        if any_non_ex_lower_level:
             # if any lower level rule is non-ex, then ignore the higher level ex rules
             rules = [r for r in rules if not r.is_exclusion]
 
@@ -979,8 +991,9 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         chapter_id = self.chapter_id
         heading_id = self.id
         subheading_id = None
+        commodity_id = None
 
-        return chapter_id, heading_id, subheading_id
+        return chapter_id, heading_id, subheading_id, commodity_id
 
     def is_duplicate_heading(self):
         children = self.get_hierarchy_children()
@@ -1176,7 +1189,9 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         except StopIteration:
             subheading_id = self.id
 
-        return chapter_id, heading_id, subheading_id
+        commodity_id = None
+
+        return chapter_id, heading_id, subheading_id, commodity_id
 
     def get_hierarchy_children(self):
         """
