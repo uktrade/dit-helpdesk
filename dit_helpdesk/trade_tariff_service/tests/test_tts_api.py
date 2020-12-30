@@ -44,10 +44,11 @@ class CommodityJsonTestCase(TestCase):
             heading=self.heading,
             nomenclature_tree=self.tree,
         )
+        self.commodity_data = get_data(settings.COMMODITY_DATA)
         self.commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
-            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            tts_json=json.dumps(self.commodity_data),
             parent_subheading=self.subheading,
             nomenclature_tree=self.tree,
         )
@@ -68,22 +69,6 @@ class CommodityJsonTestCase(TestCase):
     def test_commodity_json_chapter_note(self):
         self.maxDiff = None
         self.assertTrue(self.commodity.tts_obj.chapter_note)
-
-    def test_commodity_chapter_title(self):
-        self.assertEqual(self.commodity.tts_obj.chapter_title, "Live animals")
-
-    def test_commodity_section_position(self):
-        self.assertEqual(self.commodity.tts_obj.section_position, 1)
-
-    def test_commodity_duty_rate(self):
-        self.assertEqual(self.commodity.tts_obj.duty_rate, 0.0)
-
-    def test_commodity_duty_rate_with_no_match(self):
-        comm_json_dict = json.loads(self.commodity.tts_json)
-        comm_json_dict["basic_duty_rate"] = "<span title='0.0'>zero</span> %"
-        self.commodity.tts_json = json.dumps(comm_json_dict)
-        self.commodity.save()
-        self.assertEqual(self.commodity.tts_obj.duty_rate, None)
 
     def test_commodity_get_import_measures(self):
         self.assertTrue(
@@ -115,6 +100,19 @@ class CommodityJsonTestCase(TestCase):
             self.commodity.tts_obj.get_import_measure_by_id(10, "AF"), None
         )
 
+    def test_footnotes(self):
+        self.assertEqual(
+            self.commodity.tts_obj.footnotes,
+            self.commodity_data['footnotes'],
+        )
+
+    def test_footnotes_does_not_exist(self):
+        commodity_data = self.commodity_data
+        del commodity_data["footnotes"]
+        self.commodity.tts_json = json.dumps(self.commodity_data)
+        self.commodity.save()
+        self.assertEqual(self.commodity.tts_obj.footnotes, [])
+
 
 class ImportMeasureJsonTestCase(TestCase):
     """
@@ -122,7 +120,15 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
+        tree = create_nomenclature_tree('UK')
+        commodity = mixer.blend(
+            Commodity,
+            commodity_code=settings.TEST_COMMODITY_CODE,
+            tts_json=json.dumps(get_data(settings.COMMODITY_DATA)),
+            nomenclature_tree=tree,
+        )
         self.import_measure = ImportMeasureJson(
+            commodity,
             get_data(settings.IMPORTMEASUREJSON_DATA),
             settings.TEST_COMMODITY_CODE,
             settings.TEST_COMMODITY_DESCRIPTION,
@@ -135,52 +141,9 @@ class ImportMeasureJsonTestCase(TestCase):
             "ImportMeasureJson {0} {1}".format("0101210000", "VTS"),
         )
 
-    def test_get_date_when_exists(self):
-        self.assertTrue(
-            isinstance(
-                self.import_measure.get_date(
-                    self.import_measure.di, "effective_start_date"
-                ),
-                datetime,
-            )
-        )
-
-    def test_get_date_when_none(self):
-        self.assertFalse(
-            self.import_measure.get_date(self.import_measure.di, "effective_end_date")
-        )
-
-    def test_is_import(self):
-        self.assertEqual(self.import_measure.is_import, True)
-        self.assertTrue(isinstance(self.import_measure.is_import, bool))
-
     def test_origin(self):
         self.assertEqual(self.import_measure.origin, "uk")
         self.assertTrue(isinstance(self.import_measure.origin, str))
-
-    def test_effective_start_date(self):
-        self.assertEqual(
-            self.import_measure.effective_start_date,
-            datetime(2015, 2, 1, 0, 0, tzinfo=tzlocal()),
-        )
-
-    def test_effective_end_date(self):
-        self.assertEqual(self.import_measure.effective_end_date, None)
-
-    def test_geographical_area(self):
-        self.assertEqual(self.import_measure.geographical_area, "ERGA OMNES")
-        self.assertTrue(isinstance(self.import_measure.geographical_area, str))
-
-    def test_geographical_area_without_erga_omnes(self):
-        json_data = get_data(settings.IMPORTMEASUREJSON_DATA)
-        json_data["geographical_area"]["description"] = ""
-        import_measure = ImportMeasureJson(
-            json_data,
-            settings.TEST_COMMODITY_CODE,
-            settings.TEST_COMMODITY_DESCRIPTION,
-            settings.TEST_COUNTRY_CODE,
-        )
-        self.assertEqual(import_measure.geographical_area, None)
 
     def test_type_id(self):
         self.assertEqual(self.import_measure.type_id, "VTS")
@@ -194,9 +157,6 @@ class ImportMeasureJsonTestCase(TestCase):
         self.assertEqual(self.import_measure.measure_id, 0)
         self.assertTrue(isinstance(self.import_measure.measure_id, int))
 
-    def test_conditions_summary(self):
-        self.assertTrue(isinstance(self.import_measure.conditions_summary, list))
-
     def test_excluded_country_area_ids(self):
         self.assertTrue(isinstance(self.import_measure.excluded_country_area_ids, list))
 
@@ -208,29 +168,6 @@ class ImportMeasureJsonTestCase(TestCase):
         self.assertFalse(self.import_measure.excise)
         self.assertTrue(isinstance(self.import_measure.excise, bool))
 
-    def test_order_number_definition_summary_with_definition(self):
-        json_data = get_data(settings.IMPORTMEASUREJSON_DATA)
-        json_data["order_number"] = {"definition": {"status": "xyz"}}
-        json_data["order_number"]["definition"][
-            "description"
-        ] = "lipsuLorem ipsum dolor sit amet"
-        import_measure = ImportMeasureJson(
-            json_data,
-            settings.TEST_COMMODITY_CODE,
-            settings.TEST_COMMODITY_DESCRIPTION,
-            settings.TEST_COUNTRY_CODE,
-        )
-        self.assertTrue(
-            isinstance(import_measure.order_number_definition_summary, tuple)
-        )
-        self.assertEqual(
-            import_measure.order_number_definition_summary,
-            ("xyz", "lipsuLorem ipsum dolor sit amet"),
-        )
-
-    def test_order_number_definition_summary_when_none(self):
-        self.assertEqual(self.import_measure.order_number_definition_summary, None)
-
     def test_num_conditions(self):
         self.assertEqual(self.import_measure.num_conditions, 0)
         self.assertTrue(isinstance(self.import_measure.num_conditions, int))
@@ -241,19 +178,9 @@ class ImportMeasureJsonTestCase(TestCase):
             isinstance(self.import_measure.is_relevant_for_origin_country("AF"), bool)
         )
 
-    def test_vue__legal_base_html(self):
-        self.assertEqual(self.import_measure.vue__legal_base_html, "-")
-        self.assertTrue(isinstance(self.import_measure.vue__legal_base_html, str))
-
-    def test_vue__conditions_html(self):
-        self.assertEqual(self.import_measure.vue__conditions_html, "-")
-        self.assertTrue(isinstance(self.import_measure.vue__conditions_html, str))
-
-    def test_vue__footnotes_html(self):
-        self.assertEqual(
-            self.import_measure.vue__footnotes_html, '<a href="#">03020</a>'
-        )
-        self.assertTrue(isinstance(self.import_measure.vue__footnotes_html, str))
+    def test_conditions_html(self):
+        self.assertEqual(self.import_measure.conditions_html, "-")
+        self.assertTrue(isinstance(self.import_measure.conditions_html, str))
 
     def test_get_table_dict(self):
         self.assertEqual(
@@ -265,8 +192,6 @@ class ImportMeasureJsonTestCase(TestCase):
                 "measure_value": "20.00 %",
                 "excluded_countries": "",
                 "start_end_date": "2015-02-01",
-                "legal_base_html": "-",
-                "footnotes_html": '<a href="#">03020</a>',
             },
         )
         self.assertTrue(isinstance(self.import_measure.get_table_dict(), dict))

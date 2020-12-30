@@ -17,6 +17,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
 
+from flags.urls import flagged_re_path
+
 from admin.views import admin_login_view
 from commodities import views as commodity_views
 from hierarchy import views as hierarchy_views
@@ -44,6 +46,11 @@ urlpatterns = [
         country_views.CountryInformationView.as_view(),
         name="country-information",
     ),
+    path(
+        "country/location-autocomplete-graph.json",
+        country_views.LocationAutocompleteView.as_view(),
+        name="location-autocomplete",
+    ),
     path("cookies/", cookie_views.CookiesView.as_view(), name="cookies"),
     path(
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
@@ -55,7 +62,7 @@ urlpatterns = [
     ),
     re_path(
         r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})/(?P<nomenclature_sid>\d+)$",
-        hierarchy_views.chapter_detail,
+        hierarchy_views.ChapterDetailView.as_view(),
         name="chapter-detail",
     ),
     re_path(
@@ -63,7 +70,8 @@ urlpatterns = [
         hierarchy_views.SubHeadingDetailView.as_view(),
         name="subheading-detail",
     ),
-    re_path(
+    flagged_re_path(
+        "NI_JOURNEY",
         r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
         hierarchy_views.SubHeadingDetailNorthernIrelandView.as_view(),
         name="subheading-detail-northern-ireland",
@@ -73,7 +81,8 @@ urlpatterns = [
         hierarchy_views.HeadingDetailView.as_view(),
         name="heading-detail",
     ),
-    re_path(
+    flagged_re_path(
+        "NI_JOURNEY",
         r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
         hierarchy_views.HeadingDetailNorthernIrelandView.as_view(),
         name="heading-detail-northern-ireland",
@@ -83,7 +92,8 @@ urlpatterns = [
         commodity_views.CommodityDetailView.as_view(),
         name="commodity-detail",
     ),
-    re_path(
+    flagged_re_path(
+        "NI_JOURNEY",
         r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
         commodity_views.CommodityDetailNorthernIrelandView.as_view(),
         name="commodity-detail-northern-ireland",
@@ -148,7 +158,7 @@ if settings.ADMIN_ENABLED:
 
 if settings.CMS_ENABLED:
     urlpatterns += [
-        path("cms/", include("cms.urls", namespace="cms")),
+        path("cms/", include("cms.urls")),
     ]
 
 

@@ -1,19 +1,26 @@
-{% load cell_cleaner dotted_format %}
+{% load dotted_format %}
 
-{% if ukgt_enabled %}
-    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="quotas"></a>Quotas - {{ commodity.commodity_code|dotted_format }}
-    </h2>
-{% else %}
-    <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="quotas"></a>Quotas - {{ commodity.commodity_code|dotted_format }}
-    </h3>
-{% endif %}
+
+<h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+    <a name="quotas"></a>Quotas - {{ commodity.commodity_code|dotted_format }}
+</h2>
 
 <div class="govuk-caption-m ">
     <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> United Kingdom</p>
 </div>
 
-<p class="govuk-body app-info">Quotas allow limited  amounts of specific goods to be imported at a lower  duty rate.</p>
+<div class="app-info govuk-!-margin-bottom-6">
+    <p class="govuk-body">
+        Quotas allow a limited amount of specific goods to be imported at a lower duty rate. Once the quota has been used up, you will revert to your out-of-quota rate – which may be Most Favoured Nation (MFN) or preferential (PREF) depending on whether your country has a trade agreement with the UK.
+    </p>
+
+    <p class="govuk-body govuk-!-margin-bottom-0">
+        Quotas can be non-preferential (open to many countries) or preferential (restricted to a particular trading partner).
+    </p>
+</div>
+
+<p class="govuk-body">
+    Read more about quotas and how they may affect your product <a class="govuk-link" href="https://www.gov.uk/government/publications/uk-trade-tariff-tariff-quotas-and-ceilings">here</a>.
+</p>
 
 {% include "hierarchy/_quotas_table.html" with column_title=column_titles table_data=quotas_table_data %}

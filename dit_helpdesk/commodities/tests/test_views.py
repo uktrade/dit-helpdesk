@@ -14,7 +14,7 @@ from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _commodity_code_html
 from hierarchy.helpers import create_nomenclature_tree
-from rules_of_origin.models import Rule, RulesGroup, RulesGroupMember, RulesDocument
+from rules_of_origin.models import OldRule, OldRulesGroup, OldRulesGroupMember, OldRulesDocument
 
 logger = logging.getLogger(__name__)
 
@@ -125,10 +125,6 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
 
-    def test_commodity_detail_view_is_using_the_correct_template(self):
-        resp = self.client.get(self.url)
-        self.assertTemplateUsed(resp, "commodities/commodity_detail.html")
-
     def test_commodity_detail_template_has_the_correct_data(self):
         resp = self.client.get(self.url)
         self.assertInHTML(
@@ -151,13 +147,6 @@ class CommodityViewTestCase(TestCase):
         resp = self.client.get(self.url)
         self.assertEqual(
             resp.context["selected_origin_country_name"], settings.TEST_COUNTRY_NAME
-        )
-
-    def test_commodity_column_titles_are_correct(self):
-        resp = self.client.get(self.url)
-        self.assertEqual(
-            resp.context["column_titles"],
-            ["Country", "Measure type", "Value", "Conditions", "Start date"],
         )
 
     def test_commodity_detail_without_country_code(self):
@@ -199,9 +188,9 @@ class CommodityViewTestCase(TestCase):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
         commodity.save()
 
-        with patch.object(Commodity, "should_update_content") as mock_should_update_content, \
-            patch.object(Commodity, "update_content") as mock_update_content:
-            mock_should_update_content.return_value = True
+        with patch.object(Commodity, "should_update_tts_content") as mock_should_update_tts_content, \
+            patch.object(Commodity, "update_tts_content") as mock_update_tts_content:
+            mock_should_update_tts_content.return_value = True
 
             resp = self.client.get(
                 reverse(
@@ -215,34 +204,38 @@ class CommodityViewTestCase(TestCase):
             )
 
         self.assertEqual(resp.status_code, 200)
-        mock_should_update_content.assert_called_once()
-        mock_update_content.assert_called_once()
+        mock_should_update_tts_content.assert_called_once()
+        mock_update_tts_content.assert_called_once()
 
     def test_commodity_detail_with_rules_or_origin(self):
-        rules_group = mixer.blend(RulesGroup, description="test rules group")
+        country = Country.objects.get(country_code="AF")
+        country.has_uk_trade_agreement = True
+        country.save()
+
+        rules_group = mixer.blend(OldRulesGroup, description="test rules group")
         rules_group_member = mixer.blend(
-            RulesGroupMember,
-            rules_group=rules_group,
-            country=Country.objects.get(country_code="AF"),
+            OldRulesGroupMember,
+            old_rules_group=rules_group,
+            country=country,
         )
         rules_document = mixer.blend(
-            RulesDocument, description="test rules document", rules_group=rules_group
+            OldRulesDocument, description="test rules document", old_rules_group=rules_group
         )
 
-        rule = mixer.blend(Rule, rules_document=rules_document, chapter=self.chapter)
+        rule = mixer.blend(OldRule, old_rules_document=rules_document, chapter=self.chapter)
         resp = self.client.get(
             reverse(
                 "commodity-detail",
                 kwargs={
-                    "commodity_code": settings.TEST_COMMODITY_CODE,
-                    "country_code": "AF",
-                    "nomenclature_sid": 12345,
+                    "commodity_code": self.commodity.commodity_code,
+                    "country_code": country.country_code,
+                    "nomenclature_sid": self.commodity.goods_nomenclature_sid,
                 },
             )
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue("rules_of_origin" in resp.context)
-        self.assertTrue(resp.context["rules_of_origin"])
+        self.assertTrue("old_rules_of_origin" in resp.context)
+        self.assertTrue(resp.context["old_rules_of_origin"])
 
     def test_commodity_code_html_for_commodity(self):
         html = _commodity_code_html(self.commodity.commodity_code)

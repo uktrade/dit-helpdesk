@@ -76,21 +76,5 @@
 {% endblock %}
 
 {% block footer_additions %}
-    <script src="{% static 'js/location-autocomplete.min.js' %}"></script>
-    <script>
-        openregisterLocationPicker({
-            selectElement: document.getElementById('country-picker'),
-            url: '/assets/js/location-autocomplete-graph.json',
-            defaultValue: '',
-            displayMenu: 'overlay'
-        })
-
-        const input = document.querySelector('#country-picker')
-        input.setAttribute("role", "combobox")
-        input.setAttribute("aria-describedby", "country-picker__assistiveHint")
-
-        const wrapper = document.getElementsByClassName("autocomplete__wrapper")[0]
-        const hint = document.getElementById("country-picker__assistiveHint")
-        wrapper.appendChild(hint)
-    </script>
+    <script src="{% static 'js/location-autocomplete.js' %}"></script>
 {% endblock footer_additions %}

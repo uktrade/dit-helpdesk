@@ -1,19 +1,16 @@
 import os
 import sys
-import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import dj_database_url
 import ecs_logging
+from flags.state import flag_enabled
 
-from collections import namedtuple
+from .env import env
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
-
-env = environ.Env(DEBUG=(bool, False))
-env.read_env()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
@@ -25,16 +22,16 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 ADMIN_ENABLED = env.bool("ADMIN_ENABLED")
 
-CMS_ENABLED = env.bool("CMS_ENABLED", False)
-
-READ_ONLY = env.bool("READ_ONLY", True)
-
+READ_ONLY = True
+CMS_ENABLED = False
 
 # Feature flags
-UKGT_ENABLED = env.bool("UKGT_ENABLED", False)
-NI_JOURNEY_ENABLED = env.bool("NI_JOURNEY_ENABLED", False)
-GROUPED_SEARCH_ENABLED = env.bool("GROUPED_SEARCH_ENABLED", False)
-JAPAN_FTA_ENABLED = env.bool("JAPAN_FTA_ENABLED", False)
+FLAGS = {
+    "NI_JOURNEY": [],
+    "JAPAN_FTA": [],
+    "PRE21": [],
+    "EU_FALLBACK": [],
+}
 
 
 # Application definition
@@ -46,8 +43,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "elasticapm.contrib.django",
     "formtools",
+    "flags",
     "core",
     "commodities",
     "cookies",
@@ -71,12 +70,8 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
     "accessibility",
-    "cms",
+    "reversion",
 ]
-
-if READ_ONLY:
-    INSTALLED_APPS += ["readonly"]
-    SITE_READ_ONLY = True
 
 MIDDLEWARE = [
     "healthcheck.middleware.HealthCheckMiddleware",
@@ -88,9 +83,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
-    "core.middleware.CheckCountryUrlMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -224,22 +219,35 @@ AUTH_USER_MODEL = "user.User"
 FEEDBACK_MAX_LENGTH = 1000
 CONTACT_MAX_LENGTH = 1000
 
+# Trade Tariff
+
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
-TRADE_TARIFF_API_BASE_URL = "https://www.trade-tariff.service.gov.uk/api/v2/{0}"
-
-# We don't have this at the section level due to not requiring any information from the trade tariff service at this level
-CHAPTER_URL = "https://www.trade-tariff.service.gov.uk/api/v1/chapters/{0}"
-HEADING_URL = "https://www.trade-tariff.service.gov.uk/api/v1/headings/{0}"
-# We don't have this at the sub-heading level as there is no concept of a sub-heading in trade tariff in the same way
-# that we have it as a separate model
-COMMODITY_URL = "https://www.trade-tariff.service.gov.uk/api/v1/commodities/{0}"
+TRADE_TARIFF_CONFIG = {
+    "UK": {
+        "TREE": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+        },
+        "JSON_OBJ": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+        }
+    },
+    "EU": {
+        "TREE": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+        },
+        "JSON_OBJ": {
+            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+        }
+    }
+}
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
-RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
+OLD_RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
+RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
@@ -394,6 +402,14 @@ EU_COUNTRY_CODES = [
     "SE",
 ]
 
+COUNTRIES_TO_REMOVE = ["XC", "XL"]
+# Example:
+# {
+#     "EU": ["Europe (France)", "République française"],
+#     "DE": ["Deutschland"],
+# }
+COUNTRY_SYNONYMS = {}
+
 HIERARCHY_MODEL_MAP = {
     "Commodity": {"file_name": "prepared/commodities.json", "app_name": "commodities"},
     "Chapter": {"file_name": "prepared/chapters.json", "app_name": "hierarchy"},
@@ -409,19 +425,24 @@ SECONDARY_REGION = 'EU'
 MIGRATION_LINTER_OVERRIDE_MAKEMIGRATIONS = True
 
 SUPPORTED_TRADE_SCENARIOS = (
-    "ANDEAN-COUNTRIES",
-    "EU-AGR-SIGNED-LINK",
-    "EU-AGR-SIGNED-NO-LINK",
-    "EU-MEMBER",
-    "EU-NOAGR-FOR-EXIT",
-    "ICELAND-NORWAY",
+    "ANDEAN_COUNTRIES",
+    "ANDEAN_COUNTRIES_RATIFIED",
+    "EU_AGR_SIGNED_LINK",
+    "EU_AGR_SIGNED_NO_LINK",
+    "EU_MEMBER",
+    "EU_NOAGR_FOR_EXIT",
+    "ICELAND_NORWAY",
     "JP",
     "WTO",
     "AUSTRALIA",
-    "NEW-ZEALAND",
+    "NEW_ZEALAND",
     "US",
 )
 
 AGREEMENTS = [
-    ("JP", JAPAN_FTA_ENABLED),
+    ("JP", lambda: flag_enabled("JAPAN_FTA")),
 ]
+
+ROO_S3_BUCKET_NAME = env.str('ROO_S3_BUCKET_NAME', '')
+ROO_S3_ACCESS_KEY_ID = env.str('ROO_S3_ACCESS_KEY_ID', '')
+ROO_S3_SECRET_ACCESS_KEY = env.str('ROO_S3_SECRET_ACCESS_KEY', '')

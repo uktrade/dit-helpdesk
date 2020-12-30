@@ -1,0 +1,6 @@
+{% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=taxes_table_data %}
+{% if has_multiple_vat_entries %}
+    <p class="govuk-body govuk-!-margin-top-3">
+        <a class="govuk-link" href="https://www.gov.uk/guidance/rates-of-vat-on-different-goods-and-services#introduction">Please see guidance for when zero rate VAT applies</a>.
+    </p>
+{% endif %}

@@ -1,0 +1,25 @@
+{% extends "cms/regulations/base.html" %}
+
+{% block main %}
+    <form class="govuk-form-group{% if form.errors %} govuk-form-group--error{% endif %}" method="post">
+        {% csrf_token %}
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                <h4 class="govuk-fieldset__heading">
+                    Add new regulation group
+                </h4>
+            </legend>
+
+            {% include "core/forms/_text_input.html" with field=form.title %}
+
+            <div class="govuk-!-margin-top-6">
+                <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
+                    Save
+                </button>
+                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'cms:regulation-groups-list' %}">
+                    Cancel
+                </a>
+            </div>
+        </fieldset>
+    </form>
+{% endblock%}

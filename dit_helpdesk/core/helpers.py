@@ -9,6 +9,10 @@ from django.conf import settings
 from django.http import Http404
 from django.test import override_settings
 from django.urls import clear_url_caches
+from django.db.models import Q
+
+
+always_true_Q = ~Q(pk__in=[])
 
 
 class Timer:
@@ -48,18 +52,6 @@ def reset_urls_for_settings(urlconf=None, **kwargs):
     reload_urls(urlconf)
 
 
-def require_feature(feature_switch):
-    def decorator(func):
-        @wraps(func)
-        def inner(request, *args, **kwargs):
-            if not getattr(settings, feature_switch, False):
-                raise Http404
-
-            return func(request, *args, **kwargs)
-        return inner
-    return decorator
-
-
 def _is_importer_journey(request):
     host = request.META.get('HTTP_HOST')
 
@@ -67,3 +59,23 @@ def _is_importer_journey(request):
         return True
 
     return False
+
+
+def flatten(list_of_lists):
+    return [
+        item
+        for inner_list in list_of_lists
+        for item in inner_list
+    ]
+
+
+def unique_maintain_order(iterable):
+    out = []
+    seen = set()
+
+    for val in iterable:
+        if val not in seen:
+            out.append(val)
+            seen.add(val)
+
+    return out

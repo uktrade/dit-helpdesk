@@ -1,0 +1,125 @@
+{% load dotted_format %}
+
+<div id="tariffs_and_taxes" class="govuk-!-margin-bottom-9">
+    <h2 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+        <a name="tariffs_and_taxes"></a>Tariffs and taxes - {{ commodity.commodity_code|dotted_format }}
+    </h2>
+
+    <div class="govuk-caption-m ">
+        <p class="govuk-body-s helpdesk-caption"><span class="helpdesk-direction__left-to-right">{{ selected_origin_country_name }}</span> Northern Ireland</p>
+    </div>
+
+    <p class="govuk-body">
+        When bringing goods into Northern Ireland from outside the UK and the EU, you will pay the UK duty rate if your goods are not ‘at risk’ of onward movement to the EU. However, goods ‘at risk’ of entering the EU’s single market will pay EU tariffs.
+    </p>
+
+    <p class="govuk-body">
+        Guidance is available on <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021#when-goods-are-not-at-risk-of-onward-movement-to-the-eu">when goods are not at risk</a>, how <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021#goods-being-brought-into-northern-ireland-for-commercial-processing">commercial processing within Northern Ireland</a> is defined and <a class="govuk-link" href="https://www.gov.uk/guidance/apply-for-authorisation-for-the-uk-trader-scheme-if-you-bring-goods-into-northern-ireland-from-1-january-2021">registration for the UK Trader Scheme</a>. Guidance on any tariff waivers will follow shortly.
+    </p>
+
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-tariffs-and-charges">
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
+                        UK tariffs
+                    </span>
+                </h2>
+            </div>
+            <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
+                <p class="govuk-body">
+                    When bringing goods into Northern Ireland from outside the UK and the EU, you will pay the UK duty rate if your goods are <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021">not ‘at risk’ of onward movement to the EU</a>. Goods ‘at risk’ of entering the EU’s single market will pay EU tariffs.
+                </p>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021">Read guidance on whether goods are ‘at risk’ or not</a>.
+                </p>
+
+                {% if ukgt_enabled %}
+                    <div class="govuk-!-margin-bottom-6">
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Current tariffs
+                        </h3>
+                        {% include "hierarchy/_tariffs_and_taxes_how_to_value_goods.html" %}
+                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                        {% include "commodities/_tariffs.html" %}
+                    </div>
+
+                    <div class="govuk-!-margin-bottom-6">
+                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+                            Tariffs after 1 January 2021
+                        </h3>
+                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
+                        {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
+                            {% include "hierarchy/_tariffs_and_taxes_ukgt_future_table_data.html" with global_tariff_data=global_tariff_data.result %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="govuk-!-margin-bottom-6">
+                        {% include "commodities/_tariffs.html" %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-uk-tariffs-and-charges-heading">
+                        EU tariffs
+                    </span>
+                </h2>
+            </div>
+            <div id="accordion-uk-tariffs-and-charges-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-tariffs-and-charges-heading">
+                {% if eu_fallback_enabled %}
+                    <p class="govuk-body">
+                        Tariff data for the EU is temporarily unavailable from HMRC. In the short term, please check the <a class="govuk-link" href="{{ eu_other_measures_link }}">EU's Access2Markets for this commodity</a>.
+                    </p>
+                {% else %}
+                    <p class="govuk-body">
+                        EU tariffs may apply where goods are exported to Northern Ireland for use in the EU (including Ireland), or are considered ‘at risk’ of being exported to the EU. These are shown in the table.
+                    </p>
+                    {% if is_meursing_code %}
+                        <p class="govuk-body">
+                            Meursing codes are used in the EU to apply variable specific duties to compound agri-goods (such as confectionery and bakery products), depending on the relative content of sugar, flour and milk starch in the product being imported.
+                        </p>
+                        <p class="govuk-body">
+                            You will need to work out the additional code using the <a class="govuk-link" href="https://www.gov.uk/additional-commodity-code">Meursing code tool</a>. To calculate the duty rate, enter the meursing code (without the 7 at the start) into the <a class="govuk-link" href="{{ meursing_calculator_link }}">Meursing calculator</a> to find variable duty elements such as AE, ADFM and ADSZ.
+                        </p>
+                    {% endif %}
+
+                    <div class="govuk-!-margin-bottom-6">
+                        {% include "hierarchy/_tariffs_and_taxes_table.html" with column_titles=column_titles table_data=eu_tariffs_and_taxes_table_data %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="govuk-accordion__section">
+            <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button govuk-!-font-size-24" id="accordion-taxes-heading">
+                        Taxes
+                    </span>
+                </h2>
+            </div>
+            <div id="accordion-taxes-content" class="govuk-accordion__section-content" aria-labelledby="accordion-taxes-heading">
+                <p class="govuk-body">
+                    The tax information in the table below is for UK taxes only. In certain circumstances, EU taxes may apply instead.
+                </p>
+
+                <div class="govuk-!-margin-bottom-6">
+                    {% include "commodities/_taxes.html" %}
+                </div>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/government/publications/accounting-for-vat-on-goods-moving-between-great-britain-and-northern-ireland-from-1-january-2021">VAT rules under the Northern Ireland Protocol</a>
+                </p>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/government/publications/moving-excise-goods-as-freight-under-the-northern-ireland-protocol-from-1-january-2021">Moving excise goods as freight under the Northern Ireland Protocol from 1 January 2021</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

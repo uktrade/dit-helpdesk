@@ -1,0 +1,45 @@
+{% extends "cms/regulations/base.html" %}
+
+{% block nav %}
+    <nav class="govuk-width-container govuk-grid-row">
+        <a href="{% url 'cms:regulation-groups-list' %}" class="govuk-back-link">Back</a>
+    </nav>
+{% endblock %}
+
+{% block main %}
+    <h2 class="govuk-heading-m">{{ regulationgroup.title }}</h2>
+
+    <div class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item{% if selected_panel == "regulations" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "regulations" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-detail' pk=regulationgroup.pk %}">
+                    Regulations
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item{% if selected_panel == "chapters" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "chapters" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-chapter-list' pk=regulationgroup.pk %}">
+                    Chapters
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item{% if selected_panel == "headings" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "headings" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-heading-list' pk=regulationgroup.pk %}">
+                    Headings
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item{% if selected_panel == "subheadings" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "subheadings" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-subheading-list' pk=regulationgroup.pk %}">
+                    Subheadings
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item{% if selected_panel == "commodities" %} govuk-tabs__list-item--selected{% endif %}">
+                <a class="govuk-tabs__tab{% if selected_panel == "commodities" %} govuk-tabs__tab--selected{% endif %}" href="{% url 'cms:regulation-group-commodity-list' pk=regulationgroup.pk %}">
+                    Commodities
+                </a>
+            </li>
+        </ul>
+        <div class="govuk-tabs__panel">
+            {% block panel_heading %}{% endblock %}
+            {% block panel_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

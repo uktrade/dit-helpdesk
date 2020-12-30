@@ -50,3 +50,17 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR + "/app-messages"
 
 FEEDBACK_DESTINATION_EMAIL = env.str("FEEDBACK_DESTINATION_EMAIL")
+
+READ_ONLY = env.bool("READ_ONLY", True)
+if READ_ONLY:
+    INSTALLED_APPS += ["readonly"]
+    SITE_READ_ONLY = True
+
+CMS_ENABLED = env.bool("CMS_ENABLED", False)
+if CMS_ENABLED:
+    INSTALLED_APPS += ["cms"]
+
+AWS_ALT_TARIFF_BUCKET_NAME = env.str("AWS_ALT_TARIFF_BUCKET_NAME")
+AWS_REGION = env.str("AWS_REGION")
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")

@@ -1,370 +1,165 @@
 import logging
 import os
+import datetime as dt
+
+from unittest import mock
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.core.management import call_command
+
 from mixer.backend.django import mixer
 
-from hierarchy.models import Chapter, Heading, Section
+from freezegun import freeze_time
+
+from hierarchy.models import Chapter, Heading
 from hierarchy.helpers import create_nomenclature_tree
-from rules_of_origin.RulesOfOriginImporter import RulesOfOriginImporter
+from countries.models import Country
 from rules_of_origin.models import (
+    RulesDocument,
     Rule,
-    RuleItem,
-    RulesGroup,
-    RulesGroupMember,
+    SubRule,
     RulesDocumentFootnote,
 )
-from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
+from rules_of_origin.ingest.importer import InvalidDocumentException
+
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
+apps_dir = settings.APPS_DIR
+test_data_path = os.path.join(
+    apps_dir, 'rules_of_origin', 'data', 'test_import', 'SAMPLE_FTA.xml'
+)
+
+
+def _just10(val):
+    return val.ljust(10, '0')
+
+
+@override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path)
 class ImporterTestCase(TestCase):
     """
     Test Rules of Origin Importer
     """
 
-    def test_load(self):
-        importer = RulesOfOriginImporter()
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Autonomous_Trade_Preferences.json"
-        )
-        importer.load(input_file=path, priority=1)
-        self.assertEqual(len(importer.data.keys()), 97)
-        logger.info(importer.rules_groups)
-        self.assertTrue("AUTONOMOUS_TRADE_PREFERENCES" in importer.rules_groups.keys())
-        self.assertEqual(len(importer.rules_documents.keys()), 9)
-        self.assertEqual(importer.working_group_name, "AUTONOMOUS_TRADE_PREFERENCES")
-        self.assertEqual(importer.current_chapter_code, None)
-        self.assertEqual(importer.priority, 1)
-        self.assertEqual(importer.footnotes, {})
+    def setUp(self):
+        self.country = mixer.blend(Country, name='Test Country', country_code='TC')
 
-    fixtures = ["../../countries/fixtures/countries_data.json"]
+        self.tree = create_nomenclature_tree()
 
-    def test_instance_builder(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Autonomous_Trade_Preferences.json"
-        )
-        logger.info(os.path.isfile(path))
-        logger.info(path)
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 328)
-        self.assertEqual(RuleItem.objects.count(), 476)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        for model_class in (Chapter, Heading):
+            mixer.register(model_class, nomenclature_tree=self.tree)
 
-    def test_instance_builder_for_existing_items(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_Cariforum.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 438)
-        self.assertEqual(RuleItem.objects.count(), 581)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 14)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_Cariforum.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 438)
-        self.assertEqual(RuleItem.objects.count(), 581)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 14)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        self.chapter1 = mixer.blend(Chapter, chapter_code=_just10('01'))
 
-    def test_instance_builder_for_existing_items_with_hierarchy(self):
-        tree = create_nomenclature_tree('UK')
-
-        section = mixer.blend(Section, section_id=1, nomenclature_tree=tree)
-
-        chapters = mixer.cycle(3).blend(
-            Chapter,
-            chapter_code=(x for x in ["0100000000", "0200000000", "0300000000"]),
-            section=section, nomenclature_tree=tree
-        )
-
-        headings = mixer.cycle(4).blend(
+        self.chapter4 = mixer.blend(Chapter, chapter_code=_just10('04'))
+        self.heading0403 = mixer.blend(
             Heading,
-            heading_code=(
-                x for x in ["0304000000", "0305000000", "0306000000", "0307000000"]
-            ),
-            chapter=chapters[2],
-            nomenclature_tree=tree,
+            heading_code=_just10('0403'),
+            heading_code_4='0403',
+            chapter=self.chapter4
         )
 
-        # model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
-        # builder = HierarchyBuilder()
-        #
-        # builder.data_scanner(model_names)
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_Cariforum.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 438)
-        self.assertEqual(RuleItem.objects.count(), 581)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 14)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
-
-    def test_instance_builder_EPA_Eastern_and_Southern_Africa(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/EPA_Eastern_and_Southern_Africa.json"
+        self.chapter13 = mixer.blend(Chapter, chapter_code=_just10('13'))
+        self.heading1302 = mixer.blend(
+            Heading,
+            heading_code=_just10('1302'),
+            heading_code_4='1302',
         )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 271)
-        self.assertEqual(RuleItem.objects.count(), 285)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 4)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
 
-    def test_instance_builder_EPA_Market_Access_Regulation(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/EPA_Market_Access_Regulation.json"
+        start_code_int = 1507
+        self.chapter15 = mixer.blend(Chapter, chapter_code=_just10('15'))
+        mixer.cycle(9).blend(
+            Heading,
+            heading_code=(_just10(str(start_code_int + inc)) for inc in range(9)),
+            heading_code_4=(str(start_code_int + inc) for inc in range(9)),
+            chapter=self.chapter15,
         )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 445)
-        self.assertEqual(RuleItem.objects.count(), 573)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 4)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
 
-    def test_instance_builder_EPA_pacific(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/EPA_pacific.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 281)
-        self.assertEqual(RuleItem.objects.count(), 299)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 3)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+    def test_import_roo(self):
+        call_command('import_rules_of_origin')
 
-    def test_instance_builder_EPA_South_African_Development_Community_SADC(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/EPA_South_African_Development_Community_SADC.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 282)
-        self.assertEqual(RuleItem.objects.count(), 327)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 5)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        self.assertEqual(RulesDocument.objects.count(), 1)
+        self.assertEqual(Rule.objects.count(), 6)
+        self.assertEqual(SubRule.objects.count(), 5)
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
 
-    def test_instance_builder_Euro_Mediterranean_Free_Trade_Area(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Euro-Mediterranean_Free_Trade_Area.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 435)
-        self.assertEqual(RuleItem.objects.count(), 516)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 9)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        rules_document = RulesDocument.objects.first()
+        self.assertIn(self.country, rules_document.countries.all())
 
-    def test_instance_builder_FTA_Canada(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/FTA_Canada.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 269)
-        self.assertEqual(RuleItem.objects.count(), 269)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        rule1 = self.chapter1.rules_of_origin.first()
+        self.assertEqual(rule1.description, 'Live animals')
+        self.assertFalse(rule1.is_exclusion)
+        self.assertFalse(rule1.subrules.exists())
 
-    def test_instance_builder_FTA_Central_America(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/FTA_Central_America.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 292)
-        self.assertEqual(RuleItem.objects.count(), 327)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 6)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        rule4 = self.chapter4.rules_of_origin.first()
+        self.assertTrue(rule4.is_exclusion)
 
-    def test_instance_builder_FTA_Chile_Mexico(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/FTA_Chile_-_Mexico.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 330)
-        self.assertEqual(RuleItem.objects.count(), 465)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 2)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        rule0403 = self.heading0403.rules_of_origin.first()
+        self.assertFalse(rule0403.is_exclusion)
 
-    def test_instance_builder_FTA_Colombia_Ecuador_and_Peru(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/FTA_Colombia,_Ecuador_and_Peru.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 425)
-        self.assertEqual(RuleItem.objects.count(), 613)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 3)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        rule_multiple = Rule.objects.get(code='1507 to 1515')
+        self.assertEqual(rule_multiple.headings.count(), 9)
 
-    def test_instance_builder_FTA_Deep_and_Comprehensive_Trade_Agreement(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/FTA_Deep_and_Comprehensive_Trade_Agreement.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 271)
-        self.assertEqual(RuleItem.objects.count(), 307)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 3)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+    def test_import_roo__invalid_country(self):
+        Country.objects.all().delete()
 
-    def test_instance_builder_FTA_European_Economic_Area_EEA(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/FTA_European_Economic_Area_EEA.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 263)
-        self.assertEqual(RuleItem.objects.count(), 288)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 4)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        with self.assertRaises(InvalidDocumentException):
+            call_command('import_rules_of_origin')
 
-    def test_instance_builder_FTA_Japan(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/FTA_Japan.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 194)
-        self.assertEqual(RuleItem.objects.count(), 263)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        self.assertFalse(RulesDocument.objects.exists())
+        self.assertFalse(Rule.objects.exists())
+        self.assertFalse(SubRule.objects.exists())
+        self.assertFalse(RulesDocumentFootnote.objects.exists())
 
-    def test_instance_builder_FTA_Singapore(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/FTA_Singapore.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 247)
-        self.assertEqual(RuleItem.objects.count(), 295)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+    @freeze_time('2020-12-30')
+    def test_get_rules__pre_start_date(self):
+        call_command('import_rules_of_origin')
 
-    def test_instance_builder_FTA_South_Korea(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/FTA_South_Korea.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 340)
-        self.assertEqual(RuleItem.objects.count(), 357)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        h1509 = Heading.objects.get(heading_code_4='1509')
 
-    def test_instance_builder_Generalised_System_of_Preferences(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Generalised_System_of_Preferences.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 264)
-        self.assertEqual(RuleItem.objects.count(), 311)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 59)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
+            mock_context_ids.return_value = (
+                self.chapter15.id, h1509.id, None, None)
+            roo_data = h1509.get_rules_of_origin(
+                country_code='TC', starting_before=dt.datetime.now())
 
-    def test_instance_builder_GSP_Plus(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format("import/GSP_Plus.json")
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 264)
-        self.assertEqual(RuleItem.objects.count(), 311)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 6)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        self.assertFalse(roo_data)
 
-    def test_instance_builder_Overseas_Countries_and_Territories(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Overseas_Countries_and_Territories.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 205)
-        self.assertEqual(RuleItem.objects.count(), 211)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 22)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+    @freeze_time('2021-01-01')
+    def test_get_rules__post_start_date(self):
+        call_command('import_rules_of_origin')
 
-    def test_instance_builder_Pan_Euro_Mediterranean_Convention(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Pan-Euro-Mediterranean_Convention.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 267)
-        self.assertEqual(RuleItem.objects.count(), 312)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 13)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        h1509 = Heading.objects.get(heading_code_4='1509')
 
-    def test_instance_builder_Specific_Measures_Jordan(self):
-        path = settings.RULES_OF_ORIGIN_DATA_PATH.format(
-            "import/Specific_Measures_-_Jordan.json"
-        )
-        importer = RulesOfOriginImporter()
-        importer.load(input_file=path, priority=1)
-        importer.instance_builder()
-        self.assertEqual(Rule.objects.count(), 429)
-        self.assertEqual(RuleItem.objects.count(), 703)
-        self.assertEqual(RulesGroup.objects.count(), 1)
-        self.assertEqual(RulesGroupMember.objects.count(), 1)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 0)
+        with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
+            mock_context_ids.return_value = (
+                self.chapter15.id, h1509.id, None, None)
+            roo_data = h1509.get_rules_of_origin(country_code='TC')
 
-    def test_normalise_commodity_code(self):
-        importer = RulesOfOriginImporter()
-        code = importer.normalise_commodity_code({"commodity_id": "101210000"})
-        self.assertEqual(code, "0101210000")
-        code = importer.normalise_commodity_code({"commodity_id": "0101210000"})
-        self.assertEqual(code, "0101210000")
+        self.assertTrue(roo_data)
 
-    def test_text_sanitiser(self):
-        importer = RulesOfOriginImporter()
-        test = importer.text_sanitiser("some text with one of these\uf0b7in the middle")
-        self.assertEqual(test, "some text with one of these&#45;in the middle")
+    @freeze_time('2021-01-01')
+    def test_ex_inheritance(self):
+        call_command('import_rules_of_origin')
 
-    def test_rename_key(self):
-        importer = RulesOfOriginImporter()
+        h1509 = Heading.objects.get(heading_code_4='1509')
 
-        old_dict = {}
-        old_key = "old_key"
-        old_dict[old_key] = 1
-        new_dict = importer.rename_key(old_dict, old_key, "new_key")
-        self.assertTrue("new_key" in new_dict.keys())
+        with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
+            mock_context_ids.return_value = (
+                self.chapter15.id, h1509.id, None, None)
+            roo_data = h1509.get_rules_of_origin(country_code='TC')
+
+        roo_data = roo_data['FTA Test Country']
+
+        rules = roo_data['rules']
+        # confirm that an 'ex Chapter' is not returned as a rule
+        self.assertEquals(len(rules), 1)
+
+        rule = rules[0]
+        self.assertTrue(rule.headings.exists())
+        self.assertFalse(rule.is_exclusion)
+        self.assertFalse(rule.chapters.exists())

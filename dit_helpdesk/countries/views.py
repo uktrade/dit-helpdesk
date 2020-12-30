@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
+from django.views import View
 from django.views.generic.base import TemplateView
 
 from .models import Country
@@ -9,7 +10,12 @@ from .models import Country
 def _has_agreement(country_code):
     agreements = dict(settings.AGREEMENTS)
 
-    return agreements.get(country_code, False)
+    has_agreement = agreements.get(country_code, False)
+
+    if callable(has_agreement):
+        has_agreement = has_agreement()
+
+    return has_agreement
 
 
 class ChooseCountryView(TemplateView):
@@ -97,3 +103,52 @@ class CountryInformationView(TemplateView):
         ctx["other_information_template_name"] = self._get_template_name(country, "other_information")
 
         return ctx
+
+
+class LocationAutocompleteView(View):
+
+    def _get_country_graph_item(self, country):
+        return {
+            "names": {
+                "en-GB": country.name,
+            },
+            "meta": {
+                "canonical": True,
+                "canonical-mask": 1,
+                "stable-name": True,
+            },
+            "edges": {
+                "from": [],
+            },
+        }
+
+    def _get_country_graph_synonym_item(self, country, synonym):
+        return {
+            "names": {
+                "en-GB": synonym,
+            },
+            "meta": {
+                "canonical": False,
+                "canonical-mask": 1,
+                "stable-name": True,
+            },
+            "edges": {
+                "from": [country.country_code.lower()],
+            },
+        }
+
+    def get(self, request):
+        to_remove = settings.COUNTRIES_TO_REMOVE
+
+        countries = Country.objects.exclude(country_code__in=to_remove)
+
+        response = {}
+        for country in countries:
+            country_code = country.country_code
+            response[country_code.lower()] = self._get_country_graph_item(country)
+
+            synonyms = settings.COUNTRY_SYNONYMS.get(country_code, [])
+            for synonym in synonyms:
+                response[f"nym:{synonym.lower()}"] = self._get_country_graph_synonym_item(country, synonym)
+
+        return JsonResponse(response)

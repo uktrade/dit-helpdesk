@@ -1,12 +1,13 @@
 import logging
 import re
+import requests
+
 from datetime import datetime
 
 from django.db import connection
-from django.template import loader, Context
+from django.template import loader
 from dateutil.parser import parse as parse_dt
 from django.conf import settings
-from django.urls import reverse
 
 from countries.models import Country
 
@@ -14,7 +15,6 @@ logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
-DUTY_HTML_REGEX = r"<span.*>\s?(?P<duty>\d[\d\.]*?)\s?</span>"
 
 COMMODITY_DETAIL_TABLE_KEYS = [
     ("country", "Country"),
@@ -26,48 +26,36 @@ COMMODITY_DETAIL_TABLE_KEYS = [
 ]
 
 
-class CommodityJson(object):
-    def __init__(self, di):
+class BaseCommodityJson:
+    def __init__(self, commodity_obj, di):
+        self.commodity_obj = commodity_obj
         self.di = di
-
-    def __repr__(self):
-        return "CommodityJson"
 
     @property
     def title(self):
-        return self.di["description"]
+        return self.di["formatted_description"].replace("&nbsp;", " ").strip()
 
     @property
     def code(self):
         return self.di["goods_nomenclature_item_id"]
 
     @property
-    def chapter_note(self):
-        return self.di["chapter"]["chapter_note"]
+    def footnotes(self):
+        if "footnotes" not in self.di:
+            return []
+
+        return self.di["footnotes"]
 
     @property
-    def chapter_title(self):
-        return self.di["chapter"]["formatted_description"]
-
-    @property
-    def section_position(self):
-        return self.di["section"]["position"]
-
-    @property
-    def duty_rate(self):
-        duty_html = self.di["basic_duty_rate"]
-        match = re.search(DUTY_HTML_REGEX, duty_html, flags=re.I)
-        if match is None:
-            return None
-        return float(match.groupdict()["duty"])  # percentage
+    def is_meursing_code(self):
+        return self.di.get("meursing_code", False)
 
     def get_import_measures(self, origin_country, vat=None, excise=None):
-
         if "import_measures" not in self.di:
             return []
 
         measures = [
-            ImportMeasureJson(d, self.code, self.title, origin_country)
+            ImportMeasureJson(self.commodity_obj, d, self.code, self.title, origin_country)
             for d in self.di["import_measures"]
         ]
 
@@ -85,7 +73,6 @@ class CommodityJson(object):
         return measures
 
     def get_import_measure_by_id(self, measure_id, country_code=None):
-
         measures = [
             measure
             for measure in self.get_import_measures(country_code)
@@ -94,13 +81,41 @@ class CommodityJson(object):
 
         return measures[0] if len(measures) == 1 else None
 
+
+class CommodityJson(BaseCommodityJson):
+
+    def __repr__(self):
+        return "CommodityJson"
+
     @property
-    def footnotes(self):
-        return self.di["footnotes"]
+    def title(self):
+        return self.di["description"]
+
+    @property
+    def chapter_note(self):
+        return self.di["chapter"]["chapter_note"]
 
 
-class ImportMeasureJson(object):
-    def __init__(self, di, commodity_code, commodity_title, country_code):
+class ChapterJson(BaseCommodityJson):
+
+    @property
+    def chapter_note(self):
+        if self.di and "chapter_note" in self.di.keys():
+            return self.di["chapter_note"]
+        return ""
+
+
+class HeadingJson(BaseCommodityJson):
+    pass
+
+
+class SubHeadingJson(BaseCommodityJson):
+    pass
+
+
+class ImportMeasureJson:
+    def __init__(self, commodity_obj, di, commodity_code, commodity_title, country_code):
+        self.commodity_obj = commodity_obj
         self.di = di
         self.commodity_code = commodity_code
         self.commodity_title = commodity_title
@@ -109,70 +124,19 @@ class ImportMeasureJson(object):
 
     def get_commodity_sid(self):
         """
-        get nomenclature sid direct from db. used by vue__conditions_html and vue__quota_html to build the correct url
+        get nomenclature sid. used by conditions_html and quota_html to build the correct url
         for modal fallback page
         :return:
         """
 
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT goods_nomenclature_sid "
-                "FROM commodities_commodity "
-                "WHERE commodity_code = %s "
-                "AND description = %s",
-                [self.commodity_code, self.commodity_title.replace("|", "")],
-            )
-            row = cursor.fetchone()
-        if not row:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT goods_nomenclature_sid, description "
-                    "FROM commodities_commodity "
-                    "WHERE commodity_code = %s",
-                    [self.commodity_code],
-                )
-                row = cursor.fetchone()
-        return row
-
-    @classmethod
-    def get_date(cls, di, key):
-        dt_str = di.get(key)
-        if dt_str is None:
-            return None
-        return parse_dt(dt_str)
+        return self.commodity_obj.goods_nomenclature_sid
 
     def __repr__(self):
         return "ImportMeasureJson %s %s" % (self.commodity_code, self.type_id)
 
     @property
-    def is_import(self):
-        return self.di["import"]
-
-    @property
     def origin(self):
         return self.di["origin"]  # e.g. "uk"
-
-    @property
-    def effective_start_date(self):
-        return self.get_date(self.di, "effective_start_date")
-
-    @property
-    def effective_end_date(self):
-        return self.get_date(self.di, "effective_end_date")
-
-    @property
-    def geographical_area(self):
-        """"
-        one GA per measure
-        if everywhere in the world outside the EU return ERGA OMNES
-
-        """
-
-        if self.di["geographical_area"]["description"] == "ERGA OMNES":
-            return "ERGA OMNES"
-        # NOTE: when filtering by a GA, you will need to search
-        # both the top-level and any children in case the country exists
-        # import pdb; pdb.set_trace()
 
     @property
     def type_id(self):
@@ -196,15 +160,6 @@ class ImportMeasureJson(object):
         return self.di["measure_id"]
 
     @property
-    def conditions_summary(self):
-        """
-        list of conditions (e.g. you can import if you have document X)
-        other keys: 'condition_code', 'condition', 'document_code', '
-        requirement', 'action', 'duty_expression'
-        """
-        return [di["condition"] for di in self.di["measure_conditions"]]
-
-    @property
     def excluded_country_area_ids(self):
         return [di["geographical_area_id"] for di in self.di["excluded_countries"]]
 
@@ -217,16 +172,20 @@ class ImportMeasureJson(object):
         return self.di["excise"]
 
     @property
-    def order_number_definition_summary(self):
-        if not self.di.get("order_number"):
-            return None
-        status = self.di["order_number"]["definition"]["status"]
-        description = self.di["order_number"]["definition"]["description"]
-        return status, description
-
-    @property
     def num_conditions(self):
         return len(self.di["measure_conditions"])
+
+    @property
+    def geographical_area_description(self):
+        geographical_area_description = self.di["geographical_area"]["description"]
+        if self.di["geographical_area"]["id"][0].isalpha():
+            geographical_area_description = geographical_area_description + " (%s)" % self.di["geographical_area"]["id"]
+
+        return geographical_area_description
+
+    @property
+    def is_gsp(self):
+        return self.geographical_area_description.startswith("GSP")
 
     def is_relevant_for_origin_country(self, origin_country_code):
         geo_area = self.di["geographical_area"]
@@ -248,25 +207,14 @@ class ImportMeasureJson(object):
         return False
 
     @property
-    def vue__legal_base_html(self):
-
-        if not self.di.get("legal_acts", []):  # todo: make this a property method
-            return "-"
-        hrefs = []
-        for d in self.di["legal_acts"]:
-            reg_url, reg_code = d["regulation_url"], d["regulation_code"]
-            hrefs.append('<a href="%s">%s</a>' % (reg_url, reg_code))
-        return ", ".join(hrefs)
-
-    @property
-    def vue__conditions_html(self):
+    def conditions_html(self):
 
         if not self.num_conditions:
             html = "-"
         else:
             commodity_sid = self.get_commodity_sid()
             url = "{0}/import-measure/{1}/conditions".format(
-                commodity_sid[0], self.measure_id
+                commodity_sid, self.measure_id
             )
             modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
             html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
@@ -280,7 +228,7 @@ class ImportMeasureJson(object):
 
     def get_modal(self, modal_id, modal_body):
         template = loader.get_template("core/modal_base.html")
-        country = Country.objects.get(country_code=self.country_code)
+        country = Country.objects.get(country_code=self.country_code.upper())
         context = {
             "modal_id": modal_id,
             "modal_body": modal_body,
@@ -335,28 +283,8 @@ class ImportMeasureJson(object):
         rendered = template.render(context)
         return rendered
 
-    @property
-    def vue__footnotes_html(self):
-        # {'code': 'CD550', 'description': 'Eligibility to benefit from this tariff quota shall be subject to the
-        # presentation of an import licence AGRIM and a declaration of origin issued in accordance with Regulation
-        # (EU) 2017/1585.', 'formatted_description': 'Eligibility to benefit from this tariff quota shall be subject
-        # to the presentation of an import licence AGRIM and a declaration of origin issued in accordance with
-        # Regulation (EU) 2017/1585.'}
-        if not self.di["footnotes"]:
-            return "-"
-
-        hrefs = []
-        for d in self.di["footnotes"]:
-            code, url = d["code"], "#"
-            hrefs.append('<a href="%s">%s</a>' % (url, code))
-        return ", ".join(hrefs)
-
     def get_table_dict(self):
-
-        country = self.di["geographical_area"]["description"]
-
-        if self.di["geographical_area"]["id"][0].isalpha():
-            country = country + " (%s)" % self.di["geographical_area"]["id"]
+        country = self.geographical_area_description
 
         try:
             measure_description = (
@@ -367,7 +295,7 @@ class ImportMeasureJson(object):
             measure_description = self.di["measure_type"]["description"]
 
         if self.di["order_number"]:
-            order_str = self.vue__quota_html()
+            order_str = self.quota_html()
             measure_description = measure_description + "\n" + order_str
 
         measure_value = self.di["duty_expression"]["base"]
@@ -384,21 +312,19 @@ class ImportMeasureJson(object):
         return {
             "country": country,
             "measure_description": measure_description,
-            "conditions_html": self.vue__conditions_html,
+            "conditions_html": self.conditions_html,
             "measure_value": measure_value,
             "excluded_countries": excluded_countries,
             "start_end_date": start_end_date,
-            "legal_base_html": self.vue__legal_base_html,
-            "footnotes_html": self.vue__footnotes_html,
         }
 
-    def vue__quota_html(self):
+    def quota_html(self):
         """
         generate an html link for quota order number that supports javascript enable modal and no javascript backup
         also generates the matching modal html and appends it to a class dictionary variable
         :return: the html of the link
         """
-        commodity_sid = self.get_commodity_sid()[0]
+        commodity_sid = self.get_commodity_sid()
         html = ""
         order_number = self.di["order_number"]["number"]
         if commodity_sid:
@@ -528,182 +454,6 @@ class ImportMeasureJson(object):
                 return self.di["geographical_area"]["description"]
 
 
-class MeasureCondition(object):
+class MeasureCondition:
     def __init__(self, di):
         self.di = di
-
-
-class ChapterJson(object):
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di["formatted_description"]
-
-    @property
-    def harmonized_code(self):
-        return self.di["goods_nomenclature_item_id"]
-
-    @property
-    def heading_ids(self):
-        return [di["goods_nomenclature_item_id"][:4] for di in self.di["headings"]]
-
-    @property
-    def heading_urls(self):
-        return [settings.HEADING_URL.format(id) for id in self.heading_ids]
-
-    @property
-    def chapter_note(self):
-        if self.di and "chapter_note" in self.di.keys():
-            return self.di["chapter_note"]
-        return ""
-
-
-class HeadingJson(object):
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di["formatted_description"].replace("&nbsp;", " ").strip()
-
-    @property
-    def code(self):
-        return self.di["goods_nomenclature_item_id"]
-
-    @property
-    def commodity_dicts(self):
-        return [di for di in self.di.get("commodities", [])]
-
-    @property
-    def commodity_ids(self):
-        if "commodities" not in self.di:
-            tup = (self.code, self.title)
-            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
-            return []
-
-        return [
-            (di["goods_nomenclature_item_id"], di["leaf"])
-            for di in self.di["commodities"]
-        ]
-
-    @property
-    def commodity_urls(self):
-        return [
-            ((settings.COMMODITY_URL.format(_id)), is_leaf)
-            for (_id, is_leaf) in self.commodity_ids
-        ]
-
-    def get_import_measures(self, origin_country, vat=None, excise=None):
-
-        measures = [
-            ImportMeasureJson(d, self.code, self.title, origin_country)
-            for d in self.di["import_measures"]
-        ]
-
-        measures = [
-            json_obj
-            for json_obj in measures
-            if json_obj.is_relevant_for_origin_country(origin_country)
-        ]
-
-        if vat is not None:
-            measures = [obj for obj in measures if obj.vat == vat]
-        if excise is not None:
-            measures = [obj for obj in measures if obj.excise == excise]
-
-        return measures
-
-    @property
-    def footnotes(self):
-        if not isinstance(self.di, str) and "footnotes" in self.di.keys():
-            return self.di["footnotes"]
-        else:
-            return []
-
-    def get_import_measure_by_id(self, measure_id, country_code=None):
-
-        measures = [
-            measure
-            for measure in self.get_import_measures(country_code)
-            if measure.measure_id == measure_id
-        ]
-
-        return measures[0] if len(measures) == 1 else None
-
-
-class SubHeadingJson(object):
-    def __init__(self, di):
-        self.di = di
-
-    @property
-    def title(self):
-        return self.di["formatted_description"].replace("&nbsp;", " ").strip()
-
-    @property
-    def code(self):
-        return self.di["goods_nomenclature_item_id"]
-
-    @property
-    def commodity_dicts(self):
-        return [di for di in self.di.get("commodities", [])]
-
-    @property
-    def commodity_ids(self):
-        if "commodities" not in self.di:
-            tup = (self.code, self.title)
-            logger.debug('warning: no commodities found for Heading: %s "%s"' % tup)
-            return []
-
-        return [
-            (di["goods_nomenclature_item_id"], di["leaf"])
-            for di in self.di["commodities"]
-        ]
-
-    @property
-    def commodity_urls(self):
-        return [
-            ((settings.COMMODITY_URL.format(_id)), is_leaf)
-            for (_id, is_leaf) in self.commodity_ids
-        ]
-
-    @property
-    def footnotes(self):
-        if not isinstance(self.di, str) and "footnotes" in self.di.keys():
-            return self.di["footnotes"]
-        else:
-            return []
-
-    def get_import_measures(self, origin_country, vat=None, excise=None):
-
-        measures = []
-
-        if not isinstance(self.di, str) and "import_measures" in self.di.keys():
-            measures = [
-                ImportMeasureJson(d, self.code, self.title, origin_country)
-                for d in self.di["import_measures"]
-            ]
-
-            measures = [
-                json_obj
-                for json_obj in measures
-                if json_obj.is_relevant_for_origin_country(origin_country)
-            ]
-
-            if vat is not None:
-                measures = [obj for obj in measures if obj.vat == vat]
-            if excise is not None:
-                measures = [obj for obj in measures if obj.excise == excise]
-
-        return measures
-
-    def get_import_measure_by_id(self, measure_id, country_code=None):
-
-        measures = [
-            measure
-            for measure in self.get_import_measures(country_code)
-            if measure.measure_id == measure_id
-        ]
-
-        return measures[0] if len(measures) == 1 else None

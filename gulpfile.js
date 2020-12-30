@@ -30,14 +30,14 @@ sass.compiler = require('node-sass')
 const paths = {
   styles: {
     watch: './assets/scss/**/*.scss',
-    source: './assets/scss/global.scss',
+    helpdesk: './assets/scss/global.scss',
     oldie: './assets/scss/oldie.scss',
+    cms: './assets/scss/cms.scss',
     destination: './dit_helpdesk/static_collected/css/'
   },
   javascripts: {
     watch: './assets/javascript/**/*.js',
     source: './assets/javascript/**/*.js',
-    accessibleAutocomplete: './node_modules/govuk-country-and-territory-autocomplete/dist/*.(js|js.map)',
     destination: './dit_helpdesk/static_collected/js/'
   },
   govukFrontendAssets: {
@@ -47,8 +47,8 @@ const paths = {
   manifest: './manifest'
 }
 
-const buildStylesForModernBrowsers = () => {
-  return gulp.src(paths.styles.source)
+const buildStylesForModernBrowsers = source => {
+  return gulp.src(source)
     .pipe(sourcemaps.init())
     .pipe(sass({
       includePaths: 'node_modules'
@@ -65,6 +65,10 @@ const buildStylesForModernBrowsers = () => {
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.styles.destination))
 }
+
+const buildStylesForHelpdesk = () => buildStylesForModernBrowsers(paths.styles.helpdesk)
+
+const buildStylesForCMS = () => buildStylesForModernBrowsers(paths.styles.cms)
 
 const buildStylesForOldIE = () => {
   return gulp.src(paths.styles.oldie)
@@ -90,23 +94,24 @@ const buildJavascripts = () => {
   return gulp.src([
       paths.javascripts.source,
       '!assets/javascript/global.js',
+      '!assets/javascript/cms.js',
       '!assets/javascript/modules/**',
       '!assets/javascript/vendor/**/*'
     ], { sourcemaps: true })
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
-const compileGovukFrontend = () => {
+const bundle = filename => {
   var b = browserify({
     entries: [
-      './assets/javascript/global.js'
+      "./assets/javascript/" + filename + ".js"
     ],
     debug: true,
     standalone: 'DITGlobals'
   });
 
   return b.bundle()
-    .pipe(source('global.js'))
+    .pipe(source(filename + ".js"))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     // Add transformation tasks to the pipeline here.
@@ -116,14 +121,13 @@ const compileGovukFrontend = () => {
     .pipe(gulp.dest(paths.javascripts.destination))
 }
 
+const compileGovukFrontend = () => bundle("global")
+const compileCMS = () => bundle("cms")
+const compileLocationAutocomplete = () => bundle("location-autocomplete")
+
 const copyGOVUKFrontendAssets = () => {
   return gulp.src(paths.govukFrontendAssets.source)
     .pipe(gulp.dest(paths.govukFrontendAssets.destination))
-}
-
-const copyAccessibleAutocomplete = () => {
-  return gulp.src(paths.javascripts.accessibleAutocomplete)
-    .pipe(gulp.dest(paths.javascripts.destination))
 }
 
 const watchStyles = () => {
@@ -134,11 +138,11 @@ const watchJavascripts = () => {
   return gulp.watch(paths.javascripts.watch, buildJavascripts)
 }
 
-const buildStyles = gulp.parallel(buildStylesForModernBrowsers, buildStylesForOldIE)
+const buildStyles = gulp.parallel(buildStylesForHelpdesk, buildStylesForCMS, buildStylesForOldIE)
 
-const copy = gulp.parallel(copyGOVUKFrontendAssets, copyAccessibleAutocomplete)
-const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend)
-const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend)
+const copy = gulp.parallel(copyGOVUKFrontendAssets)
+const watch = gulp.parallel(watchStyles, watchJavascripts, compileGovukFrontend, compileLocationAutocomplete, compileCMS)
+const build = gulp.parallel(buildStyles, buildJavascripts, compileGovukFrontend, compileLocationAutocomplete, compileCMS)
 
 gulp.task('default', taskListing)
 gulp.task('copyExternalAssets', copy)

@@ -1,5 +1,7 @@
 import logging
 import json
+import re
+
 from collections import defaultdict
 
 from typing import Union
@@ -13,9 +15,11 @@ from django.conf import settings
 from commodities.models import Commodity
 from hierarchy.models import (
     Heading,
+    Section,
     SubHeading,
     Chapter,
 )
+from hierarchy.views import _commodity_code_html
 
 from search.documents.section import INDEX as section_index, alias_pattern as section_pattern
 from search.documents.chapter import INDEX as chapter_index, alias_pattern as chapter_pattern
@@ -361,3 +365,159 @@ def normalise_commodity_code(code: str) -> str:
     """
     code = code.replace('.', '')
     return code
+
+
+def _get_expanded_context(selected_node_id):
+    """
+    Given a selected_node_id (a location in the hierarchy), return
+    a list of hierarchy ids that make up the path to the currently expanded context.
+    """
+    if selected_node_id == "root":
+        return []
+
+    expanded = []
+    node_type, node_pk = selected_node_id.split("-")
+
+    if node_type == "section":
+        expanded.append(selected_node_id)
+
+    elif node_type == "chapter":
+        chapter_obj = Chapter.objects.get(goods_nomenclature_sid=node_pk)
+        expanded.append("section-{0}".format(chapter_obj.section.section_id))
+        expanded.append("chapter-{0}".format(node_pk))
+
+    elif node_type == "heading":
+        heading_obj = Heading.objects.get(goods_nomenclature_sid=node_pk)
+
+        expanded.append("section-{0}".format(heading_obj.chapter.section.section_id))
+        expanded.append(
+            "chapter-{0}".format(heading_obj.chapter.goods_nomenclature_sid)
+        )
+        expanded.append("heading-{0}".format(heading_obj.goods_nomenclature_sid))
+
+    elif node_type == "sub_heading":
+
+        current = SubHeading.objects.get(goods_nomenclature_sid=node_pk)
+        while True:
+            expanded.append("sub_heading-{0}".format(current.goods_nomenclature_sid))
+            current = current.get_parent()
+            if type(current) is Heading:
+                break
+        heading_obj = current
+
+        expanded.append("section-{0}".format(heading_obj.chapter.section.section_id))
+        expanded.append(
+            "chapter-{0}".format(heading_obj.chapter.goods_nomenclature_sid)
+        )
+        expanded.append("heading-{0}".format(heading_obj.goods_nomenclature_sid))
+
+    return expanded
+
+
+def _get_hierarchy_level_html(node, expanded, origin_country):
+    """
+    View helper function to return the html for the selected hierarchy node
+    :param node: string or model instance the current node
+    :param expanded: list of hierarchy ids that make up the currently expanded path
+    :param origin_country: string representing the origin country code
+    :return: html snippet that represents the expanded section of the hierarchy
+    """
+    if node == "root":  # if root it list only sections
+        children = (
+            Section.objects.all().order_by("section_id").prefetch_related("chapter_set")
+        )
+        html = '<ul class="app-hierarchy-tree">'
+        end = "\n</ul>"
+    else:
+        children = node.get_hierarchy_children()
+        html = '\n<ul class="app-hierarchy-tree--child">'
+        end = "\n</ul>\n</li>"
+
+    for child in children:
+        if child.hierarchy_key in expanded:
+            openclass = "open"
+        else:
+            openclass = "closed"
+
+        if type(child) is Section:
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__section app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.title.capitalize()}</a> <span class="app-hierarchy-tree__section-numbers">Section {child.roman_numeral}</span> <span class="app-hierarchy-tree__chapter-range">{child.chapter_range_str}</span>'
+        elif type(child) in [Commodity, Heading, SubHeading] and (
+            type(child) is Commodity or child.get_hierarchy_children_count() == 0
+        ):
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__commodity"><div class="app-hierarchy-tree__link"><a href="{child.get_absolute_url(origin_country)}" class="app-hierarchy-tree__link--child">{child.description}<span class="govuk-visually-hidden"> &ndash; </span></a></div>{_commodity_code_html(child)}</li>'
+        else:
+            li = f'<li id="{child.hierarchy_key}" class="app-hierarchy-tree__part app-hierarchy-tree__chapter app-hierarchy-tree__parent--{openclass}"><a href="{child.get_hierarchy_url(origin_country)}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{child.description.capitalize()}</a>{_commodity_code_html(child)}'
+        html = html + li
+
+        if child.hierarchy_key in expanded:
+            html = html + _get_hierarchy_level_html(child, expanded, origin_country)
+
+    html = html + end
+
+    return html
+
+
+def _get_hierarchy_level_json(node, expanded, origin_country):
+    """
+    View helper function to return the JSON for the selected hierarchy node
+    :param node: string or model instance the current node
+    :param expanded: list of hierarchy ids that make up the currently expanded path
+    :param origin_country: string representing the origin country code
+    :return: dict that represents the expanded section of the hierarchy
+    """
+
+    serialized = []
+
+    if node == "root":  # if root it list only sections
+        children = (
+            Section.objects.all().order_by("section_id").prefetch_related("chapter_set")
+        )
+    else:
+        children = node.get_hierarchy_children()
+
+    for child in children:
+        element = {"key": child.hierarchy_key}
+        if type(child) is Section:
+            element.update(
+                {
+                    "type": "branch",
+                    "roman_numeral": child.roman_numeral,
+                    "chapter_range_str": child.chapter_range_str,
+                    "label": child.title,
+                }
+            )
+        else:
+            if type(child) is Commodity or child.get_hierarchy_children_count() == 0:
+                element["type"] = "leaf"
+            else:
+                element["type"] = "parent"
+            code = (
+                child.commodity_code
+                if isinstance(child, Commodity)
+                else child.harmonized_code
+            )
+            code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
+            element["commodity_code"] = code_regex.search(code).groups()
+            element["label"] = child.description
+
+        if child.hierarchy_key in expanded:
+            element["children"] = _get_hierarchy_level_json(
+                node=child, expanded=expanded, origin_country=origin_country
+            )
+
+        serialized.append(element)
+    return serialized
+
+
+def hierarchy_data(country_code, node_id="root", content_type="html"):
+    """
+    View helper function
+    :param country_code: string representing country code
+    :param node_id: string representing hierarchy node id
+    :return: html snippet that represents the expanded section of the hierarchy
+    """
+    node_id = node_id.rstrip("/")
+    expanded = _get_expanded_context(node_id)
+    serializers = {"html": _get_hierarchy_level_html, "json": _get_hierarchy_level_json}
+    serializer = serializers[content_type]
+    return serializer(node="root", expanded=expanded, origin_country=country_code)

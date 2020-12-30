@@ -25,6 +25,7 @@
 # pipenv run /app/manage.py import_regulations
 # pipenv run /app/manage.py import_search_keywords -f output/commodity_category_all_with_synonyms_greenpage.csv
 # pipenv run /app/manage.py search_index --populate
+# pipenv run /app/manage.py createinitialrevisions
 ## -------------------------------------------
 
 # ----------------- ONGOING DEVELOPMENT -----

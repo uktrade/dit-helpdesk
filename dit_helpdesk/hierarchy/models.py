@@ -5,10 +5,9 @@ import datetime as dt
 
 import requests
 
-from collections import defaultdict
-
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.core.cache import cache
@@ -16,8 +15,19 @@ from django.core.cache import cache
 from backports.datetime_fromisoformat import MonkeyPatch
 
 from countries.models import Country
-from rules_of_origin.models import Rule, RuleItem, RulesDocument, RulesDocumentFootnote, RulesGroup, RulesGroupMember
-from trade_tariff_service.tts_api import HeadingJson, SubHeadingJson, ChapterJson
+from hierarchy.clients import get_json_obj_client
+from rules_of_origin.models import (
+    OldRule,
+    OldRulesDocumentFootnote,
+    Rule,
+    RulesDocumentFootnote,
+)
+from trade_tariff_service.tts_api import (
+    ChapterJson,
+    HeadingJson,
+    SubHeadingJson,
+)
+from core.helpers import flatten, always_true_Q, unique_maintain_order
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -62,7 +72,7 @@ class RulesOfOriginMixin:
     def get_chapter():
         raise NotImplementedError()
 
-    def get_rules_of_origin(self, country_code):
+    def get_old_rules_of_origin(self, country_code):
         """
         Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
         country code parameter.
@@ -74,23 +84,97 @@ class RulesOfOriginMixin:
         country = Country.objects.get(country_code=country_code)
 
         chapter = self.get_chapter()
-        rules = Rule.objects.filter(
+        rules = OldRule.objects.filter(
             chapter=chapter,
-            rules_document__rules_group__rulesgroupmember__country=country,
-        ).select_related("rules_document__rules_group").prefetch_related("ruleitem_set")
+            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
+        ).select_related("old_rules_document__old_rules_group").prefetch_related("oldruleitem_set")
 
-        footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__rules_group__rulesgroupmember__country=country,
+        footnotes = OldRulesDocumentFootnote.objects.filter(
+            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
         ).order_by("id")
         rules_of_origin = {"rules": set(), "footnotes": footnotes}
 
         groups = {}
         for rule in rules:
             rules_of_origin["rules"].add(rule)
-            group_name = rule.rules_document.rules_group.description
+            group_name = rule.old_rules_document.old_rules_group.description
             groups[group_name] = rules_of_origin
 
         return groups
+
+    def get_rules_of_origin(self, country_code, starting_before=None):
+        """
+        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
+        country code parameter.
+        the dictionary has two keys one for the list of rules and one for the related footnotes
+        :param country_code: string
+        :return: dictionary
+        """
+
+        tree = NomenclatureTree.get_active_tree()
+        country = Country.objects.get(country_code=country_code)
+
+        chapter_id, heading_id, subheading_id, commodity_id = self.get_hierarchy_context_ids()
+
+        document_filter = Q(
+            rules_document__countries=country,
+            rules_document__nomenclature_tree=tree,
+        )
+        date_filter = (
+            Q(rules_document__start_date__lte=starting_before) if starting_before
+            else always_true_Q
+        )
+
+        rule_filter = (
+            Q(chapters__id=chapter_id)
+        )
+        if heading_id:
+            rule_filter = rule_filter | Q(headings__id=heading_id)
+        if subheading_id:
+            rule_filter = rule_filter | Q(subheadings__id=subheading_id)
+        if commodity_id:
+            rule_filter = rule_filter | Q(commodities__id=commodity_id)
+
+        rules = Rule.objects.prefetch_related(
+            'subrules',
+            'chapters',
+            'headings',
+            'subheadings',
+            'commodities'
+        ).select_related(
+            'rules_document'
+        ).filter(
+            document_filter & date_filter & rule_filter
+        )
+
+        chapter_rules = [r for r in rules if r.chapters.exists()]
+        heading_rules = [r for r in rules if r.headings.exists()]
+        subheading_rules = [r for r in rules if r.subheadings.exists()]
+        commodity_rules = [r for r in rules if r.commodities.exists()]
+
+        # reorder so that they are in hierarchy descending order
+        rules = chapter_rules + heading_rules + subheading_rules + commodity_rules
+        rules = unique_maintain_order(rules)
+
+        lower_level_rules = heading_rules + subheading_rules + commodity_rules
+        any_non_ex_lower_level = any(not r.is_exclusion for r in lower_level_rules)
+
+        if any_non_ex_lower_level:
+            # if any lower level rule is non-ex, then ignore the higher level ex rules
+            rules = [r for r in rules if not r.is_exclusion]
+
+        footnotes = RulesDocumentFootnote.objects.filter(
+            rules_document__countries=country,
+        ).order_by("id")
+        rules_of_origin = {"rules": rules, "footnotes": footnotes}
+
+        roo_data = {}
+
+        if rules:
+            fta_name = rules[0].rules_document.description
+            roo_data[fta_name] = rules_of_origin
+
+        return roo_data
 
 
 class NomenclatureTree(models.Model):
@@ -102,6 +186,7 @@ class NomenclatureTree(models.Model):
     region = models.CharField(max_length=2)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True)
+    source = models.CharField(default="original", max_length=255)
 
     @classmethod
     def get_active_tree(cls, region=settings.PRIMARY_REGION):
@@ -134,11 +219,18 @@ class NomenclatureTree(models.Model):
         qs = NomenclatureTree.objects.order_by('region', '-start_date').distinct('region')
         return qs
 
+    def get_tts_api_client(self):
+        return get_json_obj_client(self.region)
+
     def __str__(self):
         return f"{self.region} {self.start_date} - {self.end_date}"
 
 
 class BaseHierarchyModel(models.Model):
+    objects = RegionHierarchyManager()
+    all_objects = models.Manager()
+
+    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
         super(BaseHierarchyModel, self).__init__(*args, **kwargs)
@@ -181,13 +273,21 @@ class BaseHierarchyModel(models.Model):
 
         self._temp_cache = None
 
-    def should_update_content(self):
+    def should_update_tts_content(self):
         is_stale_tts_json = (
             not self.last_updated
             or self.last_updated < dt.datetime.now(timezone.utc) - dt.timedelta(days=1)
         )
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
+
+    def get_tts_content(self, tts_client):
+        raise NotImplementedError("Implement `get_tts_content`")
+
+    def update_tts_content(self):
+        client = self.nomenclature_tree.get_tts_api_client()
+        self.tts_json = self.get_tts_content(client)
+        self.save_cache()
 
     @staticmethod
     def _amend_measure_conditions(resp_content):
@@ -213,10 +313,6 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
     section_id = models.IntegerField()
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
@@ -466,11 +562,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -662,16 +753,13 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             if code_match_obj.group(i) != "00"
         ]
 
-    def update_content(self):
-        url = settings.CHAPTER_URL.format(self.chapter_code[:2])
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.CHAPTER, self.chapter_code[:2])
+        except tts_client.NotFound:
+            return None
 
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        self.tts_json = resp_content
-        self.save_cache()
+        return tts_content
 
     @property
     def tts_obj(self):
@@ -680,7 +768,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return ChapterJson(json.loads(self.tts_json))
+        return ChapterJson(self, json.loads(self.tts_json))
 
     @property
     def chapter_notes(self):
@@ -750,11 +838,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
 
 
 class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -788,7 +871,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return HeadingJson(json.loads(self.tts_json))
+        return HeadingJson(self, json.loads(self.tts_json))
 
     def get_chapter(self):
         return self.chapter
@@ -914,23 +997,21 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
         return reverse("search:search-hierarchy", kwargs=kwargs)
 
-    def update_content(self):
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.heading_code[:4])
+        except tts_client.NotFound:
+            return None
 
-        """
-        url = settings.HEADING_URL.format(self.heading_code[:4])
+        return self._amend_measure_conditions(tts_content)
 
-        resp = requests.get(url, timeout=10)
-        resp_content = None
+    def get_hierarchy_context_ids(self):
+        chapter_id = self.chapter_id
+        heading_id = self.id
+        subheading_id = None
+        commodity_id = None
 
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-        self.tts_json = resp_content
-        self.save_cache()
+        return chapter_id, heading_id, subheading_id, commodity_id
 
     def is_duplicate_heading(self):
         children = self.get_hierarchy_children()
@@ -1017,11 +1098,6 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
 
 class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
-    objects = RegionHierarchyManager()
-    all_objects = models.Manager()
-
-    nomenclature_tree = models.ForeignKey(NomenclatureTree, on_delete=models.CASCADE)
-
     productline_suffix = models.CharField(max_length=2)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10)
     parent_goods_nomenclature_sid = models.CharField(max_length=10)
@@ -1118,6 +1194,22 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             kwargs["country_code"] = country_code.lower()
 
         return reverse("search:search-hierarchy", kwargs=kwargs)
+
+    def get_hierarchy_context_ids(self):
+        hierarchy_context = flatten(
+            reversed(self.get_ancestor_data()))
+
+        chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
+        heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
+
+        try:
+            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
+        except StopIteration:
+            subheading_id = self.id
+
+        commodity_id = None
+
+        return chapter_id, heading_id, subheading_id, commodity_id
 
     def get_hierarchy_children(self):
         """
@@ -1232,25 +1324,13 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
         return tree
 
-    def update_content(self):
-        """
-        gets the Commodity content from the trade tariff service url as json response and stores it in the
-        commodity's tts_json field
+    def get_tts_content(self, tts_client):
+        try:
+            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.commodity_code[:4])
+        except tts_client.NotFound:
+            return None
 
-        """
-        url = settings.HEADING_URL.format(self.commodity_code[:4])
-
-        resp = requests.get(url, timeout=10)
-        resp_content = None
-
-        if resp.status_code == 200:
-            resp_content = resp.content.decode()
-
-        resp_content = self._amend_measure_conditions(resp_content)
-
-        self.tts_json = resp_content
-
-        self.save_cache()
+        return self._amend_measure_conditions(tts_content)
 
     @property
     def tts_obj(self):
@@ -1259,7 +1339,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         used to extract data from the json data structure to display in the template
         :return: CommodityJson object
         """
-        return SubHeadingJson(json.loads(self.tts_json))
+        return SubHeadingJson(self, json.loads(self.tts_json))
 
     def get_path(self, parent=None, tree=None, level=0):
         """
