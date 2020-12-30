@@ -20,6 +20,8 @@ class Command(BaseCommand):
         return [
             "Country code",
             "Country name",
+            "UK agreement status",
+            "EU agreement status",
             "Scenario",
         ]
 
@@ -44,5 +46,7 @@ class Command(BaseCommand):
                 writer.writerow({
                     "Country code": country.country_code,
                     "Country name": country.name,
+                    "UK agreement status": country.has_uk_trade_agreement,
+                    "EU agreement status": country.has_eu_trade_agreement,
                     "Scenario": country.scenario,
                 })
