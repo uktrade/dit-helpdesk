@@ -20,4 +20,5 @@ def feature_flag_processor(request):
         "old_roo_enabled": pre21_enabled,
         "importer_journey_enabled": _is_importer_journey(request),
         "eu_fallback_enabled": flag_enabled("EU_FALLBACK"),
+        "eu_tariff_enabled": not pre21_enabled,
     }
