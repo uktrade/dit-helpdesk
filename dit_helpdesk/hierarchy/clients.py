@@ -86,8 +86,17 @@ class JSONObjClient:
         return response.content.decode()
 
 
+def get_settings_config():
+    config = settings.TRADE_TARIFF_CONFIG
+    if callable(config):
+        config = config()
+
+    return config
+
+
 def get_json_obj_client(region):
-    config = settings.TRADE_TARIFF_CONFIG[region]["JSON_OBJ"]
+    settings_config = get_settings_config()
+    config = settings_config[region]["JSON_OBJ"]
 
     base_url = config["BASE_URL"]
     auth = get_auth(config)
@@ -173,7 +182,8 @@ class HierarchyClient:
 
 
 def get_hierarchy_client(region):
-    config = settings.TRADE_TARIFF_CONFIG[region]["TREE"]
+    settings_config = get_settings_config()
+    config = settings_config[region]["TREE"]
 
     base_url = config["BASE_URL"]
     auth = get_auth(config)
