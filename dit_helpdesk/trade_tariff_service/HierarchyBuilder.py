@@ -23,6 +23,10 @@ logger.setLevel(logging.INFO)
 
 DEFAULT_REGION = settings.PRIMARY_REGION
 
+PATCH_DESCRIPTIONS = {
+    "2403991000": "Chewing tobacco and snuff",
+}
+
 
 class HierarchyBuilder:
 
@@ -585,12 +589,15 @@ class HierarchyBuilder:
                 for commodity in commodities:
 
                     parent_sid = commodity["attributes"]["parent_sid"]
+                    goods_nomenclature_item_id = commodity["attributes"]["goods_nomenclature_item_id"]
+                    description = commodity["attributes"]["description"]
+                    if not description and goods_nomenclature_item_id in PATCH_DESCRIPTIONS:
+                        description = PATCH_DESCRIPTIONS[goods_nomenclature_item_id]
+                        logger.error(f"Patching {goods_nomenclature_item_id} with {description}")
 
                     commodities_data.append(
                         {
-                            "goods_nomenclature_item_id": commodity["attributes"][
-                                "goods_nomenclature_item_id"
-                            ],
+                            "goods_nomenclature_item_id": goods_nomenclature_item_id,
                             "goods_nomenclature_sid": commodity["attributes"][
                                 "goods_nomenclature_sid"
                             ],
@@ -607,7 +614,7 @@ class HierarchyBuilder:
                             if parent_sid is not None
                             else heading_id,
                             "parent_productline_suffix": "",
-                            "description": commodity["attributes"]["description"],
+                            "description": description,
                             "number_indents": commodity["attributes"]["number_indents"],
                         }
                     )
