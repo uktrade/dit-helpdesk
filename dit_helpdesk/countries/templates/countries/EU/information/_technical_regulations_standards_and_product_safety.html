@@ -1,0 +1,28 @@
+<div class="govuk-accordion__section">
+    <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button" id="{{ accordion_id }}-technical-regulations-standards-and-conformity-assessment-procedures-heading">
+                Technical regulations, standards and product safety
+            </span>
+        </h2>
+    </div>
+    <div id="{{ accordion_id }}-technical-regulations-standards-and-conformity-assessment-procedures-content" class="govuk-accordion__section-content" aria-labelledby="{{ accordion_id }}-technical-regulations-standards-and-conformity-assessment-procedures-heading">
+        <h3 class="govuk-heading-s">Technical regulations and standards</h3>
+        <p class="govuk-body">
+            You can <a class="govuk-link" href="{% url "search:search-commodity" country_code=country_code %}">search for your goods</a> to find product-specific technical regulations and standards.
+        </p>
+
+        <h3 class="govuk-heading-s">Product safety</h3>
+        <p class="govuk-body">
+            The <a class="govuk-link" href="https://www.gov.uk/government/organisations/office-for-product-safety-and-standards">Office for Product Safety</a> helps businesses understand their obligations. They have <a class="govuk-link" href="https://www.gov.uk/guidance/product-safety-advice-for-businesses">guidance on product safety</a> which is aimed at UK businesses, but which is still relevant if you are a non-UK business.
+        </p>
+        <p class="govuk-body">
+            The <a class="govuk-link" href="https://www.ukas.com/">United Kingdom Accreditation Service</a> (UKAS) is the UK’s National Accreditation Body, responsible for determining the technical competence and integrity of organisations such as those offering testing, calibration and certification services. UKAS has a directory of accredited organisations for many different types of assessment.
+        </p>
+
+        <h3 class="govuk-heading-s">Sanitary and phytosanitary measures for import and export</h3>
+        <p class="govuk-body">
+            <a class="govuk-link" href="https://www.gov.uk/guidance/eu-business-importing-from-the-uk">Health protection for humans, animals and plants</a> includes a list of links to the UK government’s sanitary and phytosanitary measures.
+        </p>
+    </div>
+</div>
