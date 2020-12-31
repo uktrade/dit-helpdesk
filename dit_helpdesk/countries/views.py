@@ -40,27 +40,29 @@ class ChooseCountryView(TemplateView):
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
+        error_context = {
+            "country_options": [(c.country_code, c.name) for c in self.countries],
+            "isError": True,
+            "errorSummaryMessage": self.country_not_selected_summary_error_message,
+            "errorInputMessage": self.country_not_selected_input_error_message,
+        }
 
         origin_country = request.POST.get("origin_country", "").strip().upper()
-        if (
-                origin_country
-                and Country.objects.filter(country_code=origin_country).exists()
-        ):
-            request.session["search_version"] = self.search_version
-            request.session["origin_country"] = origin_country
+        if not origin_country:
+            return self.render_to_response(error_context)
 
-            if _has_agreement(origin_country):
-                return redirect("country-information", country_code=origin_country.lower())
+        try:
+            country = Country.objects.get(country_code=origin_country)
+        except Country.DoesNotExist:
+            return self.render_to_response(error_context)
 
-            return redirect(self.redirect_to, country_code=origin_country.lower())
-        else:
-            context = {
-                "country_options": [(c.country_code, c.name) for c in self.countries],
-                "isError": True,
-                "errorSummaryMessage": self.country_not_selected_summary_error_message,
-                "errorInputMessage": self.country_not_selected_input_error_message,
-            }
-            return self.render_to_response(context)
+        request.session["search_version"] = self.search_version
+        request.session["origin_country"] = origin_country
+
+        if _has_agreement("EU" if country.is_eu else origin_country):
+            return redirect("country-information", country_code=origin_country.lower())
+
+        return redirect(self.redirect_to, country_code=origin_country.lower())
 
 
 class ChooseCountryOldView(ChooseCountryView):
@@ -70,7 +72,6 @@ class ChooseCountryOldView(ChooseCountryView):
 
 
 class CountryInformationView(TemplateView):
-    template_name = "countries/information.html"
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"].upper()
@@ -79,28 +80,39 @@ class CountryInformationView(TemplateView):
         except Country.DoesNotExist:
             raise Http404
 
+        self.origin_country = country
+
+        if country.is_eu:
+            country = Country.objects.get(country_code="EU")
+
         if not _has_agreement(country.country_code):
             raise Http404
 
         self.country = country
+        self.country_code = country.country_code
 
         return super().get(request, *args, **kwargs)
 
-    def _get_template_name(self, country, template_name):
-        return f"countries/{country.country_code}/_{template_name}.html"
+    def get_template_names(self):
+        """This is called by render_to_response"""
+        return [f"countries/{self.country_code}/information.html"]
+
+    def _get_template_name(self, country_code, template_name):
+        return f"countries/{country_code}/_{template_name}.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
         country = self.country
 
+        ctx["original_country"] = self.origin_country
         ctx["country"] = country
-        ctx["country_code"] = country.country_code.lower()
+        ctx["country_name"] = "the European Union" if country.country_code == "EU" else country.name
 
-        ctx["trade_agreements_template_name"] = self._get_template_name(country, "trade_agreements")
-        ctx["goods_template_name"] = self._get_template_name(country, "goods")
-        ctx["grow_your_business_template_name"] = self._get_template_name(country, "grow_your_business")
-        ctx["other_information_template_name"] = self._get_template_name(country, "other_information")
+        ctx["trade_agreements_template_name"] = self._get_template_name(self.country_code, "trade_agreements")
+        ctx["goods_template_name"] = self._get_template_name(self.country_code, "goods")
+        ctx["grow_your_business_template_name"] = self._get_template_name(self.country_code, "grow_your_business")
+        ctx["other_information_template_name"] = self._get_template_name(self.country_code, "other_information")
 
         return ctx
 

@@ -501,6 +501,7 @@ SUPPORTED_TRADE_SCENARIOS = (
 
 AGREEMENTS = [
     ("JP", lambda: flag_enabled("JAPAN_FTA")),
+    ("EU", True),
 ]
 
 ROO_S3_BUCKET_NAME = env.str('ROO_S3_BUCKET_NAME', '')

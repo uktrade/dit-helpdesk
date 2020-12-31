@@ -227,7 +227,7 @@ class CountryInformationViewTestCase(TestCase):
     )
     def test_renders_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "countries/information.html")
+        self.assertTemplateUsed(response, "countries/XX/information.html")
 
     @override_settings(
         AGREEMENTS=[

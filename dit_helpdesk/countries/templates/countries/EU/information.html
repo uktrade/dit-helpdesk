@@ -2,7 +2,7 @@
 
 {% load humanize %}
 
-{% block title %}Information on exporting to the UK from {{ country.name }}{% endblock %}
+{% block title %}Information on exporting to the UK from {{ country_name }}{% endblock %}
 
 {% block content %}
     <div class="govuk-width-container">
@@ -10,22 +10,22 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <h1 class="govuk-heading-xl govuk-!-margin-bottom-6 govuk-!-margin-top-6">
-                        Information on exporting to the UK from {{ country.name }}
+                        Information on exporting to the UK from {{ country_name }}
                     </h1>
 
-                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=original_country.country_code|lower %}">
                         Search for your goods
                     </a>
 
                     <p class="govuk-body">
-                        This page contains information on {{ country.name }}'s trade agreements with the UK.
+                        This page contains information on the UK's trade agreement with {{ country_name }}, which will take effect from 1 January 2021.
                     </p>
 
                     <p class="govuk-body">
-                        There are also links to other sources of UK-government information to help you:
+                        There are also links to other sources of UK Government information to help you:
                     </p>
                     <ul class="govuk-list govuk-list--bullet">
-                        <li>understand and use the agreements when exporting to the UK</li>
+                        <li>understand and use the agreement when exporting to the UK</li>
                         <li>understand the relevant regulations and requirements</li>
                     </ul>
                 </div>
@@ -73,7 +73,7 @@
 
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-full">
-                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=country_code %}">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=original_country.country_code|lower %}">
                         Search for your goods
                     </a>
                 </div>
