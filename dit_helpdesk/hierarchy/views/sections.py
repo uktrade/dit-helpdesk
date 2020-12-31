@@ -88,7 +88,17 @@ class TariffsAndTaxesSection(CommodityDetailSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["tariffs_table_data"] = self._get_table_data(self.tariffs)
+        def sort_tariffs_by_country_column(row):
+            country_column = row[0]
+            _, val = country_column
+
+            return val
+
+        tariffs_table_data = sorted(
+            self._get_table_data(self.tariffs),
+            key=sort_tariffs_by_country_column,
+        )
+        ctx["tariffs_table_data"] = tariffs_table_data
         ctx["taxes_table_data"] = self._get_table_data(self.taxes)
         ctx["has_multiple_vat_entries"] = len([t for t in self.taxes if t.vat]) > 1
 
