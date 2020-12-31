@@ -72,7 +72,6 @@ class ChooseCountryOldView(ChooseCountryView):
 
 
 class CountryInformationView(TemplateView):
-    template_name = "countries/information.html"
 
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"].upper()
@@ -93,6 +92,10 @@ class CountryInformationView(TemplateView):
         self.country_code = country.country_code
 
         return super().get(request, *args, **kwargs)
+
+    def get_template_names(self):
+        """This is called by render_to_response"""
+        return [f"countries/{self.country_code}/information.html"]
 
     def _get_template_name(self, country_code, template_name):
         return f"countries/{country_code}/_{template_name}.html"
