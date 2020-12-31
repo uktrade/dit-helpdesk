@@ -31,6 +31,7 @@ FLAGS = {
     "JAPAN_FTA": [],
     "PRE21": [],
     "EU_FALLBACK": [],
+    "TREE_PRELOAD": [],
 }
 
 
@@ -219,24 +220,88 @@ CONTACT_MAX_LENGTH = 1000
 # trade tariff service arguments
 IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 
-TRADE_TARIFF_CONFIG = {
-    "UK": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
-        },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+def get_trade_tariff_config():
+    if flag_enabled("TREE_PRELOAD"):
+        return {
+            "UK": {
+                "TREE": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/",
+                    "PARAMS": {
+                        "as_of": "2021-01-01",
+                    },
+                },
+                "JSON_OBJ": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/",
+                },
+            },
+            "EU": {
+                "TREE": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/",
+                    "PARAMS": {
+                        "as_of": "2021-01-01",
+                    },
+                },
+                "JSON_OBJ": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/",
+                    "PARAMS": {
+                        "as_of": "2021-01-01",
+                    },
+                },
+            },
         }
-    },
-    "EU": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
-        },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+
+    if flag_enabled("PRE21"):
+        return {
+            "UK": {
+                "TREE": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+                },
+                "JSON_OBJ": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+                }
+            },
+            "EU": {
+                "TREE": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
+                },
+                "JSON_OBJ": {
+                    "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
+                }
+            }
         }
-    }
-}
+
+    return {
+        "UK": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/",
+                "PARAMS": {
+                    "as_of": "2021-01-01",
+                },
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/",
+                "PARAMS": {
+                    "as_of": "2021-01-01",
+                },
+            },
+        },
+        "EU": {
+            "TREE": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/",
+                "PARAMS": {
+                    "as_of": "2021-01-01",
+                },
+            },
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/",
+                "PARAMS": {
+                    "as_of": "2021-01-01",
+                },
+            },
+        },
+        }
+
+TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 # regulation import arguments
 REGULATIONS_MODEL_ARG = ["Regulation"]
