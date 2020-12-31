@@ -25,6 +25,7 @@ DEFAULT_REGION = settings.PRIMARY_REGION
 
 PATCH_DESCRIPTIONS = {
     "2403991000": "Chewing tobacco and snuff",
+    "2008971200": "Of an actual alcoholic strength by mass not exceeding 11,85% mas",
 }
 
 
@@ -546,15 +547,19 @@ class HierarchyBuilder:
 
                 for sub_heading in sub_headings:
                     parent_sid = sub_heading["attributes"]["parent_sid"]
+                    description = sub_heading["attributes"]["description"]
+                    goods_nomenclature_item_id = sub_heading["attributes"]["goods_nomenclature_item_id"]
+                    goods_nomenclature_sid = sub_heading["attributes"]["goods_nomenclature_sid"]
+                    if not description:
+                        logger.error(f"Missing description for subheading {goods_nomenclature_item_id} {goods_nomenclature_sid}")
+                    if not description and goods_nomenclature_item_id in PATCH_DESCRIPTIONS:
+                        description = PATCH_DESCRIPTIONS[goods_nomenclature_item_id]
+                        logger.error(f"Patching {goods_nomenclature_item_id} with {description}")
 
                     sub_headings_data.append(
                         {
-                            "goods_nomenclature_item_id": sub_heading["attributes"][
-                                "goods_nomenclature_item_id"
-                            ],
-                            "goods_nomenclature_sid": sub_heading["attributes"][
-                                "goods_nomenclature_sid"
-                            ],
+                            "goods_nomenclature_item_id": goods_nomenclature_item_id,
+                            "goods_nomenclature_sid": goods_nomenclature_sid,
                             "productline_suffix": sub_heading["attributes"][
                                 "producline_suffix"
                             ],
@@ -564,7 +569,7 @@ class HierarchyBuilder:
                             if parent_sid is not None
                             else heading_id,
                             "parent_productline_suffix": "",
-                            "description": sub_heading["attributes"]["description"],
+                            "description": description,
                             "number_indents": sub_heading["attributes"][
                                 "number_indents"
                             ],
@@ -591,6 +596,8 @@ class HierarchyBuilder:
                     parent_sid = commodity["attributes"]["parent_sid"]
                     goods_nomenclature_item_id = commodity["attributes"]["goods_nomenclature_item_id"]
                     description = commodity["attributes"]["description"]
+                    if not description:
+                        logger.error(f"Missing description for commodity {goods_nomenclature_item_id}")
                     if not description and goods_nomenclature_item_id in PATCH_DESCRIPTIONS:
                         description = PATCH_DESCRIPTIONS[goods_nomenclature_item_id]
                         logger.error(f"Patching {goods_nomenclature_item_id} with {description}")
