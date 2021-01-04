@@ -34,11 +34,7 @@
             <div id="accordion-uk-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-rules-of-origin-heading">
                 <div class="govuk-!-margin-bottom-3">
                     {% if has_uk_trade_agreement or has_gsp_tariff_preference %}
-                        {% if old_roo_enabled and old_rules_of_origin %}
-                            {% include "commodities/_rules_of_origin_pre21.html" %}
-                        {% elif old_roo_enabled and not old_rules_of_origin and rules_of_origin %}
-                            {% include "commodities/_rules_of_origin_pre21_no_old.html" %}
-                        {% elif not old_roo_enabled and rules_of_origin %}
+                        {% if rules_of_origin %}
                             {% include "commodities/_rules_of_origin.html" %}
                         {% else %}
                             {% include "commodities/_rules_of_origin_no_data.html" %}
