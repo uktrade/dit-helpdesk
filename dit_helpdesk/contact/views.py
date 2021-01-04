@@ -123,6 +123,8 @@ class ContactFormWizardView(SessionWizardView):
         )
 
         country_code = self.request.session["origin_country"]
+        country_code = country_code.upper()
+
         context = {
             "country_code": country_code,
             "service_name": settings.SERVICE_NAME,
