@@ -197,12 +197,11 @@ class ImportMeasureJson:
 
         return False
 
-    @property
-    def conditions_html(self):
+    def conditions_html(self, get_conditions_url):
         if not self.num_conditions:
             html = "-"
         else:
-            url = self.commodity_obj.get_conditions_url(
+            url = get_conditions_url(
                 self.country_code.lower(),
                 self.measure_id,
             )
@@ -273,7 +272,7 @@ class ImportMeasureJson:
         rendered = template.render(context)
         return rendered
 
-    def get_table_dict(self):
+    def get_table_dict(self, get_quotas_url, get_conditions_url):
         country = self.geographical_area_description
 
         try:
@@ -285,7 +284,7 @@ class ImportMeasureJson:
             measure_description = self.di["measure_type"]["description"]
 
         if self.di["order_number"]:
-            order_str = self.quota_html()
+            order_str = self.quota_html(get_quotas_url)
             measure_description = measure_description + "\n" + order_str
 
         measure_value = self.di["duty_expression"]["base"]
@@ -302,13 +301,13 @@ class ImportMeasureJson:
         return {
             "country": country,
             "measure_description": measure_description,
-            "conditions_html": self.conditions_html,
+            "conditions_html": self.conditions_html(get_conditions_url),
             "measure_value": measure_value,
             "excluded_countries": excluded_countries,
             "start_end_date": start_end_date,
         }
 
-    def quota_html(self):
+    def quota_html(self, get_quotas_url):
         """
         generate an html link for quota order number that supports javascript enable modal and no javascript backup
         also generates the matching modal html and appends it to a class dictionary variable
@@ -316,7 +315,7 @@ class ImportMeasureJson:
         """
         html = ""
         order_number = self.di["order_number"]["number"]
-        url = self.commodity_obj.get_quotas_url(
+        url = get_quotas_url(
             self.country_code.lower(),
             self.measure_id,
             order_number,
@@ -344,12 +343,12 @@ class ImportMeasureJson:
 
         return html
 
-    def get_table_row(self):
+    def get_table_row(self, get_quotas_url, get_conditions_url):
         """
         generates the data for a table row for a commodities' measures table
         :return: returns a list
         """
-        di = self.get_table_dict()
+        di = self.get_table_dict(get_quotas_url, get_conditions_url)
         data = [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
         data = self.rename_countries_default(data)
 
