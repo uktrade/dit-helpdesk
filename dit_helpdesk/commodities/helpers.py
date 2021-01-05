@@ -39,7 +39,7 @@ def get_global_tariff_context(commodity):
 
 
 def has_trade_scenario(country):
-    return country.scenario in settings.SUPPORTED_TRADE_SCENARIOS and country.has_uk_trade_agreement
+    return country.scenario and country.scenario in settings.SUPPORTED_TRADE_SCENARIOS
 
 
 def get_tariff_content_context(country, commodity):
