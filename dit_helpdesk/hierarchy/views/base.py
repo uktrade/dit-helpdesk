@@ -127,3 +127,125 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
         ctx["modals"] = modals
 
         return ctx
+
+
+class BaseMeasureConditionDetailView(TemplateView):
+    template_name = "hierarchy/measure_condition_detail.html"
+
+    def get(self, request, **kwargs):
+        country_code = kwargs["country_code"]
+        try:
+            country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+        self.country = country
+
+        try:
+            self.commodity_object = self.get_commodity_object(**kwargs)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        if self.commodity_object.should_update_tts_content():
+            self.commodity_object.update_tts_content()
+
+        measure_id = int(kwargs["measure_id"])
+        self.import_measure = self.commodity_object.tts_obj.get_import_measure_by_id(
+            measure_id,
+            country_code=country_code
+        )
+        self.conditions = self.import_measure.get_measure_conditions_by_measure_id(
+            measure_id,
+        )
+
+        return super().get(request, **kwargs)
+
+    def get_commodity_object(self, **kwargs):
+        raise NotImplementedError(f"Implement `get_commodity_object` for {self.__class__}")
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        country = self.country
+        commodity_object = self.commodity_object
+        import_measure = self.import_measure
+        conditions = self.conditions
+
+        ctx.update({
+            "back_url": commodity_object.get_detail_url(country.country_code.lower()),
+            "commodity_object": commodity_object,
+            "nomenclature_sid": commodity_object.goods_nomenclature_sid,
+            "selected_origin_country": country.country_code,
+            "commodity_code": commodity_object.commodity_code,
+            "commodity_description": commodity_object.description,
+            "selected_origin_country_name": country.name,
+            "conditions": conditions,
+            "commodity_code_split": commodity_object.commodity_code_split,
+            "measure_type": import_measure.type_description,
+            "column_headers": [
+                "Condition code",
+                "Condition",
+                "Document code",
+                "Requirement",
+                "Action",
+                "Duty",
+            ],
+        })
+
+        return ctx
+
+
+class BaseMeasureQuotaDetailView(TemplateView):
+    template_name = "hierarchy/measure_quota_detail.html"
+
+    def get(self, request, **kwargs):
+        country_code = kwargs["country_code"]
+        try:
+            country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect("choose-country")
+        self.country = country
+
+        try:
+            self.commodity_object = self.get_commodity_object(**kwargs)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        if self.commodity_object.should_update_tts_content():
+            self.commodity_object.update_tts_content()
+
+        measure_id = int(kwargs["measure_id"])
+        self.import_measure = self.commodity_object.tts_obj.get_import_measure_by_id(
+            measure_id,
+            country_code=country_code
+        )
+        order_number = kwargs["order_number"]
+        self.quota_def = self.import_measure.get_measure_quota_definition_by_order_number(
+            order_number
+        )
+        self.geographical_area = self.import_measure.get_geographical_area()
+
+        return super().get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        commodity_object = self.commodity_object
+        country = self.country
+
+        ctx.update({
+            "back_url": commodity_object.get_detail_url(country.country_code.lower()),
+            "commodity_object": commodity_object,
+            "nomenclature_sid": commodity_object.goods_nomenclature_sid,
+            "selected_origin_country": country.country_code,
+            "commodity_description": commodity_object.description,
+            "commodity_code": commodity_object.commodity_code,
+            "selected_origin_country_name": country.name,
+            "quota_def": self.quota_def,
+            "geographical_area": self.geographical_area,
+            "commodity_code_split": commodity_object.commodity_code_split,
+            "measure_type": self.import_measure.type_description,
+        })
+
+        return ctx

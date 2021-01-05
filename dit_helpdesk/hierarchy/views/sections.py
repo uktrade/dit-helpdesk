@@ -77,9 +77,9 @@ class TariffsAndTaxesSection(CommodityDetailSection):
             for measure_json in itertools.chain(self.tariffs, self.taxes)
         ]
 
-    def _get_table_data(self, measures):
+    def _get_table_data(self, measures, get_quotas_url, get_conditions_url):
         table_data = [
-            measure_json.get_table_row()
+            measure_json.get_table_row(get_quotas_url, get_conditions_url)
             for measure_json in measures
         ]
 
@@ -94,12 +94,18 @@ class TariffsAndTaxesSection(CommodityDetailSection):
 
             return val
 
+        def get_quotas_url(country_code, measure_id, order_number):
+            return self.commodity_object.get_quotas_url(country_code, measure_id, order_number)
+
+        def get_conditions_url(country_code, measure_id):
+            return self.commodity_object.get_conditions_url(country_code, measure_id)
+
         tariffs_table_data = sorted(
-            self._get_table_data(self.tariffs),
+            self._get_table_data(self.tariffs, get_quotas_url, get_conditions_url),
             key=sort_tariffs_by_country_column,
         )
         ctx["tariffs_table_data"] = tariffs_table_data
-        ctx["taxes_table_data"] = self._get_table_data(self.taxes)
+        ctx["taxes_table_data"] = self._get_table_data(self.taxes, get_quotas_url, get_conditions_url)
         ctx["has_multiple_vat_entries"] = len([t for t in self.taxes if t.vat]) > 1
 
         if flag_enabled("PRE21"):
@@ -132,10 +138,28 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
     def _get_is_meursing_code(self, commodity_object):
         return commodity_object.tts_obj.is_meursing_code
 
+    def get_modals_context_data(self):
+        modals_context_data = super().get_modals_context_data()
+
+        return modals_context_data + [
+            measure_json.measures_modals
+            for measure_json in self.eu_tariffs
+        ]
+
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(self.eu_tariffs)
+        def get_quotas_url(country_code, measure_id, order_number):
+            return self.commodity_object.get_northern_ireland_quotas_url(country_code, measure_id, order_number)
+
+        def get_conditions_url(country_code, measure_id):
+            return self.commodity_object.get_northern_ireland_conditions_url(country_code, measure_id)            
+
+        ctx["eu_tariffs_and_taxes_table_data"] = self._get_table_data(
+            self.eu_tariffs,
+            get_quotas_url,
+            get_conditions_url,
+        )
         ctx["is_meursing_code"] = self._get_is_meursing_code(self.commodity_object)
         ctx["meursing_calculator_link"] = self._get_meursing_calculator_link(self.commodity_object)
 
@@ -185,11 +209,17 @@ class QuotasSection(CommodityDetailSection):
             is_eu=country.is_eu,
         )
 
-        try:
-            self.quotas_table_data = self._get_table_data(self.quotas_measures)
-        except Exception as exc:
-            self.has_quotas_measures = False
-            logger.error("Quotas error", exc_info=exc)
+        def get_quotas_url(country_code, measure_id, order_number):
+            return self.commodity_object.get_quotas_url(country_code, measure_id, order_number)
+
+        def get_conditions_url(country_code, measure_id):
+            return self.commodity_object.get_conditions_url(country_code, measure_id)
+
+        self.quotas_table_data = self._get_table_data(
+            self.quotas_measures,
+            get_quotas_url,
+            get_conditions_url,
+        )
 
     @property
     def should_be_displayed(self):
@@ -206,9 +236,10 @@ class QuotasSection(CommodityDetailSection):
             for measure_json in self.quotas_measures
         ]
 
-    def _get_table_data(self, quotas_measures):
+    def _get_table_data(self, quotas_measures, get_quotas_url, get_conditions_url):
         return [
-            measure_json.get_table_row() for measure_json in quotas_measures
+            measure_json.get_table_row(get_quotas_url, get_conditions_url)
+            for measure_json in quotas_measures
         ]
 
     def get_context_data(self):
@@ -238,11 +269,16 @@ class OtherMeasuresSection(CommodityDetailSection):
             is_eu=country.is_eu,
         )
 
-        try:
-            self.other_measures_table_data = [measure_json.get_table_row() for measure_json in self.other_measures]
-        except Exception as exc:
-            self.has_other_measures = False
-            logger.error("Other measures error", exc_info=exc)
+        def get_quotas_url(country_code, measure_id, order_number):
+            return commodity_object.get_quotas_url(country_code, measure_id, order_number)
+
+        def get_conditions_url(country_code, measure_id):
+            return commodity_object.get_conditions_url(country_code, measure_id)
+
+        self.other_measures_table_data = [
+            measure_json.get_table_row(get_quotas_url, get_conditions_url)
+            for measure_json in self.other_measures
+        ]
 
     @property
     def should_be_displayed(self):
@@ -278,10 +314,27 @@ class BaseOtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
             country.country_code,
             is_eu=country.is_eu
         )
-        self.eu_other_measures_table_data = [measure_json.get_table_row() for measure_json in self.eu_other_measures]
+
+        def get_quotas_url(country_code, measure_id, order_number):
+            return eu_commodity_object.get_northern_ireland_quotas_url(country_code, measure_id, order_number)
+
+        def get_conditions_url(country_code, measure_id):
+            return eu_commodity_object.get_northern_ireland_conditions_url(country_code, measure_id)
+
+        self.eu_other_measures_table_data = [
+            measure_json.get_table_row(get_quotas_url, get_conditions_url)
+            for measure_json in self.eu_other_measures]
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
+
+    def get_modals_context_data(self):
+        modals_context_data = super().get_modals_context_data()
+
+        return modals_context_data + [
+            measure_json.measures_modals
+            for measure_json in self.eu_other_measures
+        ]
 
     def get_context_data(self):
         ctx = super().get_context_data()

@@ -8,13 +8,8 @@
 
 
 from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.urls import reverse
 
 from flags.state import flag_enabled
-
-from countries.models import Country
 
 from hierarchy.views.sections import (
     BaseOtherMeasuresNorthernIrelandSection,
@@ -31,21 +26,27 @@ from hierarchy.views.sections import (
     UKGTTariffsAndTaxesSection,
 )
 from hierarchy.views.base import (
+    BaseMeasureConditionDetailView,
+    BaseMeasureQuotaDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 
 from .models import Commodity
 
 
-class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
+class CommodityObjectMixin:
+
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+        nomenclature_sid = kwargs["nomenclature_sid"]
 
         return Commodity.objects.get(
             commodity_code=commodity_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
+            goods_nomenclature_sid=nomenclature_sid,
         )
+
+
+class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
 
     def get_commodity_object_path(self, commodity):
         return commodity.get_path()
@@ -65,26 +66,15 @@ class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
 
 
 class CommodityDetailView(BaseSectionedCommodityDetailView):
+    sections = [
+        TradeStatusSection,
+        TariffsAndTaxesSection,
+        QuotasSection,
+        OtherMeasuresSection,
+        RulesOfOriginSection,
+        ProductRegulationsSection,
+    ]
     template_name = "commodities/commodity_detail.html"
-
-    @property
-    def sections(self):
-        specific = [TariffsAndTaxesSection]
-
-        if flag_enabled("PRE21"):
-            specific = [
-                TradeStatusSection,
-                UKGTTariffsAndTaxesSection,
-            ]
-
-        common = [
-            QuotasSection,
-            OtherMeasuresSection,
-            RulesOfOriginSection,
-            ProductRegulationsSection,
-        ]
-
-        return specific + common
 
 
 class CommodityEUCommodityObjectMixin:
@@ -132,108 +122,31 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-def measure_condition_detail(
-    request, commodity_code, country_code, measure_id, nomenclature_sid
-):
-    """
-    View for an individual measure condition detail page template which takes three arguments, the commodity code that
-    the measure belongs to, the measure id of the individual measure being presented and the country code to
-    provide the exporter geographical context
-    :param nomenclature_sid:
-    :param request: django http request object
-    :param commodity_code: string
-    :param country_code: string
-    :param measure_id: int
-    :return:
-    """
-
-    country = Country.objects.filter(country_code=country_code.upper()).first()
-
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
-
-    commodity = Commodity.objects.get(
-        commodity_code=commodity_code,
-        goods_nomenclature_sid=nomenclature_sid,
-    )
-    if commodity.should_update_tts_content():
-        commodity.update_tts_content()
-
-    import_measure = commodity.tts_obj.get_import_measure_by_id(
-        int(measure_id), country_code=country_code
-    )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
-
-    context = {
-        "nomenclature_sid": nomenclature_sid,
-        "selected_origin_country": country.country_code,
-        "commodity_code": commodity.commodity_code,
-        "commodity_description": commodity.description,
-        "selected_origin_country_name": country.name,
-        "conditions": conditions,
-        "commodity_code_split": commodity.commodity_code_split,
-        "measure_type": import_measure.type_description,
-        "column_headers": [
-            "Condition code",
-            "Condition",
-            "Document code",
-            "Requirement",
-            "Action",
-            "Duty",
-        ],
-    }
-
-    return render(request, "commodities/measure_condition_detail.html", context)
+class MeasureConditionDetailView(CommodityObjectMixin, BaseMeasureConditionDetailView):
+    pass
 
 
-def measure_quota_detail(
-    request, commodity_code, country_code, measure_id, order_number, nomenclature_sid
-):
-    """
-    View for an individual measure condition detail page template which takes three arguments, the commodity code that
-    the measure belongs to, the measure id of the individual measure being presented and the country code to
-    provide the exporter geographical context
-    :param nomenclature_sid:
-    :param request: django http request object
-    :param commodity_code: string
-    :param country_code: string
-    :param measure_id: int
-    :param order_number: string
-    :return:
-    """
+class MeasureQuotaDetailView(CommodityObjectMixin, BaseMeasureQuotaDetailView):
+    pass
 
-    country = Country.objects.filter(country_code=country_code.upper()).first()
 
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
+class EUCommodityObjectMixin:
 
-    commodity = Commodity.objects.get(
-        commodity_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
-    )
-    if commodity.should_update_tts_content():
-        commodity.update_tts_content()
+    def get_commodity_object(self, **kwargs):
+        commodity_code = kwargs["commodity_code"]
+        nomenclature_sid = kwargs["nomenclature_sid"]
 
-    import_measure = commodity.tts_obj.get_import_measure_by_id(
-        int(measure_id), country_code=country_code
-    )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
-    quota_def = import_measure.get_measure_quota_definition_by_order_number(
-        order_number
-    )
-    geographical_area = import_measure.get_geographical_area()
+        return Commodity.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=commodity_code,
+            goods_nomenclature_sid=nomenclature_sid,
+        )
 
-    context = {
-        "nomenclature_sid": nomenclature_sid,
-        "selected_origin_country": country.country_code,
-        "commodity_description": commodity.description,
-        "commodity_code": commodity.commodity_code,
-        "selected_origin_country_name": country.name,
-        "quota_def": quota_def,
-        "geographical_area": geographical_area,
-        "commodity_code_split": commodity.commodity_code_split,
-        "measure_type": import_measure.type_description,
-    }
 
-    return render(request, "commodities/measure_quota_detail.html", context)
+class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureConditionDetailView):
+    pass
+
+
+class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
+    pass
