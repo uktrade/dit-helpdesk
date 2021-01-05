@@ -113,7 +113,7 @@ urlpatterns = [
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
-        commodity_views.measure_quota_detail,
+        commodity_views.MeasureQuotaDetailView.as_view(),
         name="commodity-measure-quota",
     ),
     re_path(
