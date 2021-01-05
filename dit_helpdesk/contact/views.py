@@ -108,7 +108,7 @@ class ContactFormWizardView(SessionWizardView):
         try:
             next_step = self.steps.next
         except ValueError:
-            next_step = None
+            next_step = "step_three" if self.steps.current == "step_two" else None
 
         if (
             "topic" in form.cleaned_data
