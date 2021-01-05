@@ -306,9 +306,6 @@ class RulesOfOriginSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.old_rules_of_origin = commodity_object.get_old_rules_of_origin(
-            country_code=country.country_code,
-        )
         self.rules_of_origin = commodity_object.get_rules_of_origin(
             country_code=country.country_code,
         )
@@ -332,7 +329,6 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["old_rules_of_origin"] = self.old_rules_of_origin
         ctx["rules_of_origin"] = self.rules_of_origin
         ctx["has_uk_trade_agreement"] = self.country.has_uk_trade_agreement
         ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
