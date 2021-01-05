@@ -13,17 +13,19 @@
     this.$module.focusDialog = this.handleFocusDialog.bind(this)
     this.$module.boundKeyDown = this.handleKeyDown.bind(this)
 
-    var $triggerElement = document.querySelector(
+    var $triggerElements = document.querySelectorAll(
       '[data-toggle="modal"][data-target="' + this.$module.id + '"]'
     )
 
-    if ($triggerElement) {
-      $triggerElement.addEventListener('click', this.$module.open)
-    }
-
-    if (this.$closeButton) {
-      this.$closeButton.addEventListener('click', this.$module.close)
-    }
+    $triggerElements.forEach(function ($triggerElement) {
+      if ($triggerElement) {
+        $triggerElement.addEventListener('click', this.$module.open)
+      }
+  
+      if (this.$closeButton) {
+        this.$closeButton.addEventListener('click', this.$module.close)
+      }
+    }, this)
   }
 
   Modal.prototype.handleResize = function (size) {
