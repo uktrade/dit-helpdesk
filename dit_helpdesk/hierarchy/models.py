@@ -17,8 +17,6 @@ from backports.datetime_fromisoformat import MonkeyPatch
 from countries.models import Country
 from hierarchy.clients import get_json_obj_client
 from rules_of_origin.models import (
-    OldRule,
-    OldRulesDocumentFootnote,
     Rule,
     RulesDocumentFootnote,
 )
@@ -71,36 +69,6 @@ class RulesOfOriginMixin:
 
     def get_chapter():
         raise NotImplementedError()
-
-    def get_old_rules_of_origin(self, country_code):
-        """
-        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
-        country code parameter.
-        the dictionary has two keys one for the list of rules and one for the related footnotes
-        :param country_code: string
-        :return: dictionary
-        """
-
-        country = Country.objects.get(country_code=country_code)
-
-        chapter = self.get_chapter()
-        rules = OldRule.objects.filter(
-            chapter=chapter,
-            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
-        ).select_related("old_rules_document__old_rules_group").prefetch_related("oldruleitem_set")
-
-        footnotes = OldRulesDocumentFootnote.objects.filter(
-            old_rules_document__old_rules_group__oldrulesgroupmember__country=country,
-        ).order_by("id")
-        rules_of_origin = {"rules": set(), "footnotes": footnotes}
-
-        groups = {}
-        for rule in rules:
-            rules_of_origin["rules"].add(rule)
-            group_name = rule.old_rules_document.old_rules_group.description
-            groups[group_name] = rules_of_origin
-
-        return groups
 
     def get_rules_of_origin(self, country_code, starting_before=None):
         """

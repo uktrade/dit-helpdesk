@@ -1,7 +1,6 @@
 import json
 import logging
 
-from datetime import datetime, timezone
 from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
@@ -14,7 +13,7 @@ from countries.models import Country
 from hierarchy.models import Section, Chapter, Heading, SubHeading
 from hierarchy.views import _commodity_code_html
 from hierarchy.helpers import create_nomenclature_tree
-from rules_of_origin.models import OldRule, OldRulesGroup, OldRulesGroupMember, OldRulesDocument
+from rules_of_origin.models import Rule, RulesDocument
 
 logger = logging.getLogger(__name__)
 
@@ -212,30 +211,34 @@ class CommodityViewTestCase(TestCase):
         country.has_uk_trade_agreement = True
         country.save()
 
-        rules_group = mixer.blend(OldRulesGroup, description="test rules group")
-        rules_group_member = mixer.blend(
-            OldRulesGroupMember,
-            old_rules_group=rules_group,
-            country=country,
-        )
         rules_document = mixer.blend(
-            OldRulesDocument, description="test rules document", old_rules_group=rules_group
+            RulesDocument,
+            nomenclature_tree=self.tree,
+            description="test rules document",
         )
+        rules_document.countries.add(country)
+        rules_document.save()
 
-        rule = mixer.blend(OldRule, old_rules_document=rules_document, chapter=self.chapter)
-        resp = self.client.get(
-            reverse(
-                "commodity-detail",
-                kwargs={
-                    "commodity_code": self.commodity.commodity_code,
-                    "country_code": country.country_code,
-                    "nomenclature_sid": self.commodity.goods_nomenclature_sid,
-                },
+        rule = mixer.blend(Rule, rules_document=rules_document)
+        rule.chapters.add(self.chapter)
+
+        with patch('commodities.models.Commodity.get_hierarchy_context_ids') as mock_context_ids:
+            mock_context_ids.return_value = (
+                self.chapter.id, None, None, None)
+            resp = self.client.get(
+                reverse(
+                    "commodity-detail",
+                    kwargs={
+                        "commodity_code": self.commodity.commodity_code,
+                        "country_code": country.country_code,
+                        "nomenclature_sid": self.commodity.goods_nomenclature_sid,
+                    },
+                )
             )
-        )
+
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue("old_rules_of_origin" in resp.context)
-        self.assertTrue(resp.context["old_rules_of_origin"])
+        self.assertTrue("rules_of_origin" in resp.context)
+        self.assertTrue(resp.context["rules_of_origin"])
 
     def test_commodity_code_html_for_commodity(self):
         html = _commodity_code_html(self.commodity.commodity_code)
