@@ -8,15 +8,8 @@
 
 
 from django.conf import settings
-from django.contrib import messages
-from django.http.response import Http404
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.views.generic import TemplateView
 
 from flags.state import flag_enabled
-
-from countries.models import Country
 
 from hierarchy.views.sections import (
     BaseOtherMeasuresNorthernIrelandSection,
@@ -34,21 +27,26 @@ from hierarchy.views.sections import (
 )
 from hierarchy.views.base import (
     BaseMeasureConditionDetailView,
+    BaseMeasureQuotaDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 
 from .models import Commodity
 
 
-class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
+class CommodityObjectMixin:
+
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+        nomenclature_sid = kwargs["nomenclature_sid"]
 
         return Commodity.objects.get(
             commodity_code=commodity_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
+            goods_nomenclature_sid=nomenclature_sid,
         )
+
+
+class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
 
     def get_commodity_object_path(self, commodity):
         return commodity.get_path()
@@ -135,72 +133,9 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(BaseMeasureConditionDetailView):
-
-    def get_commodity_object(self, **kwargs):
-        commodity_code = kwargs["commodity_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Commodity.objects.get(
-            commodity_code=commodity_code,
-            goods_nomenclature_sid=nomenclature_sid,
-        )
+class MeasureConditionDetailView(CommodityObjectMixin, BaseMeasureConditionDetailView):
+    pass
 
 
-class MeasureQuotaDetailView(TemplateView):
-    template_name = "commodities/measure_quota_detail.html"
-
-    def get(self, request, **kwargs):
-        country_code = kwargs["country_code"]
-        try:
-            country = Country.objects.get(country_code=country_code.upper())
-        except Country.DoesNotExist:
-            messages.error(request, "Invalid originCountry")
-            return redirect(reverse("choose-country"))
-        self.country = country
-
-        commodity_code = kwargs["commodity_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-        try:
-            commodity = Commodity.objects.get(
-                commodity_code=commodity_code,
-                goods_nomenclature_sid=nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            raise Http404
-        if commodity.should_update_tts_content():
-            commodity.update_tts_content()
-        self.commodity = commodity
-
-        measure_id = int(kwargs["measure_id"])
-        self.import_measure = commodity.tts_obj.get_import_measure_by_id(
-            measure_id,
-            country_code=country_code
-        )
-        order_number = kwargs["order_number"]
-        self.quota_def = self.import_measure.get_measure_quota_definition_by_order_number(
-            order_number
-        )
-        self.geographical_area = self.import_measure.get_geographical_area()
-
-        return super().get(request, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        commodity = self.commodity
-        country = self.country
-
-        ctx.update({
-            "nomenclature_sid": commodity.goods_nomenclature_sid,
-            "selected_origin_country": country.country_code,
-            "commodity_description": commodity.description,
-            "commodity_code": commodity.commodity_code,
-            "selected_origin_country_name": country.name,
-            "quota_def": self.quota_def,
-            "geographical_area": self.geographical_area,
-            "commodity_code_split": commodity.commodity_code_split,
-            "measure_type": self.import_measure.type_description,
-        })
-
-        return ctx
+class MeasureQuotaDetailView(CommodityObjectMixin, BaseMeasureQuotaDetailView):
+    pass

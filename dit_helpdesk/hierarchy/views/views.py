@@ -17,6 +17,7 @@ from ..models import Chapter, Heading, SubHeading
 from .base import (
     BaseCommodityObjectDetailView,
     BaseMeasureConditionDetailView,
+    BaseMeasureQuotaDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 from .helpers import (
@@ -127,8 +128,7 @@ class ChapterDetailView(BaseCommodityObjectDetailView):
         return ctx
 
 
-class BaseSectionedHeadingDetailView(BaseSectionedCommodityObjectDetailView):
-    context_object_name = "heading"
+class HeadingObjectMixin:
 
     def get_commodity_object(self, **kwargs):
         heading_code = kwargs["heading_code"]
@@ -138,6 +138,10 @@ class BaseSectionedHeadingDetailView(BaseSectionedCommodityObjectDetailView):
             heading_code=heading_code,
             goods_nomenclature_sid=goods_nomenclature_sid,
         )
+
+
+class BaseSectionedHeadingDetailView(HeadingObjectMixin, BaseSectionedCommodityObjectDetailView):
+    context_object_name = "heading"
 
     def get_commodity_object_path(self, heading):
         heading_path = heading.get_path()
@@ -290,62 +294,9 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(BaseMeasureConditionDetailView):
-
-    def get_commodity_object(self, **kwargs):
-        heading_code = kwargs["heading_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Heading.objects.get(
-            heading_code=heading_code,
-            goods_nomenclature_sid=nomenclature_sid,
-        )
+class MeasureConditionDetailView(HeadingObjectMixin, BaseMeasureConditionDetailView):
+    pass
 
 
-def measure_quota_detail(
-    request, heading_code, country_code, measure_id, order_number, nomenclature_sid
-):
-    """
-    View for an individual measure condition detail page template which takes three arguments, the commodity code that
-    the measure belongs to, the measure id of the individual measure being presented and the country code to
-    provide the exporter geographical context
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :param measure_id: int
-    :return:
-    """
-
-    country = Country.objects.filter(country_code=country_code.upper()).first()
-
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
-
-    heading = Heading.objects.get(
-        heading_code=heading_code,
-        goods_nomenclature_sid=nomenclature_sid,
-    )
-    if heading.should_update_tts_content():
-        heading.update_tts_content()
-
-    import_measure = heading.tts_obj.get_import_measure_by_id(
-        int(measure_id), country_code=country_code
-    )
-    quota_def = import_measure.get_measure_quota_definition_by_order_number(
-        order_number
-    )
-    geographical_area = import_measure.get_geographical_area()
-
-    context = {
-        "selected_origin_country": country.country_code,
-        "commodity_description": heading.description,
-        "commodity_code": heading.commodity_code,
-        "selected_origin_country_name": country.name,
-        "quota_def": quota_def,
-        "geographical_area": geographical_area,
-        "commodity_code_split": heading.heading_code_split,
-        "measure_type": import_measure.type_description,
-    }
-
-    return render(request, "hierarchy/measure_quota_detail.html", context)
+class MeasureQuotaDetailView(HeadingObjectMixin, BaseMeasureQuotaDetailView):
+    pass

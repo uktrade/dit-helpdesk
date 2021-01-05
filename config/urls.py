@@ -119,7 +119,7 @@ urlpatterns = [
     re_path(
         r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
-        hierarchy_views.measure_quota_detail,
+        hierarchy_views.MeasureQuotaDetailView.as_view(),
         name="heading-measure-quota",
     ),
     path(

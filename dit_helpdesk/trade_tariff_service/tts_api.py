@@ -260,7 +260,7 @@ class ImportMeasureJson:
 
     @property
     def get_quota_table(self):
-        template = loader.get_template("commodities/measure_quota_table.html")
+        template = loader.get_template("hierarchy/measure_quota_table.html")
         measure_quota = self.get_measure_quota_definition_by_order_number(
             self.di["order_number"]["number"]
         )
