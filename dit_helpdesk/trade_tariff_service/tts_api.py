@@ -122,15 +122,6 @@ class ImportMeasureJson:
         self.measures_modals = {}
         self.country_code = country_code
 
-    def get_commodity_sid(self):
-        """
-        get nomenclature sid. used by conditions_html and quota_html to build the correct url
-        for modal fallback page
-        :return:
-        """
-
-        return self.commodity_obj.goods_nomenclature_sid
-
     def __repr__(self):
         return "ImportMeasureJson %s %s" % (self.commodity_code, self.type_id)
 
@@ -208,13 +199,12 @@ class ImportMeasureJson:
 
     @property
     def conditions_html(self):
-
         if not self.num_conditions:
             html = "-"
         else:
-            commodity_sid = self.get_commodity_sid()
-            url = "{0}/import-measure/{1}/conditions".format(
-                commodity_sid, self.measure_id
+            url = self.commodity_obj.get_conditions_url(
+                self.country_code.lower(),
+                self.measure_id,
             )
             modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
             html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
@@ -324,32 +314,34 @@ class ImportMeasureJson:
         also generates the matching modal html and appends it to a class dictionary variable
         :return: the html of the link
         """
-        commodity_sid = self.get_commodity_sid()
         html = ""
         order_number = self.di["order_number"]["number"]
-        if commodity_sid:
-            url = "{0}/import-measure/{1}/quota/{2}".format(
-                commodity_sid, self.measure_id, order_number
-            )
-            modal_id = "{0}-{1}".format(self.measure_id, order_number)
-            html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
-                modal_id, url, order_number
-            )
+        url = self.commodity_obj.get_quotas_url(
+            self.country_code.lower(),
+            self.measure_id,
+            order_number,
+        )
 
-            if self.di["order_number"]["definition"] is None:
-                modal_body = """<table class="govuk-table app-flexible-table">
-                                <caption class="govuk-table__caption govuk-heading-m">Quota number : {0}</caption>
-                                <tbody class="govuk-table__body app-flexible-table__body">
-                                <tr class="govuk-table__row app-flexible-table__row">
-                                <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
-                                            scope="row"><p>{1}</p>
-                                </td></tr></tbody></table>""".format(
-                    order_number, settings.QUOTA_DEFAULT_MESSAGE
-                )
-            else:
-                modal_body = self.get_quota_table
+        modal_id = "{0}-{1}".format(self.measure_id, order_number)
+        html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
+            modal_id, url, order_number
+        )
 
-            self.measures_modals[modal_id] = self.get_modal(modal_id, modal_body)
+        if self.di["order_number"]["definition"] is None:
+            modal_body = """<table class="govuk-table app-flexible-table">
+                            <caption class="govuk-table__caption govuk-heading-m">Quota number : {0}</caption>
+                            <tbody class="govuk-table__body app-flexible-table__body">
+                            <tr class="govuk-table__row app-flexible-table__row">
+                            <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
+                                        scope="row"><p>{1}</p>
+                            </td></tr></tbody></table>""".format(
+                order_number, settings.QUOTA_DEFAULT_MESSAGE
+            )
+        else:
+            modal_body = self.get_quota_table
+
+        self.measures_modals[modal_id] = self.get_modal(modal_id, modal_body)
+
         return html
 
     def get_table_row(self):

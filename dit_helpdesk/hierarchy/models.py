@@ -290,6 +290,12 @@ class BaseHierarchyModel(models.Model):
 
         return json.dumps(obj)
 
+    def get_conditions_url(self, country_code, measure_id):
+        raise NotImplementedError(f"Implement `get_conditions_url` for {self.__class__}")
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        raise NotImplementedError(f"Implement `get_quotas_url` for {self.__class__}")
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
@@ -1078,6 +1084,29 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             }
         )
 
+    def get_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
+            }
+        )
+
 
 class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     productline_suffix = models.CharField(max_length=2)
@@ -1412,5 +1441,28 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
+    def get_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
             }
         )

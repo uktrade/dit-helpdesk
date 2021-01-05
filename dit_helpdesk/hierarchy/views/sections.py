@@ -193,11 +193,7 @@ class QuotasSection(CommodityDetailSection):
             is_eu=country.is_eu,
         )
 
-        try:
-            self.quotas_table_data = self._get_table_data(self.quotas_measures)
-        except Exception as exc:
-            self.has_quotas_measures = False
-            logger.error("Quotas error", exc_info=exc)
+        self.quotas_table_data = self._get_table_data(self.quotas_measures)
 
     @property
     def should_be_displayed(self):

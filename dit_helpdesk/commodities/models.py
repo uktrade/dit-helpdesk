@@ -320,3 +320,26 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
             }
         )
+
+    def get_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "commodity-measure-conditions",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "commodity-measure-quota",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
+            }
+        )
