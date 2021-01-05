@@ -258,6 +258,12 @@ class BaseHierarchyModel(models.Model):
 
         return json.dumps(obj)
 
+    def get_conditions_url(self, country_code, measure_id):
+        raise NotImplementedError(f"Implement `get_conditions_url` for {self.__class__}")
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        raise NotImplementedError(f"Implement `get_quotas_url` for {self.__class__}")
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
@@ -1033,6 +1039,10 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         else:
             return code
 
+    @property
+    def commodity_code_split(self):
+        return self.heading_code_split
+
     def get_parent(self):
         return self.chapter
 
@@ -1043,6 +1053,52 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "heading_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
+    def get_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_northern_ireland_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions-northern-ireland",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
+            }
+        )
+
+    def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota-northern-ireland",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
             }
         )
 
@@ -1343,6 +1399,10 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         else:
             return code
 
+    @property
+    def commodity_code_split(self):
+        return self.subheading_code_split
+
     def get_chapter(self, ancestor=None):
         """
         recursive function to return the ancestoral chapter
@@ -1380,5 +1440,51 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
+    def get_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_northern_ireland_conditions_url(self, country_code, measure_id):
+        return reverse(
+            "heading-measure-conditions-northern-ireland",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+            }
+        )
+
+    def get_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
+            }
+        )
+
+    def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
+        return reverse(
+            "heading-measure-quota-northern-ireland",
+            kwargs={
+                "heading_code": self.commodity_code,
+                "country_code": country_code,
+                "nomenclature_sid": self.goods_nomenclature_sid,
+                "measure_id": measure_id,
+                "order_number": order_number,
             }
         )

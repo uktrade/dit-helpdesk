@@ -179,12 +179,21 @@ class ImportMeasureJsonTestCase(TestCase):
         )
 
     def test_conditions_html(self):
-        self.assertEqual(self.import_measure.conditions_html, "-")
-        self.assertTrue(isinstance(self.import_measure.conditions_html, str))
+        def get_conditions_url(*args):
+            return "TEST URL"
+
+        self.assertEqual(self.import_measure.conditions_html(get_conditions_url), "-")
+        self.assertTrue(isinstance(self.import_measure.conditions_html(get_conditions_url), str))
 
     def test_get_table_dict(self):
+        def get_quotas_url(*args):
+            return "TEST QUOTAS URL"
+
+        def get_conditions_url(*args):
+            return "TEST CONDITIONS URL"
+
         self.assertEqual(
-            self.import_measure.get_table_dict(),
+            self.import_measure.get_table_dict(get_quotas_url, get_conditions_url),
             {
                 "country": "ERGA OMNES",
                 "measure_description": "VAT standard rate",
@@ -194,12 +203,18 @@ class ImportMeasureJsonTestCase(TestCase):
                 "start_end_date": "2015-02-01",
             },
         )
-        self.assertTrue(isinstance(self.import_measure.get_table_dict(), dict))
+        self.assertTrue(isinstance(self.import_measure.get_table_dict(get_quotas_url, get_conditions_url), dict))
 
     def test_get_table_row(self):
         # self.assertTrue(isinstance(self.import_measure, list))
+        def get_quotas_url(*args):
+            return "TEST QUOTAS URL"
+
+        def get_conditions_url(*args):
+            return "TEST CONDITIONS URL"
+
         self.assertEqual(
-            self.import_measure.get_table_row(),
+            self.import_measure.get_table_row(get_quotas_url, get_conditions_url),
             [
                 ["Country", "All countries"],
                 ["Measure type", "VAT standard rate"],

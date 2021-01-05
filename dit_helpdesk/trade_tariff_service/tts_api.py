@@ -122,15 +122,6 @@ class ImportMeasureJson:
         self.measures_modals = {}
         self.country_code = country_code
 
-    def get_commodity_sid(self):
-        """
-        get nomenclature sid. used by conditions_html and quota_html to build the correct url
-        for modal fallback page
-        :return:
-        """
-
-        return self.commodity_obj.goods_nomenclature_sid
-
     def __repr__(self):
         return "ImportMeasureJson %s %s" % (self.commodity_code, self.type_id)
 
@@ -206,15 +197,13 @@ class ImportMeasureJson:
 
         return False
 
-    @property
-    def conditions_html(self):
-
+    def conditions_html(self, get_conditions_url):
         if not self.num_conditions:
             html = "-"
         else:
-            commodity_sid = self.get_commodity_sid()
-            url = "{0}/import-measure/{1}/conditions".format(
-                commodity_sid, self.measure_id
+            url = get_conditions_url(
+                self.country_code.lower(),
+                self.measure_id,
             )
             modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
             html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
@@ -252,7 +241,7 @@ class ImportMeasureJson:
 
     @property
     def get_conditions_table(self):
-        template = loader.get_template("commodities/measure_condition_table.html")
+        template = loader.get_template("hierarchy/measure_condition_table.html")
         measure_conditions = self.get_measure_conditions_by_measure_id(self.measure_id)
         context = {
             "column_headers": [
@@ -270,7 +259,7 @@ class ImportMeasureJson:
 
     @property
     def get_quota_table(self):
-        template = loader.get_template("commodities/measure_quota_table.html")
+        template = loader.get_template("hierarchy/measure_quota_table.html")
         measure_quota = self.get_measure_quota_definition_by_order_number(
             self.di["order_number"]["number"]
         )
@@ -283,7 +272,7 @@ class ImportMeasureJson:
         rendered = template.render(context)
         return rendered
 
-    def get_table_dict(self):
+    def get_table_dict(self, get_quotas_url, get_conditions_url):
         country = self.geographical_area_description
 
         try:
@@ -295,7 +284,7 @@ class ImportMeasureJson:
             measure_description = self.di["measure_type"]["description"]
 
         if self.di["order_number"]:
-            order_str = self.quota_html()
+            order_str = self.quota_html(get_quotas_url)
             measure_description = measure_description + "\n" + order_str
 
         measure_value = self.di["duty_expression"]["base"]
@@ -312,52 +301,54 @@ class ImportMeasureJson:
         return {
             "country": country,
             "measure_description": measure_description,
-            "conditions_html": self.conditions_html,
+            "conditions_html": self.conditions_html(get_conditions_url),
             "measure_value": measure_value,
             "excluded_countries": excluded_countries,
             "start_end_date": start_end_date,
         }
 
-    def quota_html(self):
+    def quota_html(self, get_quotas_url):
         """
         generate an html link for quota order number that supports javascript enable modal and no javascript backup
         also generates the matching modal html and appends it to a class dictionary variable
         :return: the html of the link
         """
-        commodity_sid = self.get_commodity_sid()
         html = ""
         order_number = self.di["order_number"]["number"]
-        if commodity_sid:
-            url = "{0}/import-measure/{1}/quota/{2}".format(
-                commodity_sid, self.measure_id, order_number
-            )
-            modal_id = "{0}-{1}".format(self.measure_id, order_number)
-            html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
-                modal_id, url, order_number
-            )
+        url = get_quotas_url(
+            self.country_code.lower(),
+            self.measure_id,
+            order_number,
+        )
 
-            if self.di["order_number"]["definition"] is None:
-                modal_body = """<table class="govuk-table app-flexible-table">
-                                <caption class="govuk-table__caption govuk-heading-m">Quota number : {0}</caption>
-                                <tbody class="govuk-table__body app-flexible-table__body">
-                                <tr class="govuk-table__row app-flexible-table__row">
-                                <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
-                                            scope="row"><p>{1}</p>
-                                </td></tr></tbody></table>""".format(
-                    order_number, settings.QUOTA_DEFAULT_MESSAGE
-                )
-            else:
-                modal_body = self.get_quota_table
+        modal_id = "{0}-{1}".format(self.measure_id, order_number)
+        html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(
+            modal_id, url, order_number
+        )
 
-            self.measures_modals[modal_id] = self.get_modal(modal_id, modal_body)
+        if self.di["order_number"]["definition"] is None:
+            modal_body = """<table class="govuk-table app-flexible-table">
+                            <caption class="govuk-table__caption govuk-heading-m">Quota number : {0}</caption>
+                            <tbody class="govuk-table__body app-flexible-table__body">
+                            <tr class="govuk-table__row app-flexible-table__row">
+                            <td class="govuk-table__cell app-flexible-table__cell govuk-!-font-weight-regular"
+                                        scope="row"><p>{1}</p>
+                            </td></tr></tbody></table>""".format(
+                order_number, settings.QUOTA_DEFAULT_MESSAGE
+            )
+        else:
+            modal_body = self.get_quota_table
+
+        self.measures_modals[modal_id] = self.get_modal(modal_id, modal_body)
+
         return html
 
-    def get_table_row(self):
+    def get_table_row(self, get_quotas_url, get_conditions_url):
         """
         generates the data for a table row for a commodities' measures table
         :return: returns a list
         """
-        di = self.get_table_dict()
+        di = self.get_table_dict(get_quotas_url, get_conditions_url)
         data = [di[tup[0]] for tup in COMMODITY_DETAIL_TABLE_KEYS]
         data = self.rename_countries_default(data)
 
