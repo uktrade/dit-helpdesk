@@ -66,26 +66,15 @@ class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommod
 
 
 class CommodityDetailView(BaseSectionedCommodityDetailView):
+    sections = [
+        TradeStatusSection,
+        TariffsAndTaxesSection,
+        QuotasSection,
+        OtherMeasuresSection,
+        RulesOfOriginSection,
+        ProductRegulationsSection,
+    ]
     template_name = "commodities/commodity_detail.html"
-
-    @property
-    def sections(self):
-        specific = [TariffsAndTaxesSection]
-
-        if flag_enabled("PRE21"):
-            specific = [
-                TradeStatusSection,
-                UKGTTariffsAndTaxesSection,
-            ]
-
-        common = [
-            QuotasSection,
-            OtherMeasuresSection,
-            RulesOfOriginSection,
-            ProductRegulationsSection,
-        ]
-
-        return specific + common
 
 
 class CommodityEUCommodityObjectMixin:

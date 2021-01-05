@@ -38,7 +38,6 @@ from .sections import (
     SubHeadingTariffsAndTaxesNorthernIrelandSection,
     TariffsAndTaxesSection,
     TradeStatusSection,
-    UKGTTariffsAndTaxesSection,
 )
 
 logger = logging.getLogger(__name__)
@@ -164,26 +163,15 @@ class BaseSectionedHeadingDetailView(HeadingObjectMixin, BaseSectionedCommodityO
 
 
 class HeadingDetailView(BaseSectionedHeadingDetailView):
+    sections = [
+        TradeStatusSection,
+        TariffsAndTaxesSection,
+        QuotasSection,
+        OtherMeasuresSection,
+        RulesOfOriginSection,
+        ProductRegulationsSection,        
+    ]
     template_name = "hierarchy/heading_detail.html"
-
-    @property
-    def sections(self):
-        specific = [TariffsAndTaxesSection]
-
-        if flag_enabled("PRE21"):
-            specific = [
-                TradeStatusSection,
-                UKGTTariffsAndTaxesSection,
-            ]
-
-        common = [
-            QuotasSection,
-            OtherMeasuresSection,
-            RulesOfOriginSection,
-            ProductRegulationsSection,
-        ]
-
-        return specific + common
 
 
 class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
@@ -245,26 +233,15 @@ class BaseSectionedSubHeadingDetailView(BaseSectionedCommodityObjectDetailView):
 
 
 class SubHeadingDetailView(BaseSectionedSubHeadingDetailView):
+    sections = [
+        TradeStatusSection,
+        TariffsAndTaxesSection,
+        QuotasSection,
+        OtherMeasuresSection,
+        RulesOfOriginSection,
+        ProductRegulationsSection,
+    ]
     template_name = "hierarchy/subheading_detail.html"
-
-    @property
-    def sections(self):
-        specific = [TariffsAndTaxesSection]
-
-        if flag_enabled("PRE21"):
-            specific = [
-                TradeStatusSection,
-                UKGTTariffsAndTaxesSection,
-            ]
-
-        common = [
-            QuotasSection,
-            OtherMeasuresSection,
-            RulesOfOriginSection,
-            ProductRegulationsSection,
-        ]
-
-        return specific + common
 
 
 class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
