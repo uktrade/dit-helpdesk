@@ -23,11 +23,11 @@ from countries.models import Country
 
 logger = logging.getLogger(__name__)
 
-FORMS = [
+FORMS = (
     ("step_one", ContactFormStepOne),
     ("step_two", ContactFormStepTwo),
     ("step_three", ContactFormStepThree),
-]
+)
 
 TEMPLATES = {
     "step_one": "contact/step_one.html",
@@ -105,9 +105,14 @@ class ContactFormWizardView(SessionWizardView):
         :return: render to response
         """
 
+        try:
+            next_step = self.steps.next
+        except ValueError:
+            next_step = "step_three" if self.steps.current == "step_two" else None
+
         if (
             "topic" in form.cleaned_data
-            and self.steps.next == "step_three"
+            and next_step == "step_three"
             and form.cleaned_data["topic"] == "1"
         ):
             return HttpResponseRedirect(settings.HMRC_TAX_FORM_URL)
