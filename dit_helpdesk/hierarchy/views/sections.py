@@ -132,6 +132,14 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
     def _get_is_meursing_code(self, commodity_object):
         return commodity_object.tts_obj.is_meursing_code
 
+    def get_modals_context_data(self):
+        modals_context_data = super().get_modals_context_data()
+
+        return modals_context_data + [
+            measure_json.measures_modals
+            for measure_json in self.eu_tariffs
+        ]
+
     def get_context_data(self):
         ctx = super().get_context_data()
 
@@ -282,6 +290,14 @@ class BaseOtherMeasuresNorthernIrelandSection(OtherMeasuresSection):
 
     def get_eu_commodity_object(self, commodity_object):
         raise NotImplementedError("Implement `get_eu_commodity_object`")
+
+    def get_modals_context_data(self):
+        modals_context_data = super().get_modals_context_data()
+
+        return modals_context_data + [
+            measure_json.measures_modals
+            for measure_json in self.eu_other_measures
+        ]
 
     def get_context_data(self):
         ctx = super().get_context_data()
