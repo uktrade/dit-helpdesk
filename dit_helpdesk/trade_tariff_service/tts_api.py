@@ -242,7 +242,7 @@ class ImportMeasureJson:
 
     @property
     def get_conditions_table(self):
-        template = loader.get_template("commodities/measure_condition_table.html")
+        template = loader.get_template("hierarchy/measure_condition_table.html")
         measure_conditions = self.get_measure_conditions_by_measure_id(self.measure_id)
         context = {
             "column_headers": [

@@ -16,6 +16,7 @@ from ..models import Chapter, Heading, SubHeading
 
 from .base import (
     BaseCommodityObjectDetailView,
+    BaseMeasureConditionDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 from .helpers import (
@@ -289,48 +290,16 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-def measure_condition_detail(
-    request, heading_code, country_code, measure_id, nomenclature_sid
-):
-    """
-    View for an individual measure condition detail page template which takes three arguments, the commodity code that
-    the measure belongs to, the measure id of the individual measure being presented and the country code to
-    provide the exporter geographical context
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :param measure_id: int
-    :return:
-    """
+class MeasureConditionDetailView(BaseMeasureConditionDetailView):
 
-    country = Country.objects.filter(country_code=country_code.upper()).first()
+    def get_commodity_object(self, **kwargs):
+        heading_code = kwargs["heading_code"]
+        nomenclature_sid = kwargs["nomenclature_sid"]
 
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
-
-    heading = Heading.objects.get(
-        heading_code=heading_code,
-        goods_nomenclature_sid=nomenclature_sid,
-    )
-    if heading.should_update_tts_content():
-        heading.update_tts_content()
-
-    import_measure = heading.tts_obj.get_import_measure_by_id(
-        int(measure_id), country_code=country_code
-    )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
-
-    context = {
-        "selected_origin_country": country.country_code,
-        "heading": heading,
-        "commodity_code_split": heading.heading_code_split,
-        "selected_origin_country_name": country.name,
-        "import_measure": import_measure,
-        "conditions": conditions,
-    }
-
-    return render(request, "hierarchy/measure_condition_detail.html", context)
+        return Heading.objects.get(
+            heading_code=heading_code,
+            goods_nomenclature_sid=nomenclature_sid,
+        )
 
 
 def measure_quota_detail(

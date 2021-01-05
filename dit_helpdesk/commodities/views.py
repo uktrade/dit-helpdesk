@@ -33,6 +33,7 @@ from hierarchy.views.sections import (
     UKGTTariffsAndTaxesSection,
 )
 from hierarchy.views.base import (
+    BaseMeasureConditionDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
 
@@ -134,70 +135,16 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(TemplateView):
-    template_name = "commodities/measure_condition_detail.html"
+class MeasureConditionDetailView(BaseMeasureConditionDetailView):
 
-    def get(self, request, **kwargs):
-        country_code = kwargs["country_code"]
-        try:
-            country = Country.objects.get(country_code=country_code.upper())
-        except Country.DoesNotExist:
-            messages.error(request, "Invalid originCountry")
-            return redirect(reverse("choose-country"))
-        self.country = country
-
+    def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         nomenclature_sid = kwargs["nomenclature_sid"]
-        try:
-            commodity = Commodity.objects.get(
-                commodity_code=commodity_code,
-                goods_nomenclature_sid=nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            raise Http404
-        if commodity.should_update_tts_content():
-            commodity.update_tts_content()
-        self.commodity = commodity
 
-        measure_id = int(kwargs["measure_id"])
-        self.import_measure = self.commodity.tts_obj.get_import_measure_by_id(
-            measure_id,
-            country_code=country_code
+        return Commodity.objects.get(
+            commodity_code=commodity_code,
+            goods_nomenclature_sid=nomenclature_sid,
         )
-        self.conditions = self.import_measure.get_measure_conditions_by_measure_id(
-            measure_id,
-        )
-
-        return super().get(request, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        country = self.country
-        commodity = self.commodity
-        import_measure = self.import_measure
-        conditions = self.conditions
-
-        ctx.update({
-            "nomenclature_sid": commodity.goods_nomenclature_sid,
-            "selected_origin_country": country.country_code,
-            "commodity_code": commodity.commodity_code,
-            "commodity_description": commodity.description,
-            "selected_origin_country_name": country.name,
-            "conditions": conditions,
-            "commodity_code_split": commodity.commodity_code_split,
-            "measure_type": import_measure.type_description,
-            "column_headers": [
-                "Condition code",
-                "Condition",
-                "Document code",
-                "Requirement",
-                "Action",
-                "Duty",
-            ],
-        })
-
-        return ctx
 
 
 class MeasureQuotaDetailView(TemplateView):

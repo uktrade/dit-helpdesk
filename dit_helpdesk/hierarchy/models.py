@@ -1071,6 +1071,10 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         else:
             return code
 
+    @property
+    def commodity_code_split(self):
+        return self.heading_code_split
+
     def get_parent(self):
         return self.chapter
 
@@ -1403,6 +1407,10 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             return [x for x in code if x != "00"]
         else:
             return code
+
+    @property
+    def commodity_code_split(self):
+        return self.subheading_code_split
 
     def get_chapter(self, ancestor=None):
         """

@@ -107,7 +107,7 @@ urlpatterns = [
     re_path(
         r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
-        hierarchy_views.measure_condition_detail,
+        hierarchy_views.MeasureConditionDetailView.as_view(),
         name="heading-measure-conditions",
     ),
     re_path(
