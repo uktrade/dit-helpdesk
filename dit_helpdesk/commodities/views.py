@@ -9,8 +9,10 @@
 
 from django.conf import settings
 from django.contrib import messages
+from django.http.response import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.generic import TemplateView
 
 from flags.state import flag_enabled
 
@@ -132,59 +134,70 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
                 self.eu_commodity_object.update_tts_content()
 
 
-def measure_condition_detail(
-    request, commodity_code, country_code, measure_id, nomenclature_sid
-):
-    """
-    View for an individual measure condition detail page template which takes three arguments, the commodity code that
-    the measure belongs to, the measure id of the individual measure being presented and the country code to
-    provide the exporter geographical context
-    :param nomenclature_sid:
-    :param request: django http request object
-    :param commodity_code: string
-    :param country_code: string
-    :param measure_id: int
-    :return:
-    """
+class MeasureConditionDetailView(TemplateView):
+    template_name = "commodities/measure_condition_detail.html"
 
-    country = Country.objects.filter(country_code=country_code.upper()).first()
+    def get(self, request, **kwargs):
+        country_code = kwargs["country_code"]
+        try:
+            country = Country.objects.get(country_code=country_code.upper())
+        except Country.DoesNotExist:
+            messages.error(request, "Invalid originCountry")
+            return redirect(reverse("choose-country"))
+        self.country = country
 
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
+        commodity_code = kwargs["commodity_code"]
+        nomenclature_sid = kwargs["nomenclature_sid"]
+        try:
+            commodity = Commodity.objects.get(
+                commodity_code=commodity_code,
+                goods_nomenclature_sid=nomenclature_sid,
+            )
+        except Commodity.DoesNotExist:
+            raise Http404
+        if commodity.should_update_tts_content():
+            commodity.update_tts_content()
+        self.commodity = commodity
 
-    commodity = Commodity.objects.get(
-        commodity_code=commodity_code,
-        goods_nomenclature_sid=nomenclature_sid,
-    )
-    if commodity.should_update_tts_content():
-        commodity.update_tts_content()
+        measure_id = int(kwargs["measure_id"])
+        self.import_measure = self.commodity.tts_obj.get_import_measure_by_id(
+            measure_id,
+            country_code=country_code
+        )
+        self.conditions = self.import_measure.get_measure_conditions_by_measure_id(
+            measure_id,
+        )
 
-    import_measure = commodity.tts_obj.get_import_measure_by_id(
-        int(measure_id), country_code=country_code
-    )
-    conditions = import_measure.get_measure_conditions_by_measure_id(int(measure_id))
+        return super().get(request, **kwargs)
 
-    context = {
-        "nomenclature_sid": nomenclature_sid,
-        "selected_origin_country": country.country_code,
-        "commodity_code": commodity.commodity_code,
-        "commodity_description": commodity.description,
-        "selected_origin_country_name": country.name,
-        "conditions": conditions,
-        "commodity_code_split": commodity.commodity_code_split,
-        "measure_type": import_measure.type_description,
-        "column_headers": [
-            "Condition code",
-            "Condition",
-            "Document code",
-            "Requirement",
-            "Action",
-            "Duty",
-        ],
-    }
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
 
-    return render(request, "commodities/measure_condition_detail.html", context)
+        country = self.country
+        commodity = self.commodity
+        import_measure = self.import_measure
+        conditions = self.conditions
+
+        ctx.update({
+            "nomenclature_sid": commodity.goods_nomenclature_sid,
+            "selected_origin_country": country.country_code,
+            "commodity_code": commodity.commodity_code,
+            "commodity_description": commodity.description,
+            "selected_origin_country_name": country.name,
+            "conditions": conditions,
+            "commodity_code_split": commodity.commodity_code_split,
+            "measure_type": import_measure.type_description,
+            "column_headers": [
+                "Condition code",
+                "Condition",
+                "Document code",
+                "Requirement",
+                "Action",
+                "Duty",
+            ],
+        })
+
+        return ctx
 
 
 def measure_quota_detail(
