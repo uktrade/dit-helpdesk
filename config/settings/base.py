@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl_drf",
     "accessibility",
     "reversion",
+    "django_migration_linter",
 ]
 
 MIDDLEWARE = [
