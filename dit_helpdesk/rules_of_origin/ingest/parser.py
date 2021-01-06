@@ -85,6 +85,14 @@ def parse_file(f):
     agreement_partners = meta.findall('agreementPartner')
     non_gb_partners = [ap for ap in agreement_partners if ap.attrib['code'] != 'GB']
     non_gb_partners_labels = [ap.find('label').text for ap in non_gb_partners]
+    gb_partners = [ap for ap in agreement_partners if ap.attrib['code'] == 'GB']
+
+    if len(gb_partners) != 1:
+        raise ValueError("RoO file should have one agreement partner with code=GB")
+    gb_partner = gb_partners[0]
+    gb_country = gb_partner.find('country')
+    gb_start_date = gb_country.attrib['validFrom']
+
     fta_name = f"FTA {', '.join(non_gb_partners_labels)}"
     countries_with_dates = [
         country_element.attrib
@@ -98,6 +106,7 @@ def parse_file(f):
 
     output = {
         'name': fta_name,
+        'gb_start_date': gb_start_date,
         'countries_with_dates': countries_with_dates,
         'positions': positions_list,
         'notes': notes_list,
