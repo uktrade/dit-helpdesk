@@ -187,7 +187,7 @@ jobs:
       - run:
           name: Lint migrations
           command:
-            python manage.py lintmigrations
+            ./lint_migrations.sh
       - store_test_results:
           path: test-reports
       - store_artifacts:
