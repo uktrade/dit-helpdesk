@@ -2,10 +2,9 @@
 
 from django.db import migrations
 
-from flags.models import FlagState
-
 
 def create_flags(apps, schema_editor):
+    FlagState = apps.get_model("flags", "FlagState")
 
     FlagState.objects.create(
         name='PRE21',
@@ -27,6 +26,8 @@ def create_flags(apps, schema_editor):
 
 
 def delete_flags(apps, schema_editor):
+    FlagState = apps.get_model("flags", "FlagState")
+
     FlagState.objects.filter(
         name__in=['PRE21', 'JAPAN_FTA', 'NI_JOURNEY']
     ).all().delete()
