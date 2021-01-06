@@ -46,7 +46,7 @@ class ImporterTestCase(TestCase):
     """
 
     def setUp(self):
-        self.country = mixer.blend(Country, name='Test Country', country_code='TC')
+        self.country = mixer.blend(Country, name='Test Country', country_code='XT')
 
         self.tree = create_nomenclature_tree()
 
@@ -125,7 +125,7 @@ class ImporterTestCase(TestCase):
             mock_context_ids.return_value = (
                 self.chapter15.id, h1509.id, None, None)
             roo_data = h1509.get_rules_of_origin(
-                country_code='TC', starting_before=dt.datetime.now())
+                country_code=self.country.country_code, starting_before=dt.datetime.now())
 
         self.assertFalse(roo_data)
 
@@ -138,7 +138,7 @@ class ImporterTestCase(TestCase):
         with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
             mock_context_ids.return_value = (
                 self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(country_code='TC')
+            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
 
         self.assertTrue(roo_data)
 
@@ -151,7 +151,7 @@ class ImporterTestCase(TestCase):
         with mock.patch('hierarchy.models.Heading.get_hierarchy_context_ids') as mock_context_ids:
             mock_context_ids.return_value = (
                 self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(country_code='TC')
+            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
 
         roo_data = roo_data['FTA Test Country']
 

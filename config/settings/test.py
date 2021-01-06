@@ -116,7 +116,6 @@ CHAPTER_STRUCTURE = APPS_DIR + "/hierarchy/tests/chapter_{0}_structure.json".for
 SECTION_STRUCTURE = APPS_DIR + "/hierarchy/tests/section_{}_structure.json".format(
     TEST_SECTION_ID
 )
-COUNTRIES_DATA = APPS_DIR + "/countries/fixtures/countries_data.json"
 SECTIONJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/SectionJson.json"
 CHAPTERJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/ChapterJson.json"
 HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/HeadingJson.json"
