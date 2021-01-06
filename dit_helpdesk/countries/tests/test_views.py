@@ -66,7 +66,6 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
-        self.assertFalse(resp.context["country_options"])
         self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
@@ -81,14 +80,12 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
-        self.assertFalse(resp.context["country_options"])
         self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
     def test_post_with_country_selected_and_country_exists_and_country_code_not_in_session(
         self
     ):
-        Country.objects.create(country_code="AU", name="Australia")
         self.assertTrue("origin_country" not in self.client.session)
         resp = self.client.post(
             reverse("choose-country"), data={"origin_country": "au"}
@@ -103,8 +100,10 @@ class CountriesViewsTestCase(TestCase):
         )
 
     def test_post_with_country_selected_and_country_not_exist(self):
+        with self.assertRaises(Country.DoesNotExist):
+            Country.objects.get(country_code="XT")
         resp = self.client.post(
-            reverse("choose-country"), data={"origin_country": "au"}
+            reverse("choose-country"), data={"origin_country": "xt"}
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
@@ -191,9 +190,9 @@ class CountryInformationViewTestCase(TestCase):
 
     def test_agreement_with_invalid_country_code(self):
         with self.assertRaises(Country.DoesNotExist):
-            Country.objects.get(country_code="TT")
+            Country.objects.get(country_code="XT")
 
-        url = reverse("country-information", kwargs={"country_code": "TT"})
+        url = reverse("country-information", kwargs={"country_code": "XT"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 

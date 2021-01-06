@@ -142,8 +142,6 @@ class CommoditySetupTestCase(TestCase):
         )
         self.client = Client()
 
-    fixtures = [settings.COUNTRIES_DATA]
-
     @classmethod
     def setUpClass(cls):
         super(CommoditySetupTestCase, cls).setUpClass()
@@ -291,8 +289,6 @@ class CommodityKeywordSearchViewTestCase(TestCase):
             if not index.exists():
                 index.save()
 
-    fixtures = [settings.COUNTRIES_DATA]
-
     def test_commodity_keyword_search_query_is_empty(self):
         session = self.client.session
         session["origin_country"] = "AU"
@@ -414,8 +410,6 @@ class TestSearchHierarchyTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-    fixtures = [settings.COUNTRIES_DATA]
-
     def test_search_hierarchy(self):
         request = RequestFactory().get(
             reverse(
@@ -469,8 +463,6 @@ def create_instance(data, model_class):
 
 
 class TestHierarchyData(TestCase):
-
-    fixtures = [settings.COUNTRIES_DATA]
 
     def setUp(self):
         """
@@ -606,8 +598,6 @@ class TestSearchHierarchyAPITestCase(CommoditySetupTestCase):
     def setUp(self):
         super().setUp()
         self.client = Client()
-
-    fixtures = [settings.COUNTRIES_DATA]
 
     def test_search_hierarchy(self):
         url = reverse("search:hierarchy-api-search")

@@ -84,11 +84,6 @@ class HierarchyViewTestCase(TestCase):
 
         self.client = Client()
 
-    fixtures = [settings.COUNTRIES_DATA]
-
-    def test_fixtures_load_countries_data(self):
-        self.assertTrue(Country.objects.count() > 0)
-
     def test_section_data_exists(self):
         self.assertTrue(Section.objects.count() > 0)
 

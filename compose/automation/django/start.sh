@@ -22,7 +22,6 @@ npm run build
 # ----------------- BACKEND -----------------
 python manage.py collectstatic --noinput
 python manage.py migrate
-python manage.py loaddata countries_data
 python manage.py use_static_api_data
 python manage.py prepare_import_data
 python manage.py scrape_section_hierarchy --skip_commodity=True
