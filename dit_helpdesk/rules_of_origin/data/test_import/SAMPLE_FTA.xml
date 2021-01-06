@@ -7,7 +7,7 @@
       </agreementPartner>
       <agreementPartner code="CL">
          <label>Test Country</label>
-         <country code="TC" validFrom="2021-01-01"/>
+         <country code="XT" validFrom="2021-01-01"/>
       </agreementPartner>
    </meta>
     <positions>

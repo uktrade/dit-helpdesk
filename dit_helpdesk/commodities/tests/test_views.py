@@ -100,11 +100,6 @@ class CommodityViewTestCase(TestCase):
 
         self.mock_commodity_tts_json.stop()
 
-    fixtures = [settings.COUNTRIES_DATA]
-
-    def test_fixtures_load_countries_data(self):
-        self.assertTrue(Country.objects.count() > 0)
-
     def test_section_data_exists(self):
         self.assertTrue(Section.objects.count() > 0)
 
@@ -278,8 +273,6 @@ class MeasureConditionDetailTestCase(TestCase):
         )
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
         self.commodity.save_cache()
-
-    fixtures = ["../../countries/fixtures/countries_data.json"]
 
     def test_commodity_has_tts_json(self):
         self.assertTrue(self.commodity.tts_obj)

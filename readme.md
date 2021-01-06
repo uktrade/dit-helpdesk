@@ -161,7 +161,6 @@ of the Initialize section are commented as below
     sleep infinity
     # python manage.py collectstatic --noinput
     # python manage.py migrate
-    # python manage.py loaddata countries_data
     # python manage.py pull_api_update
     # python manage.py prepare_import_data
     # python manage.py scrape_section_hierarchy
@@ -208,7 +207,6 @@ create the countries content
 ```
 python manage.py collectstatic --noinput
 python manage.py migrate
-python manage.py loaddata countries_data
 ```
 
 Whilst still in the docker shell, run the following commands to collect the hierarchy content from the trade tariff API
@@ -520,19 +518,11 @@ If the country autocomplete is blank:
 
 Turn off JavaScript in your browser, visit the choose country page (`/choose-country`) and see if a <select> dropdown is there
 If a select is not present, then the problem is in the template file - look at `dit_helpdesk/countries/templates/countries/choose_country.html` to see why it’s been left out
-If the select is empty, or has an incomplete list of countries, then the problem is on the server-side list of countries. On the server, run
-
-```bash
-python dit_helpdesk/manage.py loaddata countries_data
-```
-
-to repopulate the list of countries.
 
 If the select is present, but the autocomplete isn’t working:
 
 ```bash
 Run `npm run build`
-Run `python dit_helpdesk/manage.py loaddata countries_data`
 ```
 
 If the autocomplete is not displaying properly run
@@ -551,23 +541,6 @@ npm run build
 ```
 
 ### Apendix II - Management Import Commands
-
-### Countries
-
-
-The project has a django fixtures file for populating the countries database table with country code and name values
-
-These would normally be imported on deployment, however, in the case where countries need to be added to the
-
-```bash
-countries/fixtures/countries.json
-```
-
-file they can be reloaed with the command:
-
-```bash
-python dit_helpdesk/manage.py loaddata countries_data
-```
 
 ### Commodity Hierarchy
 
