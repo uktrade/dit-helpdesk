@@ -16,7 +16,6 @@
 #sleep infinity
 # pipenv run /app/manage.py collectstatic --noinput
 # pipenv run /app/manage.py migrate
-# pipenv run /app/manage.py loaddata countries_data
 # pipenv run /app/manage.py pull_api_update
 # pipenv run /app/manage.py prepare_import_data
 # pipenv run /app/manage.py prepare_search_data
