@@ -9,8 +9,6 @@
 
 from django.conf import settings
 
-from flags.state import flag_enabled
-
 from hierarchy.views.sections import (
     BaseOtherMeasuresNorthernIrelandSection,
     BaseTariffsAndTaxesNorthernIrelandSection,
@@ -23,7 +21,6 @@ from hierarchy.views.sections import (
     RulesOfOriginNorthernIrelandSection,
     TariffsAndTaxesSection,
     TradeStatusSection,
-    UKGTTariffsAndTaxesSection,
 )
 from hierarchy.views.base import (
     BaseMeasureConditionDetailView,

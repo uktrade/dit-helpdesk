@@ -7,12 +7,10 @@
 {% endblock %}
 
 {% block warning %}
-    {% if ni_journey_enabled %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                {% url "subheading-detail-northern-ireland" country_code=selected_origin_country|lower commodity_code=subheading.commodity_code nomenclature_sid=subheading.goods_nomenclature_sid as ni_details_url %}
-                {% include "hierarchy/_ni_warning.html" with ni_details_url=ni_details_url %}
-            </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {% url "subheading-detail-northern-ireland" country_code=selected_origin_country|lower commodity_code=subheading.commodity_code nomenclature_sid=subheading.goods_nomenclature_sid as ni_details_url %}
+            {% include "hierarchy/_ni_warning.html" with ni_details_url=ni_details_url %}
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
