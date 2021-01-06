@@ -184,6 +184,10 @@ jobs:
             coverage report
             coverage xml -o test-reports/coverage.xml
             coverage html -d test-reports/coverage_html
+      - run:
+          name: Lint migrations
+          command:
+            python manage.py lintmigrations
       - store_test_results:
           path: test-reports
       - store_artifacts:
