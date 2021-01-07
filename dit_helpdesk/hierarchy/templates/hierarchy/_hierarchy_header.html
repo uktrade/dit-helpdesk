@@ -1,11 +1,7 @@
 {% load dotted_format %}
 
 {% if object.leaf %}
-    {% if importer_journey_enabled %}
-    Product import information for
-    {% else %}
     Product export information for
-    {% endif %}
     {{ object.commodity_code|dotted_format }}
     from {{ selected_origin_country_name }} to the United Kingdom
 {% else %}
