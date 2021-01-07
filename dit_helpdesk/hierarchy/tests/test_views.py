@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from commodities.models import Commodity
 from countries.models import Country
@@ -40,9 +41,6 @@ def create_instance(data, model_class):
 
 
 class HierarchyViewTestCase(TestCase):
-    """
-    Test Hierarchy view
-    """
 
     def setUp(self):
         """
@@ -79,8 +77,9 @@ class HierarchyViewTestCase(TestCase):
         )
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
-
         self.commodity.save()
+
+        self.country = Country.objects.get(country_code="FR")
 
         self.client = Client()
 
@@ -98,3 +97,66 @@ class HierarchyViewTestCase(TestCase):
 
     def test_commodity_data_exists(self):
         self.assertTrue(Commodity.objects.count() > 0)
+
+
+class ChapterDetailViewTestCase(HierarchyViewTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.url = reverse(
+            "chapter-detail",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "chapter_code": self.chapter.chapter_code,
+                "nomenclature_sid": self.chapter.goods_nomenclature_sid,
+            }
+        )
+
+    def test_commodity_object(self):
+        response = self.client.get(self.url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["commodity"],
+            self.chapter,
+        )
+        self.assertEqual(
+            ctx["object"],
+            self.chapter,
+        )
+
+    def test_commodity_object_path(self):
+        response = self.client.get(self.url)
+        ctx = response.context
+
+        accordion_title = ctx["accordion_title"]
+        self.assertEqual(
+            accordion_title,
+            "Section I: Live animals; animal products",
+        )
+
+        hierarchy_context = ctx["hierarchy_context"]
+        self.assertInHTML(
+            "Live animals",
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Live horses, asses, mules and hinnies",
+            hierarchy_context,
+        )
+
+    def test_notes_context_data(self):
+        response = self.client.get(self.url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["section_notes"],
+            self.section.section_notes,
+        )
+        self.assertEqual(
+            ctx["chapter_notes"],
+            self.chapter.chapter_notes,
+        )
+        self.assertNotIn("heading_notes", ctx)
+        self.assertNotIn("commodity_notes", ctx)
