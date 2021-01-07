@@ -3,10 +3,7 @@ import logging
 
 from django.conf import settings
 
-from flags.state import flag_enabled
-
 from commodities.helpers import (
-    get_global_tariff_context,
     get_tariff_content_context,
     has_trade_scenario,
 )
@@ -108,14 +105,7 @@ class TariffsAndTaxesSection(CommodityDetailSection):
         ctx["taxes_table_data"] = self._get_table_data(self.taxes, get_quotas_url, get_conditions_url)
         ctx["has_multiple_vat_entries"] = len([t for t in self.taxes if t.vat]) > 1
 
-        if flag_enabled("PRE21"):
-            ctx["global_tariff_data"] = get_global_tariff_context(self.commodity_object)
-
         return ctx
-
-
-class UKGTTariffsAndTaxesSection(TariffsAndTaxesSection):
-    template = "hierarchy/_tariffs_and_taxes_ukgt.html"
 
 
 class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):

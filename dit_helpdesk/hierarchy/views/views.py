@@ -4,8 +4,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 
-from flags.state import flag_enabled
-
 from countries.models import Country
 from regulations.models import RegulationGroup
 

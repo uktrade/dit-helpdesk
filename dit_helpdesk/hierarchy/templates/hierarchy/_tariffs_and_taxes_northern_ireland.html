@@ -35,30 +35,9 @@
                     <a class="govuk-link" href="https://www.gov.uk/guidance/check-if-you-can-declare-goods-you-bring-into-northern-ireland-not-at-risk-of-moving-to-the-eu-from-1-january-2021">Read guidance on whether goods are ‘at risk’ or not</a>.
                 </p>
 
-                {% if ukgt_enabled %}
-                    <div class="govuk-!-margin-bottom-6">
-                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                            Current tariffs
-                        </h3>
-                        {% include "hierarchy/_tariffs_and_taxes_how_to_value_goods.html" %}
-                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
-                        {% include "commodities/_tariffs.html" %}
-                    </div>
-
-                    <div class="govuk-!-margin-bottom-6">
-                        <h3 class="govuk-heading-m govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-                            Tariffs after 1 January 2021
-                        </h3>
-                        {% include "hierarchy/_tariffs_and_taxes_glossary.html" %}
-                        {% if global_tariff_data.result_type == global_tariff_data.result_types.HAS_RESULTS %}
-                            {% include "hierarchy/_tariffs_and_taxes_ukgt_future_table_data.html" with global_tariff_data=global_tariff_data.result %}
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="govuk-!-margin-bottom-6">
-                        {% include "commodities/_tariffs.html" %}
-                    </div>
-                {% endif %}
+                <div class="govuk-!-margin-bottom-6">
+                    {% include "commodities/_tariffs.html" %}
+                </div>
             </div>
         </div>
 

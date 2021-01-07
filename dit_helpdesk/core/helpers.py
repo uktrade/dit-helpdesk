@@ -52,15 +52,6 @@ def reset_urls_for_settings(urlconf=None, **kwargs):
     reload_urls(urlconf)
 
 
-def _is_importer_journey(request):
-    host = request.META.get('HTTP_HOST')
-
-    if host and host == settings.IMPORTER_JOURNEY_HOST:
-        return True
-
-    return False
-
-
 def flatten(list_of_lists):
     return [
         item
