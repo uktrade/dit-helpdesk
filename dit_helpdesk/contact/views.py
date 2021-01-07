@@ -51,8 +51,8 @@ def jump_to_step_three(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step("step_one") or {}
     category = cleaned_data.get("category")
     if not cleaned_data:
-        category = "3"
-    if category == "3":
+        category = "2"
+    if category == "2":
         return False
     else:
         return True
