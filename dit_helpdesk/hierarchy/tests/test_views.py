@@ -1,11 +1,15 @@
 import json
 import logging
 
+from contextlib import contextmanager
+from unittest import mock
+
 from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from commodities.models import Commodity
+from core.helpers import patch_tts_json
 from countries.models import Country
 
 from ..helpers import create_nomenclature_tree
@@ -48,7 +52,7 @@ class HierarchyViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region=settings.PRIMARY_REGION)
 
         self.country = Country.objects.get(country_code="FR")
 
@@ -262,3 +266,63 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
             self.heading.heading_notes,
         )
         self.assertNotIn("commodity_notes", ctx)
+
+
+class HeadingDetailNorthernIrelandView(HierarchyViewTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.tree_eu = create_nomenclature_tree(region=settings.SECONDARY_REGION)
+
+        self.section_eu = create_instance(
+            get_data(settings.SECTION_STRUCTURE, self.tree_eu), Section
+        )
+
+        self.chapter_eu = create_instance(
+            get_data(settings.CHAPTER_STRUCTURE, self.tree_eu), Chapter
+        )
+        self.chapter_eu.section_id = self.section_eu.pk
+        self.chapter_eu.save()
+
+        self.heading_eu_data = get_data(settings.HEADING_STRUCTURE, self.tree_eu)
+        self.heading_eu = create_instance(self.heading_eu_data, Heading)
+        self.heading_eu.chapter_id = self.chapter_eu.pk
+        self.heading_eu.save()
+        self.heading_northern_ireland_url = reverse(
+            "heading-detail-northern-ireland",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "heading_code": self.heading_eu.heading_code,
+                "nomenclature_sid": self.heading_eu.goods_nomenclature_sid,
+            },
+        )
+
+        self.subheading_eu = create_instance(
+            get_data(settings.SUBHEADING_STRUCTURE, self.tree_eu), SubHeading
+        )
+        self.subheading_eu.heading_id = self.heading_eu.id
+        self.subheading_eu.save()
+
+        self.commodity_eu = create_instance(
+            get_data(settings.COMMODITY_STRUCTURE, self.tree_eu), Commodity
+        )
+        self.commodity_eu.parent_subheading_id = self.subheading_eu.id
+        self.commodity_eu.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree_eu))
+        self.commodity_eu.save()
+
+    def test_eu_commodity_object_update_tts_content(self):
+        @contextmanager
+        def tts_content_mock(should_update):
+            with mock.patch.object(Heading, "should_update_tts_content", return_value=should_update), \
+                mock.patch.object(Heading, "update_tts_content"), \
+                patch_tts_json(Heading, settings.HEADINGJSON_DATA):
+                yield
+
+        with tts_content_mock(False):
+            self.client.get(self.heading_northern_ireland_url)
+            self.heading_eu.update_tts_content.assert_not_called()
+
+        with tts_content_mock(True):
+            self.client.get(self.heading_northern_ireland_url)
+            self.heading_eu.update_tts_content.assert_called()

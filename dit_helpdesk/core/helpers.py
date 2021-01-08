@@ -1,12 +1,12 @@
+import json
 import sys
 
 from contextlib import contextmanager
-from functools import wraps
 from importlib import import_module, reload
 from time import time
+from unittest import mock
 
 from django.conf import settings
-from django.http import Http404
 from django.test import override_settings
 from django.urls import clear_url_caches
 from django.db.models import Q
@@ -70,3 +70,21 @@ def unique_maintain_order(iterable):
             seen.add(val)
 
     return out
+
+
+def _get_test_data(file_path):
+    with open(file_path) as f:
+        json_data = json.load(f)
+    return json_data
+
+
+@contextmanager
+def patch_tts_json(model_class, tts_json_data_path):
+    test_data = json.dumps(_get_test_data(tts_json_data_path))
+
+    with mock.patch.object(
+        model_class,
+        "tts_json",
+        new_callable=mock.PropertyMock(return_value=test_data),
+    ):
+        yield

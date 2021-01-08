@@ -105,18 +105,15 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = Commodity.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                commodity_code=self.commodity_object.commodity_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = Commodity.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=self.commodity_object.commodity_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
 class MeasureConditionDetailView(CommodityObjectMixin, BaseMeasureConditionDetailView):

@@ -185,18 +185,15 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = Heading.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                heading_code=self.commodity_object.heading_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except Heading.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = Heading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            heading_code=self.commodity_object.heading_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
 class BaseSectionedSubHeadingDetailView(BaseSectionedCommodityObjectDetailView):
@@ -255,18 +252,15 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = SubHeading.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                commodity_code=self.commodity_object.commodity_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except SubHeading.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = SubHeading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=self.commodity_object.commodity_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
 class MeasureConditionDetailView(HeadingObjectMixin, BaseMeasureConditionDetailView):
