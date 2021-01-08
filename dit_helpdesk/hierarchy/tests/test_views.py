@@ -326,3 +326,77 @@ class HeadingDetailNorthernIrelandView(HierarchyViewTestCase):
         with tts_content_mock(True):
             self.client.get(self.heading_northern_ireland_url)
             self.heading_eu.update_tts_content.assert_called()
+
+
+class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
+
+    def test_commodity_object(self):
+        response = self.client.get(self.subheading_url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["commodity"],
+            self.subheading,
+        )
+        self.assertEqual(
+            ctx["object"],
+            self.subheading,
+        )
+
+    def test_commodity_object_path(self):
+        response = self.client.get(self.subheading_url)
+        ctx = response.context
+
+        accordion_title = ctx["accordion_title"]
+        self.assertEqual(
+            accordion_title,
+            "Section I: Live animals; animal products",
+        )
+
+        hierarchy_context = ctx["hierarchy_context"]
+        self.assertIn(
+            self.chapter_url,
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Live animals",
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Live horses, asses, mules and hinnies",
+            hierarchy_context,
+        )
+        self.assertIn(
+            self.heading_url,
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Horses",
+            hierarchy_context,
+        )
+        self.assertNotIn(
+            self.subheading_url,
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Pure-bred breeding animals",
+            hierarchy_context,
+        )
+
+    def test_notes_context_data(self):
+        response = self.client.get(self.subheading_url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["section_notes"],
+            self.section.section_notes,
+        )
+        self.assertEqual(
+            ctx["chapter_notes"],
+            self.chapter.chapter_notes,
+        )
+        self.assertEqual(
+            ctx["heading_notes"],
+            self.subheading.heading_notes,
+        )
+        self.assertNotIn("commodity_notes", ctx)
