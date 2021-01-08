@@ -177,7 +177,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                         nomenclature_link = reverse(
                             "chapter-detail",
                             kwargs={
-                                "country_code": country_code,
+                                "country_code": country_code.lower(),
                                 "chapter_code": item_commodity_code,
                                 "nomenclature_sid": nomenclature_sid,
                             },
@@ -188,7 +188,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                         nomenclature_link = reverse(
                             "heading-detail",
                             kwargs={
-                                "country_code": country_code,
+                                "country_code": country_code.lower(),
                                 "heading_code": item_commodity_code,
                                 "nomenclature_sid": nomenclature_sid,
                             },
@@ -199,7 +199,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                         nomenclature_link = reverse(
                             "subheading-detail",
                             kwargs={
-                                "country_code": country_code,
+                                "country_code": country_code.lower(),
                                 "commodity_code": item_commodity_code,
                                 "nomenclature_sid": nomenclature_sid,
                             },
@@ -210,7 +210,7 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                         nomenclature_link = reverse(
                             "commodity-detail",
                             kwargs={
-                                "country_code": country_code,
+                                "country_code": country_code.lower(),
                                 "commodity_code": item_commodity_code,
                                 "nomenclature_sid": nomenclature_sid,
                             },

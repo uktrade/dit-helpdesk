@@ -50,8 +50,17 @@ class HierarchyViewTestCase(TestCase):
         """
         self.tree = create_nomenclature_tree(region='UK')
 
+        self.country = Country.objects.get(country_code="FR")
+
         self.section = create_instance(
             get_data(settings.SECTION_STRUCTURE, self.tree), Section
+        )
+        self.section_url = reverse(
+            "section-detail",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "section_id": self.section.section_id,
+            }
         )
 
         self.chapter = create_instance(
@@ -59,18 +68,42 @@ class HierarchyViewTestCase(TestCase):
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
+        self.chapter_url = reverse(
+            "chapter-detail",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "chapter_code": self.chapter.chapter_code,
+                "nomenclature_sid": self.chapter.goods_nomenclature_sid,
+            }
+        )
 
         self.heading = create_instance(
             get_data(settings.HEADING_STRUCTURE, self.tree), Heading
         )
         self.heading.chapter_id = self.chapter.pk
         self.heading.save()
+        self.heading_url = reverse(
+            "heading-detail",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "heading_code": self.heading.heading_code,
+                "nomenclature_sid": self.heading.goods_nomenclature_sid,
+            },
+        )
 
         self.subheading = create_instance(
             get_data(settings.SUBHEADING_STRUCTURE, self.tree), SubHeading
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
+        self.subheading_url = reverse(
+            "subheading-detail",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "commodity_code": self.subheading.commodity_code,
+                "nomenclature_sid": self.subheading.goods_nomenclature_sid,
+            },
+        )
 
         self.commodity = create_instance(
             get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
@@ -78,8 +111,6 @@ class HierarchyViewTestCase(TestCase):
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
         self.commodity.save()
-
-        self.country = Country.objects.get(country_code="FR")
 
         self.client = Client()
 
@@ -101,20 +132,8 @@ class HierarchyViewTestCase(TestCase):
 
 class ChapterDetailViewTestCase(HierarchyViewTestCase):
 
-    def setUp(self):
-        super().setUp()
-
-        self.url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "chapter_code": self.chapter.chapter_code,
-                "nomenclature_sid": self.chapter.goods_nomenclature_sid,
-            }
-        )
-
     def test_commodity_object(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.chapter_url)
         ctx = response.context
 
         self.assertEqual(
@@ -127,7 +146,7 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         )
 
     def test_commodity_object_path(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.chapter_url)
         ctx = response.context
 
         accordion_title = ctx["accordion_title"]
@@ -138,16 +157,29 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
 
         hierarchy_context = ctx["hierarchy_context"]
         self.assertInHTML(
+            self.section_url,
+            hierarchy_context,
+            count=0,
+        )
+        self.assertInHTML(
             "Live animals",
+            hierarchy_context,
+        )
+        self.assertNotIn(
+            self.chapter_url,
             hierarchy_context,
         )
         self.assertInHTML(
             "Live horses, asses, mules and hinnies",
             hierarchy_context,
         )
+        self.assertIn(
+            self.heading_url,
+            hierarchy_context,
+        )
 
     def test_notes_context_data(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.chapter_url)
         ctx = response.context
 
         self.assertEqual(
@@ -159,4 +191,74 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
             self.chapter.chapter_notes,
         )
         self.assertNotIn("heading_notes", ctx)
+        self.assertNotIn("commodity_notes", ctx)
+
+
+class HeadingDetailViewTestCase(HierarchyViewTestCase):
+
+    def test_commodity_object(self):
+        response = self.client.get(self.heading_url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["commodity"],
+            self.heading,
+        )
+        self.assertEqual(
+            ctx["object"],
+            self.heading,
+        )
+
+    def test_commodity_object_path(self):
+        response = self.client.get(self.heading_url)
+        ctx = response.context
+
+        accordion_title = ctx["accordion_title"]
+        self.assertEqual(
+            accordion_title,
+            "Section I: Live animals; animal products",
+        )
+
+        hierarchy_context = ctx["hierarchy_context"]
+        self.assertIn(
+            self.chapter_url,
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Live animals",
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Live horses, asses, mules and hinnies",
+            hierarchy_context,
+        )
+        self.assertNotIn(
+            self.heading_url,
+            hierarchy_context,
+        )
+        self.assertInHTML(
+            "Horses",
+            hierarchy_context,
+        )
+        self.assertIn(
+            self.subheading_url,
+            hierarchy_context,
+        )
+
+    def test_notes_context_data(self):
+        response = self.client.get(self.heading_url)
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["section_notes"],
+            self.section.section_notes,
+        )
+        self.assertEqual(
+            ctx["chapter_notes"],
+            self.chapter.chapter_notes,
+        )
+        self.assertEqual(
+            ctx["heading_notes"],
+            self.heading.heading_notes,
+        )
         self.assertNotIn("commodity_notes", ctx)
