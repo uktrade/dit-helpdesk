@@ -119,6 +119,7 @@ SECTION_STRUCTURE = APPS_DIR + "/hierarchy/tests/section_{}_structure.json".form
 SECTIONJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/SectionJson.json"
 CHAPTERJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/ChapterJson.json"
 HEADINGJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/HeadingJson.json"
+SUBHEADINGJSON_DATA = APPS_DIR + "/trade_tariff_service/import_data/SubHeadingJson.json"
 COMMODITYHEADINGJSON_DATA = (
     APPS_DIR + "/trade_tariff_service/import_data/CommodityHeadingJson.json"
 )

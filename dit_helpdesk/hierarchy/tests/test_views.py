@@ -268,7 +268,7 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertNotIn("commodity_notes", ctx)
 
 
-class HeadingDetailNorthernIrelandView(HierarchyViewTestCase):
+class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
 
     def setUp(self):
         super().setUp()
@@ -303,6 +303,14 @@ class HeadingDetailNorthernIrelandView(HierarchyViewTestCase):
         )
         self.subheading_eu.heading_id = self.heading_eu.id
         self.subheading_eu.save()
+        self.subheading_northern_ireland_url = reverse(
+            "subheading-detail-northern-ireland",
+            kwargs={
+                "country_code": self.country.country_code.lower(),
+                "commodity_code": self.subheading_eu.commodity_code,
+                "nomenclature_sid": self.subheading_eu.goods_nomenclature_sid,
+            },
+        )
 
         self.commodity_eu = create_instance(
             get_data(settings.COMMODITY_STRUCTURE, self.tree_eu), Commodity
@@ -310,6 +318,9 @@ class HeadingDetailNorthernIrelandView(HierarchyViewTestCase):
         self.commodity_eu.parent_subheading_id = self.subheading_eu.id
         self.commodity_eu.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree_eu))
         self.commodity_eu.save()
+
+
+class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
 
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
@@ -400,3 +411,22 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
             self.subheading.heading_notes,
         )
         self.assertNotIn("commodity_notes", ctx)
+
+
+class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
+
+    def test_eu_commodity_object_update_tts_content(self):
+        @contextmanager
+        def tts_content_mock(should_update):
+            with mock.patch.object(SubHeading, "should_update_tts_content", return_value=should_update), \
+                mock.patch.object(SubHeading, "update_tts_content"), \
+                patch_tts_json(SubHeading, settings.SUBHEADINGJSON_DATA):
+                yield
+
+        with tts_content_mock(False):
+            self.client.get(self.subheading_northern_ireland_url)
+            self.subheading_eu.update_tts_content.assert_not_called()
+
+        with tts_content_mock(True):
+            self.client.get(self.subheading_northern_ireland_url)
+            self.subheading_eu.update_tts_content.assert_called()
