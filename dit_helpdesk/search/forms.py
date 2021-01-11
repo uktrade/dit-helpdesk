@@ -1,7 +1,7 @@
 from django import forms
 
 SORT_CHOICES = (("ranking", "Relevance"), ("commodity_code", "Code"))
-TOGGLE_CHOICES = ((0, "All Results"), (1, "Complete commodity codes only"))
+TOGGLE_CHOICES = ((0, "All Results"), (1, "Declarable products only"))
 SORT_ORDER = (("desc", "Descending"), ("asc", "Ascending"))
 
 
