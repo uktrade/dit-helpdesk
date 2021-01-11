@@ -23,6 +23,7 @@ class Command(BaseCommand):
             "UK agreement status",
             "EU agreement status",
             "Scenario",
+            "GOVUK FTA URL",
         ]
 
     @contextmanager
@@ -49,4 +50,5 @@ class Command(BaseCommand):
                     "UK agreement status": country.has_uk_trade_agreement,
                     "EU agreement status": country.has_eu_trade_agreement,
                     "Scenario": country.scenario,
+                    "GOVUK FTA URL": country.content_url,
                 })
