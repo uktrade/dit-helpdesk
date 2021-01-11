@@ -229,9 +229,9 @@ YE,Yemen,False,False,WTO,
 ZA,South Africa,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
 ZM,Zambia,False,False,WTO,
 ZW,Zimbabwe,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2
-CA,Canada,False,True,CANADA,https://www.gov.uk/government/collections/uk-canada-trade-continuity-agreement
+CA,Canada,True,True,CANADA,https://www.gov.uk/government/collections/uk-canada-trade-continuity-agreement
 CL,Chile,True,True,CHILE,https://www.gov.uk/government/collections/uk-chile-association-agreement
-MX,Mexico,False,True,MEXICO,https://www.gov.uk/government/collections/uk-mexico-trade-continuity-agreement
-GH,Ghana,False,False,GHANA,
+MX,Mexico,True,True,MEXICO,https://www.gov.uk/government/collections/uk-mexico-trade-continuity-agreement
+GH,Ghana,False,True,GHANA,
 AL,Albania,False,True,ALBANIA,
 ME,Montenegro,False,True,MONTENEGRO,
