@@ -445,6 +445,12 @@ SUPPORTED_TRADE_SCENARIOS = (
     "AUSTRALIA",
     "NEW_ZEALAND",
     "US",
+    "CANADA",
+    "CHILE",
+    "MEXICO",
+    "GHANA",
+    "ALBANIA",
+    "MONTENEGRO",
 )
 
 AGREEMENTS = [
