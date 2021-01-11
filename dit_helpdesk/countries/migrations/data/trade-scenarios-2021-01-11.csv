@@ -1,0 +1,237 @@
+Country code,Country name,UK agreement status,EU agreement status,Scenario,GOVUK FTA URL
+AD,Andorra,False,True,EU_NOAGR_FOR_EXIT,
+AE,United Arab Emirates,False,False,WTO,
+AF,Afghanistan,False,False,WTO,
+AG,Antigua and Barbuda,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+AI,Anguilla,False,False,WTO,
+AM,Armenia,False,False,WTO,
+AO,Angola,False,False,WTO,
+AQ,Antarctica,False,False,WTO,
+AR,Argentina,False,False,WTO,
+AS,American Samoa,False,False,WTO,
+AT,Austria,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+AU,Australia,False,False,AUSTRALIA,
+AW,Aruba,False,False,WTO,
+AZ,Azerbaijan,False,False,WTO,
+BA,Bosnia and Herzegovina,False,True,EU_NOAGR_FOR_EXIT,
+BB,Barbados,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+BD,Bangladesh,False,False,WTO,
+BE,Belgium,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+BF,Burkina Faso,False,False,WTO,
+BG,Bulgaria,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+BH,Bahrain,False,False,WTO,
+BI,Burundi,False,False,WTO,
+BJ,Benin,False,False,WTO,
+BL,Saint Barthélemy,False,False,WTO,
+BM,Bermuda,False,False,WTO,
+BN,Brunei,False,False,WTO,
+BO,Bolivia,False,False,WTO,
+BQ,"Bonaire, Sint Eustatius and Saba",False,False,WTO,
+BR,Brazil,False,False,WTO,
+BS,The Bahamas,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+BT,Bhutan,False,False,WTO,
+BV,Bouvet Island,False,False,WTO,
+BW,Botswana,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+BY,Belarus,False,False,WTO,
+BZ,Belize,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+CC,Cocos Islands (or Keeling Islands),False,False,WTO,
+CD,Congo (Democratic Republic),False,False,WTO,
+CF,Central African Republic,False,False,WTO,
+CG,Congo,False,False,WTO,
+CH,Switzerland,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-switzerland-trade-agreement
+CI,Ivory Coast,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-cote-divoire-stepping-stone-economic-partnership-agreement
+CK,Cook Islands,False,False,WTO,
+CM,Cameroon,True,True,EU_AGR_SIGNED_NO_LINK,
+CN,China,False,False,WTO,
+CO,Colombia,True,True,ANDEAN_COUNTRIES,https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement
+CR,Costa Rica,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+CU,Cuba,False,False,WTO,
+CV,Cape Verde,False,False,WTO,
+CW,Curaçao,False,False,WTO,
+CX,Christmas Island,False,False,WTO,
+CY,Cyprus,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+CZ,Czechia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+DE,Germany,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+DJ,Djibouti,False,False,WTO,
+DK,Denmark,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+DM,Dominica,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+DO,Dominican Republic,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+DZ,Algeria,False,True,EU_NOAGR_FOR_EXIT,
+EC,Ecuador,True,True,ANDEAN_COUNTRIES_RATIFIED,https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement
+EE,Estonia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+EG,Egypt,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-egypt-associationagreement
+EH,Western Sahara,False,False,WTO,
+ER,Eritrea,False,False,WTO,
+ES,Spain,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+ET,Ethiopia,False,False,WTO,
+FI,Finland,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+FJ,Fiji,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-pacific-economic-partnership-agreement
+FK,Falkland Islands,False,False,WTO,
+FM,Micronesia,False,False,WTO,
+FO,Faroe Islands,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-faroe-islands-free-trade-agreement-fta
+FR,France,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+GA,Gabon,False,False,WTO,
+GD,Grenada,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+GE,Georgia,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/publications/ukgeorgia-strategic-partnership-and-cooperation-agreement-cs-georgia-no12019
+GI,Gibraltar,False,False,WTO,
+GL,Greenland,False,False,WTO,
+GM,The Gambia,False,False,WTO,
+GN,Guinea,False,False,WTO,
+GQ,Equatorial Guinea,False,False,WTO,
+GR,Greece,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+GS,South Georgia and South Sandwich Islands,False,False,WTO,
+GT,Guatemala,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+GU,Guam,False,False,WTO,
+GW,Guinea-Bissau,False,False,WTO,
+GY,Guyana,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+HK,Hong Kong,False,False,WTO,
+HM,Heard Island and McDonald Islands,False,False,WTO,
+HN,Honduras,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+HR,Croatia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+HT,Haiti,False,False,WTO,
+HU,Hungary,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+ID,Indonesia,False,False,WTO,
+IE,Ireland,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+IL,Israel,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-israel-trade-and-partnership-agreement
+IN,India,False,False,WTO,
+IO,British Indian Ocean Territory,False,False,WTO,
+IQ,Iraq,False,False,WTO,
+IR,Iran,False,False,WTO,
+IS,Iceland,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/agreement-on-trade-in-goods-between-iceland-norway-and-the-uk
+IT,Italy,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+JM,Jamaica,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+JO,Jordan,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-jordan-association-agreement
+JP,Japan,True,True,JP,
+KE,Kenya,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-kenya-economic-partnership-agreement
+KG,Kyrgyzstan,False,False,WTO,
+KH,Cambodia,False,False,WTO,
+KI,Kiribati,False,False,WTO,
+KM,Comoros,False,False,WTO,
+KN,St Kitts and Nevis,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+KP,North Korea,False,False,WTO,
+KR,South Korea,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-south-korea-trade-agreement
+KW,Kuwait,False,False,WTO,
+KY,Cayman Islands,False,False,WTO,
+KZ,Kazakhstan,False,False,WTO,
+LA,Laos,False,False,WTO,
+LB,Lebanon,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-lebanon-association-agreement
+LC,St Lucia,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+LI,Liechtenstein,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-switzerland-liechtenstein-trade-agreement
+LK,Sri Lanka,False,False,WTO,
+LR,Liberia,False,False,WTO,
+LS,Lesotho,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+LT,Lithuania,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+LU,Luxembourg,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+LV,Latvia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+LY,Libya,False,False,WTO,
+MA,Morocco,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-morocco-association-agreement
+MD,Moldova,True,True,EU_AGR_SIGNED_NO_LINK,
+MG,Madagascar,True,True,WTO,
+MH,Marshall Islands,False,False,WTO,
+MK,North Macedonia,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-north-macedonia-partnership-trade-andcooperationagreement
+ML,Mali,False,False,WTO,
+MM,Myanmar (Burma),False,False,WTO,
+MN,Mongolia,False,False,WTO,
+MO,Macao,False,False,WTO,
+MP,Northern Mariana Islands,False,False,WTO,
+MR,Mauritania,False,False,WTO,
+MS,Montserrat,False,False,WTO,
+MT,Malta,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+MU,Mauritius,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2
+MV,Maldives,False,False,WTO,
+MW,Malawi,False,False,WTO,
+MY,Malaysia,False,False,WTO,
+MZ,Mozambique,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+NA,Namibia,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+NC,New Caledonia and dependencies,False,False,WTO,
+NE,Niger,False,False,WTO,
+NF,Norfolk Island,False,False,WTO,
+NG,Nigeria,False,False,WTO,
+NI,Nicaragua,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+NL,Netherlands,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+NO,Norway,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/agreement-on-trade-in-goods-between-iceland-norway-and-the-uk
+NP,Nepal,False,False,WTO,
+NR,Nauru,False,False,WTO,
+NU,Niue Island,False,False,WTO,
+NZ,New Zealand,False,False,NEW_ZEALAND,
+OM,Oman,False,False,WTO,
+PA,Panama,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+PE,Peru,True,True,ANDEAN_COUNTRIES,https://www.gov.uk/government/collections/uk-andean-countries-trade-agreement
+PF,French Polynesia,False,False,WTO,
+PG,Papua New Guinea,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-pacific-economic-partnership-agreement
+PH,Philippines,False,False,WTO,
+PK,Pakistan,False,False,WTO,
+PL,Poland,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+PM,St Pierre and Miquelon,False,False,WTO,
+PN,Pitcairn,False,False,WTO,
+PS,The Occupied Palestinian Territories,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-palestinian-authority-political-trade-and-partnership-agreement
+PT,Portugal,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+PW,Palau,False,False,WTO,
+PY,Paraguay,False,False,WTO,
+QA,Qatar,False,False,WTO,
+RO,Romania,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+RU,Russia,False,False,WTO,
+RW,Rwanda,False,False,WTO,
+SA,Saudi Arabia,False,False,WTO,
+SB,Solomon Islands,True,False,EU_AGR_SIGNED_NO_LINK,
+SC,Seychelles,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2
+SD,Sudan,False,False,WTO,
+SE,Sweden,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+SG,Singapore,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-singapore-trade-agreement
+SH,"Saint Helena, Ascension and Tristan da Cunha",False,False,WTO,
+SI,Slovenia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+SK,Slovakia,True,True,EU_MEMBER,https://www.gov.uk/government/publications/agreements-reached-between-the-united-kingdom-of-great-britain-and-northern-ireland-and-the-european-union
+SL,Sierra Leone,False,False,WTO,
+SM,San Marino,False,True,EU_NOAGR_FOR_EXIT,
+SN,Senegal,False,False,WTO,
+SO,Somalia,False,False,WTO,
+SR,Suriname,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+SS,South Sudan,False,False,WTO,
+ST,Sao Tome and Principe,False,False,WTO,
+SV,El Salvador,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-central-america-association-agreement
+SX,Sint Maarten (Dutch part),False,False,WTO,
+SY,Syria,False,False,WTO,
+SZ,Eswatini,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+TC,Turks and Caicos Islands,False,False,WTO,
+TD,Chad,False,False,WTO,
+TF,French Southern Territories,False,False,WTO,
+TG,Togo,False,False,WTO,
+TH,Thailand,False,False,WTO,
+TJ,Tajikistan,False,False,WTO,
+TK,Tokelau,False,False,WTO,
+TL,East Timor,False,False,WTO,
+TM,Turkmenistan,False,False,WTO,
+TN,Tunisia,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-tunisia-association-agreement
+TO,Tonga,False,False,WTO,
+TR,Turkey,True,True,EU_AGR_SIGNED_NO_LINK,
+TT,Trinidad and Tobago,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+TV,Tuvalu,False,False,WTO,
+TW,Taiwan,False,False,WTO,
+TZ,Tanzania,False,False,WTO,
+UA,Ukraine,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement
+UG,Uganda,False,False,WTO,
+UM,United States Minor outlying islands,False,False,WTO,
+US,United States,False,False,US,
+UY,Uruguay,False,False,WTO,
+UZ,Uzbekistan,False,False,WTO,
+VA,Vatican City,False,False,WTO,
+VC,St Vincent,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/cariforum-uk-economic-partnership-agreement
+VE,Venezuela,False,False,WTO,
+VG,"Virgin Islands, British",False,False,WTO,
+VI,"Virgin Islands, United States",False,False,WTO,
+VN,Vietnam,True,True,EU_AGR_SIGNED_NO_LINK,
+VU,Vanuatu,False,False,WTO,
+WF,Wallis and Futuna Islands,False,False,WTO,
+WS,Samoa,True,False,EU_AGR_SIGNED_NO_LINK,
+XK,Kosovo,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/uk-kosovopartnership-trade-and-cooperationagreement
+XS,Serbia,False,True,EU_NOAGR_FOR_EXIT,
+YE,Yemen,False,False,WTO,
+ZA,South Africa,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/sacum-uk-economic-partnership-agreement-epa
+ZM,Zambia,False,False,WTO,
+ZW,Zimbabwe,True,True,EU_AGR_SIGNED_LINK,https://www.gov.uk/government/collections/esa-uk-economic-partnership-agreement-epa--2
+CA,Canada,True,True,CANADA,https://www.gov.uk/government/collections/uk-canada-trade-continuity-agreement
+CL,Chile,True,True,CHILE,https://www.gov.uk/government/collections/uk-chile-association-agreement
+MX,Mexico,True,True,MEXICO,https://www.gov.uk/government/collections/uk-mexico-trade-continuity-agreement
+GH,Ghana,False,True,GHANA,https://www.gov.uk/government/publications/trading-with-developing-nations
+AL,Albania,False,True,ALBANIA,
+ME,Montenegro,False,True,MONTENEGRO,
