@@ -12,8 +12,8 @@ from commodities.models import Commodity
 from core.helpers import patch_tts_json
 from countries.models import Country
 
-from ..helpers import create_nomenclature_tree
-from ..models import Section, Chapter, Heading, SubHeading
+from ...helpers import create_nomenclature_tree
+from ...models import Section, Chapter, Heading, SubHeading
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)

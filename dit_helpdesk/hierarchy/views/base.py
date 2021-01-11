@@ -51,7 +51,6 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         try:
             self.initialise(request, *args, **kwargs)
         except Redirect as r:
-            messages.error(request, "Invalid originCountry")
             return r.redirect_to
 
         return super().get(request, *args, **kwargs)
