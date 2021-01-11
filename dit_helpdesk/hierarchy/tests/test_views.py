@@ -72,42 +72,21 @@ class HierarchyViewTestCase(TestCase):
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
-        self.chapter_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "chapter_code": self.chapter.chapter_code,
-                "nomenclature_sid": self.chapter.goods_nomenclature_sid,
-            }
-        )
+        self.chapter_url = self.chapter.get_detail_url(self.country.country_code)
 
         self.heading = create_instance(
             get_data(settings.HEADING_STRUCTURE, self.tree), Heading
         )
         self.heading.chapter_id = self.chapter.pk
         self.heading.save()
-        self.heading_url = reverse(
-            "heading-detail",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "heading_code": self.heading.heading_code,
-                "nomenclature_sid": self.heading.goods_nomenclature_sid,
-            },
-        )
+        self.heading_url = self.heading.get_detail_url(self.country.country_code)
 
         self.subheading = create_instance(
             get_data(settings.SUBHEADING_STRUCTURE, self.tree), SubHeading
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
-        self.subheading_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "commodity_code": self.subheading.commodity_code,
-                "nomenclature_sid": self.subheading.goods_nomenclature_sid,
-            },
-        )
+        self.subheading_url = self.subheading.get_detail_url(self.country.country_code)
 
         self.commodity = create_instance(
             get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
@@ -289,28 +268,14 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
         self.heading_eu = create_instance(self.heading_eu_data, Heading)
         self.heading_eu.chapter_id = self.chapter_eu.pk
         self.heading_eu.save()
-        self.heading_northern_ireland_url = reverse(
-            "heading-detail-northern-ireland",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "heading_code": self.heading_eu.heading_code,
-                "nomenclature_sid": self.heading_eu.goods_nomenclature_sid,
-            },
-        )
+        self.heading_northern_ireland_url = self.heading_eu.get_northern_ireland_detail_url(self.country.country_code)
 
         self.subheading_eu = create_instance(
             get_data(settings.SUBHEADING_STRUCTURE, self.tree_eu), SubHeading
         )
         self.subheading_eu.heading_id = self.heading_eu.id
         self.subheading_eu.save()
-        self.subheading_northern_ireland_url = reverse(
-            "subheading-detail-northern-ireland",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "commodity_code": self.subheading_eu.commodity_code,
-                "nomenclature_sid": self.subheading_eu.goods_nomenclature_sid,
-            },
-        )
+        self.subheading_northern_ireland_url = self.subheading_eu.get_northern_ireland_detail_url(self.country.country_code)
 
         self.commodity_eu = create_instance(
             get_data(settings.COMMODITY_STRUCTURE, self.tree_eu), Commodity

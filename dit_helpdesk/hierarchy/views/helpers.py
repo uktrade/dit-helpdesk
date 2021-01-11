@@ -150,71 +150,10 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
         else:
             html += f"<ul>"
             for i, item in enumerate(lista):
-                commodity_type = ""
-                if type(item) is Chapter:
-                    item_commodity_code = item.chapter_code
-                    commodity_type = "chapter"
-                    nomenclature_sid = item.goods_nomenclature_sid
-                elif type(item) is Heading:
-                    item_commodity_code = item.heading_code
-                    commodity_type = "heading"
-                    nomenclature_sid = item.goods_nomenclature_sid
-                elif type(item) is SubHeading:
-                    item_commodity_code = item.commodity_code
-                    commodity_type = "subheading"
-                    nomenclature_sid = item.goods_nomenclature_sid
-                else:
-                    item_commodity_code = item.commodity_code
-                    commodity_type = "commodity"
-                    nomenclature_sid = item.goods_nomenclature_sid
-
-                if item_commodity_code == commodity_code and item == current_item:
+                if item.commodity_code == commodity_code and item == current_item:
                     html += f"""<li><div class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</div><div class="govuk-visually-hidden"> &ndash; </div><strong>{_commodity_code_html(item)}</strong></li>"""
                 else:
-
-                    if commodity_type == "chapter":
-
-                        nomenclature_link = reverse(
-                            "chapter-detail",
-                            kwargs={
-                                "country_code": country_code.lower(),
-                                "chapter_code": item_commodity_code,
-                                "nomenclature_sid": nomenclature_sid,
-                            },
-                        )
-
-                    elif commodity_type == "heading":
-
-                        nomenclature_link = reverse(
-                            "heading-detail",
-                            kwargs={
-                                "country_code": country_code.lower(),
-                                "heading_code": item_commodity_code,
-                                "nomenclature_sid": nomenclature_sid,
-                            },
-                        )
-
-                    elif commodity_type == "subheading":
-
-                        nomenclature_link = reverse(
-                            "subheading-detail",
-                            kwargs={
-                                "country_code": country_code.lower(),
-                                "commodity_code": item_commodity_code,
-                                "nomenclature_sid": nomenclature_sid,
-                            },
-                        )
-
-                    else:
-
-                        nomenclature_link = reverse(
-                            "commodity-detail",
-                            kwargs={
-                                "country_code": country_code.lower(),
-                                "commodity_code": item_commodity_code,
-                                "nomenclature_sid": nomenclature_sid,
-                            },
-                        )
+                    nomenclature_link = item.get_detail_url(country_code)
 
                     html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
 

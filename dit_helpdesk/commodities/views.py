@@ -31,19 +31,8 @@ from hierarchy.views.base import (
 from .models import Commodity
 
 
-class CommodityObjectMixin:
-
-    def get_commodity_object(self, **kwargs):
-        commodity_code = kwargs["commodity_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Commodity.objects.get(
-            commodity_code=commodity_code,
-            goods_nomenclature_sid=nomenclature_sid,
-        )
-
-
-class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
+class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
+    model = Commodity
 
     def get_commodity_object_path(self, commodity):
         return commodity.get_path()
@@ -116,12 +105,12 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
             eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(CommodityObjectMixin, BaseMeasureConditionDetailView):
-    pass
+class MeasureConditionDetailView(BaseMeasureConditionDetailView):
+    model = Commodity
 
 
-class MeasureQuotaDetailView(CommodityObjectMixin, BaseMeasureQuotaDetailView):
-    pass
+class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
+    model = Commodity
 
 
 class EUCommodityObjectMixin:

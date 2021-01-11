@@ -35,7 +35,27 @@ logger = logging.getLogger(__name__)
 CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
-class RegionHierarchyManager(models.Manager):
+class HierarchyQuerySet(models.QuerySet):
+
+    def get_by_commodity_code(self, commodity_code, **kwargs):
+        return self.get(
+            **{
+                self.model.COMMODITY_CODE_FIELD: commodity_code,
+                **kwargs,
+            },
+        )
+
+
+class HierarchyManager(models.Manager):
+
+    def get_queryset(self):
+        return HierarchyQuerySet(self.model, using=self._db)
+
+    def get_by_commodity_code(self, *args, **kwargs):
+        return self.get_queryset().get_by_commodity_code(*args, **kwargs)
+
+
+class RegionHierarchyManager(HierarchyManager):
     def get_queryset(self):
         return self.for_region(settings.PRIMARY_REGION)
 
@@ -518,6 +538,8 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
+    COMMODITY_CODE_FIELD = "chapter_code"
+
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -533,8 +555,6 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     section = models.ForeignKey(
         "Section", blank=True, null=True, on_delete=models.CASCADE
     )
-
-    COMMODITY_CODE_FIELD = "chapter_code"
 
     def __str__(self):
         return "Chapter {0}".format(self.chapter_code)
@@ -786,14 +806,16 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
         return reverse(
             "chapter-detail",
             kwargs={
-                "chapter_code": self.chapter_code,
-                "country_code": country_code,
+                "commodity_code": self.commodity_code,
+                "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
             }
         )
 
 
 class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
+    COMMODITY_CODE_FIELD = "heading_code"
+
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
     leaf = models.BooleanField()
@@ -813,8 +835,6 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         on_delete=models.CASCADE,
         related_name="headings",
     )
-
-    COMMODITY_CODE_FIELD = "heading_code"
 
     @property
     def commodity_code(self):
@@ -914,7 +934,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         Method returning the rul of the current instance
         :return:
         """
-        kwargs = {"heading_code": self.heading_code}
+        kwargs = {"commodity_code": self.commodity_code}
         if country_code is not None:
             kwargs["country_code"] = country_code.lower()
             kwargs["nomenclature_sid"] = self.goods_nomenclature_sid
@@ -1050,8 +1070,18 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-detail",
             kwargs={
-                "heading_code": self.commodity_code,
-                "country_code": country_code,
+                "commodity_code": self.commodity_code,
+                "country_code": country_code.lower(),
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
+    def get_northern_ireland_detail_url(self, country_code):
+        return reverse(
+            "heading-detail-northern-ireland",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
             }
         )
@@ -1104,6 +1134,8 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
 
 class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
+    COMMODITY_CODE_FIELD = "commodity_code"
+
     productline_suffix = models.CharField(max_length=2)
     parent_goods_nomenclature_item_id = models.CharField(max_length=10)
     parent_goods_nomenclature_sid = models.CharField(max_length=10)
@@ -1115,8 +1147,6 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     commodity_code = models.CharField(max_length=10)  # goods_nomenclature_item_id
     goods_nomenclature_sid = models.CharField(max_length=10)
     leaf = models.BooleanField()
-
-    COMMODITY_CODE_FIELD = "commodity_code"
 
     @property
     def heading_code_4(self):
@@ -1438,7 +1468,17 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             "subheading-detail",
             kwargs={
                 "commodity_code": self.commodity_code,
-                "country_code": country_code,
+                "country_code": country_code.lower(),
+                "nomenclature_sid": self.goods_nomenclature_sid,
+            }
+        )
+
+    def get_northern_ireland_detail_url(self, country_code):
+        return reverse(
+            "subheading-detail-northern-ireland",
+            kwargs={
+                "commodity_code": self.commodity_code,
+                "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
             }
         )
