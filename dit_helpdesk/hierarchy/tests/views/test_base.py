@@ -9,7 +9,8 @@ from countries.models import Country
 
 from ...helpers import create_nomenclature_tree, TABLE_COLUMN_TITLES
 from ...models import Chapter, Heading, Section
-from ...views import BaseCommodityObjectDetailView
+from ...views.base import BaseCommodityObjectDetailView, BaseSectionedCommodityObjectDetailView
+from ...views.sections import CommodityDetailSection
 
 
 MOCK_NOTES = {
@@ -33,7 +34,7 @@ class TestBaseCommodityObjectDetailView(BaseCommodityObjectDetailView):
     }
 )
 @override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
-class BaseCommodityObjectDetailView(TestCase):
+class BaseCommodityObjectDetailViewTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
@@ -227,3 +228,208 @@ class BaseCommodityObjectDetailView(TestCase):
                 response.context["context_object"],
                 self.chapter,
             )
+
+
+class DisplayedSection(CommodityDetailSection):
+    def get_menu_items(self):
+        return [
+            ("Menu item", "not_shown_menu_item"),
+            ("Another menu item", "another_not_shown_menu_item"),
+        ]
+
+    def get_modals_context_data(self):
+        return [
+            {
+                "section_modals_show_me": "section_modals_me_show",
+            },
+            {
+                "section_another_modals_not_show_me": "section_another_modals_me_show",
+            }
+        ]
+
+    def get_context_data(self):
+        return {
+            "section_show_me": "section_me_show",
+            "another_section_show_me": "another_section_me_show",
+        }
+
+
+class ShouldNotBeDisplayedSection(CommodityDetailSection):
+    should_be_displayed = False
+
+    def get_menu_items(self):
+        return [
+            ("Not shown menu item", "not_shown_menu_item"),
+            ("Another not shown menu item", "another_not_shown_menu_item"),
+        ]
+
+    def get_modals_context_data(self):
+        return [
+            {
+                "section_modals_not_show_me": "section_modals_me_show_not",
+            },
+            {
+                "section_another_modals_not_show_me": "section_another_modals_me_show_not",
+            }
+        ]
+
+    def get_context_data(self):
+        return {
+            "section_do_not_show_me": "section_me_show_not",
+            "another_section_do_not_show_me": "another_section_me_show_not",
+        }
+
+
+class TestBaseSectionedCommodityObjectDetailView(BaseSectionedCommodityObjectDetailView):
+    model = Chapter
+    sections = [
+        DisplayedSection,
+        ShouldNotBeDisplayedSection,
+    ]
+    template_name = "hierarchy/test_base_sectioned_commodity_object_detail.html"
+
+
+@modify_settings(
+    INSTALLED_APPS={
+        "append": ["hierarchy.tests.views"],
+    }
+)
+@override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
+class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.country = Country.objects.all().first()
+
+        tree = create_nomenclature_tree()
+
+        self.section = mixer.blend(
+            Section,
+            nomenclature_tree=tree,
+        )
+        self.chapter = mixer.blend(
+            Chapter,
+            nomenclature_tree=tree,
+            chapter_code="0100000000",
+            goods_nomenclature_sid="1",
+        )
+        self.heading = mixer.blend(
+            Heading,
+            nomenclature_tree=tree,
+            heading_code="0101000000",
+            goods_nomenclature_sid="2",
+        )
+
+        mock_get_commodity_object_path = mock.patch.object(
+            TestBaseSectionedCommodityObjectDetailView,
+            "get_commodity_object_path",
+            return_value=[
+                [self.heading],
+                [self.chapter],
+                [self.section],
+            ],
+        )
+        mock_get_commodity_object_path.start()
+        self.mock_get_commodity_object_path = mock_get_commodity_object_path
+
+    def tearDown(self):
+        self.mock_get_commodity_object_path.stop()
+
+    def get_url(self, country_code=None, commodity_code=None, nomenclature_sid=None):
+        if not country_code:
+            country_code = self.country.country_code
+
+        if not commodity_code:
+            commodity_code = self.chapter.commodity_code
+
+        if not nomenclature_sid:
+            nomenclature_sid = self.chapter.goods_nomenclature_sid
+
+        return reverse(
+            "test-base-sectioned-commodity-object-detail-view",
+            kwargs={
+                "country_code": country_code,
+                "commodity_code": commodity_code,
+                "nomenclature_sid": nomenclature_sid,
+            },
+        )
+
+    def test_sections_init(self):
+        MockSection = mock.MagicMock()
+        AnotherMockSection = mock.MagicMock()
+
+        with mock.patch.object(
+            TestBaseSectionedCommodityObjectDetailView,
+            "sections",
+            new_callable=mock.PropertyMock(return_value=[MockSection, AnotherMockSection]),
+        ):
+            self.client.get(self.get_url())
+
+        MockSection.assert_called_once_with(self.country, self.chapter)
+        AnotherMockSection.assert_called_once_with(self.country, self.chapter)
+
+    def test_context_data(self):
+        response = self.client.get(self.get_url())
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["section_show_me"],
+            "section_me_show",
+        )
+        self.assertEqual(
+            ctx["another_section_show_me"],
+            "another_section_me_show",
+        )
+
+        self.assertNotIn(
+            "section_do_not_show_me",
+            ctx,
+        )
+        self.assertNotIn(
+            "another_section_do_not_show_me",
+            ctx,
+        )
+
+    def test_sections_context_data(self):
+        response = self.client.get(self.get_url())
+        sections = response.context["sections"]
+
+        self.assertEqual(len(sections), 1)
+
+        section = sections[0]
+        self.assertIsInstance(section, DisplayedSection)
+
+    def test_sections_menu_items_context_data(self):
+        response = self.client.get(self.get_url())
+        section_menu_items = response.context["section_menu_items"]
+
+        self.assertEqual(
+            section_menu_items,
+            [
+                ('Menu item', 'not_shown_menu_item'),
+                ('Another menu item', 'another_not_shown_menu_item'),
+            ],
+        )
+
+    def test_modals_context_data(self):
+        response = self.client.get(self.get_url())
+        modals = response.context["modals"]
+
+        self.assertEqual(
+            modals["section_modals_show_me"],
+            "section_modals_me_show",
+        )
+        self.assertEqual(
+            modals["section_another_modals_not_show_me"],
+            "section_another_modals_me_show",
+        )
+
+        self.assertNotIn(
+            "section_modals_not_show_me",
+            modals,
+        )
+        self.assertNotIn(
+            "section_modals_not_show_me",
+            modals,
+        )
