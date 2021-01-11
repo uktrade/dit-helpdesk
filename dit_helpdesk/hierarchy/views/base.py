@@ -75,7 +75,7 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
 
     def get_notes_context_data(self, commodity_object):
-        raise NotImplementedError("Implement `get_notes_context_data`")
+        return {}
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
