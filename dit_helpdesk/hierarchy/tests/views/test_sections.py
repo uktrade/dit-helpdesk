@@ -8,6 +8,7 @@ from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
 from countries.models import Country
+from regulations.models import RegulationGroup
 from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
 from trade_tariff_service.tts_api import ImportMeasureJson
 
@@ -16,6 +17,7 @@ from ...models import Chapter, Heading, Section
 from ...views.base import BaseSectionedCommodityObjectDetailView
 from ...views.sections import (
     OtherMeasuresSection,
+    ProductRegulationsSection,
     QuotasSection,
     RulesOfOriginSection,
     TariffsAndTaxesSection,
@@ -628,3 +630,57 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
             self.country.country_code,
         )
         self.assertTrue(response.context["has_gsp_tariff_preference"])
+
+
+class ProductRegulationsSectionTestCase(BaseSectionTestCase):
+    section_class = ProductRegulationsSection
+
+    def setUp(self):
+        super().setUp()
+
+        mixer.blend(
+            RegulationGroup,
+            headings=[self.heading],
+        )
+
+    def test_template(self):
+        response = self.client.get(self.get_url())
+        self.assert_uses_template(response, "hierarchy/_product_regulations.html")
+
+    def test_menu_items(self):
+        response = self.client.get(self.get_url())
+        self.assert_has_menu_item(response, "Product-specific regulations", "regulations")
+
+    def test_should_be_displayed(self):
+        response = self.client.get(self.get_url())
+        self.assert_section_displayed(response, ProductRegulationsSection)
+
+        RegulationGroup.objects.all().delete()
+        response = self.client.get(self.get_url())
+        self.assert_section_not_displayed(response, ProductRegulationsSection)
+
+    def test_regulation_groups(self):
+        RegulationGroup.objects.all().delete()
+
+        b_regulation_group = mixer.blend(
+            RegulationGroup,
+            title="b",
+            headings=[self.heading],
+        )
+        a_regulation_group = mixer.blend(
+            RegulationGroup,
+            title="a",
+            headings=[self.heading],
+        )
+
+        response = self.client.get(self.get_url())
+        regulation_groups = response.context["regulation_groups"]
+
+        self.assertEqual(
+            regulation_groups[0],
+            a_regulation_group,
+        )
+        self.assertEqual(
+            regulation_groups[1],
+            b_regulation_group,
+        )
