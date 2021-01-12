@@ -731,6 +731,9 @@ class HierarchyBuilder:
                 self.hierarchy_client,
                 len(self.hierarchy_client_not_found_errors),
                 self.region,
+                extra={
+                    "not_found_errors": self.hierarchy_client_not_found_errors,
+                },
             )
         if self.hierarchy_client_server_errors:
             logger.error(
@@ -738,6 +741,9 @@ class HierarchyBuilder:
                 self.hierarchy_client,
                 len(self.hierarchy_client_server_errors),
                 self.region,
+                extra={
+                    "server_errors": self.hierarchy_client_server_errors,
+                },
             )
 
     def lookup_parent(self, parent_model, child_parent_code):
