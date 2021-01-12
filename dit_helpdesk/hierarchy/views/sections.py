@@ -248,8 +248,6 @@ class OtherMeasuresSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.has_other_measures = True
-
         self.other_measures = get_nomenclature_group_measures(
             commodity_object,
             "Other measures",
@@ -270,7 +268,7 @@ class OtherMeasuresSection(CommodityDetailSection):
 
     @property
     def should_be_displayed(self):
-        return self.has_other_measures and bool(self.other_measures)
+        return bool(self.other_measures)
 
     def get_menu_items(self):
         return [("Other measures", "other_measures")]

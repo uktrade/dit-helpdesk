@@ -14,6 +14,7 @@ from ...helpers import create_nomenclature_tree
 from ...models import Chapter, Heading, Section
 from ...views.base import BaseSectionedCommodityObjectDetailView
 from ...views.sections import (
+    OtherMeasuresSection,
     QuotasSection,
     TariffsAndTaxesSection,
 )
@@ -440,6 +441,83 @@ class QuotasSectionTestCase(BaseSectionTestCase):
         )
 
     def test_quotas_table_data_urls(self):
+        mock_measure = self.get_mock_measure()
+
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            self.client.get(self.get_url())
+
+        call_args, _ = mock_measure.get_table_row.call_args_list[0]
+        get_quotas_url, get_conditions_url = call_args
+        self.assertEqual(
+            get_quotas_url("XT", "12", "1"),
+            self.heading.get_quotas_url("XT", "12", "1"),
+        )
+        self.assertEqual(
+            get_conditions_url("XT", "12"),
+            self.heading.get_conditions_url("XT", "12"),
+        )
+
+
+class OtherMeasuresSectionTestCase(BaseSectionTestCase):
+    section_class = OtherMeasuresSection
+
+    def test_template(self):
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+        self.assert_uses_template(response, "hierarchy/_other_measures.html")
+
+    def test_calls_get_nomenclature_group_measures(self):
+        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+            self.client.get(self.get_url())
+
+        mock_get_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Other measures",
+            self.country.country_code,
+            is_eu=self.country.is_eu,
+        )
+
+    def test_menu_items(self):
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+        self.assert_has_menu_item(response, "Other measures", "other_measures")
+
+    def test_should_be_displayed(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+            self.assert_section_not_displayed(response, OtherMeasuresSection)
+
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+            self.assert_section_displayed(response, OtherMeasuresSection)
+
+    def test_modals_context_data(self):
+        mock_measure = self.get_mock_measure(measures_modals={
+            "mock_other_measure": "mock_other_measure_modal",
+        })
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+
+        self.assert_modal(response, "mock_other_measure", "mock_other_measure_modal")
+
+    def test_other_measures_table_data(self):
+        mock_measure = self.get_mock_measure("other")
+
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+
+        other_measures_table_data = response.context["other_measures_table"]
+        self.assertEqual(
+            other_measures_table_data,
+            [
+                [["Country", "XT"], ["ID", "other"]],
+            ],
+        )
+
+    def test_other_measures_table_data_urls(self):
         mock_measure = self.get_mock_measure()
 
         with self.patch_get_nomenclature_group_measures([mock_measure]):
