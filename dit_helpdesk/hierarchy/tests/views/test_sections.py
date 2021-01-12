@@ -8,6 +8,7 @@ from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
 from countries.models import Country
+from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
 from trade_tariff_service.tts_api import ImportMeasureJson
 
 from ...helpers import create_nomenclature_tree
@@ -16,6 +17,7 @@ from ...views.base import BaseSectionedCommodityObjectDetailView
 from ...views.sections import (
     OtherMeasuresSection,
     QuotasSection,
+    RulesOfOriginSection,
     TariffsAndTaxesSection,
 )
 
@@ -44,6 +46,7 @@ class BaseSectionTestCase(TestCase):
         self.country = Country.objects.all().first()
 
         tree = create_nomenclature_tree()
+        self.tree = tree
 
         self.section = mixer.blend(
             Section,
@@ -136,7 +139,7 @@ class BaseSectionTestCase(TestCase):
         try:
             found_menu_item_id = section_menu_items[menu_item_label]
         except KeyError:
-            raise AssertionError(f"{menu_item_label} not found in menu items")
+            raise AssertionError(f"{menu_item_label} not found in menu items {section_menu_items.keys()}")
 
         if found_menu_item_id != menu_item_id:
             raise AssertionError(f"{menu_item_id} does not equal {found_menu_item_id}")
@@ -533,3 +536,95 @@ class OtherMeasuresSectionTestCase(BaseSectionTestCase):
             get_conditions_url("XT", "12"),
             self.heading.get_conditions_url("XT", "12"),
         )
+
+
+class RulesOfOriginSectionTestCase(BaseSectionTestCase):
+    section_class = RulesOfOriginSection
+
+    def setUp(self):
+        super().setUp()
+
+        rules_document = mixer.blend(
+            RulesDocument,
+            countries=[self.country],
+            nomenclature_tree=self.tree,
+        )
+        self.rules_document = rules_document
+
+        self.rule = mixer.blend(
+            Rule,
+            description=mixer.RANDOM,
+            headings=[self.heading],
+            rules_document=rules_document,
+        )
+
+    def test_template(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+        self.assert_uses_template(response, "hierarchy/_rules_of_origin.html")
+
+    def test_menu_items(self):
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+            self.assert_has_menu_item(response, "Rules of origin", "rules_of_origin")
+
+    def test_should_be_displayed(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+        self.assert_section_displayed(response, RulesOfOriginSection)
+
+    def test_rules_of_origin(self):
+        expected_rules_of_origin = self.heading.get_rules_of_origin(self.country.country_code)
+
+        with self.patch_get_nomenclature_group_measures([]), \
+            mock.patch.object(Heading, "get_rules_of_origin") as mock_rules_of_origin:
+            mock_rules_of_origin.return_value = expected_rules_of_origin
+            response = self.client.get(self.get_url())
+
+        mock_rules_of_origin.assert_called_once_with(country_code=self.country.country_code)
+        rules_of_origin = response.context["rules_of_origin"]
+
+        self.assertEqual(
+            rules_of_origin,
+            expected_rules_of_origin,
+        )
+
+    def test_has_uk_trade_agreement(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+
+        self.assertEqual(
+            response.context["has_uk_trade_agreement"],
+            self.country.has_uk_trade_agreement,
+        )
+
+    def test_has_gsp_tariff_preference(self):
+        with self.patch_get_nomenclature_group_measures([]) as mock_nomenclature_group_measures:
+            response = self.client.get(self.get_url())
+        mock_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Tariffs and charges",
+            self.country.country_code,
+        )
+        self.assertFalse(response.context["has_gsp_tariff_preference"])
+
+        mock_measure_no_gsp = self.get_mock_measure(is_gsp=False)
+        with self.patch_get_nomenclature_group_measures([mock_measure_no_gsp]) as mock_nomenclature_group_measures:
+            response = self.client.get(self.get_url())
+        mock_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Tariffs and charges",
+            self.country.country_code,
+        )
+        self.assertFalse(response.context["has_gsp_tariff_preference"])
+
+        mock_measure_has_gsp = self.get_mock_measure(is_gsp=True)
+        with self.patch_get_nomenclature_group_measures([mock_measure_has_gsp]) as mock_nomenclature_group_measures:
+            response = self.client.get(self.get_url())
+        mock_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Tariffs and charges",
+            self.country.country_code,
+        )
+        self.assertTrue(response.context["has_gsp_tariff_preference"])
