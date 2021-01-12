@@ -6,6 +6,7 @@ from .test_base import (
     TestBaseCommodityObjectDetailView,
     TestBaseSectionedCommodityObjectDetailView,
 )
+from .test_sections import TestSectionsView
 
 
 test_urlpatterns = [
@@ -18,7 +19,12 @@ test_urlpatterns = [
         r"test-base-sectioned-commodity-object-detail-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",
         TestBaseSectionedCommodityObjectDetailView.as_view(),
         name="test-base-sectioned-commodity-object-detail-view",
-    )
+    ),
+    re_path(
+        r"test-sections-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",
+        TestSectionsView.as_view(),
+        name="test-sections-view",
+    ),
 ]
 
 urlpatterns = base_urlpatterns + test_urlpatterns

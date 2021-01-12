@@ -334,6 +334,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.mock_get_commodity_object_path = mock_get_commodity_object_path
 
     def tearDown(self):
+        super().tearDown()
+
         self.mock_get_commodity_object_path.stop()
 
     def get_url(self, country_code=None, commodity_code=None, nomenclature_sid=None):

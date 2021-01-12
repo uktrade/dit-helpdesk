@@ -44,8 +44,11 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         except ObjectDoesNotExist:
             raise Http404
 
-        if self.commodity_object.should_update_tts_content():
-            self.commodity_object.update_tts_content()
+        self.update_commodity_object_tts_content(self.commodity_object)
+
+    def update_commodity_object_tts_content(self, commodity_object):
+        if commodity_object.should_update_tts_content():
+            commodity_object.update_tts_content()
 
     def get(self, request, *args, **kwargs):
         try:

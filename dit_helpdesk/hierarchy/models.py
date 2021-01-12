@@ -1090,7 +1090,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-conditions",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1101,7 +1101,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-conditions-northern-ireland",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1112,7 +1112,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-quota",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1487,7 +1487,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-conditions",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1498,7 +1498,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-conditions-northern-ireland",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1509,7 +1509,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-quota",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
@@ -1521,7 +1521,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse(
             "heading-measure-quota-northern-ireland",
             kwargs={
-                "heading_code": self.commodity_code,
+                "commodity_code": self.commodity_code,
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
