@@ -13,7 +13,10 @@ from trade_tariff_service.tts_api import ImportMeasureJson
 from ...helpers import create_nomenclature_tree
 from ...models import Chapter, Heading, Section
 from ...views.base import BaseSectionedCommodityObjectDetailView
-from ...views.sections import TariffsAndTaxesSection
+from ...views.sections import (
+    QuotasSection,
+    TariffsAndTaxesSection,
+)
 
 
 faker = Faker()
@@ -26,15 +29,13 @@ class TestSectionsView(BaseSectionedCommodityObjectDetailView):
     def update_commodity_object_tts_content(self, commodity_object):
         pass
 
-
 @modify_settings(
     INSTALLED_APPS={
         "append": ["hierarchy.tests.views"],
     }
 )
 @override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
-class TariffsAndTaxesSectionTestCase(TestCase):
-    section_class = TariffsAndTaxesSection
+class BaseSectionTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
@@ -110,9 +111,7 @@ class TariffsAndTaxesSectionTestCase(TestCase):
             "hierarchy.views.sections.get_nomenclature_group_measures",
             return_value=measures
         ) as mock_get_nomenclature_group_measures:
-            yield
-
-        return mock_get_nomenclature_group_measures
+            yield mock_get_nomenclature_group_measures
 
     def assert_section_not_displayed(self, response, section_class):
         sections = response.context["sections"]
@@ -182,37 +181,52 @@ class TariffsAndTaxesSectionTestCase(TestCase):
 
         return mock_measure
 
+
+class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
+    section_class = TariffsAndTaxesSection
+
     def test_template(self):
         mock_measure = self.get_mock_measure()
         with self.patch_get_nomenclature_group_measures([mock_measure]):
             response = self.client.get(self.get_url())
-            self.assert_uses_template(response, "hierarchy/_tariffs_and_taxes.html")
+        self.assert_uses_template(response, "hierarchy/_tariffs_and_taxes.html")
+
+    def test_calls_get_nomenclature_group_measures(self):
+        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+            self.client.get(self.get_url())
+
+        mock_get_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Tariffs and charges",
+            self.country.country_code,
+            is_eu=self.country.is_eu,
+        )
 
     def test_menu_items(self):
         mock_measure = self.get_mock_measure()
         with self.patch_get_nomenclature_group_measures([mock_measure]):
             response = self.client.get(self.get_url())
-            self.assert_has_menu_item(response, "Tariffs and taxes", "tariffs_and_taxes")
+        self.assert_has_menu_item(response, "Tariffs and taxes", "tariffs_and_taxes")
 
     def test_should_be_displayed(self):
         with self.patch_get_nomenclature_group_measures([]):
             response = self.client.get(self.get_url())
-            self.assert_section_not_displayed(response, TariffsAndTaxesSection)
+        self.assert_section_not_displayed(response, TariffsAndTaxesSection)
 
         mock_vat_measure = self.get_mock_measure(vat=True)
         with self.patch_get_nomenclature_group_measures([mock_vat_measure]):
             response = self.client.get(self.get_url())
-            self.assert_section_displayed(response, TariffsAndTaxesSection)
+        self.assert_section_displayed(response, TariffsAndTaxesSection)
 
         mock_excise_measure = self.get_mock_measure(excise=True)
         with self.patch_get_nomenclature_group_measures([mock_excise_measure]):
             response = self.client.get(self.get_url())
-            self.assert_section_displayed(response, TariffsAndTaxesSection)
+        self.assert_section_displayed(response, TariffsAndTaxesSection)
 
         mock_tariff_measure = self.get_mock_measure()
         with self.patch_get_nomenclature_group_measures([mock_tariff_measure]):
             response = self.client.get(self.get_url())
-            self.assert_section_displayed(response, TariffsAndTaxesSection)
+        self.assert_section_displayed(response, TariffsAndTaxesSection)
 
     def test_modals_context_data(self):
         mock_vat_measure = self.get_mock_measure(
@@ -238,9 +252,10 @@ class TariffsAndTaxesSectionTestCase(TestCase):
             mock_tariff_measure,
         ]):
             response = self.client.get(self.get_url())
-            self.assert_modal(response, "mock_vat_measure", "mock_vat_measure_modal")
-            self.assert_modal(response, "mock_excise_measure", "mock_excise_measure_modal")
-            self.assert_modal(response, "mock_tariff_measure", "mock_tariff_measure_modal")
+
+        self.assert_modal(response, "mock_vat_measure", "mock_vat_measure_modal")
+        self.assert_modal(response, "mock_excise_measure", "mock_excise_measure_modal")
+        self.assert_modal(response, "mock_tariff_measure", "mock_tariff_measure_modal")
 
     def test_tariffs_table_data(self):
         mock_vat_measure = self.get_mock_measure("vat", vat=True)
@@ -363,3 +378,80 @@ class TariffsAndTaxesSectionTestCase(TestCase):
         ]):
             response = self.client.get(self.get_url())
         self.assertTrue(response.context["has_multiple_vat_entries"])
+
+
+class QuotasSectionTestCase(BaseSectionTestCase):
+    section_class = QuotasSection
+
+    def test_template(self):
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+            self.assert_uses_template(response, "hierarchy/_quotas.html")
+
+    def test_calls_get_nomenclature_group_measures(self):
+        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+            self.client.get(self.get_url())
+
+        mock_get_nomenclature_group_measures.assert_called_with(
+            self.heading,
+            "Quotas",
+            self.country.country_code,
+            is_eu=self.country.is_eu,
+        )
+
+    def test_menu_items(self):
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+            self.assert_has_menu_item(response, "Quotas", "quotas")
+
+    def test_should_be_displayed(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+            self.assert_section_not_displayed(response, QuotasSection)
+
+        mock_measure = self.get_mock_measure()
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+            self.assert_section_displayed(response, QuotasSection)
+
+    def test_modals_context_data(self):
+        mock_measure = self.get_mock_measure(measures_modals={
+            "mock_quota_measure": "mock_quota_measure_modal",
+        })
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+
+        self.assert_modal(response, "mock_quota_measure", "mock_quota_measure_modal")
+
+    def test_quotas_table_data(self):
+        mock_measure = self.get_mock_measure("quota")
+
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            response = self.client.get(self.get_url())
+
+        quotas_table_data = response.context["quotas_table_data"]
+        self.assertEqual(
+            quotas_table_data,
+            [
+                [["Country", "XT"], ["ID", "quota"]],
+            ],
+        )
+
+    def test_quotas_table_data_urls(self):
+        mock_measure = self.get_mock_measure()
+
+        with self.patch_get_nomenclature_group_measures([mock_measure]):
+            self.client.get(self.get_url())
+
+        call_args, _ = mock_measure.get_table_row.call_args_list[0]
+        get_quotas_url, get_conditions_url = call_args
+        self.assertEqual(
+            get_quotas_url("XT", "12", "1"),
+            self.heading.get_quotas_url("XT", "12", "1"),
+        )
+        self.assertEqual(
+            get_conditions_url("XT", "12"),
+            self.heading.get_conditions_url("XT", "12"),
+        )

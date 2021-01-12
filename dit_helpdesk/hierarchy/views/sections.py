@@ -190,8 +190,6 @@ class QuotasSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.has_quotas_measures = True
-
         self.quotas_measures = get_nomenclature_group_measures(
             self.commodity_object,
             "Quotas",
@@ -213,7 +211,7 @@ class QuotasSection(CommodityDetailSection):
 
     @property
     def should_be_displayed(self):
-        return self.has_quotas_measures and bool(self.quotas_measures)
+        return bool(self.quotas_measures)
 
     def get_menu_items(self):
         return [
