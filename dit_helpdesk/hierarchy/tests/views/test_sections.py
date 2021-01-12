@@ -21,6 +21,7 @@ from ...views.sections import (
     QuotasSection,
     RulesOfOriginSection,
     TariffsAndTaxesSection,
+    TradeStatusSection,
 )
 
 
@@ -684,3 +685,50 @@ class ProductRegulationsSectionTestCase(BaseSectionTestCase):
             regulation_groups[1],
             b_regulation_group,
         )
+
+
+class TradeStatusSectionTestCase(BaseSectionTestCase):
+    section_class = TradeStatusSection
+
+    @contextmanager
+    def mock_has_trade_scenario(self, has_trade_scenario=True):
+        with mock.patch(
+            "hierarchy.views.sections.has_trade_scenario",
+            return_value=has_trade_scenario
+        ) as mock_has_trade_scenario:
+            yield
+
+        mock_has_trade_scenario.assert_called_once_with(self.country)
+
+    def test_template(self):
+        with self.mock_has_trade_scenario():
+            response = self.client.get(self.get_url())
+        self.assert_uses_template(response, "hierarchy/_trade_status.html")
+
+    def test_menu_items(self):
+        with self.mock_has_trade_scenario():
+            response = self.client.get(self.get_url())
+        self.assert_has_menu_item(response, "Trade status", "trade_status")
+
+    def test_should_be_displayed(self):
+        with self.mock_has_trade_scenario():
+            response = self.client.get(self.get_url())
+        self.assert_section_displayed(response, TradeStatusSection)
+
+        with self.mock_has_trade_scenario(False):
+            response = self.client.get(self.get_url())
+        self.assert_section_not_displayed(response, TradeStatusSection)
+
+    def test_context_data(self):
+        with self.mock_has_trade_scenario(), \
+            mock.patch("hierarchy.views.sections.get_tariff_content_context") as mock_get_tariff_content_context:
+            mock_get_tariff_content_context.return_value = {
+                "tariff_content_key": "tariff_content_value",
+            }
+            response = self.client.get(self.get_url())
+
+        mock_get_tariff_content_context.assert_called_once_with(
+            self.country,
+            self.heading,
+        )
+        self.assertEqual(response.context["tariff_content_key"], "tariff_content_value")
