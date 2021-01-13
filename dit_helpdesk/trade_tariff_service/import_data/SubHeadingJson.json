@@ -1,0 +1,237 @@
+{
+    "_response_info": {
+      "links": [
+        {
+          "href": "/trade-tariff/headings/2402.json",
+          "rel": "self"
+        },
+        {
+          "href": "/trade-tariff/chapters/24",
+          "rel": "chapter"
+        },
+        {
+          "href": "/trade-tariff/sections/4",
+          "rel": "section"
+        }
+      ]
+    },
+    "bti_url": "http://ec.europa.eu/taxation_customs/dds2/ebti/ebti_consultation.jsp?Lang=en&nomenc=2402000000&Expand=true",
+    "chapter": {
+      "chapter_note": "* 1\\. This chapter does not cover medicinal cigarettes (Chapter 30).",
+      "description": "TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES",
+      "formatted_description": "Tobacco and manufactured tobacco substitutes",
+      "goods_nomenclature_item_id": "2400000000"
+    },
+    "commodities": [
+      {
+        "description": "Cigars, cheroots and cigarillos, containing tobacco",
+        "description_plain": "Cigars, cheroots and cigarillos, containing tobacco",
+        "formatted_description": "Cigars, cheroots and cigarillos, containing tobacco",
+        "goods_nomenclature_item_id": "2402100000",
+        "goods_nomenclature_sid": 35284,
+        "leaf": true,
+        "number_indents": 1,
+        "overview_measures": [
+          {
+            "duty_expression": {
+              "base": "20.00 %",
+              "formatted_base": "<span title=\"20.0\">20.00</span> %"
+            },
+            "id": -488398,
+            "measure_type": {
+              "description": "VAT standard rate",
+              "id": "VTS"
+            },
+            "vat": true
+          },
+          {
+            "duty_expression": {
+              "base": "1000 p/st",
+              "formatted_base": "<abbr title=\"1000 items\">1000 p/st</abbr>"
+            },
+            "id": 2982268,
+            "measure_type": {
+              "description": "Supplementary unit",
+              "id": "109"
+            },
+            "vat": false
+          },
+          {
+            "duty_expression": {
+              "base": "26.00 %",
+              "formatted_base": "<span title=\"26.0\">26.00</span> %"
+            },
+            "id": 2053040,
+            "measure_type": {
+              "description": "Third country duty",
+              "id": "103"
+            },
+            "vat": false
+          }
+        ],
+        "parent_sid": null,
+        "producline_suffix": "80"
+      },
+      {
+        "description": "Cigarettes containing tobacco",
+        "description_plain": "Cigarettes containing tobacco",
+        "formatted_description": "Cigarettes containing tobacco",
+        "goods_nomenclature_item_id": "2402200000",
+        "goods_nomenclature_sid": 35285,
+        "leaf": false,
+        "number_indents": 1,
+        "parent_sid": null,
+        "producline_suffix": "80"
+      },
+      {
+        "description": "Containing cloves",
+        "description_plain": "Containing cloves",
+        "formatted_description": "Containing cloves",
+        "goods_nomenclature_item_id": "2402201000",
+        "goods_nomenclature_sid": 55653,
+        "leaf": true,
+        "number_indents": 2,
+        "overview_measures": [
+          {
+            "duty_expression": {
+              "base": "20.00 %",
+              "formatted_base": "<span title=\"20.0\">20.00</span> %"
+            },
+            "id": -463662,
+            "measure_type": {
+              "description": "VAT standard rate",
+              "id": "VTS"
+            },
+            "vat": true
+          },
+          {
+            "duty_expression": {
+              "base": "1000 p/st",
+              "formatted_base": "<abbr title=\"1000 items\">1000 p/st</abbr>"
+            },
+            "id": 2982269,
+            "measure_type": {
+              "description": "Supplementary unit",
+              "id": "109"
+            },
+            "vat": false
+          },
+          {
+            "duty_expression": {
+              "base": "10.00 %",
+              "formatted_base": "<span title=\"10.0\">10.00</span> %"
+            },
+            "id": 2053041,
+            "measure_type": {
+              "description": "Third country duty",
+              "id": "103"
+            },
+            "vat": false
+          }
+        ],
+        "parent_sid": 35285,
+        "producline_suffix": "80"
+      },
+      {
+        "description": "Other",
+        "description_plain": "Other",
+        "formatted_description": "Other",
+        "goods_nomenclature_item_id": "2402209000",
+        "goods_nomenclature_sid": 55654,
+        "leaf": true,
+        "number_indents": 2,
+        "overview_measures": [
+          {
+            "duty_expression": {
+              "base": "20.00 %",
+              "formatted_base": "<span title=\"20.0\">20.00</span> %"
+            },
+            "id": -488435,
+            "measure_type": {
+              "description": "VAT standard rate",
+              "id": "VTS"
+            },
+            "vat": true
+          },
+          {
+            "duty_expression": {
+              "base": "1000 p/st",
+              "formatted_base": "<abbr title=\"1000 items\">1000 p/st</abbr>"
+            },
+            "id": 2982269,
+            "measure_type": {
+              "description": "Supplementary unit",
+              "id": "109"
+            },
+            "vat": false
+          },
+          {
+            "duty_expression": {
+              "base": "57.60 %",
+              "formatted_base": "<span title=\"57.6\">57.60</span> %"
+            },
+            "id": 2053042,
+            "measure_type": {
+              "description": "Third country duty",
+              "id": "103"
+            },
+            "vat": false
+          }
+        ],
+        "parent_sid": 35285,
+        "producline_suffix": "80"
+      },
+      {
+        "description": "Other",
+        "description_plain": "Other",
+        "formatted_description": "Other",
+        "goods_nomenclature_item_id": "2402900000",
+        "goods_nomenclature_sid": 35286,
+        "leaf": true,
+        "number_indents": 1,
+        "overview_measures": [
+          {
+            "duty_expression": {
+              "base": "20.00 %",
+              "formatted_base": "<span title=\"20.0\">20.00</span> %"
+            },
+            "id": -488361,
+            "measure_type": {
+              "description": "VAT standard rate",
+              "id": "VTS"
+            },
+            "vat": true
+          },
+          {
+            "duty_expression": {
+              "base": "57.60 %",
+              "formatted_base": "<span title=\"57.6\">57.60</span> %"
+            },
+            "id": 2053043,
+            "measure_type": {
+              "description": "Third country duty",
+              "id": "103"
+            },
+            "vat": false
+          }
+        ],
+        "parent_sid": null,
+        "producline_suffix": "80"
+      }
+    ],
+    "description": "Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes",
+    "footnotes": [
+      {
+        "code": "TN701",
+        "description": "According to  the Council Regulation (EU) No 692/2014 (OJ L183, p. 9) it shall be prohibited to import into European Union goods originating in Crimea or Sevastopol.\nThe prohibition shall not apply in respect of: \n(a) the execution until 26 September 2014, of trade contracts concluded before 25 June 2014, or of ancillary contracts necessary for the execution of such contracts, provided that the natural or legal persons, entity or body seeking to perform the contract have notified, at least 10 working days in advance, the activity or transaction to the competent authority of the Member State in which they are established. \n(b) goods originating in Crimea or Sevastopol which have been made available to the Ukrainian authorities for examination, for which compliance with the conditions conferring entitlement to preferential origin has been verified and for which a certificate of origin has been issued in accordance with Regulation (EU) No 978/2012 and Regulation (EU) No 374/2014 or in accordance with the EU-Ukraine Association Agreement.",
+        "formatted_description": "According to  the Council Regulation (EU) No 692/2014 (OJ L183, p. 9) it shall be prohibited to import into European Union goods originating in Crimea or Sevastopol.<br/>The prohibition shall not apply in respect of: <br/>(a) the execution until 26 September 2014, of trade contracts concluded before 25 June 2014, or of ancillary contracts necessary for the execution of such contracts, provided that the natural or legal persons, entity or body seeking to perform the contract have notified, at least 10 working days in advance, the activity or transaction to the competent authority of the Member State in which they are established. <br/>(b) goods originating in Crimea or Sevastopol which have been made available to the Ukrainian authorities for examination, for which compliance with the conditions conferring entitlement to preferential origin has been verified and for which a certificate of origin has been issued in accordance with Regulation (EU) No 978/2012 and Regulation (EU) No 374/2014 or in accordance with the EU-Ukraine Association Agreement."
+      }
+    ],
+    "formatted_description": "Cigars, cheroots, cigarillos and cigarettes, of tobacco or of tobacco substitutes",
+    "goods_nomenclature_item_id": "2402000000",
+    "section": {
+      "numeral": "IV",
+      "position": 4,
+      "title": "Prepared foodstuffs; beverages, spirits and vinegar; tobacco and manufactured tobacco substitutes"
+    }
+  }

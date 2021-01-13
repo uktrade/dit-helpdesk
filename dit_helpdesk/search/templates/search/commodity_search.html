@@ -232,13 +232,13 @@
                                                         <a href="{% url 'commodity-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'chapter' %}
-                                                        <a href="{% url 'chapter-detail' country_code=country_code chapter_code=result.commodity_code nomenclature_sid=result.id %}"
+                                                        <a href="{% url 'chapter-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'section' %}
                                                         <a href="{% url 'section-detail' country_code=country_code section_id=result.commodity_code %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'heading' %}
-                                                        <a href="{% url 'heading-detail' country_code=country_code heading_code=result.commodity_code nomenclature_sid=result.id %}"
+                                                        <a href="{% url 'heading-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"
                                                            class="govuk-link">{{ result.description | safe }}</a>
                                                     {% elif result.meta.index == 'subheading' %}
                                                         <a href="{% url 'subheading-detail' country_code=country_code commodity_code=result.commodity_code nomenclature_sid=result.id %}"

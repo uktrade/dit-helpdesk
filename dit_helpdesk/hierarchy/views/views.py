@@ -97,16 +97,8 @@ def section_detail(request, section_id, country_code):
 
 class ChapterDetailView(BaseCommodityObjectDetailView):
     context_object_name = "chapter"
+    model = Chapter
     template_name = "hierarchy/chapter_detail.html"
-
-    def get_commodity_object(self, **kwargs):
-        chapter_code = kwargs["chapter_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Chapter.objects.get(
-            chapter_code=chapter_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
-        )
 
     def get_commodity_object_path(self, chapter):
         chapter_path = chapter.get_path()
@@ -125,20 +117,9 @@ class ChapterDetailView(BaseCommodityObjectDetailView):
         return ctx
 
 
-class HeadingObjectMixin:
-
-    def get_commodity_object(self, **kwargs):
-        heading_code = kwargs["heading_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Heading.objects.get(
-            heading_code=heading_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
-        )
-
-
-class BaseSectionedHeadingDetailView(HeadingObjectMixin, BaseSectionedCommodityObjectDetailView):
+class BaseSectionedHeadingDetailView(BaseSectionedCommodityObjectDetailView):
     context_object_name = "heading"
+    model = Heading
 
     def get_commodity_object_path(self, heading):
         heading_path = heading.get_path()
@@ -185,31 +166,20 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = Heading.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                heading_code=self.commodity_object.heading_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except Heading.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = Heading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get_by_commodity_code(
+            self.commodity_object.commodity_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
 class BaseSectionedSubHeadingDetailView(BaseSectionedCommodityObjectDetailView):
     context_object_name = "subheading"
-
-    def get_commodity_object(self, **kwargs):
-        commodity_code = kwargs["commodity_code"]
-        goods_nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return SubHeading.objects.get(
-            commodity_code=commodity_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
-        )
+    model = SubHeading
 
     def get_commodity_object_path(self, subheading):
         subheading_path = subheading.get_path()
@@ -255,23 +225,20 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = SubHeading.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                commodity_code=self.commodity_object.commodity_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except SubHeading.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = SubHeading.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get_by_commodity_code(
+            commodity_code=self.commodity_object.commodity_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(HeadingObjectMixin, BaseMeasureConditionDetailView):
-    pass
+class MeasureConditionDetailView(BaseMeasureConditionDetailView):
+    model = Heading
 
 
-class MeasureQuotaDetailView(HeadingObjectMixin, BaseMeasureQuotaDetailView):
-    pass
+class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
+    model = Heading

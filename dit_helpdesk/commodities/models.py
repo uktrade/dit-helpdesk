@@ -316,7 +316,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             "commodity-detail",
             kwargs={
                 "commodity_code": self.commodity_code,
-                "country_code": country_code,
+                "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
             }
         )

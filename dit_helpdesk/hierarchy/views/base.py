@@ -12,11 +12,24 @@ from .exceptions import Redirect
 from .helpers import get_hierarchy_context
 
 
-class BaseCommodityObjectDetailView(TemplateView):
-    context_object_name = None
+class GetCommodityObjectMixin:
+
+    @property
+    def model(self):
+        raise AttributeError(f"Add `model` attribute for getting of commodity object for {self.__class__}")
 
     def get_commodity_object(self, **kwargs):
-        raise NotImplementedError("Implement `get_commodity_object`")
+        commodity_code = kwargs["commodity_code"]
+        goods_nomenclature_sid = kwargs["nomenclature_sid"]
+
+        return self.model.objects.get_by_commodity_code(
+            commodity_code,
+            goods_nomenclature_sid=goods_nomenclature_sid,
+        )
+
+
+class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
+    context_object_name = None
 
     def initialise(self, request, *args, **kwargs):
         country_code = kwargs["country_code"]
@@ -31,14 +44,16 @@ class BaseCommodityObjectDetailView(TemplateView):
         except ObjectDoesNotExist:
             raise Http404
 
-        if self.commodity_object.should_update_tts_content():
-            self.commodity_object.update_tts_content()
+        self.update_commodity_object_tts_content(self.commodity_object)
+
+    def update_commodity_object_tts_content(self, commodity_object):
+        if commodity_object.should_update_tts_content():
+            commodity_object.update_tts_content()
 
     def get(self, request, *args, **kwargs):
         try:
             self.initialise(request, *args, **kwargs)
         except Redirect as r:
-            messages.error(request, "Invalid originCountry")
             return r.redirect_to
 
         return super().get(request, *args, **kwargs)
@@ -63,7 +78,7 @@ class BaseCommodityObjectDetailView(TemplateView):
         return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
 
     def get_notes_context_data(self, commodity_object):
-        raise NotImplementedError("Implement `get_notes_context_data`")
+        return {}
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -129,7 +144,7 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
         return ctx
 
 
-class BaseMeasureConditionDetailView(TemplateView):
+class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
     template_name = "hierarchy/measure_condition_detail.html"
 
     def get(self, request, **kwargs):
@@ -159,9 +174,6 @@ class BaseMeasureConditionDetailView(TemplateView):
         )
 
         return super().get(request, **kwargs)
-
-    def get_commodity_object(self, **kwargs):
-        raise NotImplementedError(f"Implement `get_commodity_object` for {self.__class__}")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -195,7 +207,7 @@ class BaseMeasureConditionDetailView(TemplateView):
         return ctx
 
 
-class BaseMeasureQuotaDetailView(TemplateView):
+class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
     template_name = "hierarchy/measure_quota_detail.html"
 
     def get(self, request, **kwargs):
