@@ -23,11 +23,6 @@ logger.setLevel(logging.INFO)
 
 DEFAULT_REGION = settings.PRIMARY_REGION
 
-PATCH_DESCRIPTIONS = {
-    "2403991000": "Chewing tobacco and snuff",
-    "2008971200": "Of an actual alcoholic strength by mass not exceeding 11,85% mas",
-}
-
 
 class HierarchyBuilder:
 
@@ -550,11 +545,6 @@ class HierarchyBuilder:
                     description = sub_heading["attributes"]["description"]
                     goods_nomenclature_item_id = sub_heading["attributes"]["goods_nomenclature_item_id"]
                     goods_nomenclature_sid = sub_heading["attributes"]["goods_nomenclature_sid"]
-                    if not description:
-                        logger.error(f"Missing description for subheading {goods_nomenclature_item_id} {goods_nomenclature_sid}")
-                    if not description and goods_nomenclature_item_id in PATCH_DESCRIPTIONS:
-                        description = PATCH_DESCRIPTIONS[goods_nomenclature_item_id]
-                        logger.error(f"Patching {goods_nomenclature_item_id} with {description}")
 
                     sub_headings_data.append(
                         {
@@ -592,15 +582,9 @@ class HierarchyBuilder:
                 }
 
                 for commodity in commodities:
-
                     parent_sid = commodity["attributes"]["parent_sid"]
                     goods_nomenclature_item_id = commodity["attributes"]["goods_nomenclature_item_id"]
                     description = commodity["attributes"]["description"]
-                    if not description:
-                        logger.error(f"Missing description for commodity {goods_nomenclature_item_id}")
-                    if not description and goods_nomenclature_item_id in PATCH_DESCRIPTIONS:
-                        description = PATCH_DESCRIPTIONS[goods_nomenclature_item_id]
-                        logger.error(f"Patching {goods_nomenclature_item_id} with {description}")
 
                     commodities_data.append(
                         {
