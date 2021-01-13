@@ -41,7 +41,7 @@ def get_url(object, country_code):
             "heading-detail",
             kwargs={
                 "country_code": country_code,
-                "heading_code": object.commodity_code,
+                "commodity_code": object.commodity_code,
                 "nomenclature_sid": object.goods_nomenclature_sid,
             },
         )

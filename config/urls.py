@@ -59,7 +59,7 @@ urlpatterns = [
         name="section-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/chapter/(?P<chapter_code>\d{10})/(?P<nomenclature_sid>\d+)$",
+        r"^country/(?P<country_code>\w+)/chapter/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.ChapterDetailView.as_view(),
         name="chapter-detail",
     ),
@@ -74,12 +74,12 @@ urlpatterns = [
         name="subheading-detail-northern-ireland",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)$",
+        r"^country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.HeadingDetailView.as_view(),
         name="heading-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        r"^country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
         hierarchy_views.HeadingDetailNorthernIrelandView.as_view(),
         name="heading-detail-northern-ireland",
     ),
@@ -106,7 +106,7 @@ urlpatterns = [
         name="commodity-measure-conditions-northern-ireland",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
+        r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
         hierarchy_views.MeasureConditionDetailView.as_view(),
         name="heading-measure-conditions",
@@ -124,7 +124,7 @@ urlpatterns = [
         name="commodity-measure-quota-northern-ireland",
     ),
     re_path(
-        r"country/(?P<country_code>\w+)/heading/(?P<heading_code>\d{10})/(?P<nomenclature_sid>\d+)"
+        r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
         hierarchy_views.MeasureQuotaDetailView.as_view(),
         name="heading-measure-quota",

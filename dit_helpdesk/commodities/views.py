@@ -31,19 +31,8 @@ from hierarchy.views.base import (
 from .models import Commodity
 
 
-class CommodityObjectMixin:
-
-    def get_commodity_object(self, **kwargs):
-        commodity_code = kwargs["commodity_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Commodity.objects.get(
-            commodity_code=commodity_code,
-            goods_nomenclature_sid=nomenclature_sid,
-        )
-
-
-class BaseSectionedCommodityDetailView(CommodityObjectMixin, BaseSectionedCommodityObjectDetailView):
+class BaseSectionedCommodityDetailView(BaseSectionedCommodityObjectDetailView):
+    model = Commodity
 
     def get_commodity_object_path(self, commodity):
         return commodity.get_path()
@@ -105,26 +94,23 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
     def initialise(self, request, *args, **kwargs):
         super().initialise(request, *args, **kwargs)
 
-        try:
-            self.eu_commodity_object = Commodity.objects.for_region(
-                settings.SECONDARY_REGION,
-            ).get(
-                commodity_code=self.commodity_object.commodity_code,
-                goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
-            )
-        except Commodity.DoesNotExist:
-            self.eu_commodity_object = None
-        else:
-            if self.eu_commodity_object.should_update_tts_content():
-                self.eu_commodity_object.update_tts_content()
+        eu_commodity_object = Commodity.objects.for_region(
+            settings.SECONDARY_REGION,
+        ).get(
+            commodity_code=self.commodity_object.commodity_code,
+            goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
+        )
+
+        if eu_commodity_object.should_update_tts_content():
+            eu_commodity_object.update_tts_content()
 
 
-class MeasureConditionDetailView(CommodityObjectMixin, BaseMeasureConditionDetailView):
-    pass
+class MeasureConditionDetailView(BaseMeasureConditionDetailView):
+    model = Commodity
 
 
-class MeasureQuotaDetailView(CommodityObjectMixin, BaseMeasureQuotaDetailView):
-    pass
+class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
+    model = Commodity
 
 
 class EUCommodityObjectMixin:
