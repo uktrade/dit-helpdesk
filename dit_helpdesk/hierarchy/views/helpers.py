@@ -2,6 +2,8 @@ import re
 
 from django.shortcuts import reverse
 
+import sentry_sdk
+
 from commodities.models import Commodity
 
 from ..models import Chapter, Heading, SubHeading
@@ -166,3 +168,13 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                     html += "</ul></nav>"
 
     return html
+
+
+def sentry_emit_commodity_not_found(commodity_code, nomenclature_sid):
+    sentry_sdk.capture_event({
+            'type': 'commodity_object_not_found',
+            'commodity_code': commodity_code,
+            'nomenclature_sid': nomenclature_sid,
+        },
+        level='warning'
+    )
