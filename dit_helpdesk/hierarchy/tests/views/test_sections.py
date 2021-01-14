@@ -319,6 +319,23 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
             self.heading.get_conditions_url("XT", "12"),
         )
 
+    def test_tariffs_table_data_urls_with_three_digit_measure_id(self):
+        mock_tariff = self.get_mock_measure()
+
+        with self.patch_get_nomenclature_group_measures([mock_tariff]):
+            self.client.get(self.get_url())
+
+        call_args, _ = mock_tariff.get_table_row.call_args_list[0]
+        get_quotas_url, get_conditions_url = call_args
+        self.assertEqual(
+            get_quotas_url("XT", "123", "1"),
+            self.heading.get_quotas_url("XT", "123", "1"),
+        )
+        self.assertEqual(
+            get_conditions_url("XT", "123"),
+            self.heading.get_conditions_url("XT", "123"),
+        )
+
     def test_taxes_table_data(self):
         mock_vat_measure = self.get_mock_measure("vat", vat=True)
         mock_excise_measure = self.get_mock_measure("excise", excise=True)
