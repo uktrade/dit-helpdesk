@@ -95,37 +95,37 @@ urlpatterns = [
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
-        r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
+        r"/import-measure/(?P<measure_id>\d{1,3})/conditions",
         commodity_views.MeasureConditionDetailView.as_view(),
         name="commodity-measure-conditions",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland"
-        r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
+        r"/import-measure/(?P<measure_id>\d{1,3})/conditions",
         commodity_views.MeasureConditionDetailNorthernIrelandView.as_view(),
         name="commodity-measure-conditions-northern-ireland",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
-        r"/import-measure/(?P<measure_id>\d{1,2})/conditions",
+        r"/import-measure/(?P<measure_id>\d{1,3})/conditions",
         hierarchy_views.MeasureConditionDetailView.as_view(),
         name="heading-measure-conditions",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
-        r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
+        r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
         commodity_views.MeasureQuotaDetailView.as_view(),
         name="commodity-measure-quota",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland"
-        r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
+        r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
         commodity_views.MeasureQuotaDetailNorthernIrelandView.as_view(),
         name="commodity-measure-quota-northern-ireland",
     ),
     re_path(
         r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
-        r"/import-measure/(?P<measure_id>\d{1,2})/quota/(?P<order_number>\d+)",
+        r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
         hierarchy_views.MeasureQuotaDetailView.as_view(),
         name="heading-measure-quota",
     ),
