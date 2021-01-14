@@ -176,5 +176,5 @@ def sentry_emit_commodity_not_found(commodity_code, nomenclature_sid):
             'commodity_code': commodity_code,
             'nomenclature_sid': nomenclature_sid,
         },
-        level='warning'
+        {'level': 'warning'}
     )
