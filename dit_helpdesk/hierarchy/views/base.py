@@ -9,7 +9,7 @@ from countries.models import Country
 from ..helpers import get_eu_commodity_link, TABLE_COLUMN_TITLES
 
 from .exceptions import Redirect
-from .helpers import get_hierarchy_context
+from .helpers import get_hierarchy_context, sentry_emit_commodity_not_found
 
 
 class GetCommodityObjectMixin:
@@ -42,6 +42,11 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         try:
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
+            sentry_emit_commodity_not_found(
+                commodity_code=kwargs.get('commodity_code'),
+                nomenclature_sid=kwargs.get('nomenclature_sid'),
+            )
+
             raise Http404
 
         self.update_commodity_object_tts_content(self.commodity_object)
@@ -159,6 +164,10 @@ class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
         try:
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
+            sentry_emit_commodity_not_found(
+                commodity_code=kwargs.get('commodity_code'),
+                nomenclature_sid=kwargs.get('nomenclature_sid'),
+            )
             raise Http404
 
         if self.commodity_object.should_update_tts_content():
@@ -222,6 +231,10 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
         try:
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
+            sentry_emit_commodity_not_found(
+                commodity_code=kwargs.get('commodity_code'),
+                nomenclature_sid=kwargs.get('nomenclature_sid'),
+            )
             raise Http404
 
         if self.commodity_object.should_update_tts_content():
