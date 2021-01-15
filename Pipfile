@@ -90,6 +90,7 @@ requests-aws4auth = "*"
 freezegun = "*"
 boto3 = "*"
 django-flags = "*"
+django-csp = "*"
 
 [requires]
 python_version = "3.6"
