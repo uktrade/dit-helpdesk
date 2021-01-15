@@ -124,7 +124,7 @@ class ContactFormWizardView(SessionWizardView):
         form_data = self.get_all_cleaned_data()
 
         is_feedback = (
-            True if form_path == "/feedback/" or form_data["category"] == "3" else False
+            True if form_path == "/feedback/" or form_data["category"] == "2" else False
         )
 
         country_code = self.request.session["origin_country"]
