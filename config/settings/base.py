@@ -83,7 +83,6 @@ MIDDLEWARE = [
     "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
-    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -202,12 +201,6 @@ ALLOWED_ADMIN_IP_RANGES = env.list("ALLOWED_ADMIN_IP_RANGES")
 AUTHBROKER_URL = env.str("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env.str("AUTHBROKER_CLIENT_ID")
 AUTHBROKER_CLIENT_SECRET = env.str("AUTHBROKER_CLIENT_SECRET")
-
-CSP_DEFAULT_SRC = (
-    "'self'",
-    "www.googletagmanager.com",
-    "www.google-analytics.com",
-)
 
 LOGIN_URL = env.str("LOGIN_URL")
 
