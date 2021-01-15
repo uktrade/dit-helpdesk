@@ -91,7 +91,7 @@ freezegun = "*"
 boto3 = "*"
 django-flags = "*"
 django-csp = "*"
-mixer = "==7.1.1"
+mixer = "==7.0.6"
 
 [requires]
 python_version = "3.6"
