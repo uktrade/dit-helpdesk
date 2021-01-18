@@ -1,7 +1,11 @@
+import logging
 import requests
 import uuid
 
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 API_VERSION = "1"
@@ -23,6 +27,8 @@ def track_event(category, action, label=None, value=None):
 
     if value:
         data["ev"] = value
+
+    logger.info("Sending analytics event %s", data)
 
     requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
