@@ -83,6 +83,7 @@ MIDDLEWARE = [
     "reversion.middleware.RevisionMiddleware",
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -322,6 +323,8 @@ ELASTIC_APM = {
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN")
+SENTRY_SECURITY_ENDPOINT = env.str("SENTRY_SECURITY_ENDPOINT", '')
+SENTRY_KEY = env.str("SENTRY_KEY", '')
 SENTRY_ENVIRONMENT = env.str("SENTRY_ENVIRONMENT")
 
 SENTRY_SKIP_ENVIRONMENTS = [
@@ -340,6 +343,18 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()],
     before_send=skip_sentry_logging,
 )
+
+
+CSP_REPORT_ONLY = True
+_CSP_REPORT_URI = (
+    f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_environment={SENTRY_ENVIRONMENT}")
+CSP_REPORT_URI = (_CSP_REPORT_URI,)
+CSP_DEFAULT_SRC = (
+    "'self'",
+    "www.googletagmanager.com",
+    "www.google-analytics.com",
+)
+
 
 RESULTS_PER_PAGE = 20
 
