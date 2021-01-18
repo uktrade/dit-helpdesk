@@ -361,6 +361,11 @@ CSP_SCRIPT_SRC = (
     "'unsafe-inline'",
     "'unsafe-eval'",
     "https://ssl.google-analytics.com",
+    "www.googletagmanager.com",
+    "www.google.com",
+    "www.google.co.uk",
+    "www.google-analytics.com",
+    "stats.g.doubleclick.net",
 )
 CSP_SCRIPT_SRC_ELEMT = (
     "'unsafe-inline'",
