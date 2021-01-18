@@ -1,15 +1,14 @@
 import requests_mock
-import urllib
 
 from django.test import TestCase, override_settings
 
 from .track import API_VERSION, GOOGLE_ANALYTICS_ENDPOINT, track_event
 
 
-FAKE_GA_ID = "GTM-GA-id"
+FAKE_GA_ID = "ua-12345-1"
 
 
-@override_settings(HELPDESK_GA_GTM=FAKE_GA_ID)
+@override_settings(HELPDESK_GA_UA=FAKE_GA_ID)
 class TrackTestCase(TestCase):
 
     @requests_mock.Mocker()
@@ -23,7 +22,7 @@ class TrackTestCase(TestCase):
             "test_action",
         )
         request = mock_requests.request_history[0]
-        data = urllib.parse.parse_qs(request.text)
+        data = request.qs
         self.assertEqual(
             data["v"],
             [API_VERSION],
@@ -54,7 +53,7 @@ class TrackTestCase(TestCase):
             "test_value",
         )
         request = mock_requests.request_history[1]
-        data = urllib.parse.parse_qs(request.text)
+        data = request.qs
         self.assertEqual(
             data["v"],
             [API_VERSION],
@@ -98,7 +97,7 @@ class TrackTestCase(TestCase):
                 "test_action",
             )
             request = mock_requests.request_history[i]
-            data = urllib.parse.parse_qs(request.text)
+            data = request.qs
             user_ids.append(data["cid"][0])
 
         self.assertEqual(

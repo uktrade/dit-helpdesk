@@ -407,6 +407,7 @@ DDAT_SUBJECT_SUFFIX = " - DDAT Support Team"
 HMRC_TAX_FORM_URL = env.str("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = env.str("HELPDESK_GA_GTM")
+HELPDESK_GA_UA = env.str("HELPDESK_GA_UA")
 
 QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
 
