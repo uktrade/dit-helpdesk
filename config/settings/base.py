@@ -366,6 +366,7 @@ CSP_SCRIPT_SRC = (
     *_GOOGLE_DOMAINS,
 )
 CSP_SCRIPT_SRC_ELEMT = (
+    "'self'",
     "'unsafe-inline'",
     *_GOOGLE_DOMAINS,
 )
