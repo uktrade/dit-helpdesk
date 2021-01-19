@@ -361,6 +361,7 @@ CSP_DEFAULT_SRC = (
     *_GOOGLE_DOMAINS,
 )
 CSP_SCRIPT_SRC = (
+    "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
     *_GOOGLE_DOMAINS,
