@@ -345,7 +345,7 @@ sentry_sdk.init(
 )
 
 
-CSP_REPORT_ONLY = True
+CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", True)
 _CSP_REPORT_URI = (
     f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_environment={SENTRY_ENVIRONMENT}")
 CSP_REPORT_URI = (_CSP_REPORT_URI,)
