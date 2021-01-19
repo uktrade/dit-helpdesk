@@ -349,26 +349,25 @@ CSP_REPORT_ONLY = True
 _CSP_REPORT_URI = (
     f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_environment={SENTRY_ENVIRONMENT}")
 CSP_REPORT_URI = (_CSP_REPORT_URI,)
-CSP_DEFAULT_SRC = (
-    "'self'",
+_GOOGLE_DOMAINS = (
     "www.googletagmanager.com",
     "www.google-analytics.com",
     "stats.g.doubleclick.net",
     "www.google.com",
     "www.google.co.uk",
+)
+CSP_DEFAULT_SRC = (
+    "'self'",
+    *_GOOGLE_DOMAINS,
 )
 CSP_SCRIPT_SRC = (
     "'unsafe-inline'",
     "'unsafe-eval'",
-    "https://ssl.google-analytics.com",
-    "www.googletagmanager.com",
-    "www.google.com",
-    "www.google.co.uk",
-    "www.google-analytics.com",
-    "stats.g.doubleclick.net",
+    *_GOOGLE_DOMAINS,
 )
 CSP_SCRIPT_SRC_ELEMT = (
     "'unsafe-inline'",
+    *_GOOGLE_DOMAINS,
 )
 
 
