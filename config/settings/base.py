@@ -371,6 +371,10 @@ CSP_SCRIPT_SRC_ELEM = (
     "'unsafe-inline'",
     *_GOOGLE_DOMAINS,
 )
+CSP_STYLE_SRC_ATTR = (
+    "'self'",
+    "'unsafe-inline'",
+)
 
 
 RESULTS_PER_PAGE = 20
