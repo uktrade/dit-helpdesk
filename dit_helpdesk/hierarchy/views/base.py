@@ -178,9 +178,14 @@ class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
             measure_id,
             country_code=country_code
         )
+        if not self.import_measure:
+            raise Http404
+
         self.conditions = self.import_measure.get_measure_conditions_by_measure_id(
             measure_id,
         )
+        if not self.conditions:
+            raise Http404
 
         return super().get(request, **kwargs)
 
