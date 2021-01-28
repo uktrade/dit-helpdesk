@@ -112,6 +112,12 @@ urlpatterns = [
         name="heading-measure-conditions",
     ),
     re_path(
+        r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland"
+        r"/import-measure/(?P<measure_id>\d{1,3})/conditions",
+        hierarchy_views.MeasureConditionDetailNorthernIrelandView.as_view(),
+        name="heading-measure-conditions-northern-ireland",
+    ),
+    re_path(
         r"country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)"
         r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
         commodity_views.MeasureQuotaDetailView.as_view(),
@@ -128,6 +134,12 @@ urlpatterns = [
         r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
         hierarchy_views.MeasureQuotaDetailView.as_view(),
         name="heading-measure-quota",
+    ),
+    re_path(
+        r"country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland"
+        r"/import-measure/(?P<measure_id>\d{1,3})/quota/(?P<order_number>\d+)",
+        hierarchy_views.MeasureQuotaDetailNorthernIrelandView.as_view(),
+        name="heading-measure-quota-northern-ireland",
     ),
     path(
         "feedback/", contact_views.ContactFormWizardView.as_view(), name="feedback-view"
