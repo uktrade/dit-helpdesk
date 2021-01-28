@@ -27,6 +27,7 @@ from hierarchy.views.base import (
     BaseMeasureQuotaDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
+from hierarchy.views.mixins import EUCommodityObjectMixin
 
 from .models import Commodity
 
@@ -113,23 +114,9 @@ class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
     model = Commodity
 
 
-class EUCommodityObjectMixin:
-
-    def get_commodity_object(self, **kwargs):
-        commodity_code = kwargs["commodity_code"]
-        nomenclature_sid = kwargs["nomenclature_sid"]
-
-        return Commodity.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
-            commodity_code=commodity_code,
-            goods_nomenclature_sid=nomenclature_sid,
-        )
-
-
 class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureConditionDetailView):
-    pass
+    model = Commodity
 
 
 class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
-    pass
+    model = Commodity

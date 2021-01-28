@@ -16,6 +16,8 @@ from .views import (
     HeadingDetailView,
     MeasureConditionDetailView,
     MeasureQuotaDetailView,
+    MeasureConditionDetailNorthernIrelandView,
+    MeasureQuotaDetailNorthernIrelandView,
     section_detail,
     SubHeadingDetailNorthernIrelandView,
     SubHeadingDetailView,

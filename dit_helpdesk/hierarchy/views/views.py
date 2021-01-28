@@ -22,6 +22,7 @@ from .helpers import (
     get_hierarchy_context,
     hierarchy_section_header,
 )
+from .mixins import EUCommodityObjectMixin
 from .sections import (
     HeadingOtherMeasuresNorthernIrelandSection,
     HeadingTariffsAndTaxesNorthernIrelandSection,
@@ -240,5 +241,13 @@ class MeasureConditionDetailView(BaseMeasureConditionDetailView):
     model = Heading
 
 
-class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
+class MeasureQuotaDetailView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
+    model = Heading
+
+
+class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureConditionDetailView):
+    model = Heading
+
+
+class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
     model = Heading
