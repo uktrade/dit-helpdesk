@@ -98,7 +98,7 @@ def _replace_hs_code(code_match):
                 **{arg: code_norm}
             )
         except model.DoesNotExist:
-            logger.warning("Couldn't find object for HS code %s", code_norm)
+            logger.warning("Couldn't find %s object for HS code %s", model, code_norm)
             continue
         except model.MultipleObjectsReturned:
             # if multiple objects with the same HS code (usually differing by productline suffix)
