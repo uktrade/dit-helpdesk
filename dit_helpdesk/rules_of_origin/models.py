@@ -81,15 +81,6 @@ class Rule(models.Model):
             if self.chapter is not None
         ]
 
-    def get_processed_description(self, country_code):
-        return self.description_processed.format(country_code=country_code)
-
-    def get_processed_text(self, country_code):
-        return self.rule_text_processed.format(country_code=country_code)
-
-    def get_processed_alt_text(self, country_code):
-        return self.alt_rule_text_processed.format(country_code=country_code)
-
 
 class SubRule(models.Model):
     rule = models.ForeignKey("Rule", on_delete=models.CASCADE, related_name='subrules')
@@ -103,12 +94,6 @@ class SubRule(models.Model):
 
     class Meta:
         ordering = ["order"]
-
-    def get_processed_rule(self, country_code):
-        return self.rule_text_processed.format(country_code=country_code)
-
-    def get_processed_alt_rule(self, country_code):
-        return self.alt_rule_text_processed.format(country_code=country_code)
 
 
 class RulesDocumentFootnote(models.Model):

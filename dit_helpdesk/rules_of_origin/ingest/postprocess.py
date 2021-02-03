@@ -141,29 +141,3 @@ def process_hs_codes_in_text(text):
     processed_text = SUBTEXT_REGEX.sub(_process_hs_codes_in_subtext, text)
 
     return processed_text
-
-
-def test1():
-    from rules_of_origin.models import Rule
-
-    r1 = Rule.objects.filter(rule_text__iregex="\d\d\d\d\.\d\d").first()
-    rt = r1.rule_text
-
-    result = process_hs_codes_in_text(rt)
-    print(result)
-
-
-if __name__ == '__main__':
-    import os
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings.docker_development'
-    import django
-    django.configure()
-
-    from rules_of_origin.models import Rule
-
-    r1 = Rule.objects.filter(rule_text__iregex="\d\d\d\d\.\d\d").first()
-    rt = r1.rule_text
-
-    result = CODES_REGEX.sub(_replace_hs_code, "15.09")
-
-    print(result)
