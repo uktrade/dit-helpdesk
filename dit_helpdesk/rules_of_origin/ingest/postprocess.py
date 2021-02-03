@@ -11,21 +11,17 @@ from commodities.models import Commodity
 logger = logging.getLogger(__name__)
 
 
-SUBTEXT_REGEX_OLD = re.compile(
-    r"\bchapter.*\.\D|\bchapters.*\.\D|\bheading.*\.\D|\bheadings.*\.\D|\bsubheading"
-    r".*\.\D"
-    r"|\bsubheadings.*\.\D",
-    re.IGNORECASE
-)
-
 SUBTEXT_REGEX = re.compile(
-    r"\b(chapter|chapters|heading|headings|subheading|subheadings).*(\.\D|\s*$)",
-    re.IGNORECASE
+    r"\b(chapter|chapters|heading|headings|subheading|subheadings).*(\.\D|;|\s*$)",
+    re.IGNORECASE,
 )
 
 CODES_REGEX = re.compile(
-    r"\b(\d\d)[^.\d][\b,)]?|\b(\d\d\d\d)[^.][\b,)]?|\b(\d\d\.\d\d)[\b,)]?|\b(\d\d\d\d\.\d\d)[\b,"
-    r")]?",
+    r"\bchapter (\d)[^.\d][\b,)]?(?!\s?%)|"
+    r"\b(\d\d)[^.\d][\b,)]?(?!\s?%)|\b(\d\d\d\d)[^.][\b,)]?(?!\s?%)|"
+    r"\b(\d\d\.\d\d)[\b,)]?(?!\s?%)|"
+    r"\b(\d\d\d\d\.\d\d)[\b,)]?(?!\s?%)",
+    re.IGNORECASE,
 )
 
 
@@ -79,6 +75,9 @@ def _replace_hs_code(code_match):
     code = next(code for code in code_match.groups() if code)
     code_stripped = code.replace('.', '').strip()
 
+    if len(code) == 1:
+        code_stripped = f"0{code_stripped}"
+
     models = HS_LEN_MAPPING[len(code_stripped)]
 
     code_norm = code_stripped.ljust(10, '0')
@@ -98,8 +97,16 @@ def _replace_hs_code(code_match):
             obj = model.objects.get(
                 **{arg: code_norm}
             )
-        except (model.DoesNotExist, model.MultipleObjectsReturned):
+        except model.DoesNotExist:
+            logger.warning("Couldn't find object for HS code %s", code_norm)
             continue
+        except model.MultipleObjectsReturned:
+            # if multiple objects with the same HS code (usually differing by productline suffix)
+            # choose the one highest in hierarchy
+            objs = model.objects.filter(
+                **{arg: code_norm}
+            ).order_by('number_indents')
+            obj = objs.first()
 
         url_name = {
             Chapter: 'chapter-detail',
@@ -110,7 +117,7 @@ def _replace_hs_code(code_match):
         url = reverse(viewname=url_name, kwargs={
             'commodity_code': code_norm,
             'nomenclature_sid': obj.goods_nomenclature_sid,
-            'country_code': 'country_code',   # to be replaced at a later stage
+            'country_code': 'country_code',   # to be replaced/formatted at a later stage
         })
         url = url.replace("country_code", "{country_code}")
 
