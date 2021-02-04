@@ -21,4 +21,5 @@ from .views import (
     section_detail,
     SubHeadingDetailNorthernIrelandView,
     SubHeadingDetailView,
+    HierarchyContextTreeView,
 )

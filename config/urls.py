@@ -141,6 +141,12 @@ urlpatterns = [
         hierarchy_views.MeasureQuotaDetailNorthernIrelandView.as_view(),
         name="heading-measure-quota-northern-ireland",
     ),
+    re_path(
+        r"country/(?P<country_code>\w+)"
+        r"/hierarchy/(?P<commodity_type>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)",
+        hierarchy_views.HierarchyContextTreeView.as_view(),
+        name="hierarchy-context-tree",
+    ),
     path(
         "feedback/", contact_views.ContactFormWizardView.as_view(), name="feedback-view"
     ),

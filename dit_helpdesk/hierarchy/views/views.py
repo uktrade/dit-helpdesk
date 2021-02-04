@@ -2,6 +2,7 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
+from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 
 from countries.models import Country
@@ -21,6 +22,10 @@ from .base import (
 from .helpers import (
     get_hierarchy_context,
     hierarchy_section_header,
+    get_hierarchy_context_from_object,
+)
+from ..helpers import (
+    get_code_argument_by_class,
 )
 from .mixins import EUCommodityObjectMixin
 from .sections import (
@@ -38,6 +43,8 @@ from .sections import (
     TariffsAndTaxesSection,
     TradeStatusSection,
 )
+
+from commodities.models import Commodity
 
 logger = logging.getLogger(__name__)
 
@@ -251,3 +258,36 @@ class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeas
 
 class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
     model = Heading
+
+
+class HierarchyContextTreeView(TemplateView):
+
+    template_name = "hierarchy/_hierarchy_modal.html"
+
+    def get_context_data(self, *args, **kwargs):
+        commodity_type = kwargs['commodity_type']
+        country_code = kwargs['country_code']
+
+        model = {
+            'chapter': Chapter,
+            'heading': Heading,
+            'subheading': SubHeading,
+            'commodity': Commodity,
+        }[commodity_type]
+
+        code, sid = kwargs['commodity_code'], kwargs['nomenclature_sid']
+        code_arg = get_code_argument_by_class(model)
+
+        obj = model.objects.get(
+            **{code_arg: code, 'goods_nomenclature_sid': sid}
+        )
+
+        hierarchy_tree_html = get_hierarchy_context_from_object(
+            obj, country_code=country_code, links=False)
+
+        commodity_code = obj.short_formatted_commodity_code
+
+        return {
+            "hierarchy_html": hierarchy_tree_html,
+            "commodity_code": commodity_code,
+        }

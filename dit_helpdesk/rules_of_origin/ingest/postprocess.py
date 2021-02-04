@@ -18,7 +18,8 @@ SUBTEXT_REGEX = re.compile(
 
 CODES_REGEX = re.compile(
     r"\bchapter (\d)[^.\d][\b,)]?(?!\s?%)|"
-    r"\b(\d\d)[^.\d][\b,)]?(?!\s?%)|\b(\d\d\d\d)[^.][\b,)]?(?!\s?%)|"
+    r"\b(\d\d)[^.\d][\b,)]?(?!\s?%)|"
+    r"\b(\d\d\d\d)[^.][\b,)]?(?!\s?%)|"
     r"\b(\d\d\.\d\d)[\b,)]?(?!\s?%)|"
     r"\b(\d\d\d\d\.\d\d)[\b,)]?(?!\s?%)",
     re.IGNORECASE,
@@ -35,7 +36,8 @@ HS_LEN_MAPPING = {
 def postprocess_rules_of_origin():
 
     active_tree = NomenclatureTree.get_active_tree()
-    active_documents = RulesDocument.objects.filter(nomenclature_tree=active_tree)
+    active_documents = RulesDocument.objects.filter(nomenclature_tree=active_tree,
+                                                    countries__country_code='JP')
 
     doc_count = active_documents.count()
 
@@ -108,13 +110,10 @@ def _replace_hs_code(code_match):
             ).order_by('number_indents')
             obj = objs.first()
 
-        url_name = {
-            Chapter: 'chapter-detail',
-            Heading: 'heading-detail',
-            SubHeading: 'subheading-detail',
-            Commodity: 'commodity-detail',
-        }[model]
+        url_name = 'hierarchy-context-tree'
+
         url = reverse(viewname=url_name, kwargs={
+            'commodity_type': model.__name__.lower(),
             'commodity_code': code_norm,
             'nomenclature_sid': obj.goods_nomenclature_sid,
             'country_code': 'country_code',   # to be replaced/formatted at a later stage
@@ -122,7 +121,10 @@ def _replace_hs_code(code_match):
         url = url.replace("country_code", "{country_code}")
 
     if url:
-        url_element = f"<a href={url}>{code}</a>"
+        url_element = (
+            f'<a data-toggle="modal" data-target="hierarchy-modal" href="javascript:void(0)" '
+            f'class="hierarchy-modal" data-href="{url}">{code}</a>'
+        )
         return full_code.replace(code, url_element)
     else:
         return full_code

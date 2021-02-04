@@ -284,6 +284,23 @@ class BaseHierarchyModel(models.Model):
     def get_quotas_url(self, country_code, measure_id, order_number):
         raise NotImplementedError(f"Implement `get_quotas_url` for {self.__class__}")
 
+    def get_path(self):
+        raise NotImplementedError(f"Implement `get_path` for {self.__class__}")
+
+    def get_hierarchy_children_count(self):
+        raise NotImplementedError(f"Implement `get_hierarchy_children_count` for {self.__class__}")
+
+    def get_hierarchy_children(self):
+        raise NotImplementedError(f"Implement `get_hierarchy_children` for {self.__class__}")
+
+    def get_commodity_object_path(self):
+        chapter_path = self.get_path()
+        chapter_path.insert(0, [self])
+        if self.get_hierarchy_children_count() > 0:
+            chapter_path.insert(0, self.get_hierarchy_children())
+
+        return chapter_path
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
@@ -564,6 +581,10 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
         return self.chapter_code
 
     @property
+    def short_formatted_commodity_code(self):
+        return self.chapter_code[:2]
+
+    @property
     def title(self):
         """
         Property method returning the Chapter title from the object field
@@ -839,6 +860,10 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     @property
     def commodity_code(self):
         return self.heading_code
+
+    @property
+    def short_formatted_commodity_code(self):
+        return self.heading_code[:4]
 
     @property
     def tts_obj(self):
@@ -1173,6 +1198,10 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def __str__(self):
         return "Sub Heading {0}".format(self.commodity_code)
+
+    @property
+    def short_formatted_commodity_code(self):
+        return f"{self.commodity_code[:4]}.{self.commodity_code[4:6]}"
 
     def get_absolute_url(self, country_code=None):
         """
