@@ -25,6 +25,10 @@ CODES_REGEX = re.compile(
     re.IGNORECASE,
 )
 
+ABBR_REGEX = re.compile(
+    r"\b(CC|CTH|CTSH|MaxNOM%?)\b"
+)
+
 
 HS_LEN_MAPPING = {
     2: [Chapter],
@@ -36,8 +40,7 @@ HS_LEN_MAPPING = {
 def postprocess_rules_of_origin():
 
     active_tree = NomenclatureTree.get_active_tree()
-    active_documents = RulesDocument.objects.filter(nomenclature_tree=active_tree,
-                                                    countries__country_code='JP')
+    active_documents = RulesDocument.objects.filter(nomenclature_tree=active_tree)
 
     doc_count = active_documents.count()
 
@@ -68,6 +71,7 @@ def process_rule_text(text):
         return text
 
     text = process_hs_codes_in_text(text)
+    text = process_abbreviations_in_text(text)
 
     return text
 
@@ -104,10 +108,10 @@ def _replace_hs_code(code_match):
             continue
         except model.MultipleObjectsReturned:
             # if multiple objects with the same HS code (usually differing by productline suffix)
-            # choose the one highest in hierarchy
+            # choose the one lowest in hierarchy
             objs = model.objects.filter(
                 **{arg: code_norm}
-            ).order_by('number_indents')
+            ).order_by('-number_indents')
             obj = objs.first()
 
         url_name = 'hierarchy-context-tree'
@@ -141,5 +145,24 @@ def _process_hs_codes_in_subtext(subtext_match):
 def process_hs_codes_in_text(text):
 
     processed_text = SUBTEXT_REGEX.sub(_process_hs_codes_in_subtext, text)
+
+    return processed_text
+
+
+def _replace_abbrs(abbr_match):
+    abbr = abbr_match.group()
+    abbr_cleaned = abbr.strip(' %').lower()
+
+    url_element = (
+        f'<a data-toggle="modal" data-target="roo-abbr-{abbr_cleaned}-modal" '
+        f'href="javascript:void(0)">{abbr}</a>'
+    )
+
+    return url_element
+
+
+def process_abbreviations_in_text(text):
+
+    processed_text = ABBR_REGEX.sub(_replace_abbrs, text)
 
     return processed_text
