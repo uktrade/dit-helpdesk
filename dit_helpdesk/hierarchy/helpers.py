@@ -316,3 +316,15 @@ def get_eu_commodity_link(commodity_object, country) -> str:
     country_code = {"EU": "FR"}.get(country.country_code, country.country_code)
 
     return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={commodity_code}&origin={country_code}&destination=IE"
+
+
+_class_name_arg_map = {
+    'Chapter': 'chapter_code',
+    'Heading': 'heading_code',
+    'SubHeading': 'commodity_code',
+    'Commodity': 'commodity_code',
+}
+
+
+def get_code_argument_by_class(class_):
+    return _class_name_arg_map[class_.__name__]

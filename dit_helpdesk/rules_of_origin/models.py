@@ -28,17 +28,20 @@ class RulesDocument(models.Model):
 
 class Rule(models.Model):
     """
-    Rule of Origin belonging to a Rules Of Origin Documents and related to a Commodity Heading Heading
+    Rule of Origin belonging to a Rules Of Origin Document and related to a commodity object
     """
 
     code = models.CharField(null=True, blank=True, max_length=255)
     description = models.TextField(null=True, blank=True)
+    description_processed = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
     )
     rule_text = models.TextField(null=True, blank=True)
     alt_rule_text = models.TextField(null=True, blank=True)
+    rule_text_processed = models.TextField(null=True, blank=True)
+    alt_rule_text_processed = models.TextField(null=True, blank=True)
 
     chapters = models.ManyToManyField(
         "hierarchy.Chapter",
@@ -83,8 +86,11 @@ class SubRule(models.Model):
     rule = models.ForeignKey("Rule", on_delete=models.CASCADE, related_name='subrules')
     order = models.IntegerField()
     description = models.TextField(null=True, blank=True)
+    description_processed = models.TextField(null=True, blank=True)
     rule_text = models.TextField(null=True, blank=True)
     alt_rule_text = models.TextField(null=True, blank=True)
+    rule_text_processed = models.TextField(null=True, blank=True)
+    alt_rule_text_processed = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ["order"]

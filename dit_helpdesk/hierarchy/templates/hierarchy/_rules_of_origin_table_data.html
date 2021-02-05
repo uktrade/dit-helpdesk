@@ -20,13 +20,13 @@
                                 <p>{{ rule.code }}</p>
                             </td>
                             <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="Description of product">
-                                <p>{{ rule.description|safe }}</p>
+                                <p>{{ rule.description_processed|set_country:country_code|safe }}</p>
                             </td>
                             <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                                <p>{{ rule.rule_text|blank_none|safe }}</p>
-                                {% if rule.alt_rule_text %}
+                                <p>{{ rule.rule_text_processed|set_country:country_code|blank_none|safe }}</p>
+                                {% if rule.alt_rule_text_processed %}
                                     or
-                                    <p>{{ rule.alt_rule_text|safe }}</p>
+                                    <p>{{ rule.alt_rule_text_processed|set_country:country_code|safe }}</p>
                                 {% endif %}
                             </td>
                             {% for subrule in rule.subrules.all %}
@@ -35,7 +35,7 @@
                                         <p>{{ subrule.description|safe }}</p>
                                     </td>
                                     <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                                        <p>{{ subrule.rule_text|safe }}</p>
+                                        <p>{{ subrule.rule_text_processed|set_country:country_code|safe }}</p>
                                     </td>
                                 </tr>
                             {% endfor %}

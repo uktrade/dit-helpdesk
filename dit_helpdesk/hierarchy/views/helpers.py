@@ -130,7 +130,7 @@ def _commodity_code_html(item, ignore_duplicate=True):
     return commodity_code_html
 
 
-def get_hierarchy_context(commodity_path, country_code, commodity_code, current_item):
+def get_hierarchy_context(commodity_path, country_code, commodity_code, current_item, links=True):
     """
     View helper function that returns an html representation of the context of the commodity within the
     hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
@@ -141,11 +141,11 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
     :return: html
     """
 
-    listSize = len(commodity_path)
+    list_size = len(commodity_path)
     html = ""
-    reversedList = reversed(commodity_path)
+    reversed_list = reversed(commodity_path)
 
-    for index, lista in enumerate(reversedList):
+    for index, lista in enumerate(reversed_list):
         if index == 0:
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += "<nav>"
@@ -157,17 +157,33 @@ def get_hierarchy_context(commodity_path, country_code, commodity_code, current_
                 else:
                     nomenclature_link = item.get_detail_url(country_code)
 
-                    html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
+                    if links:
+                        html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
+                    else:
+                        html += f"""<li><span class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</span>{_commodity_code_html(item)}"""
 
-                if index is listSize:
+                if index == list_size:
                     html += "</li>"
 
-            if index is listSize:
-                for i in range(0, listSize):
+            if index == list_size:
+                for i in range(0, list_size):
                     # close
                     html += "</ul></nav>"
 
     return html
+
+
+def get_hierarchy_context_from_object(commodity_object, country_code, links=True):
+    path = commodity_object.get_commodity_object_path()
+    commodity_code = commodity_object.commodity_code
+
+    return get_hierarchy_context(
+        commodity_path=path,
+        country_code=country_code,
+        commodity_code=commodity_code,
+        current_item=commodity_object,
+        links=links
+    )
 
 
 def sentry_emit_commodity_not_found(commodity_code, nomenclature_sid):

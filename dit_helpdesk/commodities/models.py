@@ -100,6 +100,10 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return [code_match_obj.group(i) for i in range(1, 5)]
 
     @property
+    def short_formatted_commodity_code(self):
+        return f"{self.commodity_code[:4]}.{self.commodity_code[4:6]}"
+
+    @property
     def tts_obj(self):
         """
         gets the json object from the tts_json field and converts it to a python CommodityJson class instance
@@ -182,6 +186,9 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
             tree.insert(0, [self])
 
         return tree
+
+    def get_commodity_object_path(self):
+        return self.get_path()
 
     @property
     def ancestor_data(self):

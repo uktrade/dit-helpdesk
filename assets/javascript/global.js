@@ -8,6 +8,16 @@ var commodityTree = require('./modules/commodity-tree')
 var Modal = require('./modules/modal')
 var CookiePolicy = require('./modules/cookie-policy');
 var nodeListForEach = common.nodeListForEach
+var $ = require('jquery')
+
+var addListener = function (target, event, handler) {
+    var self = this
+    if (target.attachEvent) {
+      target.attachEvent('on' + event, handler)
+    } else {
+      target.addEventListener(event, handler, false)
+    }
+  }
 
 var cookiePolicy = new CookiePolicy();
 cookiePolicy.initBanner('.app-cookie-banner', '.js-accept-cookie', 'cookies');
@@ -45,6 +55,45 @@ if ($modals) {
   nodeListForEach($modals, function ($modal) {
     new Modal($modal).start()
   })
+}
+
+var makeRequest = function(url, handler) {
+    var request = new XMLHttpRequest();
+
+    request.open('GET', url, true);
+
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 400) {
+        var resp = request.responseText;
+        handler(resp)
+      }
+    };
+
+    request.send();
+}
+
+var $hierarchyModalLinks = document.querySelectorAll('.hierarchy-modal')
+if ($hierarchyModalLinks) {
+
+    var modal = document.querySelector('#hierarchy-modal')
+
+    nodeListForEach($hierarchyModalLinks, function($modalLink) {
+        console.log("modal link: " + $modalLink)
+        addListener($modalLink, "click", function() {
+            console.log("Inside onclick")
+            modal.querySelector('.app-modal-dialogue__content').innerHTML = ""
+
+            var url = $modalLink.getAttribute('data-href')
+            makeRequest(url, function(responseText) {
+                modal.querySelector('.app-modal-dialogue__content').innerHTML = responseText
+
+                modalWindow = new Modal(modal)
+                modalWindow.start()
+                modal.open()
+            })
+        })
+
+    })
 }
 
 var CommoditySearchForm = {
