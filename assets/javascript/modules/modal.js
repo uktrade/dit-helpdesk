@@ -3,7 +3,10 @@
   }
   Modal.prototype.start = function () {
     this.$dialogBox = this.$module.querySelector('.app-modal-dialogue__box')
-    this.$closeButton = this.$module.querySelector('.app-modal-dialogue__close-button')
+    this.$closeButton = (
+        this.$module.querySelector('.app-modal-dialogue__close-button')
+        || this.$module.querySelector('.app-modal-dialogue__close-button-white')
+    )
     this.$html = document.querySelector('html')
     this.$body = document.querySelector('body')
 
