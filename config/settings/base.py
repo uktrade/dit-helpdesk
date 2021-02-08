@@ -223,32 +223,20 @@ def get_trade_tariff_config():
         "UK": {
             "TREE": {
                 "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/",
-                "PARAMS": {
-                    "as_of": "2021-01-01",
-                },
             },
             "JSON_OBJ": {
                 "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/",
-                "PARAMS": {
-                    "as_of": "2021-01-01",
-                },
             },
         },
         "EU": {
             "TREE": {
                 "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/",
-                "PARAMS": {
-                    "as_of": "2021-01-01",
-                },
             },
             "JSON_OBJ": {
                 "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/",
-                "PARAMS": {
-                    "as_of": "2021-01-01",
-                },
             },
         },
-        }
+    }
 
 TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
