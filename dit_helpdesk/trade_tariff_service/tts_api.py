@@ -416,6 +416,12 @@ class ImportMeasureJson:
         :param order_number: string of a number
         :return: dictionary or None
         """
+        if "order_number" not in self.di:
+            return None
+
+        if self.di["order_number"] is None:
+            return None
+
         if self.di["order_number"]["number"] == order_number:
             if self.di["order_number"]["definition"] and isinstance(
                 self.di["order_number"]["definition"]["validity_start_date"], str
