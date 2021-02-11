@@ -7,6 +7,8 @@
         this.$module.querySelector('.app-modal-dialogue__close-button')
         || this.$module.querySelector('.app-modal-dialogue__close-button-white')
     )
+    this.$altCloseButton = this.$module.querySelector(
+        '.app-modal-dialogue__close-alt-button')
     this.$html = document.querySelector('html')
     this.$body = document.querySelector('body')
 
@@ -27,6 +29,10 @@
   
       if (this.$closeButton) {
         this.$closeButton.addEventListener('click', this.$module.close)
+      }
+
+      if (this.$altCloseButton) {
+        this.$altCloseButton.addEventListener('click', this.$module.close)
       }
     }, this)
   }
