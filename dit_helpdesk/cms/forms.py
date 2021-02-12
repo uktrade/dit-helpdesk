@@ -1,10 +1,21 @@
 from django import forms
 from django.core.validators import RegexValidator
 
+from hierarchy.models import NomenclatureTree
 from regulations.models import (
     Regulation,
     RegulationGroup,
 )
+
+
+class RegulationGroupForm(forms.ModelForm):
+    class Meta:
+        model = RegulationGroup
+        fields = ["title"]
+
+    def _save_m2m(self):
+        super()._save_m2m()
+        self.instance.nomenclature_trees.add(NomenclatureTree.get_active_tree())
 
 
 class RegulationSearchForm(forms.Form):

@@ -29,6 +29,7 @@ from .forms import (
     HeadingAddSearchForm,
     HeadingRemoveForm,
     RegulationForm,
+    RegulationGroupForm,
     RegulationRemoveForm,
     RegulationSearchForm,
     SubHeadingAddForm,
@@ -84,8 +85,7 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
 
 
 class RegulationGroupCreateView(BaseCMSMixin, CreateView):
-    fields = ["title"]
-    model = RegulationGroup
+    form_class = RegulationGroupForm
     template_name = "cms/regulations/regulationgroup_create.html"
 
     def get_success_url(self):
@@ -95,14 +95,6 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
                 "pk": self.object.pk,
             },
         )
-
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        return_value = super().form_valid(form)
-        self.object.nomenclature_trees.add(NomenclatureTree.get_active_tree())
-        self.object.save()
-
-        return return_value
 
 
 class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
