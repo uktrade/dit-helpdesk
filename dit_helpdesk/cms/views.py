@@ -494,7 +494,7 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
         )
 
 
-class ApprovalDetailView(DetailView):
+class ApprovalDetailView(BaseCMSMixin, DetailView):
     model = Approval
     template_name = "cms/approvals/approval_detail.html"
 
