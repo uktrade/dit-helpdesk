@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -36,6 +36,7 @@ from .forms import (
     SubHeadingAddSearchForm,
     SubHeadingRemoveForm,
 )
+from .models import Approval
 
 
 class BaseCMSMixin(object):
@@ -88,12 +89,20 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
     form_class = RegulationGroupForm
     template_name = "cms/regulations/regulationgroup_create.html"
 
-    def get_success_url(self):
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": self.object.pk,
-            },
+    def form_valid(self, form):
+        deferred_save = form.defer_save()
+        approval = Approval.objects.create(
+            created_by=self.request.user,
+            deferred_save=deferred_save,
+        )
+
+        return HttpResponseRedirect(
+            reverse(
+                "cms:approval-detail",
+                kwargs={
+                    "pk": approval.pk,
+                },
+            ),
         )
 
 
@@ -483,3 +492,15 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
                 "pk": regulation_group.pk,
             },
         )
+
+
+class ApprovalDetailView(DetailView):
+    model = Approval
+    template_name = "cms/approvals/approval_detail.html"
+
+    def post(self, request, *args, **kwargs):
+        approval = self.get_object()
+
+        form, _ = approval.approve(request.user)
+
+        return HttpResponseRedirect(form.get_post_approval_url())

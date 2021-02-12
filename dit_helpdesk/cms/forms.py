@@ -1,6 +1,8 @@
 from django import forms
 from django.core.validators import RegexValidator
+from django.urls import reverse
 
+from deferred_save.forms import DeferredSaveFormMixin
 from hierarchy.models import NomenclatureTree
 from regulations.models import (
     Regulation,
@@ -8,7 +10,7 @@ from regulations.models import (
 )
 
 
-class RegulationGroupForm(forms.ModelForm):
+class RegulationGroupForm(DeferredSaveFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["title"]
@@ -16,6 +18,14 @@ class RegulationGroupForm(forms.ModelForm):
     def _save_m2m(self):
         super()._save_m2m()
         self.instance.nomenclature_trees.add(NomenclatureTree.get_active_tree())
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
 
 
 class RegulationSearchForm(forms.Form):

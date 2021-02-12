@@ -1,0 +1,23 @@
+{% extends "cms/regulations/base.html" %}
+
+{% block main %}
+    <h2 class="govuk-heading-m">
+        Approval
+    </h2>
+
+    <pre>
+        {{ approval.deferred_save.data }}
+    </pre>
+
+    <p>
+        Created by: {{ approval.created_by.get_full_name }}
+    </p>
+    <p>
+        Created at: {{ approval.created_at }}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button>Approve</button>
+    </form>
+{% endblock %}
