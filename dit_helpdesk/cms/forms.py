@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.urls import reverse
 
 from deferred_changes.forms import DeferredFormMixin
-from hierarchy.models import NomenclatureTree
+from hierarchy.models import Chapter, NomenclatureTree
 from regulations.models import (
     Regulation,
     RegulationGroup,
@@ -93,10 +93,19 @@ class ChapterAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in chapter_codes.split(",")]
 
 
+class ChapterModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.description} ({obj.chapter_code})"
+
+
 class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["chapters"]
+
+    chapters = ChapterModelMultipleChoiceField(
+        queryset=Chapter.objects.all(),
+    )
 
     def save(self, commit=True):
         instance = super().save(False)

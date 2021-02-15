@@ -94,6 +94,7 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
         approval = Approval.objects.create(
             created_by=self.request.user,
             deferred_change=deferred_create,
+            description="Create regulation group",
         )
 
         return HttpResponseRedirect(
@@ -160,6 +161,9 @@ class BaseAddView(BaseRegulationGroupDetailView):
     def get_add_form(self):
         return self.add_form_class(self.request.POST, instance=self.get_object())
 
+    def get_approval_description(self):
+        raise NotImplementedError("`get_approval_description` needs to be implemented.")
+
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
 
@@ -169,6 +173,7 @@ class BaseAddView(BaseRegulationGroupDetailView):
             approval = Approval.objects.create(
                 created_by=self.request.user,
                 deferred_change=deferred_update,
+                description=self.get_approval_description(),
             )
 
             return HttpResponseRedirect(
@@ -183,9 +188,6 @@ class BaseAddView(BaseRegulationGroupDetailView):
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
-
-    def get_success_url(self):
-        raise NotImplementedError("`get_success_url` needs to be implemented.")
 
     def get_search_results(self, search_form):
         raise NotImplementedError("`get_search_results` needs to be implemented.")
@@ -300,15 +302,10 @@ class RegulationGroupChapterAddView(BaseAddView):
     search_form_class = ChapterAddSearchForm
     add_form_class = ChapterAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': regulation_group.pk,
-            },
-        )
+        return f'Link chapters to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         chapter_codes = search_form.cleaned_data["chapter_codes"]
@@ -515,3 +512,11 @@ class ApprovalDetailView(BaseCMSMixin, DetailView):
         form, _ = approval.approve(request.user)
 
         return HttpResponseRedirect(form.get_post_approval_url())
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        approval = self.get_object()
+        ctx["form"] = approval.get_bound_form()
+
+        return ctx

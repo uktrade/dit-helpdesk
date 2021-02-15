@@ -21,6 +21,7 @@ class Approval(models.Model):
         User, on_delete=models.PROTECT, related_name="created_approvals",
     )
     deferred_change = models.OneToOneField(DeferredChange, on_delete=models.PROTECT)
+    description = models.CharField(max_length=255)
 
     def approve(self, user):
         form, instance = self.deferred_change.apply()
@@ -31,3 +32,8 @@ class Approval(models.Model):
         self.save()
 
         return form, instance
+
+    def get_bound_form(self):
+        form = self.deferred_change.get_bound_form()
+
+        return form

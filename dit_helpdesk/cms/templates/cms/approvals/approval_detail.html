@@ -1,30 +1,60 @@
 {% extends "cms/regulations/base.html" %}
 
 {% block main %}
-    <h2 class="govuk-heading-m">
+    <h2 class="govuk-heading-l">
         Approval
     </h2>
 
-    <dl>
-        <dt>Data</dt>
-        <dd>
-            <pre>
-                {{ approval.deferred_change.data }}
-            </pre>
-        </dd>
-        <dt>Instance</dt>
-        <dd>{{ approval.deferred_change.instance }}</dd>
+    <h3 class="govuk-heading-m">
+        {{ approval.description }}
+    </h3>
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Creator
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ approval.created_by.get_full_name }}
+            </dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Created
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ approval.created_at }}
+            </dd>
+        </div>
     </dl>
 
-    <p>
-        Created by: {{ approval.created_by.get_full_name }}
-    </p>
-    <p>
-        Created at: {{ approval.created_at }}
-    </p>
+    <h3 class="govuk-heading-m">Changes</h3>
+    <dl class="govuk-summary-list">
+        {% for change in approval.deferred_change.get_deferred_changes %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {{ change.description }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% if change.single_value %}
+                        {{ change.value }}
+                    {% else %}
+                        <ul class="govuk-list">
+                            {% for value in change.values %}
+                                <li>{{ value }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>    
 
     <form method="post">
         {% csrf_token %}
-        <button>Approve</button>
+        <button class="govuk-button" data-module="govuk-button">
+            Approve
+        </button>
     </form>
 {% endblock %}
