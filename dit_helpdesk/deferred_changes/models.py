@@ -20,14 +20,20 @@ class DeferredChange(PolymorphicModel):
         raise NotImplementedError(f"Deferred change subclass requires `apply` method.")
 
 
-class DeferredCreate(DeferredChange):
+class DeferredFormChange(DeferredChange):
+    class Meta:
+        abstract = True
+
     data = JSONField()
     form_class = models.CharField(max_length=255)
+
+    def get_form_kwargs(self):
+        return {}
 
     def apply(self):
         form_class = import_string(self.form_class)
 
-        form = form_class(self.data)
+        form = form_class(self.data, **self.get_form_kwargs())
         if not form.is_valid():
             raise InvalidDataError(form)
 
@@ -36,21 +42,14 @@ class DeferredCreate(DeferredChange):
         return form, instance
 
 
-class DeferredUpdate(DeferredChange):
-    data = JSONField()
-    form_class = models.CharField(max_length=255)
+class DeferredCreate(DeferredFormChange):
+    pass
+
+
+class DeferredUpdate(DeferredFormChange):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     instance = GenericForeignKey('content_type', 'object_id')
 
-    def apply(self):
-        form_class = import_string(self.form_class)
-        instance = self.instance
-
-        form = form_class(self.data, instance=instance)
-        if not form.is_valid():
-            raise InvalidDataError(form)
-
-        instance = form.save()
-
-        return form, instance
+    def get_form_kwargs(self):
+        return {"instance": self.instance}
