@@ -351,15 +351,10 @@ class RegulationGroupHeadingAddView(BaseAddView):
     search_form_class = HeadingAddSearchForm
     add_form_class = HeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link headings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         heading_codes = search_form.cleaned_data["heading_codes"]

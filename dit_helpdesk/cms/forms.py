@@ -3,7 +3,11 @@ from django.core.validators import RegexValidator
 from django.urls import reverse
 
 from deferred_changes.forms import DeferredFormMixin
-from hierarchy.models import Chapter, NomenclatureTree
+from hierarchy.models import (
+    Chapter,
+    Heading,
+    NomenclatureTree,
+)
 from regulations.models import (
     Regulation,
     RegulationGroup,
@@ -157,10 +161,19 @@ class HeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
 
 
-class HeadingAddForm(forms.ModelForm):
+class HeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.description} ({obj.heading_code})"
+
+
+class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["headings"]
+
+    headings = HeadingModelMultipleChoiceField(
+        queryset=Heading.objects.all(),
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
@@ -170,6 +183,14 @@ class HeadingAddForm(forms.ModelForm):
             instance.headings.add(*self.cleaned_data["headings"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-heading-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class HeadingRemoveForm(forms.ModelForm):
