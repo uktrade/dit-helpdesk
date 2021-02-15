@@ -93,7 +93,7 @@ class ChapterAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in chapter_codes.split(",")]
 
 
-class ChapterAddForm(forms.ModelForm):
+class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["chapters"]
@@ -106,6 +106,14 @@ class ChapterAddForm(forms.ModelForm):
             instance.chapters.add(*self.cleaned_data["chapters"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class ChapterRemoveForm(forms.ModelForm):

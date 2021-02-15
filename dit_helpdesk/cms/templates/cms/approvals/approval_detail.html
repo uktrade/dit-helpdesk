@@ -5,9 +5,16 @@
         Approval
     </h2>
 
-    <pre>
-        {{ approval.deferred_change.data }}
-    </pre>
+    <dl>
+        <dt>Data</dt>
+        <dd>
+            <pre>
+                {{ approval.deferred_change.data }}
+            </pre>
+        </dd>
+        <dt>Instance</dt>
+        <dd>{{ approval.deferred_change.instance }}</dd>
+    </dl>
 
     <p>
         Created by: {{ approval.created_by.get_full_name }}

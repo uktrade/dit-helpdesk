@@ -165,9 +165,20 @@ class BaseAddView(BaseRegulationGroupDetailView):
 
         add_form = self.get_add_form()
         if add_form.is_valid():
-            add_form.save()
+            deferred_update = add_form.defer_update()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_update,
+            )
 
-            return redirect(self.get_success_url())
+            return HttpResponseRedirect(
+                reverse(
+                    "cms:approval-detail",
+                    kwargs={
+                        "pk": approval.pk,
+                    },
+                ),
+            )
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
