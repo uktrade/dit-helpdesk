@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from deferred_changes.models import DeferredSave
+from deferred_changes.models import DeferredChange
 
 
 User = get_user_model()
@@ -20,10 +20,10 @@ class Approval(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="created_approvals",
     )
-    deferred_save = models.OneToOneField(DeferredSave, on_delete=models.PROTECT)
+    deferred_change = models.OneToOneField(DeferredChange, on_delete=models.PROTECT)
 
     def approve(self, user):
-        form, instance = self.deferred_save.apply()
+        form, instance = self.deferred_change.apply()
 
         self.approved_at = timezone.datetime.now()
         self.approved_by = user

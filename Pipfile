@@ -91,6 +91,7 @@ freezegun = "*"
 boto3 = "*"
 django-flags = "*"
 django-csp = "*"
+django-polymorphic = "*"
 
 [requires]
 python_version = "3.6"

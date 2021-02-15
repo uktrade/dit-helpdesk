@@ -90,10 +90,10 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
     template_name = "cms/regulations/regulationgroup_create.html"
 
     def form_valid(self, form):
-        deferred_save = form.defer_save()
+        deferred_create = form.defer_create()
         approval = Approval.objects.create(
             created_by=self.request.user,
-            deferred_save=deferred_save,
+            deferred_change=deferred_create,
         )
 
         return HttpResponseRedirect(
