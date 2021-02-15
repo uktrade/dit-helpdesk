@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('deferred_save', '0001_initial'),
+        ('deferred_changes', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('approved_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='approved_approvals', to=settings.AUTH_USER_MODEL)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='created_approvals', to=settings.AUTH_USER_MODEL)),
-                ('deferred_save', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='deferred_save.DeferredSave')),
+                ('deferred_save', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='deferred_changes.DeferredSave')),
             ],
         ),
     ]

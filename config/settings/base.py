@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     "accessibility",
     "reversion",
     "django_migration_linter",
-    "deferred_save",
+    "deferred_changes",
 ]
 
 MIDDLEWARE = [

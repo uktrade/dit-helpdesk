@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.urls import reverse
 
-from deferred_save.forms import DeferredSaveFormMixin
+from deferred_changes.forms import DeferredSaveFormMixin
 from hierarchy.models import NomenclatureTree
 from regulations.models import (
     Regulation,
