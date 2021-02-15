@@ -400,15 +400,10 @@ class RegulationGroupSubHeadingAddView(BaseAddView):
     search_form_class = SubHeadingAddSearchForm
     add_form_class = SubHeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link subheadings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         subheading_codes = search_form.cleaned_data["subheading_codes"]

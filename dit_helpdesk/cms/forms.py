@@ -7,6 +7,7 @@ from hierarchy.models import (
     Chapter,
     Heading,
     NomenclatureTree,
+    SubHeading,
 )
 from regulations.models import (
     Regulation,
@@ -225,10 +226,19 @@ class SubHeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in subheading_codes.split(",")]
 
 
-class SubHeadingAddForm(forms.ModelForm):
+class SubHeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.description} ({obj.commodity_code})"
+
+
+class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["subheadings"]
+
+    subheadings = SubHeadingModelMultipleChoiceField(
+        queryset=SubHeading.objects.all(),
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
@@ -238,6 +248,14 @@ class SubHeadingAddForm(forms.ModelForm):
             instance.subheadings.add(*self.cleaned_data["subheadings"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class SubHeadingRemoveForm(forms.ModelForm):
