@@ -23,6 +23,10 @@ class Approval(models.Model):
     deferred_change = models.OneToOneField(DeferredChange, on_delete=models.PROTECT)
     description = models.CharField(max_length=255)
 
+    @property
+    def approved(self):
+        return self.approved_at is not None
+
     def approve(self, user):
         form, instance = self.deferred_change.apply()
 

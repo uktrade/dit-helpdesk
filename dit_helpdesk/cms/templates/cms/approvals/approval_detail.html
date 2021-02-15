@@ -18,7 +18,6 @@
                 {{ approval.created_by.get_full_name }}
             </dd>
         </div>
-
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 Created
@@ -27,6 +26,25 @@
                 {{ approval.created_at }}
             </dd>
         </div>
+
+        {% if approval.approved %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Approver
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ approval.approved_by.get_full_name }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Approved
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ approval.approved_at }}
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 
     <h3 class="govuk-heading-m">Changes</h3>
