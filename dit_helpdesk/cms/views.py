@@ -449,15 +449,10 @@ class RegulationGroupCommodityAddView(BaseAddView):
     search_form_class = CommodityAddSearchForm
     add_form_class = CommodityAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link commodities to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         commodity_codes = search_form.cleaned_data["commodity_codes"]

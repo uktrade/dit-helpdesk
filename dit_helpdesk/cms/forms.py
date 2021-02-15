@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.urls import reverse
 
+from commodities.models import Commodity
 from deferred_changes.forms import DeferredFormMixin
 from hierarchy.models import (
     Chapter,
@@ -290,10 +291,19 @@ class CommodityAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in commodity_codes.split(",")]
 
 
-class CommodityAddForm(forms.ModelForm):
+class CommodityModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.description} ({obj.commodity_code})"
+
+
+class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
         fields = ["commodities"]
+
+    commodities = CommodityModelMultipleChoiceField(
+        queryset=Commodity.objects.all(),
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
@@ -303,6 +313,14 @@ class CommodityAddForm(forms.ModelForm):
             instance.commodities.add(*self.cleaned_data["commodities"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class CommodityRemoveForm(forms.ModelForm):
