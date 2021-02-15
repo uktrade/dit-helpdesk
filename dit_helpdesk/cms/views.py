@@ -239,7 +239,11 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
 
         if not regulation_form:
             regulation_form_class = self.get_regulation_form_class()
-            regulation_form = regulation_form_class(self.get_object())
+            regulation_form = regulation_form_class(
+                initial={
+                    "regulation_group": self.get_object(),
+                },
+            )
         ctx["regulation_form"] = regulation_form
 
         return ctx
@@ -248,16 +252,18 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         return RegulationForm
 
     def post(self, request, *args, **kwargs):
-        regulation_group = self.get_object()
-
         regulation_form_class = self.get_regulation_form_class()
-        regulation_form = regulation_form_class(regulation_group, request.POST)
+        regulation_form = regulation_form_class(request.POST)
         if regulation_form.is_valid():
-            regulation = regulation_form.save()
-            regulation.nomenclature_trees.add(NomenclatureTree.get_active_tree())
+            deferred_create = regulation_form.defer_create()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_create,
+                description="Add regulation",
+            )
             return redirect(
-                "cms:regulation-group-detail",
-                pk=regulation_group.pk,
+                "cms:approval-detail",
+                pk=approval.pk,
             )
 
         self.object = self.get_object()

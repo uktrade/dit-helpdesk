@@ -37,6 +37,11 @@ class DeferredValue:
 
     @property
     def value(self):
+        if isinstance(self.field, forms.ModelChoiceField):
+            for pk, desc in self.field.choices:
+                if str(pk) == self.bound_field.value():
+                    return desc
+
         return self.bound_field.value()
 
     @property
@@ -65,10 +70,6 @@ class DeferredFormChange(DeferredChange):
 
     def apply(self):
         form = self.get_bound_form()
-
-        if not form.is_valid():
-            raise InvalidDataError(form)
-
         instance = form.save()
 
         return form, instance
@@ -76,7 +77,11 @@ class DeferredFormChange(DeferredChange):
     def get_bound_form(self):
         form_class = import_string(self.form_class)
 
-        return form_class(self.data, **self.get_form_kwargs())
+        form = form_class(self.data, **self.get_form_kwargs())
+        if not form.is_valid():
+            raise InvalidDataError(form)
+
+        return form
 
     def get_deferred_changes(self):
         form = self.get_bound_form()

@@ -38,11 +38,20 @@ class RegulationSearchForm(forms.Form):
     q = forms.CharField(label="Search regulations")
 
 
-class RegulationForm(forms.ModelForm):
+class RegulationGroupChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.title}"
+
+
+class RegulationForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = Regulation
-        fields = ["title", "url"]
+        fields = ["regulation_group", "title", "url"]
 
+    regulation_group = RegulationGroupChoiceField(
+        queryset=RegulationGroup.objects.all(),
+        widget=forms.HiddenInput,
+    )
     url = forms.URLField(
         label="URL",
         validators=[
@@ -53,18 +62,21 @@ class RegulationForm(forms.ModelForm):
         ],
     )
 
-    def __init__(self, regulation_group, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def _save_m2m(self):
+        super()._save_m2m()
+        regulation_group = self.cleaned_data["regulation_group"]
+        self.instance.regulation_groups.add(regulation_group)
+        self.instance.nomenclature_trees.add(NomenclatureTree.get_active_tree())
 
-        self.regulation_group = regulation_group
+    def get_post_approval_url(self):
+        regulation_group = self.cleaned_data["regulation_group"]
 
-    def save(self, commit=True):
-        instance = super().save(commit)
-
-        if commit:
-            self.regulation_group.regulation_set.add(self.instance)
-
-        return instance
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                "pk": regulation_group.pk,
+            },
+        )
 
 
 class RegulationRemoveForm(forms.ModelForm):
