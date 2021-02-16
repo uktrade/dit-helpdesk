@@ -266,10 +266,13 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         regulation_form = regulation_form_class(request.POST)
         if regulation_form.is_valid():
             deferred_create = regulation_form.defer_create()
+            regulation_title = regulation_form.cleaned_data["title"]
+            regulation_group_title = regulation_form.cleaned_data["regulation_group"].title
+
             approval = Approval.objects.create(
                 created_by=self.request.user,
                 deferred_change=deferred_create,
-                description="Add regulation",
+                description=f'Add regulation "{regulation_title}" to "{regulation_group_title}"',
             )
             return redirect(
                 "cms:approval-detail",
