@@ -46,6 +46,13 @@ class BaseCMSMixin(object):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["pending_approvals_count"] = Approval.objects.pending().count()
+
+        return ctx
+
 
 class CMSView(BaseCMSMixin, View):
 
@@ -492,6 +499,13 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
                 "pk": regulation_group.pk,
             },
         )
+
+
+class PendingApprovalListView(BaseCMSMixin, ListView):
+    context_object_name = "pending_approvals"
+    model = Approval
+    queryset = Approval.objects.pending()
+    template_name = "cms/approvals/approval_list.html"
 
 
 class ApprovalDetailView(BaseCMSMixin, DetailView):

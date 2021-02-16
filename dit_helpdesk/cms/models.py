@@ -10,7 +10,15 @@ from deferred_changes.models import DeferredChange
 User = get_user_model()
 
 
+class ApprovalManager(models.Manager):
+
+    def pending(self):
+        return self.filter(approved_at__isnull=True)
+
+
 class Approval(models.Model):
+    objects = ApprovalManager()
+
     approved_at = models.DateTimeField(null=True)
     approved_by = models.ForeignKey(
         User,
