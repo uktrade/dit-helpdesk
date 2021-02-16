@@ -1,5 +1,6 @@
-var Button = require('govuk-frontend/govuk/components/button/button.js')
 var common = require('govuk-frontend/govuk/common')
+var Button = require('govuk-frontend/govuk/components/button/button')
+var Header = require('govuk-frontend/govuk/components/header/header')
 
 var CopyButton = require('./modules/copy-button');
 
@@ -11,6 +12,9 @@ if ($buttons) {
         new Button($button).init()
     })
 }
+
+var $header = document.querySelector('[data-module=header]')
+new Header($header).init()
 
 var $copyButtons = document.querySelectorAll('[data-copy-button-for]')
 if ($copyButtons) {

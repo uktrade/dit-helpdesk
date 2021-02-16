@@ -46,6 +46,13 @@ class BaseCMSMixin(object):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["pending_approvals_count"] = Approval.objects.pending().count()
+
+        return ctx
+
 
 class CMSView(BaseCMSMixin, View):
 
@@ -92,10 +99,12 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
 
     def form_valid(self, form):
         deferred_create = form.defer_create()
+        regulation_group_title = form.cleaned_data["title"]
+
         approval = Approval.objects.create(
             created_by=self.request.user,
             deferred_change=deferred_create,
-            description="Create regulation group",
+            description=f'Create regulation group "{regulation_group_title}"',
         )
 
         return HttpResponseRedirect(
@@ -257,10 +266,13 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         regulation_form = regulation_form_class(request.POST)
         if regulation_form.is_valid():
             deferred_create = regulation_form.defer_create()
+            regulation_title = regulation_form.cleaned_data["title"]
+            regulation_group_title = regulation_form.cleaned_data["regulation_group"].title
+
             approval = Approval.objects.create(
                 created_by=self.request.user,
                 deferred_change=deferred_create,
-                description="Add regulation",
+                description=f'Add regulation "{regulation_title}" to "{regulation_group_title}"',
             )
             return redirect(
                 "cms:approval-detail",
@@ -492,6 +504,13 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
                 "pk": regulation_group.pk,
             },
         )
+
+
+class PendingApprovalListView(BaseCMSMixin, ListView):
+    context_object_name = "pending_approvals"
+    model = Approval
+    queryset = Approval.objects.pending()
+    template_name = "cms/approvals/approval_list.html"
 
 
 class ApprovalDetailView(BaseCMSMixin, DetailView):

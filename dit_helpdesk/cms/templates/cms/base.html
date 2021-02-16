@@ -35,6 +35,26 @@
           <a href="{% url 'cms:home' %}" class="govuk-header__link govuk-header__link--service-name">
             {% block header %}Admin{% endblock%}
           </a>
+          <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide navigation menu">Menu</button>
+          <nav>
+            <ul id="navigation" class="govuk-header__navigation " aria-label="Navigation menu">
+              <li class="govuk-header__navigation-item">
+                <a class="govuk-header__link" href="{% url 'cms:regulation-groups-list' %}">
+                  Regulation groups
+                </a>
+              </li>
+              <li class="govuk-header__navigation-item">
+                <a class="govuk-header__link" href="{% url 'cms:pending-approvals-list' %}">
+                  Pending approvals
+                </a>
+                {% if pending_approvals_count %}
+                  <span class="app-header-link-alert">
+                    {{ pending_approvals_count }}
+                  </span>
+                {% endif %}
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </header>
