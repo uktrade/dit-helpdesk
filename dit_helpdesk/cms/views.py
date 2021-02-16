@@ -504,10 +504,15 @@ class ApprovalDetailView(BaseCMSMixin, DetailView):
 
         return HttpResponseRedirect(form.get_post_approval_url())
 
+    def can_approve(self, approval, user):
+        return approval.created_by != user
+
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
 
         approval = self.get_object()
         ctx["form"] = approval.get_bound_form()
+        ctx["can_approve"] = self.can_approve(approval, self.request.user)
+        ctx["approval_url"] = self.request.build_absolute_uri()
 
         return ctx

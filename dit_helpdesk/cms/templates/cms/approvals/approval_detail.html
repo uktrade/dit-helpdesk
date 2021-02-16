@@ -67,12 +67,25 @@
                 </dd>
             </div>
         {% endfor %}
-    </dl>    
+    </dl>
 
-    <form method="post">
-        {% csrf_token %}
-        <button class="govuk-button" data-module="govuk-button">
-            Approve
-        </button>
-    </form>
+    {% if can_approve %}
+        <form method="post">
+            {% csrf_token %}
+            <button class="govuk-button" data-module="govuk-button">
+                Approve
+            </button>
+        </form>
+    {% else %}
+        <p class="govuk-body">
+            <strong>This change requires approval.</strong>
+        </p>
+        <div class="govuk-body">
+            Approval link
+            <div class="govuk-input__wrapper">
+                <input class="govuk-input govuk-!-width-one-half" id="approval-url" type="text" readonly value="{{ approval_url }}">
+                <button class="govuk-button" data-module="govuk-button" data-copy-button-for="approval-url">Copy</button>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
