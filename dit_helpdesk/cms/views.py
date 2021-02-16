@@ -99,10 +99,12 @@ class RegulationGroupCreateView(BaseCMSMixin, CreateView):
 
     def form_valid(self, form):
         deferred_create = form.defer_create()
+        regulation_group_title = form.cleaned_data["title"]
+
         approval = Approval.objects.create(
             created_by=self.request.user,
             deferred_change=deferred_create,
-            description="Create regulation group",
+            description=f'Create regulation group "{regulation_group_title}"',
         )
 
         return HttpResponseRedirect(
