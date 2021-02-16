@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -29,12 +30,14 @@ from .forms import (
     HeadingAddSearchForm,
     HeadingRemoveForm,
     RegulationForm,
+    RegulationGroupForm,
     RegulationRemoveForm,
     RegulationSearchForm,
     SubHeadingAddForm,
     SubHeadingAddSearchForm,
     SubHeadingRemoveForm,
 )
+from .models import Approval
 
 
 class BaseCMSMixin(object):
@@ -84,25 +87,25 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
 
 
 class RegulationGroupCreateView(BaseCMSMixin, CreateView):
-    fields = ["title"]
-    model = RegulationGroup
+    form_class = RegulationGroupForm
     template_name = "cms/regulations/regulationgroup_create.html"
 
-    def get_success_url(self):
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": self.object.pk,
-            },
+    def form_valid(self, form):
+        deferred_create = form.defer_create()
+        approval = Approval.objects.create(
+            created_by=self.request.user,
+            deferred_change=deferred_create,
+            description="Create regulation group",
         )
 
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        return_value = super().form_valid(form)
-        self.object.nomenclature_trees.add(NomenclatureTree.get_active_tree())
-        self.object.save()
-
-        return return_value
+        return HttpResponseRedirect(
+            reverse(
+                "cms:approval-detail",
+                kwargs={
+                    "pk": approval.pk,
+                },
+            ),
+        )
 
 
 class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
@@ -159,21 +162,33 @@ class BaseAddView(BaseRegulationGroupDetailView):
     def get_add_form(self):
         return self.add_form_class(self.request.POST, instance=self.get_object())
 
+    def get_approval_description(self):
+        raise NotImplementedError("`get_approval_description` needs to be implemented.")
+
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
 
         add_form = self.get_add_form()
         if add_form.is_valid():
-            add_form.save()
+            deferred_update = add_form.defer_update()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_update,
+                description=self.get_approval_description(),
+            )
 
-            return redirect(self.get_success_url())
+            return HttpResponseRedirect(
+                reverse(
+                    "cms:approval-detail",
+                    kwargs={
+                        "pk": approval.pk,
+                    },
+                ),
+            )
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
-
-    def get_success_url(self):
-        raise NotImplementedError("`get_success_url` needs to be implemented.")
 
     def get_search_results(self, search_form):
         raise NotImplementedError("`get_search_results` needs to be implemented.")
@@ -225,7 +240,11 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
 
         if not regulation_form:
             regulation_form_class = self.get_regulation_form_class()
-            regulation_form = regulation_form_class(self.get_object())
+            regulation_form = regulation_form_class(
+                initial={
+                    "regulation_group": self.get_object(),
+                },
+            )
         ctx["regulation_form"] = regulation_form
 
         return ctx
@@ -234,16 +253,18 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         return RegulationForm
 
     def post(self, request, *args, **kwargs):
-        regulation_group = self.get_object()
-
         regulation_form_class = self.get_regulation_form_class()
-        regulation_form = regulation_form_class(regulation_group, request.POST)
+        regulation_form = regulation_form_class(request.POST)
         if regulation_form.is_valid():
-            regulation = regulation_form.save()
-            regulation.nomenclature_trees.add(NomenclatureTree.get_active_tree())
+            deferred_create = regulation_form.defer_create()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_create,
+                description="Add regulation",
+            )
             return redirect(
-                "cms:regulation-group-detail",
-                pk=regulation_group.pk,
+                "cms:approval-detail",
+                pk=approval.pk,
             )
 
         self.object = self.get_object()
@@ -288,15 +309,10 @@ class RegulationGroupChapterAddView(BaseAddView):
     search_form_class = ChapterAddSearchForm
     add_form_class = ChapterAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': regulation_group.pk,
-            },
-        )
+        return f'Link chapters to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         chapter_codes = search_form.cleaned_data["chapter_codes"]
@@ -342,15 +358,10 @@ class RegulationGroupHeadingAddView(BaseAddView):
     search_form_class = HeadingAddSearchForm
     add_form_class = HeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link headings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         heading_codes = search_form.cleaned_data["heading_codes"]
@@ -396,15 +407,10 @@ class RegulationGroupSubHeadingAddView(BaseAddView):
     search_form_class = SubHeadingAddSearchForm
     add_form_class = SubHeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link subheadings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         subheading_codes = search_form.cleaned_data["subheading_codes"]
@@ -450,15 +456,10 @@ class RegulationGroupCommodityAddView(BaseAddView):
     search_form_class = CommodityAddSearchForm
     add_form_class = CommodityAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link commodities to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         commodity_codes = search_form.cleaned_data["commodity_codes"]
@@ -491,3 +492,29 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
                 "pk": regulation_group.pk,
             },
         )
+
+
+class ApprovalDetailView(BaseCMSMixin, DetailView):
+    model = Approval
+    template_name = "cms/approvals/approval_detail.html"
+
+    def post(self, request, *args, **kwargs):
+        approval = self.get_object()
+
+        if not approval.can_approve(self.request.user):
+            raise PermissionDenied
+
+        form, _ = approval.approve(request.user)
+
+        return HttpResponseRedirect(form.get_post_approval_url())
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        approval = self.get_object()
+        ctx["form"] = approval.get_bound_form()
+        ctx["is_approved"] = approval.approved
+        ctx["can_approve"] = approval.can_approve(self.request.user)
+        ctx["approval_url"] = self.request.build_absolute_uri()
+
+        return ctx

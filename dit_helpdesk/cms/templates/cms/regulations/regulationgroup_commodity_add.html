@@ -1,7 +1,5 @@
 {% extends "cms/regulations/base_regulationgroup_detail.html" %}
 
-{% load l10n %}
-
 {% block panel_heading %}
     <div class="app-panel-heading">
         <h3 class="govuk-heading-m">Link other commodities to the group</h4>
@@ -50,7 +48,7 @@
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">
                                 {{ commodity.commodity_code }}
-                                <input name="{{ add_form.commodities.name }}" type="hidden" value="{{ commodity.pk|unlocalize }}" />
+                                <input name="{{ add_form.commodities.name }}" type="hidden" value="{{ commodity.goods_nomenclature_sid }}" />
                             </th>
                             <td class="govuk-table__cell">{{ commodity.description }}</td>
                             <td class="govuk-table__cell">
