@@ -1,3 +1,5 @@
+import reversion
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -28,7 +30,11 @@ class Approval(models.Model):
         return self.approved_at is not None
 
     def approve(self, user):
-        form, instance = self.deferred_change.apply()
+        with reversion.create_revision():
+            form, instance = self.deferred_change.apply()
+
+            reversion.set_user(user)
+            reversion.set_comment(f"Created revision from approval {self.pk}")
 
         self.approved_at = timezone.datetime.now()
         self.approved_by = user
