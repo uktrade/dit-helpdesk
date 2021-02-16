@@ -1,7 +1,5 @@
 {% extends "cms/regulations/base_regulationgroup_detail.html" %}
 
-{% load l10n %}
-
 {% block panel_heading %}
     <div class="app-panel-heading">
         <h3 class="govuk-heading-m">Link other subheadings to the group</h4>
@@ -50,7 +48,7 @@
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">
                                 {{ subheading.commodity_code }}
-                                <input name="{{ add_form.subheadings.name }}" type="hidden" value="{{ subheading.pk|unlocalize }}" />
+                                <input name="{{ add_form.subheadings.name }}" type="hidden" value="{{ subheading.goods_nomenclature_sid }}" />
                             </th>
                             <td class="govuk-table__cell">{{ subheading.description }}</td>
                             <td class="govuk-table__cell">

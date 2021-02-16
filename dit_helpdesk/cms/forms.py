@@ -123,6 +123,7 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
 
     chapters = ChapterModelMultipleChoiceField(
         queryset=Chapter.objects.all(),
+        to_field_name="goods_nomenclature_sid",
     )
 
     def save(self, commit=True):
@@ -187,6 +188,7 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
 
     headings = HeadingModelMultipleChoiceField(
         queryset=Heading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
     )
 
     def save(self, commit=True):
@@ -251,6 +253,7 @@ class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
 
     subheadings = SubHeadingModelMultipleChoiceField(
         queryset=SubHeading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
     )
 
     def save(self, commit=True):
@@ -315,6 +318,7 @@ class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
 
     commodities = CommodityModelMultipleChoiceField(
         queryset=Commodity.objects.all(),
+        to_field_name="goods_nomenclature_sid",
     )
 
     def save(self, commit=True):
