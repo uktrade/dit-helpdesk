@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -500,19 +501,20 @@ class ApprovalDetailView(BaseCMSMixin, DetailView):
     def post(self, request, *args, **kwargs):
         approval = self.get_object()
 
+        if not approval.can_approve(self.request.user):
+            raise PermissionDenied
+
         form, _ = approval.approve(request.user)
 
         return HttpResponseRedirect(form.get_post_approval_url())
-
-    def can_approve(self, approval, user):
-        return approval.created_by != user
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
 
         approval = self.get_object()
         ctx["form"] = approval.get_bound_form()
-        ctx["can_approve"] = self.can_approve(approval, self.request.user)
+        ctx["is_approved"] = approval.approved
+        ctx["can_approve"] = approval.can_approve(self.request.user)
         ctx["approval_url"] = self.request.build_absolute_uri()
 
         return ctx

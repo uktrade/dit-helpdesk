@@ -69,7 +69,11 @@
         {% endfor %}
     </dl>
 
-    {% if can_approve %}
+    {% if is_approved %}
+        <p class="govuk-body">
+            <strong>This change has already been approved and applied.</strong>
+        </p>
+    {% elif can_approve %}
         <form method="post">
             {% csrf_token %}
             <button class="govuk-button" data-module="govuk-button">

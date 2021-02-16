@@ -41,3 +41,6 @@ class Approval(models.Model):
         form = self.deferred_change.get_bound_form()
 
         return form
+
+    def can_approve(self, user):
+        return not self.approved and self.created_by != user
