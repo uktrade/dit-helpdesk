@@ -18,8 +18,8 @@ SUBTEXT_REGEX = re.compile(
 
 CODES_REGEX = re.compile(
     r"\bchapter (\d)[^.\d][\b,)]?(?!\s?%)|"
-    r"\b(\d\d)[^.\d][\b,)]?(?!\s?%)|"
-    r"\b(\d\d\d\d)[^.][\b,)]?(?!\s?%)|"
+    r"\b(\d\d)(?!.\d)[\b,)]?(?!\s?%)|"
+    r"\b(\d\d\d\d)(?!.\d)[\b,)]?(?!\s?%)|"
     r"\b(\d\d\.\d\d)[\b,)]?(?!\s?%)|"
     r"\b(\d\d\d\d\.\d\d)[\b,)]?(?!\s?%)",
     re.IGNORECASE,
