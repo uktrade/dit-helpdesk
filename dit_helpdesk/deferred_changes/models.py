@@ -93,13 +93,15 @@ class DeferredFormChange(DeferredChange):
 
 
 class DeferredCreate(DeferredFormChange):
-    pass
+    action_type = "create"
 
 
 class DeferredUpdate(DeferredFormChange):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     instance = GenericForeignKey('content_type', 'object_id')
+
+    action_type = "update"
 
     def get_form_kwargs(self):
         return {"instance": self.instance}

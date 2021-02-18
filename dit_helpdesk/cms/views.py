@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -38,6 +40,9 @@ from .forms import (
     SubHeadingRemoveForm,
 )
 from .models import Approval
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseCMSMixin(object):
@@ -223,10 +228,27 @@ class BaseRemoveView(BaseRegulationGroupDetailView):
 
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
+        object_to_remove = self.get_object_to_remove()
 
         remove_form = self.get_remove_form()
         if remove_form.is_valid():
             remove_form.save()
+
+            logger.info(
+                "Remove %s (%s) from %s (%s)",
+                object_to_remove.__class__.__name__,
+                object_to_remove.pk,
+                regulation_group.__class__.__name__,
+                regulation_group.pk,
+                extra={
+                    "user": self.request.user,
+                    "cms.audit": {
+                        "action_type": "remove",
+                        "object_type": object_to_remove.__class__.__name__,
+                        "pk": object_to_remove.pk,
+                    },
+                },
+            )
 
             return redirect(self.get_success_url())
 

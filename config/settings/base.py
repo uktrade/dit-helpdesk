@@ -4,7 +4,8 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import dj_database_url
-import ecs_logging
+
+from core.logging import UserLogFormatter
 
 from .env import env
 
@@ -272,7 +273,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'ecs_formatter': {
-            '()': ecs_logging.StdlibFormatter,
+            '()': UserLogFormatter,
 
             # Kibana mapping expects a different type (long) to what is sent by the library (object)
             'exclude_fields': ['process'],
