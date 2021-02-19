@@ -275,8 +275,11 @@ LOGGING = {
         'ecs_formatter': {
             '()': UserLogFormatter,
 
-            # Kibana mapping expects a different type (long) to what is sent by the library (object)
-            'exclude_fields': ['process'],
+            # Kibana mapping expects different types to what is sent by the library
+            'exclude_fields': [
+                'process',  # expects (long) but sends (object)
+                'service',  # expects (string) but sends (object)
+            ],
         },
         'console_formatter': {
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
