@@ -139,7 +139,10 @@ ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 
 SITE_READ_ONLY = False
 
-INSTALLED_APPS += ["cms"]
+INSTALLED_APPS += [
+    "cms",
+    "deferred_changes.tests",
+]
 
 TRADE_TARIFF_CONFIG = {
     "UK": {
