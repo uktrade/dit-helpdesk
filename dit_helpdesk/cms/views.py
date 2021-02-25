@@ -204,7 +204,7 @@ class BaseRemoveView(BaseRegulationGroupDetailView):
     def get_remove_form(self):
         raise NotImplementedError("`get_remove_form` needs to be implemented.")
 
-    def get_approval_description(self):
+    def get_approval_description(self, remove_form):
         raise NotImplementedError("`get_approval_description` needs to be implemented.")
 
     def post(self, request, *args, **kwargs):
@@ -422,22 +422,18 @@ class RegulationGroupSubHeadingRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return SubHeading.objects.get(pk=self.kwargs["subheading_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return SubHeadingRemoveForm(
-            self.request.POST,
+            data,
+            initial={"subheading": self.get_object_to_remove()},
             instance=self.get_object(),
-            subheading=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        subheading = remove_form.cleaned_data["subheading"]
 
-        return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}" from "{subheading.description}"'
 
 
 class RegulationGroupCommodityListView(BaseRegulationGroupDetailView):

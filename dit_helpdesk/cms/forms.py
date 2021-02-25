@@ -111,9 +111,13 @@ class ChapterAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in chapter_codes.split(",")]
 
 
-class ChapterModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class ChapterLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.chapter_code})"
+
+
+class ChapterModelMultipleChoiceField(ChapterLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
@@ -144,9 +148,8 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class ChapterChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.title
+class ChapterChoiceField(ChapterLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
 
 
 class ChapterRemoveForm(DeferredFormMixin, forms.ModelForm):
@@ -190,9 +193,13 @@ class HeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
 
 
-class HeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class HeadingLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.heading_code})"
+
+
+class HeadingModelMultipleChoiceField(HeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
@@ -223,9 +230,8 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class HeadingChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.description
+class HeadingChoiceField(HeadingLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
 
 
 class HeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
@@ -269,9 +275,13 @@ class SubHeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in subheading_codes.split(",")]
 
 
-class SubHeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class SubHeadingLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.commodity_code})"
+
+
+class SubHeadingModelMultipleChoiceField(SubHeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
@@ -302,24 +312,37 @@ class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class SubHeadingRemoveForm(forms.ModelForm):
+class SubHeadingChoiceField(SubHeadingLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class SubHeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["subheading"]
 
-    def __init__(self, *args, subheading, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.subheading = subheading
+    subheading = SubHeadingChoiceField(
+        queryset=SubHeading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.subheadings.remove(self.subheading)
+            instance.subheadings.remove(self.cleaned_data["subheading"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
 
 
 class CommodityAddSearchForm(forms.Form):
