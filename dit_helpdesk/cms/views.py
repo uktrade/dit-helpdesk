@@ -283,22 +283,18 @@ class RegulationGroupRegulationRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Regulation.objects.get(pk=self.kwargs["regulation_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return RegulationRemoveForm(
-            self.request.POST,
+            data,
+            initial={"regulation": self.get_object_to_remove()},
             instance=self.get_object(),
-            regulation=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        regulation = remove_form.cleaned_data["regulation"]
 
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation.title}" from "{regulation_group.title}"'
 
 
 class RegulationGroupChapterListView(BaseRegulationGroupDetailView):

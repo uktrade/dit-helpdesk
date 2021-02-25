@@ -79,24 +79,37 @@ class RegulationForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class RegulationRemoveForm(forms.ModelForm):
+class RegulationChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.title
+
+
+class RegulationRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["regulation"]
 
-    def __init__(self, *args, regulation, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.regulation = regulation
+    regulation = RegulationChoiceField(
+        queryset=Regulation.objects.all(),
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.regulation_set.remove(self.regulation)
+            instance.regulation_set.remove(self.cleaned_data["regulation"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class ChapterAddSearchForm(forms.Form):

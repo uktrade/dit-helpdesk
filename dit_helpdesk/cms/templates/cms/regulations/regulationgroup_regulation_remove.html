@@ -7,6 +7,9 @@
 
     <form method="post">
         {% csrf_token %}
+        {% for field in remove_form %}
+            {{ field }}
+        {% endfor %}
         <button class="govuk-button govuk-!-margin-right-1" data-module="govuk-button">
             Remove
         </button>
