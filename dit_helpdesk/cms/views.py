@@ -346,14 +346,6 @@ class RegulationGroupChapterRemoveView(BaseRemoveView):
         return f'Remove "{regulation_group.title}" from "{chapter.title}"'
 
 
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
-
-
 class RegulationGroupHeadingListView(BaseRegulationGroupDetailView):
     selected_panel = "headings"
     template_name = "cms/regulations/regulationgroup_heading_list.html"
@@ -385,22 +377,18 @@ class RegulationGroupHeadingRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Heading.objects.get(pk=self.kwargs["heading_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return HeadingRemoveForm(
-            self.request.POST,
+            data,
+            initial={"heading": self.get_object_to_remove()},
             instance=self.get_object(),
-            heading=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        heading = remove_form.cleaned_data["heading"]
 
-        return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}" from "{heading.description}"'
 
 
 class RegulationGroupSubHeadingListView(BaseRegulationGroupDetailView):

@@ -223,24 +223,38 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class HeadingRemoveForm(forms.ModelForm):
+class HeadingChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.description
+
+
+class HeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["heading"]
 
-    def __init__(self, *args, heading, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.heading = heading
+    heading = HeadingChoiceField(
+        queryset=Heading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.headings.remove(self.heading)
+            instance.headings.remove(self.cleaned_data["heading"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-heading-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
 
 
 class SubHeadingAddSearchForm(forms.Form):
