@@ -57,4 +57,7 @@ class Approval(models.Model):
         return form
 
     def can_approve(self, user):
+        if user.is_superuser:
+            return True
+
         return not self.approved and self.created_by != user
