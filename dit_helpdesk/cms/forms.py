@@ -357,9 +357,13 @@ class CommodityAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in commodity_codes.split(",")]
 
 
-class CommodityModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class CommodityLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.commodity_code})"
+
+
+class CommodityModelMultipleChoiceField(CommodityLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
@@ -390,21 +394,34 @@ class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class CommodityRemoveForm(forms.ModelForm):
+class CommodityModelChoiceField(CommodityLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class CommodityRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["commodity"]
 
-    def __init__(self, *args, commodity, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.commodity = commodity
+    commodity = CommodityModelChoiceField(
+        queryset=Commodity.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.commodities.remove(self.commodity)
+            instance.commodities.remove(self.cleaned_data["commodity"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )

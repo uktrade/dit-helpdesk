@@ -467,22 +467,18 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Commodity.objects.get(pk=self.kwargs["commodity_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return CommodityRemoveForm(
-            self.request.POST,
+            data,
+            initial={"commodity": self.get_object_to_remove()},
             instance=self.get_object(),
-            commodity=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        commodity = remove_form.cleaned_data["commodity"]
 
-        return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}"" from "{commodity.description}"'
 
 
 class PendingApprovalListView(BaseCMSMixin, ListView):
