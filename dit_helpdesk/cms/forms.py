@@ -40,7 +40,7 @@ class RegulationSearchForm(forms.Form):
 
 class RegulationGroupChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.title}"
+        return obj.title
 
 
 class RegulationForm(DeferredFormMixin, forms.ModelForm):
@@ -144,24 +144,38 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class ChapterRemoveForm(forms.ModelForm):
+class ChapterChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.title
+
+
+class ChapterRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["chapter"]
 
-    def __init__(self, *args, chapter, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.chapter = chapter
+    chapter = ChapterChoiceField(
+        queryset=Chapter.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.chapters.remove(self.chapter)
+            instance.chapters.remove(self.cleaned_data["chapter"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class HeadingAddSearchForm(forms.Form):
