@@ -1,15 +1,15 @@
+import logging
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 
 from commodities.models import Commodity
 from hierarchy.models import (
-    NomenclatureTree,
     Chapter,
     Heading,
     SubHeading,
@@ -38,6 +38,9 @@ from .forms import (
     SubHeadingRemoveForm,
 )
 from .models import Approval
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseCMSMixin(object):
