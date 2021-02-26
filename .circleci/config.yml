@@ -48,7 +48,7 @@ aliases:
     HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
-    TEST_OUTPUT_DIR: .
+    TEST_OUTPUT_DIR: "./test-reports/"
     FEEDBACK_DESTINATION_EMAIL: going@to.com
 
 
@@ -98,7 +98,7 @@ aliases:
     HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
     HELPDESK_GA_GTM: HELPDESK_GA_GTM
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
-    TEST_OUTPUT_DIR: "/app/reports"
+    TEST_OUTPUT_DIR: "./test-reports/"
     FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
 
@@ -182,16 +182,15 @@ jobs:
           name: Generate coverage
           command: |
             coverage report
-            coverage xml -o test-reports/coverage.xml
-            coverage html -d test-reports/coverage_html
+            coverage html -d ./test-reports/coverage_html
       - run:
           name: Lint migrations
           command:
             ./lint_migrations.sh
       - store_test_results:
-          path: test-reports
+          path: ./test-reports/
       - store_artifacts:
-          path: test-reports
+          path: ./test-reports/coverage_html
 
   ui_tests:
     docker:
