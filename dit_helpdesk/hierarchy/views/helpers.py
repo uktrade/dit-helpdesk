@@ -187,10 +187,13 @@ def get_hierarchy_context_from_object(commodity_object, country_code, links=True
 
 
 def sentry_emit_commodity_not_found(commodity_code, nomenclature_sid):
-    sentry_sdk.capture_event({
-            'type': 'commodity_object_not_found',
-            'commodity_code': commodity_code,
-            'nomenclature_sid': nomenclature_sid,
+    sentry_sdk.capture_event(
+        {
+            'message': 'Commodity object not found',
+            'level': 'warning',
+            'extra': {
+                'commodity_code': commodity_code,
+                'nomenclature_sid': nomenclature_sid,
+            },
         },
-        {'level': 'warning'}
     )
