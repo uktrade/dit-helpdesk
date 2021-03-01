@@ -80,4 +80,15 @@ urlpatterns = [
         views.RegulationGroupCommodityRemoveView.as_view(),
         name="regulation-group-commodity-remove",
     ),
+
+    path(
+        "pending-approvals/",
+        views.PendingApprovalListView.as_view(),
+        name="pending-approvals-list",
+    ),
+    path(
+        "approval/<int:pk>/",
+        views.ApprovalDetailView.as_view(),
+        name="approval-detail",
+    ),
 ]

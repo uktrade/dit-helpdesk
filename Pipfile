@@ -29,6 +29,7 @@ pygraphviz = "*"
 parameterized = "*"
 ipython = "==7.16.1"
 requests-mock = "==1.8.0"
+jedi = "==0.17.2"
 
 [packages]
 beautifulsoup4 = "==4.7.0"
@@ -91,6 +92,7 @@ freezegun = "*"
 boto3 = "*"
 django-flags = "*"
 django-csp = "*"
+django-polymorphic = "*"
 
 [requires]
 python_version = "3.6"
