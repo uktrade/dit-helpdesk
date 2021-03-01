@@ -1,3 +1,4 @@
+import logging
 import reversion
 
 from django.db import models
@@ -5,6 +6,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from deferred_changes.models import DeferredChange
+
+
+logger = logging.getLogger(__name__)
 
 
 User = get_user_model()
@@ -39,13 +43,44 @@ class Approval(models.Model):
 
     def approve(self, user):
         with reversion.create_revision():
+            deferred_change = self.deferred_change
+
             form, instance = self.deferred_change.apply()
 
             reversion.set_user(user)
             reversion.set_comment(f"Created revision from approval {self.pk}")
 
+            logger.info(
+                "%s %s (%s)",
+                deferred_change.action_type.title(),
+                instance.__class__.__name__,
+                instance.pk,
+                extra={
+                    "user": self.created_by,
+                    "cms.audit": {
+                        "action_type": deferred_change.action_type,
+                        "object_type": instance.__class__.__name__,
+                        "pk": instance.pk,
+                    },
+                },
+            )
+
         self.approved_at = timezone.datetime.now()
         self.approved_by = user
+
+        logger.info(
+            'Approve "%s" (%s)',
+            self.description,
+            self.pk,
+            extra={
+                "user": self.approved_by,
+                "cms.audit": {
+                    "action_type": "approve",
+                    "object_type": self.__class__.__name__,
+                    "pk": self.pk,
+                },
+            },
+        )
 
         self.save()
 
@@ -57,4 +92,7 @@ class Approval(models.Model):
         return form
 
     def can_approve(self, user):
+        if user.is_superuser:
+            return True
+
         return not self.approved and self.created_by != user

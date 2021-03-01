@@ -40,7 +40,7 @@ class RegulationSearchForm(forms.Form):
 
 class RegulationGroupChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.title}"
+        return obj.title
 
 
 class RegulationForm(DeferredFormMixin, forms.ModelForm):
@@ -79,24 +79,37 @@ class RegulationForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class RegulationRemoveForm(forms.ModelForm):
+class RegulationChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.title
+
+
+class RegulationRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["regulation"]
 
-    def __init__(self, *args, regulation, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.regulation = regulation
+    regulation = RegulationChoiceField(
+        queryset=Regulation.objects.all(),
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.regulation_set.remove(self.regulation)
+            instance.regulation_set.remove(self.cleaned_data["regulation"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-detail",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class ChapterAddSearchForm(forms.Form):
@@ -111,9 +124,13 @@ class ChapterAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in chapter_codes.split(",")]
 
 
-class ChapterModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class ChapterLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.chapter_code})"
+
+
+class ChapterModelMultipleChoiceField(ChapterLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
@@ -144,24 +161,37 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class ChapterRemoveForm(forms.ModelForm):
+class ChapterChoiceField(ChapterLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class ChapterRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["chapter"]
 
-    def __init__(self, *args, chapter, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.chapter = chapter
+    chapter = ChapterChoiceField(
+        queryset=Chapter.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.chapters.remove(self.chapter)
+            instance.chapters.remove(self.cleaned_data["chapter"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-chapter-list",
+            kwargs={
+                'pk': self.instance.pk,
+            },
+        )
 
 
 class HeadingAddSearchForm(forms.Form):
@@ -176,9 +206,13 @@ class HeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in heading_codes.split(",")]
 
 
-class HeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class HeadingLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.heading_code})"
+
+
+class HeadingModelMultipleChoiceField(HeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
@@ -209,24 +243,37 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class HeadingRemoveForm(forms.ModelForm):
+class HeadingChoiceField(HeadingLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class HeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["heading"]
 
-    def __init__(self, *args, heading, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.heading = heading
+    heading = HeadingChoiceField(
+        queryset=Heading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.headings.remove(self.heading)
+            instance.headings.remove(self.cleaned_data["heading"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-heading-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
 
 
 class SubHeadingAddSearchForm(forms.Form):
@@ -241,9 +288,13 @@ class SubHeadingAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in subheading_codes.split(",")]
 
 
-class SubHeadingModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class SubHeadingLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.commodity_code})"
+
+
+class SubHeadingModelMultipleChoiceField(SubHeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
@@ -274,24 +325,37 @@ class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class SubHeadingRemoveForm(forms.ModelForm):
+class SubHeadingChoiceField(SubHeadingLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class SubHeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["subheading"]
 
-    def __init__(self, *args, subheading, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.subheading = subheading
+    subheading = SubHeadingChoiceField(
+        queryset=SubHeading.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.subheadings.remove(self.subheading)
+            instance.subheadings.remove(self.cleaned_data["subheading"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-subheading-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
 
 
 class CommodityAddSearchForm(forms.Form):
@@ -306,9 +370,13 @@ class CommodityAddSearchForm(forms.Form):
         return [code.strip().ljust(10, "0") for code in commodity_codes.split(",")]
 
 
-class CommodityModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+class CommodityLabelFromInstanceMixin:
     def label_from_instance(self, obj):
         return f"{obj.description} ({obj.commodity_code})"
+
+
+class CommodityModelMultipleChoiceField(CommodityLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
@@ -339,21 +407,34 @@ class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
         )
 
 
-class CommodityRemoveForm(forms.ModelForm):
+class CommodityModelChoiceField(CommodityLabelFromInstanceMixin, forms.ModelChoiceField):
+    pass
+
+
+class CommodityRemoveForm(DeferredFormMixin, forms.ModelForm):
     class Meta:
         model = RegulationGroup
-        fields = []
+        fields = ["commodity"]
 
-    def __init__(self, *args, commodity, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.commodity = commodity
+    commodity = CommodityModelChoiceField(
+        queryset=Commodity.objects.all(),
+        to_field_name="goods_nomenclature_sid",
+        widget=forms.HiddenInput,
+    )
 
     def save(self, commit=True):
         instance = super().save(False)
 
         if commit:
             instance.save()
-            instance.commodities.remove(self.commodity)
+            instance.commodities.remove(self.cleaned_data["commodity"])
 
         return instance
+
+    def get_post_approval_url(self):
+        return reverse(
+            "cms:regulation-group-commodity-list",
+            kwargs={
+                "pk": self.instance.pk,
+            },
+        )
