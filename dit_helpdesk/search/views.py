@@ -150,9 +150,9 @@ class CommoditySearchView(FormView):
 
                 track_event(
                     "search",
-                    "results",
-                    search_term,
-                    total_results,
+                    f"products results ({country_code})",
+                    label=search_term,
+                    value=total_results,
                 )
 
                 for hit in context["results"]:
@@ -224,7 +224,6 @@ class GroupedCommoditySearchView(FormView):
         return initial
 
     def get(self, request, *args, **kwargs):
-
         self.initial = self.get_initial()
 
         country_code = kwargs["country_code"]
@@ -327,10 +326,17 @@ class GroupedCommoditySearchView(FormView):
 
                 track_event(
                     "search",
-                    "grouped_results",
-                    search_term,
-                    total_results,
+                    f"product types results ({country_code})",
+                    label=search_term,
+                    value=total_results,
                 )
+
+                if not total_results:
+                    track_event(
+                        "search",
+                        f"product types no results ({country_code})",
+                        label=search_term,
+                    )
 
                 return self.render_to_response(context)
 
@@ -340,6 +346,12 @@ class GroupedCommoditySearchView(FormView):
                 context["form_q_error"] = True
                 error_data = form.errors.as_data()
                 context["form_q_validation_message"] = error_data["q"][0]
+
+            track_event(
+                "page view",
+                "country goods search",
+                label=country_code,
+            )
 
             return self.render_to_response(context)
 

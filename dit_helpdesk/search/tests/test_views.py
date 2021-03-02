@@ -224,9 +224,9 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
             mock_track_event.assert_called_once_with(
                 "search",
-                "results",
-                "socks",
-                10,
+                "products results (au)",
+                label="socks",
+                value=10,
             )
 
 
