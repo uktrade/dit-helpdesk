@@ -36,6 +36,9 @@ def track_event(category, action, label=None, value=None):
 
     logger.info("Sending analytics event %s", data)
 
+    if not settings.TRACK_GA_EVENTS:
+        return
+
     return requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
         params=data,
