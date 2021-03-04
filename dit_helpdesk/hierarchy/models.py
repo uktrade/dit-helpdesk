@@ -85,15 +85,13 @@ class TreeSelectorMixin:
         super().save()
 
 
-class RulesOfOriginMixin:
+class FootnoteReferenceProcessor:
+    """Used to keep state of encountered notes references in multiple rule texts."""
 
     NOTE_REFERENCE_REGEX = re.compile(r"\[[A-Za-z0-9]+\]")
 
     def __init__(self):
         self.found_note_ids = []
-
-    def get_chapter(self):
-        raise NotImplementedError()
 
     def _replace_note_reference(self, ref_match):
         ref = ref_match.group()
@@ -102,7 +100,7 @@ class RulesOfOriginMixin:
         self.found_note_ids.append(ref_id)
         return f"<sup>{ref_id})</sup>"
 
-    def _replace_all_notes_references(self, text):
+    def replace_all_notes_references(self, text):
         if not text:
             return text
 
@@ -111,7 +109,13 @@ class RulesOfOriginMixin:
         )
         return text_replaced
 
-    def _process_rule_references(self, rule):
+
+class RulesOfOriginMixin:
+
+    def get_chapter(self):
+        raise NotImplementedError()
+
+    def _process_rule_references(self, rule, footnote_processor):
         """Rule text may contain references to footnotes. Extract them from rule text.
 
         The Rule object is not saved - the changes are only persisted in memory because the same
@@ -120,31 +124,33 @@ class RulesOfOriginMixin:
         not persist the result - the in-memory version is used for rendering from current view
         though.
         """
-        rule.rule_text_processed = self._replace_all_notes_references(rule.rule_text_processed)
 
-        rule.alt_rule_text_processed = self._replace_all_notes_references(
+        rule.rule_text_processed = footnote_processor.replace_all_notes_references(
+            rule.rule_text_processed)
+
+        rule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
             rule.alt_rule_text_processed
         )
 
         for subrule in rule.subrules.all():
-            subrule.rule_text_processed = self._replace_all_notes_references(
+            subrule.rule_text_processed = footnote_processor.replace_all_notes_references(
                 subrule.rule_text_processed
             )
-            subrule.alt_rule_text_processed = self._replace_all_notes_references(
+            subrule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
                 subrule.alt_rule_text_processed
             )
 
     def process_footnotes(self, rules, notes):
-        self.found_note_ids = []
+        footnote_processor = FootnoteReferenceProcessor()
 
         for rule in rules:
-            self._process_rule_references(rule)
+            self._process_rule_references(rule, footnote_processor)
 
-        self.found_note_ids = unique_maintain_order(self.found_note_ids)
+        found_note_ids = unique_maintain_order(footnote_processor.found_note_ids)
 
         notes_by_id = {note.identifier: note for note in notes}
 
-        filtered_notes = [notes_by_id[note_id] for note_id in self.found_note_ids]
+        filtered_notes = [notes_by_id[note_id] for note_id in found_note_ids]
 
         return filtered_notes
 
