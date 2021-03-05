@@ -45,10 +45,22 @@
             </tbody>
         </table>
         {% if data_dict.footnotes %}
-            <h4 class="govuk-heading-s">Notes</h4>
+            <h4 class="govuk-heading-s govuk-!-margin-top-4">Notes</h4>
             {% for note in data_dict.footnotes %}
-                <p class="govuk-body">{{ note.number }}) {{ note.note }}</p>
+                <p class="govuk-body govuk-!-font-size-16">{{ note.number }}) {{ note.note }}</p>
             {% endfor %}
+        {% endif %}
+        {% if data_dict.introductory_notes %}
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text govuk-!-font-size-16">
+                        Introductory notes
+                    </span>
+                </summary>
+                <div class="govuk-details__text govuk-!-padding-bottom-0 govuk-!-font-size-16">
+                    {{ data_dict.introductory_notes.note|safe }}
+                </div>
+            </details>
         {% endif %}
     {% endfor %}
 </div>
