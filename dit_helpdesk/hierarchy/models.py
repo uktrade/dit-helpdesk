@@ -20,6 +20,8 @@ from rules_of_origin.models import (
     Rule,
     RulesDocumentFootnote,
 )
+from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
+from rules_of_origin.exceptions import RulesOfOriginException
 from trade_tariff_service.tts_api import (
     ChapterJson,
     HeadingJson,
@@ -85,44 +87,6 @@ class TreeSelectorMixin:
         super().save()
 
 
-class FootnoteReferenceProcessor:
-    """Used to keep state of encountered notes references in multiple rule texts."""
-
-    NOTE_REFERENCE_REGEX = re.compile(r"\[[A-Za-z0-9]+\]")
-
-    def __init__(self):
-        self.found_note_ids = []
-        self.unique_note_ids = set()
-        self.note_number_by_id = {}
-
-    def _replace_note_reference(self, ref_match):
-        ref = ref_match.group()
-        ref_id = ref.strip('[]')
-
-        self.found_note_ids.append(ref_id)
-        self.unique_note_ids.add(ref_id)
-
-        # each newly encountered note reference gets an n+1 number, but if we've seen it before
-        # we fetch the note reference number like it was when it was seen for the first time
-        # e.g. [A] [B] [C] [B] would result in numbering of: A=1, B=2, C=3, so after replacing:
-        # [1] [2] [3] [2]
-        if ref_id not in self.note_number_by_id:
-            self.note_number_by_id[ref_id] = len(self.unique_note_ids)
-
-        note_number = self.note_number_by_id[ref_id]
-
-        return f"<sup>{note_number})</sup>"
-
-    def replace_all_notes_references(self, text):
-        if not text:
-            return text
-
-        text_replaced = self.NOTE_REFERENCE_REGEX.sub(
-            self._replace_note_reference, text
-        )
-        return text_replaced
-
-
 class RulesOfOriginMixin:
 
     def get_chapter(self):
@@ -165,8 +129,11 @@ class RulesOfOriginMixin:
 
         filtered_notes = [notes_by_id[note_id] for note_id in found_note_ids]
 
-        for note_id in found_note_ids:
-            notes_by_id[note_id].number = footnote_processor.note_number_by_id[note_id]
+        for note in filtered_notes:
+            note_id = note.identifier
+            note.number = footnote_processor.note_number_by_id[note_id]
+            note.note = footnote_processor.replace_all_introductory_notes_references(
+                note.note)
 
         return filtered_notes
 
@@ -233,11 +200,25 @@ class RulesOfOriginMixin:
             rules = [r for r in rules if not r.is_exclusion]
 
         footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__countries=country,
+            rules_document__countries=country, rules_document__nomenclature_tree=tree,
         ).order_by("id")
         relevant_footnotes = self.process_footnotes(rules, footnotes)
 
-        rules_of_origin = {"rules": rules, "footnotes": relevant_footnotes}
+        try:
+            introductory_notes = RulesDocumentFootnote.objects.get(
+                rules_document__countries=country,
+                rules_document__nomenclature_tree=tree,
+                identifier="COMM",
+            )
+        except RulesDocumentFootnote.DoesNotExist:
+            introductory_notes = None
+            logger.error("Could not find introductory notes for %s", country)
+
+        rules_of_origin = {
+            "rules": rules,
+            "footnotes": relevant_footnotes,
+            "introductory_notes": introductory_notes,
+        }
 
         roo_data = {}
 
