@@ -20,6 +20,8 @@ from rules_of_origin.models import (
     Rule,
     RulesDocumentFootnote,
 )
+from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
+from rules_of_origin.exceptions import RulesOfOriginException
 from trade_tariff_service.tts_api import (
     ChapterJson,
     HeadingJson,
@@ -87,15 +89,61 @@ class TreeSelectorMixin:
 
 class RulesOfOriginMixin:
 
-    def get_chapter():
+    def get_chapter(self):
         raise NotImplementedError()
+
+    def _process_rule_references(self, rule, footnote_processor):
+        """Rule text may contain references to footnotes. Extract them from rule text.
+
+        The Rule object is not saved - the changes are only persisted in memory because the same
+        rule may be reused for different commodity objects and the order of notes (and their
+        numbering) may change for these objects. So it's necessary to recalculate on the fly and
+        not persist the result - the in-memory version is used for rendering from current view
+        though.
+        """
+
+        rule.rule_text_processed = footnote_processor.replace_all_notes_references(
+            rule.rule_text_processed)
+
+        rule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
+            rule.alt_rule_text_processed
+        )
+
+        for subrule in rule.subrules.all():
+            subrule.rule_text_processed = footnote_processor.replace_all_notes_references(
+                subrule.rule_text_processed
+            )
+            subrule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
+                subrule.alt_rule_text_processed
+            )
+
+    def process_footnotes(self, rules, notes):
+        footnote_processor = FootnoteReferenceProcessor()
+
+        for rule in rules:
+            self._process_rule_references(rule, footnote_processor)
+
+        found_note_ids = unique_maintain_order(footnote_processor.found_note_ids)
+
+        notes_by_id = {note.identifier: note for note in notes}
+
+        filtered_notes = [notes_by_id[note_id] for note_id in found_note_ids]
+
+        for note in filtered_notes:
+            note_id = note.identifier
+            note.number = footnote_processor.note_number_by_id[note_id]
+            note.note = footnote_processor.replace_all_introductory_notes_references(
+                note.note)
+
+        return filtered_notes
 
     def get_rules_of_origin(self, country_code, starting_before=None):
         """
-        Returns a dictionary of related rules of origin instances related to the commodity and filtered by the
-        country code parameter.
-        the dictionary has two keys one for the list of rules and one for the related footnotes
+        Returns a dictionary of rules of origin instances related to the commodity and filtered
+        by the country code parameter.
+        the dictionary has two keys - one for the list of rules and one for the related footnotes
         :param country_code: string
+        :param starting_before: datetime
         :return: dictionary
         """
 
@@ -152,9 +200,25 @@ class RulesOfOriginMixin:
             rules = [r for r in rules if not r.is_exclusion]
 
         footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__countries=country,
+            rules_document__countries=country, rules_document__nomenclature_tree=tree,
         ).order_by("id")
-        rules_of_origin = {"rules": rules, "footnotes": footnotes}
+        relevant_footnotes = self.process_footnotes(rules, footnotes)
+
+        try:
+            introductory_notes = RulesDocumentFootnote.objects.get(
+                rules_document__countries=country,
+                rules_document__nomenclature_tree=tree,
+                identifier="COMM",
+            )
+        except RulesDocumentFootnote.DoesNotExist:
+            introductory_notes = None
+            logger.error("Could not find introductory notes for %s", country)
+
+        rules_of_origin = {
+            "rules": rules,
+            "footnotes": relevant_footnotes,
+            "introductory_notes": introductory_notes,
+        }
 
         roo_data = {}
 

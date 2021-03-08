@@ -103,7 +103,7 @@ def _determine_range_models(hs_type, hs_from):
         return [Chapter]
     elif hs_type == 'PO':
         if len(hs_from) == 4:
-            return [Heading]
+            return [Heading, SubHeading]
         elif len(hs_from) == 6:
             return [SubHeading, Commodity]
 
