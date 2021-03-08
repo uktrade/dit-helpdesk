@@ -210,8 +210,9 @@ class RulesOfOriginMixin:
                 rules_document__nomenclature_tree=tree,
                 identifier="COMM",
             )
-        except RulesDocumentFootnote.DoesNotExist as e:
-            raise RulesOfOriginException(f"Could not find introductory notes for {country}") from e
+        except RulesDocumentFootnote.DoesNotExist:
+            introductory_notes = None
+            logger.error("Could not find introductory notes for %s", country)
 
         rules_of_origin = {
             "rules": rules,
