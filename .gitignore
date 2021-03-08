@@ -130,5 +130,5 @@ docker-compose.env
 .DS_Store
 
 # exclude everything
-reports/*
-!reports/.gitkeep
+test-reports/*
+!test-reports/.gitkeep

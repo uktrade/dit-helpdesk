@@ -4,7 +4,8 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import dj_database_url
-import ecs_logging
+
+from core.logging import UserLogFormatter
 
 from .env import env
 
@@ -68,6 +69,8 @@ INSTALLED_APPS = [
     "accessibility",
     "reversion",
     "django_migration_linter",
+    "polymorphic",
+    "deferred_changes",
 ]
 
 MIDDLEWARE = [
@@ -270,10 +273,13 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'ecs_formatter': {
-            '()': ecs_logging.StdlibFormatter,
+            '()': UserLogFormatter,
 
-            # Kibana mapping expects a different type (long) to what is sent by the library (object)
-            'exclude_fields': ['process'],
+            # Kibana mapping expects different types to what is sent by the library
+            'exclude_fields': [
+                'process',  # expects (long) but sends (object)
+                'service',  # expects (string) but sends (object)
+            ],
         },
         'console_formatter': {
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',

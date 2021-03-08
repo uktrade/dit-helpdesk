@@ -1,14 +1,15 @@
+import logging
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 
 from commodities.models import Commodity
 from hierarchy.models import (
-    NomenclatureTree,
     Chapter,
     Heading,
     SubHeading,
@@ -29,12 +30,17 @@ from .forms import (
     HeadingAddSearchForm,
     HeadingRemoveForm,
     RegulationForm,
+    RegulationGroupForm,
     RegulationRemoveForm,
     RegulationSearchForm,
     SubHeadingAddForm,
     SubHeadingAddSearchForm,
     SubHeadingRemoveForm,
 )
+from .models import Approval
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseCMSMixin(object):
@@ -42,6 +48,13 @@ class BaseCMSMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["pending_approvals_count"] = Approval.objects.pending().count()
+
+        return ctx
 
 
 class CMSView(BaseCMSMixin, View):
@@ -84,25 +97,20 @@ class RegulationGroupsListView(BaseCMSMixin, ListView):
 
 
 class RegulationGroupCreateView(BaseCMSMixin, CreateView):
-    fields = ["title"]
-    model = RegulationGroup
+    form_class = RegulationGroupForm
     template_name = "cms/regulations/regulationgroup_create.html"
 
-    def get_success_url(self):
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": self.object.pk,
-            },
+    def form_valid(self, form):
+        deferred_create = form.defer_create()
+        regulation_group_title = form.cleaned_data["title"]
+
+        approval = Approval.objects.create(
+            created_by=self.request.user,
+            deferred_change=deferred_create,
+            description=f'Create regulation group "{regulation_group_title}"',
         )
 
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        return_value = super().form_valid(form)
-        self.object.nomenclature_trees.add(NomenclatureTree.get_active_tree())
-        self.object.save()
-
-        return return_value
+        return redirect("cms:approval-detail", pk=approval.pk)
 
 
 class BaseRegulationGroupDetailView(BaseCMSMixin, DetailView):
@@ -159,21 +167,26 @@ class BaseAddView(BaseRegulationGroupDetailView):
     def get_add_form(self):
         return self.add_form_class(self.request.POST, instance=self.get_object())
 
+    def get_approval_description(self):
+        raise NotImplementedError("`get_approval_description` needs to be implemented.")
+
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
 
         add_form = self.get_add_form()
         if add_form.is_valid():
-            add_form.save()
+            deferred_update = add_form.defer_update()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_update,
+                description=self.get_approval_description(),
+            )
 
-            return redirect(self.get_success_url())
+            return redirect("cms:approval-detail", pk=approval.pk)
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
         return self.render_to_response(ctx)
-
-    def get_success_url(self):
-        raise NotImplementedError("`get_success_url` needs to be implemented.")
 
     def get_search_results(self, search_form):
         raise NotImplementedError("`get_search_results` needs to be implemented.")
@@ -194,17 +207,22 @@ class BaseRemoveView(BaseRegulationGroupDetailView):
     def get_remove_form(self):
         raise NotImplementedError("`get_remove_form` needs to be implemented.")
 
-    def get_success_url(self):
-        raise NotImplementedError("`get_success_url` needs to be implemented.")
+    def get_approval_description(self, remove_form):
+        raise NotImplementedError("`get_approval_description` needs to be implemented.")
 
     def post(self, request, *args, **kwargs):
         regulation_group = self.get_object()
 
-        remove_form = self.get_remove_form()
+        remove_form = self.get_remove_form(request.POST)
         if remove_form.is_valid():
-            remove_form.save()
+            deferred_update = remove_form.defer_update()
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_update,
+                description=self.get_approval_description(remove_form),
+            )
 
-            return redirect(self.get_success_url())
+            return redirect("cms:approval-detail", pk=approval.pk)
 
         self.object = regulation_group
         ctx = self.get_context_data(object=self.object)
@@ -225,7 +243,11 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
 
         if not regulation_form:
             regulation_form_class = self.get_regulation_form_class()
-            regulation_form = regulation_form_class(self.get_object())
+            regulation_form = regulation_form_class(
+                initial={
+                    "regulation_group": self.get_object(),
+                },
+            )
         ctx["regulation_form"] = regulation_form
 
         return ctx
@@ -234,16 +256,21 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         return RegulationForm
 
     def post(self, request, *args, **kwargs):
-        regulation_group = self.get_object()
-
         regulation_form_class = self.get_regulation_form_class()
-        regulation_form = regulation_form_class(regulation_group, request.POST)
+        regulation_form = regulation_form_class(request.POST)
         if regulation_form.is_valid():
-            regulation = regulation_form.save()
-            regulation.nomenclature_trees.add(NomenclatureTree.get_active_tree())
+            deferred_create = regulation_form.defer_create()
+            regulation_title = regulation_form.cleaned_data["title"]
+            regulation_group_title = regulation_form.cleaned_data["regulation_group"].title
+
+            approval = Approval.objects.create(
+                created_by=self.request.user,
+                deferred_change=deferred_create,
+                description=f'Add regulation "{regulation_title}" to "{regulation_group_title}"',
+            )
             return redirect(
-                "cms:regulation-group-detail",
-                pk=regulation_group.pk,
+                "cms:approval-detail",
+                pk=approval.pk,
             )
 
         self.object = self.get_object()
@@ -259,22 +286,18 @@ class RegulationGroupRegulationRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Regulation.objects.get(pk=self.kwargs["regulation_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return RegulationRemoveForm(
-            self.request.POST,
+            data,
+            initial={"regulation": self.get_object_to_remove()},
             instance=self.get_object(),
-            regulation=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        regulation = remove_form.cleaned_data["regulation"]
 
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation.title}" from "{regulation_group.title}"'
 
 
 class RegulationGroupChapterListView(BaseRegulationGroupDetailView):
@@ -288,15 +311,10 @@ class RegulationGroupChapterAddView(BaseAddView):
     search_form_class = ChapterAddSearchForm
     add_form_class = ChapterAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': regulation_group.pk,
-            },
-        )
+        return f'Link chapters to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         chapter_codes = search_form.cleaned_data["chapter_codes"]
@@ -313,22 +331,18 @@ class RegulationGroupChapterRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Chapter.objects.get(pk=self.kwargs["chapter_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return ChapterRemoveForm(
-            self.request.POST,
+            data,
+            initial={"chapter": self.get_object_to_remove()},
             instance=self.get_object(),
-            chapter=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        chapter = remove_form.cleaned_data["chapter"]
 
-        return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}" from "{chapter.title}"'
 
 
 class RegulationGroupHeadingListView(BaseRegulationGroupDetailView):
@@ -342,15 +356,10 @@ class RegulationGroupHeadingAddView(BaseAddView):
     search_form_class = HeadingAddSearchForm
     add_form_class = HeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link headings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         heading_codes = search_form.cleaned_data["heading_codes"]
@@ -367,22 +376,18 @@ class RegulationGroupHeadingRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Heading.objects.get(pk=self.kwargs["heading_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return HeadingRemoveForm(
-            self.request.POST,
+            data,
+            initial={"heading": self.get_object_to_remove()},
             instance=self.get_object(),
-            heading=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        heading = remove_form.cleaned_data["heading"]
 
-        return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}" from "{heading.description}"'
 
 
 class RegulationGroupSubHeadingListView(BaseRegulationGroupDetailView):
@@ -396,15 +401,10 @@ class RegulationGroupSubHeadingAddView(BaseAddView):
     search_form_class = SubHeadingAddSearchForm
     add_form_class = SubHeadingAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link subheadings to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         subheading_codes = search_form.cleaned_data["subheading_codes"]
@@ -421,22 +421,18 @@ class RegulationGroupSubHeadingRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return SubHeading.objects.get(pk=self.kwargs["subheading_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return SubHeadingRemoveForm(
-            self.request.POST,
+            data,
+            initial={"subheading": self.get_object_to_remove()},
             instance=self.get_object(),
-            subheading=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        subheading = remove_form.cleaned_data["subheading"]
 
-        return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}" from "{subheading.description}"'
 
 
 class RegulationGroupCommodityListView(BaseRegulationGroupDetailView):
@@ -450,15 +446,10 @@ class RegulationGroupCommodityAddView(BaseAddView):
     search_form_class = CommodityAddSearchForm
     add_form_class = CommodityAddForm
 
-    def get_success_url(self):
+    def get_approval_description(self):
         regulation_group = self.get_object()
 
-        return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Link commodities to "{regulation_group.title}"'
 
     def get_search_results(self, search_form):
         commodity_codes = search_form.cleaned_data["commodity_codes"]
@@ -475,19 +466,48 @@ class RegulationGroupCommodityRemoveView(BaseRemoveView):
     def get_object_to_remove(self):
         return Commodity.objects.get(pk=self.kwargs["commodity_pk"])
 
-    def get_remove_form(self):
+    def get_remove_form(self, data=None):
         return CommodityRemoveForm(
-            self.request.POST,
+            data,
+            initial={"commodity": self.get_object_to_remove()},
             instance=self.get_object(),
-            commodity=self.get_object_to_remove(),
         )
 
-    def get_success_url(self):
+    def get_approval_description(self, remove_form):
         regulation_group = self.get_object()
+        commodity = remove_form.cleaned_data["commodity"]
 
-        return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
-        )
+        return f'Remove "{regulation_group.title}"" from "{commodity.description}"'
+
+
+class PendingApprovalListView(BaseCMSMixin, ListView):
+    context_object_name = "pending_approvals"
+    model = Approval
+    queryset = Approval.objects.pending()
+    template_name = "cms/approvals/approval_list.html"
+
+
+class ApprovalDetailView(BaseCMSMixin, DetailView):
+    model = Approval
+    template_name = "cms/approvals/approval_detail.html"
+
+    def post(self, request, *args, **kwargs):
+        approval = self.get_object()
+
+        if not approval.can_approve(self.request.user):
+            raise PermissionDenied
+
+        form, _ = approval.approve(request.user)
+
+        return HttpResponseRedirect(form.get_post_approval_url())
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        approval = self.get_object()
+        ctx["form"] = approval.get_bound_form()
+        ctx["is_approved"] = approval.approved
+        ctx["can_approve"] = approval.can_approve(self.request.user)
+        ctx["approval_url"] = self.request.build_absolute_uri()
+
+        return ctx

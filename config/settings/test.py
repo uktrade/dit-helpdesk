@@ -69,7 +69,7 @@ NOSE_ARGS = [
     "--with-spec",
     "--spec-color",
     "--with-xunit",
-    "--xunit-file=%s/unittests.xml" % TEST_OUTPUT_DIR,
+    "--xunit-file=%s/unit_tests/report.xml" % TEST_OUTPUT_DIR,
 ]
 
 # Disable Django's logging setup
@@ -139,7 +139,10 @@ ELASTICSEARCH_DSL = {"default": {"hosts": ES_URL}}
 
 SITE_READ_ONLY = False
 
-INSTALLED_APPS += ["cms"]
+INSTALLED_APPS += [
+    "cms",
+    "deferred_changes.tests.apps.DeferredChangesTestsConfig",
+]
 
 TRADE_TARIFF_CONFIG = {
     "UK": {
