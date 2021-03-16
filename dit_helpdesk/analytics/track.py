@@ -18,7 +18,7 @@ API_VERSION = "1"
 GOOGLE_ANALYTICS_ENDPOINT = "http://www.google-analytics.com/collect"
 
 
-def track_event(request, category, action, label=None, value=None):
+def build_tracking_data(request, additional_data):
     data = {
         "v": API_VERSION,  # API Version.
         "tid": settings.HELPDESK_GA_UA,  # Tracking aID / Property ID.
@@ -30,21 +30,46 @@ def track_event(request, category, action, label=None, value=None):
         "dr": request.META.get("HTTP_REFERER"),  # Document referrer
         "dl": request.build_absolute_uri(),  # Document location URL
 
-        "t": "event",  # Event hit type.
-        "ec": category,  # Event category.
-        "ea": action,  # Event action.
+        **additional_data,
     }
 
-    if label:
-        data["el"] = label
+    return data
 
-    if value:
-        data["ev"] = value
 
+def send_tracking_data(tracking_data):
     if not settings.TRACK_GA_EVENTS:
         return
 
-    return requests.post(
+    response = requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
-        data=data,
+        data=tracking_data,
     )
+
+    return response
+
+
+def track_event(request, category, action, label=None, value=None):
+    event_data = {
+        "t": "event",
+        "ec": category,
+        "ea": action,
+    }
+    if label:
+        event_data["el"] = label
+
+    if value:
+        event_data["ev"] = value
+
+    data = build_tracking_data(request, event_data)
+
+    return send_tracking_data(data)
+
+
+def track_page_view(request):
+    page_view_data = {
+        "t": "pageview",
+    }
+
+    data = build_tracking_data(request, page_view_data)
+
+    return send_tracking_data(data)

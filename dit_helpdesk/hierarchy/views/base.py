@@ -4,7 +4,6 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
-from analytics.track import track_event
 from countries.models import Country
 
 from ..helpers import get_eu_commodity_link, TABLE_COLUMN_TITLES
@@ -62,23 +61,7 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         except Redirect as r:
             return r.redirect_to
 
-        self.track_page_view(request)
-
         return super().get(request, *args, **kwargs)
-
-    def get_tracking_action(self):
-        country_code = self.country.country_code.lower()
-
-        return f"{self.context_object_name} ({country_code})"
-
-    def track_page_view(self, request):
-        track_event(
-            request,
-            "page view",
-            self.get_tracking_action(),
-            label=self.commodity_object.commodity_code,
-            value=self.commodity_object.get_depth(),
-        )
 
     def get_commodity_object_path(self, commodity_object):
         raise NotImplementedError("Implement `get_commodity_object_path`")

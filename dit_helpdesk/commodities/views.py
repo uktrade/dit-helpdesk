@@ -105,9 +105,6 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
         if eu_commodity_object.should_update_tts_content():
             eu_commodity_object.update_tts_content()
 
-    def get_tracking_action(self):
-        return f"NI {super().get_tracking_action()}"
-
 
 class MeasureConditionDetailView(BaseMeasureConditionDetailView):
     model = Commodity

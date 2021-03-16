@@ -87,6 +87,7 @@ MIDDLEWARE = [
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
     "csp.middleware.CSPMiddleware",
+    "analytics.middleware.page_view_tracking_middleware",
 ]
 
 ROOT_URLCONF = "config.urls"

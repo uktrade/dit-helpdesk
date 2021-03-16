@@ -350,13 +350,6 @@ class GroupedCommoditySearchView(FormView):
                 error_data = form.errors.as_data()
                 context["form_q_validation_message"] = error_data["q"][0]
 
-            track_event(
-                request,
-                "page view",
-                "country goods search",
-                label=country_code,
-            )
-
             return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):

@@ -4,8 +4,6 @@ from django.shortcuts import redirect
 from django.views import View
 from django.views.generic.base import TemplateView
 
-from analytics.track import track_event
-
 from .models import Country
 
 
@@ -37,8 +35,6 @@ class ChooseCountryView(TemplateView):
             errorSummaryMessage = "Enter a country or territory"
             context["errorSummaryMessage"] = errorSummaryMessage
             context["errorInputMessage"] = errorSummaryMessage
-
-        track_event(request, "page view", "country chooser")
 
         return self.render_to_response(context)
 
@@ -93,13 +89,6 @@ class CountryInformationView(TemplateView):
 
         self.country = country
         self.country_code = country.country_code
-
-        track_event(
-            request,
-            "page view",
-            "country information",
-            label=country.country_code.lower(),
-        )
 
         return super().get(request, *args, **kwargs)
 

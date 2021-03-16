@@ -184,9 +184,6 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
         if eu_commodity_object.should_update_tts_content():
             eu_commodity_object.update_tts_content()
 
-    def get_tracking_action(self):
-        return f"NI {super().get_tracking_action()}"
-
 
 class BaseSectionedSubHeadingDetailView(BaseSectionedCommodityObjectDetailView):
     context_object_name = "subheading"
@@ -245,9 +242,6 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
 
         if eu_commodity_object.should_update_tts_content():
             eu_commodity_object.update_tts_content()
-
-    def get_tracking_action(self):
-        return f"NI {super().get_tracking_action()}"
 
 
 class MeasureConditionDetailView(BaseMeasureConditionDetailView):
