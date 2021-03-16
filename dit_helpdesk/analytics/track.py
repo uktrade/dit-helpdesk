@@ -18,11 +18,18 @@ API_VERSION = "1"
 GOOGLE_ANALYTICS_ENDPOINT = "http://www.google-analytics.com/collect"
 
 
-def track_event(category, action, label=None, value=None):
+def track_event(request, category, action, label=None, value=None):
     data = {
         "v": API_VERSION,  # API Version.
         "tid": settings.HELPDESK_GA_UA,  # Tracking aID / Property ID.
-        "cid": str(uuid.uuid4()),
+        "uid": str(uuid.uuid4()),
+
+        "uip": request.META.get("REMOTE_ADDR"),  # User ip override
+        "aip": "1",  # Anonymise user ip
+        "ua": request.META.get("HTTP_USER_AGENT"),  # User agent override
+        "dr": request.META.get("HTTP_REFERER"),  # Document referrer
+        "dl": request.build_absolute_uri(),  # Document location URL
+
         "t": "event",  # Event hit type.
         "ec": category,  # Event category.
         "ea": action,  # Event action.
@@ -34,16 +41,10 @@ def track_event(category, action, label=None, value=None):
     if value:
         data["ev"] = value
 
-    logger.info("Sending analytics event %s", data)
-
     if not settings.TRACK_GA_EVENTS:
         return
 
     return requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
-        params=data,
-        # if a custom user agent isn't set then we get no events coming through
-        # on GA as it seems to filter out those sent by requests (requests sets
-        # its own user agent if you don't specify one)
-        headers={"User-Agent": "TWUK analytics"},
+        data=data,
     )

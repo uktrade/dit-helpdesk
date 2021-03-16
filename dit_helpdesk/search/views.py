@@ -149,6 +149,7 @@ class CommoditySearchView(FormView):
                     })
 
                 track_event(
+                    request,
                     "search",
                     f"products results ({country_code})",
                     label=search_term,
@@ -325,6 +326,7 @@ class GroupedCommoditySearchView(FormView):
                     })
 
                 track_event(
+                    request,
                     "search",
                     f"product types results ({country_code})",
                     label=search_term,
@@ -333,6 +335,7 @@ class GroupedCommoditySearchView(FormView):
 
                 if not total_results:
                     track_event(
+                        request,
                         "search",
                         f"product types no results ({country_code})",
                         label=search_term,
@@ -348,6 +351,7 @@ class GroupedCommoditySearchView(FormView):
                 context["form_q_validation_message"] = error_data["q"][0]
 
             track_event(
+                request,
                 "page view",
                 "country goods search",
                 label=country_code,

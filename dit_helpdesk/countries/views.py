@@ -38,7 +38,7 @@ class ChooseCountryView(TemplateView):
             context["errorSummaryMessage"] = errorSummaryMessage
             context["errorInputMessage"] = errorSummaryMessage
 
-        track_event("page view", "country chooser")
+        track_event(request, "page view", "country chooser")
 
         return self.render_to_response(context)
 
@@ -95,6 +95,7 @@ class CountryInformationView(TemplateView):
         self.country_code = country.country_code
 
         track_event(
+            request,
             "page view",
             "country information",
             label=country.country_code.lower(),

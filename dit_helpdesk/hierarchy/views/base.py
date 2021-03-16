@@ -62,7 +62,7 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         except Redirect as r:
             return r.redirect_to
 
-        self.track_page_view()
+        self.track_page_view(request)
 
         return super().get(request, *args, **kwargs)
 
@@ -71,8 +71,9 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
 
         return f"{self.context_object_name} ({country_code})"
 
-    def track_page_view(self):
+    def track_page_view(self, request):
         track_event(
+            request,
             "page view",
             self.get_tracking_action(),
             label=self.commodity_object.commodity_code,
