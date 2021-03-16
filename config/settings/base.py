@@ -409,7 +409,7 @@ HMRC_TAX_FORM_URL = env.str("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = env.str("HELPDESK_GA_GTM")
 HELPDESK_GA_UA = env.str("HELPDESK_GA_UA")
-TRACK_GA_EVENTS = env.bool("TRACK_GA_EVENTS", True)
+TRACK_GA_EVENTS = env.bool("TRACK_GA_EVENTS", False)
 
 QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
 
