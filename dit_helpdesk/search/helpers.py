@@ -21,11 +21,14 @@ from hierarchy.models import (
 )
 from hierarchy.views import _commodity_code_html
 
-from search.documents.section import INDEX as section_index
-from search.documents.chapter import INDEX as chapter_index
-from search.documents.heading import INDEX as heading_index
-from search.documents.subheading import INDEX as sub_heading_index
-from search.documents.commodity import INDEX as commodity_index
+from search.documents.section import INDEX as section_index, alias_pattern as section_pattern
+from search.documents.chapter import INDEX as chapter_index, alias_pattern as chapter_pattern
+from search.documents.heading import INDEX as heading_index, alias_pattern as heading_pattern
+from search.documents.subheading import (
+    INDEX as sub_heading_index,
+    alias_pattern as subheading_pattern
+)
+from search.documents.commodity import INDEX as commodity_index, alias_pattern as commodity_pattern
 
 
 logger = logging.getLogger(__name__)
@@ -34,6 +37,12 @@ logger.setLevel(logging.INFO)
 
 indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
 alias_names = [idx._name for idx in indices]
+alias_patterns = (
+    section_pattern, chapter_pattern, heading_pattern, subheading_pattern, commodity_pattern)
+
+
+def get_aliases_by_region(region=settings.PRIMARY_REGION):
+    return (pattern.format(region=region.lower()) for pattern in alias_patterns)
 
 
 class HierarchyIntegrityError(Exception):
@@ -55,7 +64,7 @@ def _build_search_request(query, sort_key, sort_order, filter_on_leaf=None):
 
     request = (
         Search()
-        .index(*alias_names)
+        .index(*get_aliases_by_region())
         .using(client)
         .query(query_object)
         .sort(sort_object)
@@ -89,11 +98,13 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
         commodity_code = hit["commodity_code"]
         score = hit.meta["score"]
 
-        index = get_alias_from_hit(hit)
-        if index == 'section':
+        alias = get_alias_from_hit(hit)
+        model_name = get_model_name_from_alias(alias)
+
+        if model_name == 'section':
             continue
 
-        if index == 'chapter':
+        if model_name == 'chapter':
             hits_by_chapter_heading[commodity_code] = defaultdict(list)
             chapter_scores[commodity_code] = score_strategy(chapter_scores[commodity_code], score)
             continue
@@ -119,7 +130,7 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
             heading_data = next(item for item in flattened_context if item["type"] == "heading")
             heading_code = heading_data["commodity_code"]
         except StopIteration as e:
-            if index == 'heading':
+            if model_name == 'heading':
                 heading_code = commodity_code
             else:
                 raise HierarchyIntegrityError(
@@ -151,8 +162,8 @@ def search_by_term(form_data=None, page_size=None):
     total = request.count()
     request = request[0:total]
 
-    hits = request[start:end].execute()
     all_hits = request[0:total].execute()
+    hits = all_hits[start:end]
 
     for hit in hits:
         try:
@@ -298,8 +309,21 @@ def get_alias_from_hit(hit: Hit) -> str:
     """The indexes are named (by our convention) in the form of {alias}-{datetime}.
     Given an ElasticSearch hit return the alias of index"""
 
-    alias = hit.meta["index"].split("-")[0]
+    index = hit.meta["index"]
+
+    alias_parts = index.split("-")[:-1]
+    if not alias_parts:
+        return index
+
+    alias = "-".join(alias_parts)
     return alias
+
+
+def get_model_name_from_alias(alias) -> str:
+    parts = alias.split("-")
+    model_name = parts[0]
+
+    return model_name
 
 
 INDEX_TO_MODEL_CLASS_MAP = {
@@ -317,7 +341,8 @@ class ObjectNotFoundFromHit(Exception):
 def get_object_from_hit(hit: Hit) -> Union[Chapter, Heading, SubHeading, Commodity]:
     """Returns the commodity object related to a hit."""
     alias = get_alias_from_hit(hit)
-    model_class = INDEX_TO_MODEL_CLASS_MAP[alias]
+    model_name = get_model_name_from_alias(alias)
+    model_class = INDEX_TO_MODEL_CLASS_MAP[model_name]
 
     try:
         model = model_class.objects.get(

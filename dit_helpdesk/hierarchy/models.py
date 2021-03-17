@@ -253,6 +253,24 @@ class NomenclatureTree(models.Model):
 
         return prev_tree
 
+    @classmethod
+    def get_regions(cls):
+        return NomenclatureTree.objects.distinct('region').values_list('region', flat=True)
+
+    @classmethod
+    def get_all_active_trees(cls):
+        active_trees = NomenclatureTree.objects.filter(
+            end_date__isnull=True,
+        )
+
+        return active_trees
+
+    @classmethod
+    def get_all_latest_trees(cls):
+        # a latest tree may not yet be active, as is happening during data load
+        qs = NomenclatureTree.objects.order_by('region', '-start_date').distinct('region')
+        return qs
+
     def get_tts_api_client(self):
         return get_json_obj_client(self.region)
 
