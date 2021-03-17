@@ -210,7 +210,7 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
                 "no_results": False,
             }
 
-            self.client.get(
+            response = self.client.get(
                 self.url,
                 data={
                     "q": "socks",
@@ -223,10 +223,11 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
             )
 
             mock_track_event.assert_called_once_with(
+                response.wsgi_request,
                 "search",
-                "results",
-                "socks",
-                10,
+                "products results (au)",
+                label="socks",
+                value=10,
             )
 
 

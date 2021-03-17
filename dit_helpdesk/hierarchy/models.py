@@ -365,6 +365,16 @@ class BaseHierarchyModel(models.Model):
 
         return chapter_path
 
+    def get_depth(self):
+        depth = 1
+
+        parent = self.get_parent()
+        while parent:
+            parent = parent.get_parent()
+            depth += 1
+
+        return depth
+
 
 class Section(BaseHierarchyModel, TreeSelectorMixin):
     """

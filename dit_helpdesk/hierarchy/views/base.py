@@ -118,6 +118,7 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
 
 
 class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
+    context_object_name = "commodity"
 
     @property
     def sections(self):

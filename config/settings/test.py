@@ -162,3 +162,5 @@ TRADE_TARIFF_CONFIG = {
         }
     }
 }
+
+TRACK_GA_EVENTS = False
