@@ -18,10 +18,10 @@ from countries.models import Country
 from hierarchy.clients import get_json_obj_client
 from rules_of_origin.models import (
     Rule,
+    RulesDocument,
     RulesDocumentFootnote,
 )
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
-from rules_of_origin.exceptions import RulesOfOriginException
 from trade_tariff_service.tts_api import (
     ChapterJson,
     HeadingJson,
@@ -147,6 +147,9 @@ class RulesOfOriginMixin:
         :return: dictionary
         """
 
+        if country_code == 'EU':
+            country_code = 'FR'     # pick one of the EU countries, the RoO are the same for all
+
         tree = NomenclatureTree.get_active_tree()
         country = Country.objects.get(country_code=country_code)
 
@@ -212,7 +215,11 @@ class RulesOfOriginMixin:
             )
         except RulesDocumentFootnote.DoesNotExist:
             introductory_notes = None
-            logger.error("Could not find introductory notes for %s", country)
+
+            roo_exist = RulesDocument.objects.filter(countries=country).exists()
+
+            if roo_exist:
+                logger.error("Could not find introductory notes for %s", country)
 
         rules_of_origin = {
             "rules": rules,
