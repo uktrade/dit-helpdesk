@@ -416,6 +416,10 @@ SUPPORTED_TRADE_SCENARIOS = (
     "GHANA",
     "ALBANIA",
     "MONTENEGRO",
+    "JORDAN",
+    "VIETNAM",
+    "GSP",
+    "GSP_WITH_EXCLUSIONS",
 )
 
 AGREEMENTS = [("JP", True), ("EU", True)]
