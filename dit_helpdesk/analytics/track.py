@@ -42,7 +42,7 @@ def send_tracking_data(tracking_data):
 
     response = requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
-        data=tracking_data,
+        params=tracking_data,
     )
 
     return response

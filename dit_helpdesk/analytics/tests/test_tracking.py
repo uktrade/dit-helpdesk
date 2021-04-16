@@ -18,7 +18,7 @@ FAKE_GA_ID = "ua-12345-1"
 
 
 def get_request_data(request):
-    return parse_qs(request.body)
+    return request.qs
 
 
 @override_settings(
