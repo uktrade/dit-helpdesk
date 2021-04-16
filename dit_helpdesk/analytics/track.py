@@ -14,15 +14,15 @@ logger = logging.getLogger(__name__)
 
 API_VERSION = "1"
 
-# Use "http://www.google-analytics.com/debug/collect" for testing.
-GOOGLE_ANALYTICS_ENDPOINT = "http://www.google-analytics.com/collect"
+# Use "https://www.google-analytics.com/debug/collect" for testing.
+GOOGLE_ANALYTICS_ENDPOINT = "https://www.google-analytics.com/collect"
 
 
 def build_tracking_data(request, additional_data):
     data = {
         "v": API_VERSION,  # API Version.
         "tid": settings.HELPDESK_GA_UA,  # Tracking aID / Property ID.
-        "uid": str(uuid.uuid4()),
+        "cid": str(uuid.uuid4()),  # This needs to be cid not uid or your events won't register in the behaviour section
 
         "uip": request.META.get("REMOTE_ADDR"),  # User ip override
         "aip": "1",  # Anonymise user ip
@@ -42,7 +42,7 @@ def send_tracking_data(tracking_data):
 
     response = requests.post(
         GOOGLE_ANALYTICS_ENDPOINT,
-        data=tracking_data,
+        params=tracking_data,
     )
 
     return response
