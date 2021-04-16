@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 API_VERSION = "1"
 
-# Use "http://www.google-analytics.com/debug/collect" for testing.
-GOOGLE_ANALYTICS_ENDPOINT = "http://www.google-analytics.com/collect"
+# Use "https://www.google-analytics.com/debug/collect" for testing.
+GOOGLE_ANALYTICS_ENDPOINT = "https://www.google-analytics.com/collect"
 
 
 def build_tracking_data(request, additional_data):
