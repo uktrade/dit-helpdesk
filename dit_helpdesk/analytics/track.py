@@ -22,7 +22,7 @@ def build_tracking_data(request, additional_data):
     data = {
         "v": API_VERSION,  # API Version.
         "tid": settings.HELPDESK_GA_UA,  # Tracking aID / Property ID.
-        "uid": str(uuid.uuid4()),
+        "cid": str(uuid.uuid4()),  # This needs to be cid not uid or your events won't register in the behaviour section
 
         "uip": request.META.get("REMOTE_ADDR"),  # User ip override
         "aip": "1",  # Anonymise user ip

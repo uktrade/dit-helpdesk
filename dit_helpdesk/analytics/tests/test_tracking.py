@@ -47,7 +47,7 @@ class TrackingTestCase(TestCase):
         common_data_params = {
             "v": [API_VERSION],
             "tid": [FAKE_GA_ID],
-            "uid": [str(mock_uuid_value)],
+            "cid": [str(mock_uuid_value)],
             "uip": ["127.0.0.1"],
             "aip": ["1"],
             "ua": ["user-agent-string"],
@@ -120,7 +120,7 @@ class TrackingTestCase(TestCase):
             {
                 "v": [API_VERSION],
                 "tid": [FAKE_GA_ID],
-                "uid": [str(mock_uuid_value)],
+                "cid": [str(mock_uuid_value)],
                 "uip": ["127.0.0.1"],
                 "aip": ["1"],
                 "ua": ["user-agent-string"],
@@ -147,7 +147,7 @@ class TrackingTestCase(TestCase):
             )
             request = m.request_history[i]
             data = get_request_data(request)
-            user_ids.append(data["uid"][0])
+            user_ids.append(data["cid"][0])
 
         self.assertEqual(
             len(user_ids),
@@ -161,7 +161,7 @@ class TrackingTestCase(TestCase):
             track_page_view(original_request)
             request = m.request_history[i]
             data = get_request_data(request)
-            user_ids.append(data["uid"][0])
+            user_ids.append(data["cid"][0])
 
         self.assertEqual(
             len(user_ids),
