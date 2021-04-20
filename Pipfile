@@ -93,6 +93,7 @@ boto3 = "*"
 django-flags = "*"
 django-csp = "*"
 django-polymorphic = "*"
+django-webpack-loader = "*"
 
 [requires]
 python_version = "3.6"

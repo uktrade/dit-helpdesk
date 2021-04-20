@@ -1,7 +1,12 @@
 {% extends 'core/base.html' %}
-{% load static %}
+
+{% load render_bundle from webpack_loader %}
 
 {% block title %}Select country{% endblock title %}
+
+{% block footer_additions %}
+    {% render_bundle 'location-autocomplete' %}
+{% endblock %}
 
 {% block content %}
 
@@ -70,7 +75,3 @@
     </div>
 
 {% endblock %}
-
-{% block footer_additions %}
-    <script src="{% static 'js/location-autocomplete.js' %}"></script>
-{% endblock footer_additions %}

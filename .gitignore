@@ -60,6 +60,7 @@ unittests.xml
 *.log
 local_settings.py
 db.sqlite3
+static_root/
 
 # Flask stuff:
 instance/
@@ -132,3 +133,6 @@ docker-compose.env
 # exclude everything
 test-reports/*
 !test-reports/.gitkeep
+
+webpack-stats.json
+/assets/webpack_bundles

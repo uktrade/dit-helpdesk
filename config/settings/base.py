@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "django_migration_linter",
     "polymorphic",
     "deferred_changes",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
@@ -176,15 +177,12 @@ USE_THOUSAND_SEPARATOR = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 
-STATIC_URL = "/assets/"
-STATICFILES_DIRS = [os.path.join(APPS_DIR, "static_collected")]
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets"),
+]
 
-STATIC_ROOT = os.path.join(
-    APPS_DIR, "static"
-)  # manage.py collectstatic will copy static files here
-
-MEDIA_ROOT = os.path.join(APPS_DIR, "media")
-MEDIA_URL = "/files/"
+STATIC_ROOT = "static_root"
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
