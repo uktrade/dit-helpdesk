@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js --mode development"
+    "build": "webpack --config webpack.config.js",
+    "clean": "rm -f ./assets/webpack_bundles/*",
+    "dev": "webpack --config webpack.config.js --watch --mode development",
+    "heroku-postbuild": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "accessible-autocomplete": "^2.0.3",
     "govuk-country-and-territory-autocomplete": "^1.0.1",
-    "govuk-frontend": "^3.9.1"
-  },
-  "devDependencies": {
+    "govuk-frontend": "^3.9.1",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.1",
     "file-loader": "^6.2.0",
