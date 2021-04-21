@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/uktrade/dit-helpdesk/issues"
   },
-  "homepage": "https://github.com/uktrade/dit-helpdesk#readme"
+  "homepage": "https://github.com/uktrade/dit-helpdesk#readme",
+  "engines": {
+    "node": "14.x"
+  }
 }

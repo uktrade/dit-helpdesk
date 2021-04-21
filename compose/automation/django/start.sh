@@ -14,11 +14,6 @@
 # from scratch again
 # ----------------- commands ----------------
 
-# ----------------- FRONTEND ----------------
-npm install
-npm run build
-# -------------------------------------------
-
 # ----------------- BACKEND -----------------
 python manage.py collectstatic --noinput
 python manage.py migrate
