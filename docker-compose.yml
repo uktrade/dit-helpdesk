@@ -22,6 +22,17 @@ services:
     command: ./start.sh
     stdin_open: true
     tty: true
+  webpack:
+    image: node:14
+    command:
+      bash -c "
+        npm set unsafe-perm true
+        && npm install
+        && npm run dev
+      "
+    volumes:
+      - .:/app
+    working_dir: /app
   postgres:
     image: postgres:10
     env_file:

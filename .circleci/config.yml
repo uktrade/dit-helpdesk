@@ -163,7 +163,7 @@ jobs:
       - run:
           name: Install system deps
           command:
-            sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev
+            sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -174,6 +174,10 @@ jobs:
           key: v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - ~/.local/share/virtualenvs/venv
+      - run:
+          name: Webpack build
+          command:
+            npm install && npm run build
       - run:
           name: Running tests
           command:
