@@ -6,7 +6,7 @@ products that they want to export to the UK.
 
 ## Requirements
  - Python 3
- - Node [Active LTS][1] version (Current Active version is v10)
+ - Node [Active LTS][1] version (Current Active version is v14)
  - Docker (if developing locally with docker)
 
  #### Optional. Only required for testing contact form submissions to zenddesk
@@ -104,8 +104,6 @@ To build and move all of the static assets:
 npm run build
 ```
 
-`npm run` will show a list of all of the commands available, including linting.
-
 #### set environment variables
 
 copy the two development environment variables files
@@ -135,7 +133,7 @@ all content, on subsequent runs it will on take a minute or so to be up and runn
 
 The initial run (this section) only needs to be done when building a new or fresh docker container. Once this section
 has been done and as long as the docker images are not destroyed, the only line that needs to be uncommented
-when running`docker-compose -f development.yml up` will be.
+when running `docker-compose -d up` will be.
 
 NOTE: On first setup if you don't have the [Directory Forms API](https://github.com/uktrade/directory-forms-api/blob/develop/README.md) docker environment running you may receive the error:
 
@@ -146,7 +144,7 @@ You can either run the docker environment for Directory Forms API, which will cr
 This section details manually running each command in turn to fuly import all content.
 
 NB: Alternatively, you can comment out `sleep infinity` and uncomment those that are commented, below, and the entire
-process should run automatically on `docker-compose -f development.yml up`, ending with a running application accessible
+process should run automatically on `docker-compose up -d`, ending with a running application accessible
 at http://localhost:8000/choose-country/
 
 ```
@@ -285,16 +283,10 @@ the rest of the commands should be commented out
 Starting the server again is the same command as installing:
 
 ```bash
-docker-compose -f development.yml up
+docker-compose up -d
 ```
 
 The site will be available at http://localhost:8000/choose-country/
-
-To trigger a build when any Sass is changed, run the following command in the root of the project folder in a
-`host machine` shell, not a `docker instance` shell:
-```bash
-npm run watch:styles
-```
 
 ### Running, then shelling in
 
