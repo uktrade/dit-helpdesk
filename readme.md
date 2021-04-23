@@ -122,7 +122,7 @@ Go here: [Vault][6] click `Generate new token` and make sure it has these scopes
 Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github
 as your login option.
 
-### pre-commit
+#### pre-commit
 
 Install pre-commit - a hook will execute Python and JS code formatters before
  commit
