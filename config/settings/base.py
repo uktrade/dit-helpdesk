@@ -88,7 +88,7 @@ MIDDLEWARE = [
     "core.middleware.AdminIpRestrictionMiddleware",
     "core.middleware.NoIndexMiddleware",
     "csp.middleware.CSPMiddleware",
-    "analytics.middleware.page_view_tracking_middleware",
+    "django_ga_measurement_protocol.middleware.page_view_tracking_middleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -407,7 +407,8 @@ HMRC_TAX_FORM_URL = env.str("HMRC_TAX_FORM_URL")
 
 HELPDESK_GA_GTM = env.str("HELPDESK_GA_GTM")
 HELPDESK_GA_UA = env.str("HELPDESK_GA_UA")
-TRACK_GA_EVENTS = env.bool("TRACK_GA_EVENTS", False)
+GA_MEASUREMENT_PROTOCOL_UA = HELPDESK_GA_UA
+GA_MEASUREMENT_PROTOCOL_TRACK_EVENTS = env.bool("TRACK_GA_EVENTS", False)
 
 QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
 

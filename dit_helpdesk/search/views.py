@@ -10,9 +10,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic.edit import FormView
 
+from django_ga_measurement_protocol.track import track_event
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 
-from analytics.track import track_event
 from countries.models import Country
 from hierarchy.models import Chapter, Heading
 from hierarchy.views import _commodity_code_html
