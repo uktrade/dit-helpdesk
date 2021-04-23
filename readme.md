@@ -122,6 +122,13 @@ Go here: [Vault][6] click `Generate new token` and make sure it has these scopes
 Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github
 as your login option.
 
+#### pre-commit
+
+Install pre-commit - a hook will execute Python and JS code formatters before
+ commit
+
+    $ pre-commit install
+
 #### Install for development with Docker
 
 Make sure that Docker is installed and running.
@@ -230,13 +237,11 @@ This should take approximately 10 to 15 minutes
 run the following command to import the Rules of origin documents
 
 ```
-python manage.py import_rules_of_origin --data_path "import"
+python manage.py import_rules_of_origin
+python manage.py postprocess_rules_of_origin
 ```
 
 This should take approximately a couple of minutes
-
-NB: see `Extracting Rules of Origin data from word documents ready for import` below to recreate reuls of origin data
-or add new rules
 
 ###### Documents and regulations
 The source data for this content should be in a json format.
@@ -325,18 +330,6 @@ and for database access the postgres service
 ```
 docker exec -it dit-helpdesk_postgres_1 /bin/bash
 ```
-
-### Extracting Rules of Origin data from word documents ready for import
-There is a management command for extracting data from word documents that may be supplied for new content,
-from time to time. First, place the new word documents in the `rules_of_origin/data/source`folder then run the
-`scrape_rules_of_origin_docx`data extraction command. The command will generate json files in the
-`rules_of_origin/import_folder`where the importer command will read them from.
-Be sure to archive any existing word files and/or json files should there be anyone clear the two folders.
-To extract data from word docx source content, run:
-```bash
-python dit_helpdesk/manage.py scrape_rules_of_origin_docx
-```
-This should take a couple of minutes per word document.
 
 ### Preparing the regulations content
 
@@ -589,43 +582,24 @@ This Cascades to tables:
 Each commodity has an associated list of rules of origin data which we need to generate from source dcouments
 and import into the database.
 
-#### Generating Rules of Origin Data
-
-New rules of origin documents get placed in the directory `rules_of_origin/data/source`
-
-To process all rules of origin documents use:
-
-```bash
-python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path source
-```
-
-To import an individual rules of origin data file use:
-
-```bash
-python dit_helpdesk/manage.py scrape_rules_of_origin_docx --data_path "source/Chile ROO v2.docx"
-```
-
-The main python class used by this command can be found in the python module `rules_of_origin/ms_word_docx_scraper.py`
-
-
 #### Importing Rules of Origin Data
 
-
-Rules of origin data generated for import get placed in the directory `rules_of_origin/data/import`
-
+Rules of Origin data is imported from an S3 bucket with credentials stored in
+ environment variables.
 To import all rules of origin data files use:
 
 ```bash
-python dit_helpdesk/manage.py import_rules_of_origin --data_path import
+python dit_helpdesk/manage.py import_rules_of_origin
 ```
 
-To import an individual rules of origin data file use:
+RoO data has to be processed to detect abbreviations/HS codes in rule
+ descriptions, so that modal links can be generated.
 
 ```bash
-python dit_helpdesk/manage.py import_rules_of_origin --data_path "import/CHILE ROO V2.json"
+python dit_helpdesk/manage.py postprocess_rules_of_origin
 ```
 
-The main python class used by this command can be found in the python module `rules_of_origin/importer.py`
+The python code used by this command can be found in the app `rules_of_origin`
 
 #### Clearing the Data from the Database
 
