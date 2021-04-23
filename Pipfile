@@ -94,6 +94,7 @@ django-flags = "*"
 django-csp = "*"
 django-polymorphic = "*"
 django-webpack-loader = "*"
+django-ga-measurement-protocol = "*"
 
 [requires]
 python_version = "3.6"
