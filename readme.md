@@ -3,16 +3,17 @@
 This service is used to help people find the correct Harmonised System (HS) code, duties, rules of origin etc for the
 products that they want to export to the UK.
 
-
 ## Requirements
- - Python 3
- - Node [Active LTS][1] version (Current Active version is v14)
- - Docker (if developing locally with docker)
 
- #### Optional. Only required for testing contact form submissions to zenddesk
- - Directory Forms API (https://github.com/uktrade/directory-forms-api)
-    - redis (installed locally)
-    - postgres (installed locally)
+- Python 3
+- Node [Active LTS][1] version (Current Active version is v14)
+- Docker (if developing locally with docker)
+
+#### Optional. Only required for testing contact form submissions to zenddesk
+
+- Directory Forms API (https://github.com/uktrade/directory-forms-api)
+  - redis (installed locally)
+  - postgres (installed locally)
 
 ### Install using Docker
 
@@ -26,16 +27,15 @@ virtual environments - it's all within the Docker instance.
 
 ### Directory Forms API (Optional only required when testing contact form submissions to zenddesk)
 
-
 clone the directory
+
 ```
 git clone https://github.com/uktrade/directory-forms-api.git .
 ```
 
 create a hosts file entry for
 
-`127.0.0.1    forms.trade.great`
-=======
+# `127.0.0.1 forms.trade.great`
 
 Follow installation and setup instructions in https://github.com/uktrade/directory-forms-api/blob/develop/README.md
 
@@ -52,6 +52,7 @@ STAFF_SSO_AUTHBROKER_URL=
 AUTHBROKER_CLIENT_ID=
 AUTHBROKER_CLIENT_SECRET=
 ```
+
 after running `make debug` in a terminal
 
 create a superuser by running the following in a terminal
@@ -68,9 +69,10 @@ access the application admin screens locally in you browser with the url http://
 Click the add button in the Client section and add `helpdesk` as the name of the client then click submit. This will
 generate the user identifier and accss key that you need to add to the .env file for the `dit_helpdesk` application
 
-** ToDo: incorporate into docker as service
+\*\* ToDo: incorporate into docker as service
 
 ### UK Trade Helpdesk
+
 First clone the repo
 
 ```bash
@@ -125,7 +127,7 @@ as your login option.
 #### pre-commit
 
 Install pre-commit - a hook will execute Python and JS code formatters before
- commit
+commit
 
     $ pre-commit install
 
@@ -201,6 +203,7 @@ for the trade helpdesk app with the command.
 ```
 docker exec -it dit_helpdesk_helpdesk_1 /bin/bash
 ```
+
 NB: if `dit_helpdesk_helpdesk_1` is not found run `docker ps` in your host terminal to get a list of the docker images
 and their correct names
 
@@ -217,23 +220,28 @@ python manage.py migrate
 Whilst still in the docker shell, run the following commands to collect the hierarchy content from the trade tariff API
 and prepare it for import into the django database, then import
 
-** todo: rename scrape_section_hierarchy
+\*\* todo: rename scrape_section_hierarchy
 
 ###### Commodities and Hierarchy
+
 To populate the commodities in the database, we need to:
+
 - pull data from the api,
 - prepare the api data for import
 - import the data.
 
 to do this we run a set of management commands:
+
 ```
 python manage.py pull_api_update
 python manage.py prepare_import_data
 python manage.py scrape_section_hierarchy
 ```
+
 This should take approximately 10 to 15 minutes
 
 ###### Rules of Origin
+
 run the following command to import the Rules of origin documents
 
 ```
@@ -244,13 +252,15 @@ python manage.py postprocess_rules_of_origin
 This should take approximately a couple of minutes
 
 ###### Documents and regulations
+
 The source data for this content should be in a json format.
 run the following command to import the regulations content
+
 ```
 python manage.py import_regulations
 ```
-This should take approximately 10 minutes.
 
+This should take approximately 10 minutes.
 
 run the following command to import search keywords into the the hierarchy items
 
@@ -259,7 +269,7 @@ python manage.py import_search_keywords -f output/commodity_category_all_with_sy
 ```
 
 run the following command to create the elasticsearch indexes - it's a custom
- command which guarantees consistency between DB and ES results.
+command which guarantees consistency between DB and ES results.
 
 ```
 python manage.py swap_rebuild_index
@@ -273,6 +283,7 @@ containers) run the following to shut down (not destroy) the running docker inst
 ```
 docker-compose -f development.yml stop
 ```
+
 ### Ongoing Developement with Docker
 
 make sure that in the file `compose/development/django/start.sh` the only command uncommented is
@@ -283,7 +294,7 @@ python manage.py runserver_plus 0.0.0.0:8000
 
 the rest of the commands should be commented out
 
-** todo: make the process of running intial set up and running developement set up less cumbersome
+\*\* todo: make the process of running intial set up and running developement set up less cumbersome
 
 Starting the server again is the same command as installing:
 
@@ -308,10 +319,13 @@ NB: do not use `docker-compose -f development.yml down` as that will stop the co
 you will need ot go through the whole intial process of building and setting up with content again.
 
 Uncomment the sleep command:
+
 ```
 sleep infinity
 ```
+
 and comment out the line that starts the app,
+
 ```
 # python dit_helpdesk/manage.py runserver_plus 0.0.0.0:8000
 ```
@@ -321,12 +335,15 @@ This will cause the docker instance to pause once it's up and running.
 ```
 docker-compose up
 ```
+
 then enter a shell for the docker instance of the django service
 
 ```
 docker exec -it dit-helpdesk_helpdesk_1 /bin/bash
 ```
+
 and for database access the postgres service
+
 ```
 docker exec -it dit-helpdesk_postgres_1 /bin/bash
 ```
@@ -365,17 +382,23 @@ user.save()
 refer to the section `Running, then shelling in` above to get a shell in the runnig docker instance
 
 From within the docker shell terminal run the following command for full tests:
+
 ```
 coverage run manage.py test dit_helpdesk --settings=config.settings.test
 ```
+
 for testing a single app run i.e. the hierarchy app:
+
 ```
 coverage run manage.py test hierarchy.tests --settings=config.settings.test
 ```
+
 for testing a single app's test module run i.e. the test_views in the the hierarchy app:
+
 ```
 coverage run manage.py test hierarchy.tests.test_views --settings=config.settings.test
 ```
+
 and so on.
 
 for coverage reports run
@@ -383,9 +406,9 @@ for coverage reports run
 ```
 coverage -d reports html
 ```
+
 you will then be able to access the coverage report html from within your project folder's root
 from your host machine at /reports
-
 
 ### Running tests and generating coverage with Docker
 
@@ -396,23 +419,25 @@ docker-compose -f test.yml up
 ```
 
 This will display in the shell the following:
+
 - all tests, showing passes and failures
 - coverage report
 
 it will also generate the following reports into folder `reports` :
+
 - xunit coverage report file
 - xml coverage report file
 - html coverage report
-
 
 ### Install locally
 
 To run, we need to create a Python virtual environment and install any requirements.
 
 ## Requirements
- - Python 3
- - Node [Active LTS][8] version (Current Active version is v10)
- - postgresql
+
+- Python 3
+- Node [Active LTS][8] version (Current Active version is v10)
+- postgresql
 
 When in the project folder, create a virtual environment.
 
@@ -477,9 +502,11 @@ The source for the static assets is in `assets` in the root of the project folde
 All of the dependencies have been compiled and are included in the git repository because the Jenkins build process that deploys the site doesn't run Node. This means that you won’t need to build the CSS and JavaScript unless you change anything. Any changes should be tested before merging into the master branch, so this should help ensure that any frontend problems are not during the Jenkins build process.
 
 Before changing anything, make sure that the dependencies are installed. Once that’s done,
+
 ```bash
 npm run build
 ```
+
 will run the process that builds the CSS and JavaScript.
 
 Not all of GOV.UK Frontend is included, since this service doesn’t use all of the components. The components that aren’t being used are commented out in `global.scss` - when editing them, remember to re-run
@@ -487,17 +514,20 @@ Not all of GOV.UK Frontend is included, since this service doesn’t use all of 
 ```bash
 npm run build
 ```
+
 to build the styles.
 
 GOV.UK Frontend CSS is namespaced with `govuk-` at the start of every class name. The namespace for Sass specific to this service is `app-`. All of the `app-` Sass is in the `assets/scss` folder. See the Design System team’s guidance on Extending and modifying components in production for building on top of GOV.UK Frontend.
 
 If things are looking broken, first run
+
 ```bash
 npm run build
 ```
+
 this will rebuild and recompile all of the frontend static assets.
 
-If the country autocomplete is not working, first:  open up the browser console to see if there are any error messages - it could be anything from a 404 file not found to a script loaded by Google Tag Manager clashing with existing JavaScript
+If the country autocomplete is not working, first: open up the browser console to see if there are any error messages - it could be anything from a 404 file not found to a script loaded by Google Tag Manager clashing with existing JavaScript
 
 If the country autocomplete is blank:
 
@@ -518,7 +548,6 @@ npm run build
 
 The autocomplete is set up to enhance a select - check that the `id` of the select element and in the JavaScript match up. These are in `dit_helpdesk/countries/templates/choose_country.html`
 
-
 Check that `assets/scss/global.scss` has an `@import` for `govuk-country-and-territory-autocomplete/dist/location-autocomplete.min`. If not, add in `@import "govuk-country-and-territory-autocomplete/dist/location-autocomplete.min";` and re-run
 
 ```bash
@@ -529,9 +558,7 @@ npm run build
 
 ### Commodity Hierarchy
 
-
 #### Importing Commodity Hierarchy Data
-
 
 To import commodity hierarchy content run:
 
@@ -542,7 +569,6 @@ python dit_helpdesk/manage.py scrape_section_hierarchy
 The main python class used by this command can be found in the python module `trade_tarrif_service/importer.py`
 
 The source data for this command can be found in the directory `trade_tarrif_service/import_data`
-
 
 #### Generating Commodity Hierarchy Data for Import
 
@@ -570,12 +596,12 @@ truncate table hierarchy_section CASCADE;
 
 This Cascades to tables:
 
-* regulations_regulation_commodities
-* regulations_regulation_sections
-* regulations_document_regulations
-* regulations_regulation_chapters
-* regulations_regulation_headings
-* regulations_regulation_subheadings
+- regulations_regulation_commodities
+- regulations_regulation_sections
+- regulations_document_regulations
+- regulations_regulation_chapters
+- regulations_regulation_headings
+- regulations_regulation_subheadings
 
 ### Rules of Origins Documents
 
@@ -585,7 +611,7 @@ and import into the database.
 #### Importing Rules of Origin Data
 
 Rules of Origin data is imported from an S3 bucket with credentials stored in
- environment variables.
+environment variables.
 To import all rules of origin data files use:
 
 ```bash
@@ -593,7 +619,7 @@ python dit_helpdesk/manage.py import_rules_of_origin
 ```
 
 RoO data has to be processed to detect abbreviations/HS codes in rule
- descriptions, so that modal links can be generated.
+descriptions, so that modal links can be generated.
 
 ```bash
 python dit_helpdesk/manage.py postprocess_rules_of_origin
@@ -611,11 +637,10 @@ truncate table rules_of_origin_rulesgroup CASCADE;
 
 This cascades to tables:
 
-* rules_of_origin_rulesdocument
-* rules_of_origin_rulesgroupmember
-* rules_of_origin_rule
-* rules_of_origin_rulesdocumentfootnote
-
+- rules_of_origin_rulesdocument
+- rules_of_origin_rulesgroupmember
+- rules_of_origin_rule
+- rules_of_origin_rulesdocumentfootnote
 
 ### Regulations and Documents
 
@@ -654,20 +679,19 @@ truncate table regulations_regulation CASCADE;
 
 This cascades to tables:
 
-* regulations_regulation_commodities
-* regulations_regulation_sections
-* regulations_document_regulations
-* regulations_regulation_chapters
-* regulations_regulation_headings
-* regulations_regulation_subheadings
+- regulations_regulation_commodities
+- regulations_regulation_sections
+- regulations_document_regulations
+- regulations_regulation_chapters
+- regulations_regulation_headings
+- regulations_regulation_subheadings
 
-
-[1]:	https://nodejs.org/en/about/releases/
-[2]:	https://github.com/alphagov/govuk-frontend
-[3]:	https://github.com/alphagov/govuk-country-and-territory-autocomplete
-[4]:	https://github.com/alphagov/accessible-autocomplete
-[5]:	%60https://vault.ci.uktrade.io/ui/vault/secrets/dit%2Ftrade-helpdesk/list/helpdesk/%60
-[6]:	%60https://github.com/settings/tokens%60
-[7]:	%60https://vault.ci.uktrade.io%60
-[8]:	https://nodejs.org/en/about/releases/
-[9]:	#frontend-build
+[1]: https://nodejs.org/en/about/releases/
+[2]: https://github.com/alphagov/govuk-frontend
+[3]: https://github.com/alphagov/govuk-country-and-territory-autocomplete
+[4]: https://github.com/alphagov/accessible-autocomplete
+[5]: %60https://vault.ci.uktrade.io/ui/vault/secrets/dit%2Ftrade-helpdesk/list/helpdesk/%60
+[6]: %60https://github.com/settings/tokens%60
+[7]: %60https://vault.ci.uktrade.io%60
+[8]: https://nodejs.org/en/about/releases/
+[9]: #frontend-build

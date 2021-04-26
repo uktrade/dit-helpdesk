@@ -1,39 +1,31 @@
-const path = require('path');
-const BundleTracker = require('webpack-bundle-tracker');
+const path = require("path");
+const BundleTracker = require("webpack-bundle-tracker");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: {
-    main: [
-        "./assets/javascript/global.js",
-        "./assets/scss/global.scss"
-    ],
-    cms: [
-        "./assets/javascript/cms.js",
-        "./assets/scss/cms.scss"
-    ],
+    main: ["./assets/javascript/global.js", "./assets/scss/global.scss"],
+    cms: ["./assets/javascript/cms.js", "./assets/scss/cms.scss"],
     "global-old-ie": "./assets/scss/oldie.scss",
-    "location-autocomplete": "./assets/javascript/location-autocomplete.js"
+    "location-autocomplete": "./assets/javascript/location-autocomplete.js",
   },
 
   output: {
     path: path.resolve("./assets/webpack_bundles/"),
     publicPath: "/static/webpack_bundles/",
-    filename: "[name]-[fullhash].js"
+    filename: "[name]-[fullhash].js",
   },
 
   plugins: [
     new BundleTracker({ filename: "./webpack-stats.json" }),
     new MiniCssExtractPlugin({
-        filename: "[name]-[fullhash].css",
-        chunkFilename: "[id]-[fullhash].css",
+      filename: "[name]-[fullhash].css",
+      chunkFilename: "[id]-[fullhash].css",
     }),
     new CopyPlugin({
-      patterns: [
-        { from: "./assets/images/", to: "images"}
-      ]
-    })
+      patterns: [{ from: "./assets/images/", to: "images" }],
+    }),
   ],
 
   module: {
@@ -73,5 +65,5 @@ module.exports = {
   resolve: {
     modules: ["node_modules"],
     extensions: [".js", ".scss"],
-  }
+  },
 };

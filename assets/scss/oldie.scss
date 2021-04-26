@@ -13,7 +13,8 @@
 // fix hierarchy tree underline in IE 8-10
 
 .app-hierarchy-tree__link--parent:link:before,
-.app-hierarchy-tree__parent--closed .app-hierarchy-tree__link--parent:link:before {
+.app-hierarchy-tree__parent--closed
+  .app-hierarchy-tree__link--parent:link:before {
   text-decoration: none;
 }
 
@@ -24,6 +25,6 @@
 
 // modal positional tweaks
 .app-modal-dialogue__box {
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
