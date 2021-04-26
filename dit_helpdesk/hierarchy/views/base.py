@@ -262,8 +262,10 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
             measure_id, country_code=country_code
         )
         order_number = kwargs["order_number"]
-        self.quota_def = self.import_measure.get_measure_quota_definition_by_order_number(
-            order_number
+        self.quota_def = (
+            self.import_measure.get_measure_quota_definition_by_order_number(
+                order_number
+            )
         )
         self.geographical_area = self.import_measure.get_geographical_area()
 

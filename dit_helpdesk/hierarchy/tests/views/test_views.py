@@ -195,8 +195,8 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
         self.heading_eu = create_instance(self.heading_eu_data, Heading)
         self.heading_eu.chapter_id = self.chapter_eu.pk
         self.heading_eu.save()
-        self.heading_northern_ireland_url = self.heading_eu.get_northern_ireland_detail_url(
-            self.country.country_code
+        self.heading_northern_ireland_url = (
+            self.heading_eu.get_northern_ireland_detail_url(self.country.country_code)
         )
 
         self.subheading_eu = create_instance(
@@ -204,8 +204,10 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
         )
         self.subheading_eu.heading_id = self.heading_eu.id
         self.subheading_eu.save()
-        self.subheading_northern_ireland_url = self.subheading_eu.get_northern_ireland_detail_url(
-            self.country.country_code
+        self.subheading_northern_ireland_url = (
+            self.subheading_eu.get_northern_ireland_detail_url(
+                self.country.country_code
+            )
         )
 
         self.commodity_eu = create_instance(

@@ -99,11 +99,15 @@ class RulesOfOriginMixin:
         )
 
         for subrule in rule.subrules.all():
-            subrule.rule_text_processed = footnote_processor.replace_all_notes_references(
-                subrule.rule_text_processed
+            subrule.rule_text_processed = (
+                footnote_processor.replace_all_notes_references(
+                    subrule.rule_text_processed
+                )
             )
-            subrule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
-                subrule.alt_rule_text_processed
+            subrule.alt_rule_text_processed = (
+                footnote_processor.replace_all_notes_references(
+                    subrule.alt_rule_text_processed
+                )
             )
 
     def process_footnotes(self, rules, notes):
@@ -306,10 +310,9 @@ class BaseHierarchyModel(models.Model):
         self._temp_cache = None
 
     def should_update_tts_content(self):
-        is_stale_tts_json = not self.last_updated or self.last_updated < dt.datetime.now(
-            timezone.utc
-        ) - dt.timedelta(
-            days=1
+        is_stale_tts_json = (
+            not self.last_updated
+            or self.last_updated < dt.datetime.now(timezone.utc) - dt.timedelta(days=1)
         )
         should_update = is_stale_tts_json or self.tts_json is None
         return should_update
