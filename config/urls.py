@@ -22,7 +22,6 @@ from commodities import views as commodity_views
 from hierarchy import views as hierarchy_views
 from cookies import views as cookie_views
 from countries import views as country_views
-from feedback import views as feedback_views
 from contact import views as contact_views
 from iee_contact import views as iee_contact_views
 from healthcheck.views import HealthCheckView
@@ -37,8 +36,11 @@ urlpatterns = [
     # redirects to start page
     path("", index.IndexRedirect.as_view(), name="index"),
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
-    path("choose-country/",
-         country_views.ChooseCountryView.as_view(), name="choose-country"),
+    path(
+        "choose-country/",
+        country_views.ChooseCountryView.as_view(),
+        name="choose-country",
+    ),
     re_path(
         r"^country/(?P<country_code>\w+)/information/$",
         country_views.CountryInformationView.as_view(),
@@ -159,11 +161,6 @@ urlpatterns = [
         name="iee-contact-view",
     ),
     path(
-        "feedback/success/",
-        feedback_views.FeedbackSuccessView.as_view(),
-        name="feedback-success-view",
-    ),
-    path(
         "privacy-terms-and-conditions/",
         privacy_terms_and_conditions_views.PrivacyTermsAndConditionsView.as_view(),
         name="privacy_terms_and_conditions_views",
@@ -182,9 +179,7 @@ if settings.ADMIN_ENABLED:
 
 
 if settings.CMS_ENABLED:
-    urlpatterns += [
-        path("cms/", include("cms.urls")),
-    ]
+    urlpatterns += [path("cms/", include("cms.urls"))]
 
 
 if settings.DEBUG:
