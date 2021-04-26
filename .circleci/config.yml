@@ -4,7 +4,7 @@ aliases:
   - &redis_version redis:3.2.10
   - &postgres_version circleci/postgres:10
   - &elasticsearch_version docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-  - &python_version circleci/python:3.6
+  - &python_version circleci/python:3.7
   - &kibana_version docker.elastic.co/kibana/kibana:7.9.3
 
   - &unit_base_envs
