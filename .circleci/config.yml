@@ -185,7 +185,7 @@ jobs:
           command: black ./dit_helpdesk --check
       - run:
           name: Javascript code formatting check
-          command: prettier
+          command: npx prettier ./dit_helpdesk --check
       - store_test_results:
           path: ./test-reports/
       - store_artifacts:
