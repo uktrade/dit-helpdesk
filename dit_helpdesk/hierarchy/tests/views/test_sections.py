@@ -35,14 +35,10 @@ class TestSectionsView(BaseSectionedCommodityObjectDetailView):
     def update_commodity_object_tts_content(self, commodity_object):
         pass
 
-@modify_settings(
-    INSTALLED_APPS={
-        "append": ["hierarchy.tests.views"],
-    }
-)
+
+@modify_settings(INSTALLED_APPS={"append": ["hierarchy.tests.views"]})
 @override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
 class BaseSectionTestCase(TestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -51,10 +47,7 @@ class BaseSectionTestCase(TestCase):
         tree = create_nomenclature_tree()
         self.tree = tree
 
-        self.section = mixer.blend(
-            Section,
-            nomenclature_tree=tree,
-        )
+        self.section = mixer.blend(Section, nomenclature_tree=tree)
         self.chapter = mixer.blend(
             Chapter,
             nomenclature_tree=tree,
@@ -70,11 +63,7 @@ class BaseSectionTestCase(TestCase):
         mock_get_commodity_object_path = mock.patch.object(
             TestSectionsView,
             "get_commodity_object_path",
-            return_value=[
-                [self.heading],
-                [self.chapter],
-                [self.section],
-            ],
+            return_value=[[self.heading], [self.chapter], [self.section]],
         )
         mock_get_commodity_object_path.start()
         self.mock_get_commodity_object_path = mock_get_commodity_object_path
@@ -116,7 +105,7 @@ class BaseSectionTestCase(TestCase):
     def patch_get_nomenclature_group_measures(self, measures):
         with mock.patch(
             "hierarchy.views.sections.get_nomenclature_group_measures",
-            return_value=measures
+            return_value=measures,
         ) as mock_get_nomenclature_group_measures:
             yield mock_get_nomenclature_group_measures
 
@@ -142,7 +131,9 @@ class BaseSectionTestCase(TestCase):
         try:
             found_menu_item_id = section_menu_items[menu_item_label]
         except KeyError:
-            raise AssertionError(f"{menu_item_label} not found in menu items {section_menu_items.keys()}")
+            raise AssertionError(
+                f"{menu_item_label} not found in menu items {section_menu_items.keys()}"
+            )
 
         if found_menu_item_id != menu_item_id:
             raise AssertionError(f"{menu_item_id} does not equal {found_menu_item_id}")
@@ -161,7 +152,16 @@ class BaseSectionTestCase(TestCase):
         if found_modal_value != modal_value:
             raise AssertionError(f"{modal_value} does not equal {found_modal_value}")
 
-    def get_mock_measure(self, id=None, commodity_object=None, country_code="XT", vat=False, excise=False, measures_modals=None, **kwargs):
+    def get_mock_measure(
+        self,
+        id=None,
+        commodity_object=None,
+        country_code="XT",
+        vat=False,
+        excise=False,
+        measures_modals=None,
+        **kwargs,
+    ):
         if not id:
             id = faker.word()
 
@@ -199,7 +199,9 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
         self.assert_uses_template(response, "hierarchy/_tariffs_and_taxes.html")
 
     def test_calls_get_nomenclature_group_measures(self):
-        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            []
+        ) as mock_get_nomenclature_group_measures:
             self.client.get(self.get_url())
 
         mock_get_nomenclature_group_measures.assert_called_with(
@@ -237,27 +239,20 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
 
     def test_modals_context_data(self):
         mock_vat_measure = self.get_mock_measure(
-            vat=True,
-            measures_modals={
-                "mock_vat_measure": "mock_vat_measure_modal",
-            },
+            vat=True, measures_modals={"mock_vat_measure": "mock_vat_measure_modal"}
         )
 
         mock_excise_measure = self.get_mock_measure(
             excise=True,
-            measures_modals={
-                "mock_excise_measure": "mock_excise_measure_modal",
-            },
+            measures_modals={"mock_excise_measure": "mock_excise_measure_modal"},
         )
 
-        mock_tariff_measure = self.get_mock_measure(measures_modals={
-            "mock_tariff_measure": "mock_tariff_measure_modal",
-        })
-        with self.patch_get_nomenclature_group_measures([
-            mock_vat_measure,
-            mock_excise_measure,
-            mock_tariff_measure,
-        ]):
+        mock_tariff_measure = self.get_mock_measure(
+            measures_modals={"mock_tariff_measure": "mock_tariff_measure_modal"}
+        )
+        with self.patch_get_nomenclature_group_measures(
+            [mock_vat_measure, mock_excise_measure, mock_tariff_measure]
+        ):
             response = self.client.get(self.get_url())
 
         self.assert_modal(response, "mock_vat_measure", "mock_vat_measure_modal")
@@ -269,27 +264,22 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
         mock_excise_measure = self.get_mock_measure("excise", excise=True)
         mock_tariff_measure = self.get_mock_measure("tariff")
 
-        with self.patch_get_nomenclature_group_measures([
-            mock_vat_measure,
-            mock_excise_measure,
-            mock_tariff_measure,
-        ]):
+        with self.patch_get_nomenclature_group_measures(
+            [mock_vat_measure, mock_excise_measure, mock_tariff_measure]
+        ):
             response = self.client.get(self.get_url())
 
         tariffs_table_data = response.context["tariffs_table_data"]
-        self.assertEqual(
-            tariffs_table_data,
-            [
-                [["Country", "XT"], ["ID", "tariff"]],
-            ],
-        )
+        self.assertEqual(tariffs_table_data, [[["Country", "XT"], ["ID", "tariff"]]])
 
     def test_tariffs_table_data_is_sorted(self):
-        with self.patch_get_nomenclature_group_measures([
-            self.get_mock_measure("c", country_code="CC"),
-            self.get_mock_measure("b", country_code="BB"),
-            self.get_mock_measure("a", country_code="AA"),
-        ]):
+        with self.patch_get_nomenclature_group_measures(
+            [
+                self.get_mock_measure("c", country_code="CC"),
+                self.get_mock_measure("b", country_code="BB"),
+                self.get_mock_measure("a", country_code="AA"),
+            ]
+        ):
             response = self.client.get(self.get_url())
 
         tariffs_table_data = response.context["tariffs_table_data"]
@@ -315,8 +305,7 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
             self.heading.get_quotas_url("XT", "12", "1"),
         )
         self.assertEqual(
-            get_conditions_url("XT", "12"),
-            self.heading.get_conditions_url("XT", "12"),
+            get_conditions_url("XT", "12"), self.heading.get_conditions_url("XT", "12")
         )
 
     def test_tariffs_table_data_urls_with_three_digit_measure_id(self):
@@ -341,30 +330,24 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
         mock_excise_measure = self.get_mock_measure("excise", excise=True)
         mock_tariff_measure = self.get_mock_measure("tariff")
 
-        with self.patch_get_nomenclature_group_measures([
-            mock_vat_measure,
-            mock_excise_measure,
-            mock_tariff_measure,
-        ]):
+        with self.patch_get_nomenclature_group_measures(
+            [mock_vat_measure, mock_excise_measure, mock_tariff_measure]
+        ):
             response = self.client.get(self.get_url())
 
         taxes_table_data = response.context["taxes_table_data"]
         self.assertEqual(
             taxes_table_data,
-            [
-                [["Country", "XT"], ["ID", "vat"]],
-                [["Country", "XT"], ["ID", "excise"]],
-            ],
+            [[["Country", "XT"], ["ID", "vat"]], [["Country", "XT"], ["ID", "excise"]]],
         )
 
     def test_taxes_table_data_urls(self):
         mock_vat_measure = self.get_mock_measure("vat", vat=True)
         mock_excise_measure = self.get_mock_measure("excise", excise=True)
 
-        with self.patch_get_nomenclature_group_measures([
-            mock_vat_measure,
-            mock_excise_measure,
-        ]):
+        with self.patch_get_nomenclature_group_measures(
+            [mock_vat_measure, mock_excise_measure]
+        ):
             self.client.get(self.get_url())
 
         call_args, _ = mock_vat_measure.get_table_row.call_args_list[0]
@@ -374,8 +357,7 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
             self.heading.get_quotas_url("XT", "12", "1"),
         )
         self.assertEqual(
-            get_conditions_url("XT", "12"),
-            self.heading.get_conditions_url("XT", "12"),
+            get_conditions_url("XT", "12"), self.heading.get_conditions_url("XT", "12")
         )
 
         call_args, _ = mock_excise_measure.get_table_row.call_args_list[0]
@@ -385,8 +367,7 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
             self.heading.get_quotas_url("XT", "12", "1"),
         )
         self.assertEqual(
-            get_conditions_url("XT", "12"),
-            self.heading.get_conditions_url("XT", "12"),
+            get_conditions_url("XT", "12"), self.heading.get_conditions_url("XT", "12")
         )
 
     def test_has_multiple_vat_entries(self):
@@ -396,10 +377,9 @@ class TariffsAndTaxesSectionTestCase(BaseSectionTestCase):
         self.assertFalse(response.context["has_multiple_vat_entries"])
 
         another_mock_vat_measure = self.get_mock_measure("vat", vat=True)
-        with self.patch_get_nomenclature_group_measures([
-            mock_vat_measure,
-            another_mock_vat_measure,
-        ]):
+        with self.patch_get_nomenclature_group_measures(
+            [mock_vat_measure, another_mock_vat_measure]
+        ):
             response = self.client.get(self.get_url())
         self.assertTrue(response.context["has_multiple_vat_entries"])
 
@@ -414,14 +394,13 @@ class QuotasSectionTestCase(BaseSectionTestCase):
             self.assert_uses_template(response, "hierarchy/_quotas.html")
 
     def test_calls_get_nomenclature_group_measures(self):
-        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            []
+        ) as mock_get_nomenclature_group_measures:
             self.client.get(self.get_url())
 
         mock_get_nomenclature_group_measures.assert_called_with(
-            self.heading,
-            "Quotas",
-            self.country.country_code,
-            is_eu=self.country.is_eu,
+            self.heading, "Quotas", self.country.country_code, is_eu=self.country.is_eu
         )
 
     def test_menu_items(self):
@@ -441,9 +420,9 @@ class QuotasSectionTestCase(BaseSectionTestCase):
             self.assert_section_displayed(response, QuotasSection)
 
     def test_modals_context_data(self):
-        mock_measure = self.get_mock_measure(measures_modals={
-            "mock_quota_measure": "mock_quota_measure_modal",
-        })
+        mock_measure = self.get_mock_measure(
+            measures_modals={"mock_quota_measure": "mock_quota_measure_modal"}
+        )
         with self.patch_get_nomenclature_group_measures([mock_measure]):
             response = self.client.get(self.get_url())
 
@@ -456,12 +435,7 @@ class QuotasSectionTestCase(BaseSectionTestCase):
             response = self.client.get(self.get_url())
 
         quotas_table_data = response.context["quotas_table_data"]
-        self.assertEqual(
-            quotas_table_data,
-            [
-                [["Country", "XT"], ["ID", "quota"]],
-            ],
-        )
+        self.assertEqual(quotas_table_data, [[["Country", "XT"], ["ID", "quota"]]])
 
     def test_quotas_table_data_urls(self):
         mock_measure = self.get_mock_measure()
@@ -476,8 +450,7 @@ class QuotasSectionTestCase(BaseSectionTestCase):
             self.heading.get_quotas_url("XT", "12", "1"),
         )
         self.assertEqual(
-            get_conditions_url("XT", "12"),
-            self.heading.get_conditions_url("XT", "12"),
+            get_conditions_url("XT", "12"), self.heading.get_conditions_url("XT", "12")
         )
 
 
@@ -491,7 +464,9 @@ class OtherMeasuresSectionTestCase(BaseSectionTestCase):
         self.assert_uses_template(response, "hierarchy/_other_measures.html")
 
     def test_calls_get_nomenclature_group_measures(self):
-        with self.patch_get_nomenclature_group_measures([]) as mock_get_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            []
+        ) as mock_get_nomenclature_group_measures:
             self.client.get(self.get_url())
 
         mock_get_nomenclature_group_measures.assert_called_with(
@@ -518,9 +493,9 @@ class OtherMeasuresSectionTestCase(BaseSectionTestCase):
             self.assert_section_displayed(response, OtherMeasuresSection)
 
     def test_modals_context_data(self):
-        mock_measure = self.get_mock_measure(measures_modals={
-            "mock_other_measure": "mock_other_measure_modal",
-        })
+        mock_measure = self.get_mock_measure(
+            measures_modals={"mock_other_measure": "mock_other_measure_modal"}
+        )
         with self.patch_get_nomenclature_group_measures([mock_measure]):
             response = self.client.get(self.get_url())
 
@@ -534,10 +509,7 @@ class OtherMeasuresSectionTestCase(BaseSectionTestCase):
 
         other_measures_table_data = response.context["other_measures_table"]
         self.assertEqual(
-            other_measures_table_data,
-            [
-                [["Country", "XT"], ["ID", "other"]],
-            ],
+            other_measures_table_data, [[["Country", "XT"], ["ID", "other"]]]
         )
 
     def test_other_measures_table_data_urls(self):
@@ -553,8 +525,7 @@ class OtherMeasuresSectionTestCase(BaseSectionTestCase):
             self.heading.get_quotas_url("XT", "12", "1"),
         )
         self.assertEqual(
-            get_conditions_url("XT", "12"),
-            self.heading.get_conditions_url("XT", "12"),
+            get_conditions_url("XT", "12"), self.heading.get_conditions_url("XT", "12")
         )
 
 
@@ -565,9 +536,7 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         super().setUp()
 
         rules_document = mixer.blend(
-            RulesDocument,
-            countries=[self.country],
-            nomenclature_tree=self.tree,
+            RulesDocument, countries=[self.country], nomenclature_tree=self.tree
         )
         self.rules_document = rules_document
 
@@ -595,20 +564,22 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         self.assert_section_displayed(response, RulesOfOriginSection)
 
     def test_rules_of_origin(self):
-        expected_rules_of_origin = self.heading.get_rules_of_origin(self.country.country_code)
+        expected_rules_of_origin = self.heading.get_rules_of_origin(
+            self.country.country_code
+        )
 
-        with self.patch_get_nomenclature_group_measures([]), \
-            mock.patch.object(Heading, "get_rules_of_origin") as mock_rules_of_origin:
+        with self.patch_get_nomenclature_group_measures([]), mock.patch.object(
+            Heading, "get_rules_of_origin"
+        ) as mock_rules_of_origin:
             mock_rules_of_origin.return_value = expected_rules_of_origin
             response = self.client.get(self.get_url())
 
-        mock_rules_of_origin.assert_called_once_with(country_code=self.country.country_code)
+        mock_rules_of_origin.assert_called_once_with(
+            country_code=self.country.country_code
+        )
         rules_of_origin = response.context["rules_of_origin"]
 
-        self.assertEqual(
-            rules_of_origin,
-            expected_rules_of_origin,
-        )
+        self.assertEqual(rules_of_origin, expected_rules_of_origin)
 
     def test_has_uk_trade_agreement(self):
         with self.patch_get_nomenclature_group_measures([]):
@@ -620,32 +591,32 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         )
 
     def test_has_gsp_tariff_preference(self):
-        with self.patch_get_nomenclature_group_measures([]) as mock_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            []
+        ) as mock_nomenclature_group_measures:
             response = self.client.get(self.get_url())
         mock_nomenclature_group_measures.assert_called_with(
-            self.heading,
-            "Tariffs and charges",
-            self.country.country_code,
+            self.heading, "Tariffs and charges", self.country.country_code
         )
         self.assertFalse(response.context["has_gsp_tariff_preference"])
 
         mock_measure_no_gsp = self.get_mock_measure(is_gsp=False)
-        with self.patch_get_nomenclature_group_measures([mock_measure_no_gsp]) as mock_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            [mock_measure_no_gsp]
+        ) as mock_nomenclature_group_measures:
             response = self.client.get(self.get_url())
         mock_nomenclature_group_measures.assert_called_with(
-            self.heading,
-            "Tariffs and charges",
-            self.country.country_code,
+            self.heading, "Tariffs and charges", self.country.country_code
         )
         self.assertFalse(response.context["has_gsp_tariff_preference"])
 
         mock_measure_has_gsp = self.get_mock_measure(is_gsp=True)
-        with self.patch_get_nomenclature_group_measures([mock_measure_has_gsp]) as mock_nomenclature_group_measures:
+        with self.patch_get_nomenclature_group_measures(
+            [mock_measure_has_gsp]
+        ) as mock_nomenclature_group_measures:
             response = self.client.get(self.get_url())
         mock_nomenclature_group_measures.assert_called_with(
-            self.heading,
-            "Tariffs and charges",
-            self.country.country_code,
+            self.heading, "Tariffs and charges", self.country.country_code
         )
         self.assertTrue(response.context["has_gsp_tariff_preference"])
 
@@ -656,10 +627,7 @@ class ProductRegulationsSectionTestCase(BaseSectionTestCase):
     def setUp(self):
         super().setUp()
 
-        mixer.blend(
-            RegulationGroup,
-            headings=[self.heading],
-        )
+        mixer.blend(RegulationGroup, headings=[self.heading])
 
     def test_template(self):
         response = self.client.get(self.get_url())
@@ -667,7 +635,9 @@ class ProductRegulationsSectionTestCase(BaseSectionTestCase):
 
     def test_menu_items(self):
         response = self.client.get(self.get_url())
-        self.assert_has_menu_item(response, "Product-specific regulations", "regulations")
+        self.assert_has_menu_item(
+            response, "Product-specific regulations", "regulations"
+        )
 
     def test_should_be_displayed(self):
         response = self.client.get(self.get_url())
@@ -681,27 +651,17 @@ class ProductRegulationsSectionTestCase(BaseSectionTestCase):
         RegulationGroup.objects.all().delete()
 
         b_regulation_group = mixer.blend(
-            RegulationGroup,
-            title="b",
-            headings=[self.heading],
+            RegulationGroup, title="b", headings=[self.heading]
         )
         a_regulation_group = mixer.blend(
-            RegulationGroup,
-            title="a",
-            headings=[self.heading],
+            RegulationGroup, title="a", headings=[self.heading]
         )
 
         response = self.client.get(self.get_url())
         regulation_groups = response.context["regulation_groups"]
 
-        self.assertEqual(
-            regulation_groups[0],
-            a_regulation_group,
-        )
-        self.assertEqual(
-            regulation_groups[1],
-            b_regulation_group,
-        )
+        self.assertEqual(regulation_groups[0], a_regulation_group)
+        self.assertEqual(regulation_groups[1], b_regulation_group)
 
 
 class TradeStatusSectionTestCase(BaseSectionTestCase):
@@ -711,7 +671,7 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
     def mock_has_trade_scenario(self, has_trade_scenario=True):
         with mock.patch(
             "hierarchy.views.sections.has_trade_scenario",
-            return_value=has_trade_scenario
+            return_value=has_trade_scenario,
         ) as mock_has_trade_scenario:
             yield
 
@@ -737,15 +697,15 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
         self.assert_section_not_displayed(response, TradeStatusSection)
 
     def test_context_data(self):
-        with self.mock_has_trade_scenario(), \
-            mock.patch("hierarchy.views.sections.get_tariff_content_context") as mock_get_tariff_content_context:
+        with self.mock_has_trade_scenario(), mock.patch(
+            "hierarchy.views.sections.get_tariff_content_context"
+        ) as mock_get_tariff_content_context:
             mock_get_tariff_content_context.return_value = {
-                "tariff_content_key": "tariff_content_value",
+                "tariff_content_key": "tariff_content_value"
             }
             response = self.client.get(self.get_url())
 
         mock_get_tariff_content_context.assert_called_once_with(
-            self.country,
-            self.heading,
+            self.country, self.heading
         )
         self.assertEqual(response.context["tariff_content_key"], "tariff_content_value")

@@ -7,7 +7,6 @@ from django.views import View
 
 
 class TestMiddlewareView(View):
-
     def get(self, request):
         return HttpResponse("OK")
 
@@ -17,7 +16,6 @@ class TestMiddlewareView(View):
     ROOT_URLCONF="analytics.tests.urls",
 )
 class PageViewTrackingMiddlewareTestCase(TestCase):
-
     @mock.patch("analytics.middleware.track_page_view")
     def test_page_view_called_on_view(self, mock_track_page_view):
         response = self.client.get(reverse("test-middleware"))

@@ -52,5 +52,5 @@ class CommoditySearchForm(forms.Form):
         elif cleaned_data.get("sort") == "ranking":
             cleaned_data["sort"] = "_score"
             cleaned_data["sort_order"] = "desc"
-        
+
         return cleaned_data

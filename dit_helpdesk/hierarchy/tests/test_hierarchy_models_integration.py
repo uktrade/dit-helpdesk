@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 
 def create_instance(data, app_name, model_name):
 
-    tts_json = data.pop('tts_json', None)
+    tts_json = data.pop("tts_json", None)
     model = apps.get_model(app_label=app_name, model_name=model_name)
     if tts_json:
         model.tts_json = tts_json
@@ -43,7 +43,7 @@ class HierarchyModelsTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region="UK")
         self.section = create_instance(
             get_data(settings.SECTION_STRUCTURE, self.tree), "hierarchy", "Section"
         )
@@ -61,16 +61,22 @@ class HierarchyModelsTestCase(TestCase):
         self.heading.save()
 
         self.subheading = create_instance(
-            get_data(settings.SUBHEADING_STRUCTURE, self.tree), "hierarchy", "SubHeading"
+            get_data(settings.SUBHEADING_STRUCTURE, self.tree),
+            "hierarchy",
+            "SubHeading",
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
         self.commodity = create_instance(
-            get_data(settings.COMMODITY_STRUCTURE, self.tree), "commodities", "Commodity"
+            get_data(settings.COMMODITY_STRUCTURE, self.tree),
+            "commodities",
+            "Commodity",
         )
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
+        self.commodity.tts_json = json.dumps(
+            get_data(settings.COMMODITY_DATA, self.tree)
+        )
 
         self.commodity.save()
 

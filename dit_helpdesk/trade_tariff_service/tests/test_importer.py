@@ -16,10 +16,16 @@ logger.setLevel(logging.INFO)
 original_hierarchy_model_map = settings.HIERARCHY_MODEL_MAP
 
 mock_hierarchy_model_map = {
-    "Commodity": {"file_name": "test_prepared/commodities.json", "app_name": "commodities"},
+    "Commodity": {
+        "file_name": "test_prepared/commodities.json",
+        "app_name": "commodities",
+    },
     "Chapter": {"file_name": "test_prepared/chapters.json", "app_name": "hierarchy"},
     "Heading": {"file_name": "test_prepared/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {"file_name": "test_prepared/sub_headings.json", "app_name": "hierarchy"},
+    "SubHeading": {
+        "file_name": "test_prepared/sub_headings.json",
+        "app_name": "hierarchy",
+    },
     "Section": {"file_name": "test_prepared/sections.json", "app_name": "hierarchy"},
 }
 
@@ -31,18 +37,23 @@ class HierarchyBuilderTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region="UK")
 
     def test_file_loader(self):
-        sections = HierarchyBuilder(region=self.tree.region).file_loader(model_name="Section", tree=self.tree)
+        sections = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name="Section", tree=self.tree
+        )
         self.assertTrue(isinstance(sections, list))
         self.assertTrue(set(["section_id" in item.keys() for item in sections]))
 
     def test_instance_builder_for_section(self):
         model_name = "Section"
-        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=model_name, tree=self.tree
+        )
         model = apps.get_model(
-            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"],
+            model_name=model_name,
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -54,18 +65,22 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'UK')
+        self.assertEquals(tree.region, "UK")
 
     def test_instance_builder_for_chapter(self):
         chapter_model_name = "Chapter"
-        chapter_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=chapter_model_name, tree=self.tree)
+        chapter_data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=chapter_model_name, tree=self.tree
+        )
         chapter_model = apps.get_model(
             app_label="hierarchy", model_name=chapter_model_name
         )
 
         # load section data
         section_model_name = "Section"
-        section_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=section_model_name, tree=self.tree)
+        section_data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=section_model_name, tree=self.tree
+        )
         section_model = apps.get_model(
             app_label="hierarchy", model_name=section_model_name
         )
@@ -87,13 +102,16 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'UK')
+        self.assertEquals(tree.region, "UK")
 
     def test_instance_builder_for_heading(self):
         model_name = "Heading"
-        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=model_name, tree=self.tree
+        )
         model = apps.get_model(
-            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"],
+            model_name=model_name,
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -108,15 +126,18 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'UK')
+        self.assertEquals(tree.region, "UK")
 
     def test_instance_builder_for_subheading(self):
 
         model_name = "SubHeading"
-        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=model_name, tree=self.tree
+        )
 
         model = apps.get_model(
-            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"],
+            model_name=model_name,
         )
 
         builder = HierarchyBuilder(new_tree=self.tree)
@@ -131,13 +152,16 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'UK')
+        self.assertEquals(tree.region, "UK")
 
     def test_instance_builder_for_commodity(self):
         model_name = "Commodity"
-        data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=self.tree)
+        data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=model_name, tree=self.tree
+        )
         model = apps.get_model(
-            app_label=original_hierarchy_model_map[model_name]["app_name"], model_name=model_name
+            app_label=original_hierarchy_model_map[model_name]["app_name"],
+            model_name=model_name,
         )
         builder = HierarchyBuilder(new_tree=self.tree)
         instance_data = [
@@ -151,13 +175,15 @@ class HierarchyBuilderTestCase(TestCase):
         self.assertIsNotNone(tree)
         self.assertIsNone(tree.end_date)
         self.assertIsNotNone(tree.start_date)
-        self.assertEquals(tree.region, 'UK')
+        self.assertEquals(tree.region, "UK")
 
     def test_load_data_for_section(self):
         model_name = "Section"
         builder = HierarchyBuilder(new_tree=self.tree)
         builder.load_data(model_name)
-        file_data = HierarchyBuilder(region=self.tree.region).file_loader(model_name=model_name, tree=builder.new_tree)
+        file_data = HierarchyBuilder(region=self.tree.region).file_loader(
+            model_name=model_name, tree=builder.new_tree
+        )
         self.assertEqual(builder.data[model_name]["data"], file_data)
         self.assertTrue(isinstance(builder.data[model_name]["data"], list))
 
@@ -180,7 +206,9 @@ class HierarchyBuilderTestCase(TestCase):
                 parent_instance_data = builder.rename_key(
                     parent, "child_goods_nomenclature_sids", "tts_json"
                 )
-                parent_model.objects.create(**parent_instance_data, nomenclature_tree=self.tree)
+                parent_model.objects.create(
+                    **parent_instance_data, nomenclature_tree=self.tree
+                )
 
         self.assertEqual(builder.lookup_parent(parent_model, "27623").section_id, 1)
 
@@ -202,14 +230,16 @@ class HierarchyBuilderTestCase(TestCase):
                 parent_instance_data = builder.rename_key(
                     parent, "goods_nomenclature_item_id", "chapter_code"
                 )
-                parent_model.objects.create(**parent_instance_data, nomenclature_tree=self.tree)
+                parent_model.objects.create(
+                    **parent_instance_data, nomenclature_tree=self.tree
+                )
         self.assertEqual(
             builder.lookup_parent(parent_model, "27623").description, "LIVE ANIMALS"
         )
 
     def test_incorrect_instantiation(self):
         with self.assertRaises(ValueError):
-            HierarchyBuilder(region='UK', new_tree='some fake tree')
+            HierarchyBuilder(region="UK", new_tree="some fake tree")
 
     # def test_processed_orphan_subheadings(self):
     #

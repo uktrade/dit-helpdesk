@@ -9,7 +9,10 @@ from countries.models import Country
 
 from ...helpers import create_nomenclature_tree, TABLE_COLUMN_TITLES
 from ...models import Chapter, Heading, Section
-from ...views.base import BaseCommodityObjectDetailView, BaseSectionedCommodityObjectDetailView
+from ...views.base import (
+    BaseCommodityObjectDetailView,
+    BaseSectionedCommodityObjectDetailView,
+)
 from ...views.sections import CommodityDetailSection
 
 
@@ -28,14 +31,9 @@ class TestBaseCommodityObjectDetailView(BaseCommodityObjectDetailView):
         return MOCK_NOTES
 
 
-@modify_settings(
-    INSTALLED_APPS={
-        "append": ["hierarchy.tests.views"],
-    }
-)
+@modify_settings(INSTALLED_APPS={"append": ["hierarchy.tests.views"]})
 @override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
 class BaseCommodityObjectDetailViewTestCase(TestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -43,10 +41,7 @@ class BaseCommodityObjectDetailViewTestCase(TestCase):
 
         tree = create_nomenclature_tree()
 
-        self.section = mixer.blend(
-            Section,
-            nomenclature_tree=tree,
-        )
+        self.section = mixer.blend(Section, nomenclature_tree=tree)
         self.chapter = mixer.blend(
             Chapter,
             nomenclature_tree=tree,
@@ -63,11 +58,7 @@ class BaseCommodityObjectDetailViewTestCase(TestCase):
         mock_get_commodity_object_path = mock.patch.object(
             TestBaseCommodityObjectDetailView,
             "get_commodity_object_path",
-            return_value=[
-                [self.heading],
-                [self.chapter],
-                [self.section],
-            ],
+            return_value=[[self.heading], [self.chapter], [self.section]],
         )
         mock_get_commodity_object_path.start()
         self.mock_get_commodity_object_path = mock_get_commodity_object_path
@@ -105,14 +96,10 @@ class BaseCommodityObjectDetailViewTestCase(TestCase):
             response = self.client.get(url)
 
         mock_messages_error.assert_called_once_with(
-            response.wsgi_request,
-            "Invalid originCountry",
+            response.wsgi_request, "Invalid originCountry"
         )
 
-        self.assertRedirects(
-            response,
-            reverse("choose-country"),
-        )
+        self.assertRedirects(response, reverse("choose-country"))
 
     def test_commodity_object_does_not_exist(self):
         commodity_code = "1234567890"
@@ -120,32 +107,33 @@ class BaseCommodityObjectDetailViewTestCase(TestCase):
 
         with self.assertRaises(Chapter.DoesNotExist):
             Chapter.objects.get(
-                chapter_code=commodity_code,
-                goods_nomenclature_sid=nomenclature_sid,
+                chapter_code=commodity_code, goods_nomenclature_sid=nomenclature_sid
             )
 
         url = self.get_url(
-            commodity_code=commodity_code,
-            nomenclature_sid=nomenclature_sid,
+            commodity_code=commodity_code, nomenclature_sid=nomenclature_sid
         )
         response = self.client.get(url)
 
-        self.assertEqual(
-            response.status_code,
-            404,
-        )
+        self.assertEqual(response.status_code, 404)
 
     def test_update_tts_content(self):
         url = self.get_url()
 
-        with mock.patch.object(Chapter, "should_update_tts_content") as mock_should_update_tts_content, \
-            mock.patch.object(Chapter, "update_tts_content") as mock_update_tts_content:
+        with mock.patch.object(
+            Chapter, "should_update_tts_content"
+        ) as mock_should_update_tts_content, mock.patch.object(
+            Chapter, "update_tts_content"
+        ) as mock_update_tts_content:
             mock_should_update_tts_content.return_value = False
             self.client.get(url)
             mock_update_tts_content.assert_not_called()
 
-        with mock.patch.object(Chapter, "should_update_tts_content") as mock_should_update_tts_content, \
-            mock.patch.object(Chapter, "update_tts_content") as mock_update_tts_content:
+        with mock.patch.object(
+            Chapter, "should_update_tts_content"
+        ) as mock_should_update_tts_content, mock.patch.object(
+            Chapter, "update_tts_content"
+        ) as mock_update_tts_content:
             mock_should_update_tts_content.return_value = True
             self.client.get(url)
             mock_update_tts_content.assert_called()
@@ -153,81 +141,54 @@ class BaseCommodityObjectDetailViewTestCase(TestCase):
     def test_context_data(self):
         eu_commodity_link = "http://example.com/mock-eu-commodity-link"
 
-        with mock.patch.object(Chapter, "should_update_tts_content"), \
-            mock.patch.object(Chapter, "update_tts_content"), \
-            mock.patch("hierarchy.views.base.get_eu_commodity_link") as mock_get_eu_commodity_link:
+        with mock.patch.object(Chapter, "should_update_tts_content"), mock.patch.object(
+            Chapter, "update_tts_content"
+        ), mock.patch(
+            "hierarchy.views.base.get_eu_commodity_link"
+        ) as mock_get_eu_commodity_link:
             mock_get_eu_commodity_link.return_value = eu_commodity_link
 
             response = self.client.get(self.get_url())
 
         ctx = response.context
 
-        self.assertEqual(
-            ctx["selected_origin_country"],
-            self.country.country_code,
-        )
-        self.assertEqual(
-            ctx["selected_origin_country_name"],
-            self.country.name,
-        )
+        self.assertEqual(ctx["selected_origin_country"], self.country.country_code)
+        self.assertEqual(ctx["selected_origin_country_name"], self.country.name)
 
         self.assertEqual(
             ctx["accordion_title"],
-            f"Section {self.section.roman_numeral}: {self.section.title.capitalize()}"
+            f"Section {self.section.roman_numeral}: {self.section.title.capitalize()}",
         )
 
-        self.assertEqual(
-            ctx["commodity"],
-            self.chapter,
-        )
+        self.assertEqual(ctx["commodity"], self.chapter)
 
-        self.assertEqual(
-            ctx["is_eu_member"],
-            self.country.is_eu,
-        )
+        self.assertEqual(ctx["is_eu_member"], self.country.is_eu)
         mock_get_eu_commodity_link.assert_called_once_with(self.chapter, self.country)
-        self.assertEqual(
-            ctx["eu_regulations_link"],
-            eu_commodity_link,
-        )
+        self.assertEqual(ctx["eu_regulations_link"], eu_commodity_link)
 
-        self.assertEqual(
-            ctx["section_notes"],
-            MOCK_NOTES["section_notes"],
-        )
-        self.assertEqual(
-            ctx["chapter_notes"],
-            MOCK_NOTES["chapter_notes"],
-        )
-        self.assertEqual(
-            ctx["heading_notes"],
-            MOCK_NOTES["heading_notes"],
-        )
+        self.assertEqual(ctx["section_notes"], MOCK_NOTES["section_notes"])
+        self.assertEqual(ctx["chapter_notes"], MOCK_NOTES["chapter_notes"])
+        self.assertEqual(ctx["heading_notes"], MOCK_NOTES["heading_notes"])
 
-        self.assertEqual(
-            ctx["column_titles"],
-            TABLE_COLUMN_TITLES,
-        )
+        self.assertEqual(ctx["column_titles"], TABLE_COLUMN_TITLES)
 
     def test_context_object_name(self):
-        with mock.patch.object(Chapter, "should_update_tts_content"), \
-            mock.patch.object(Chapter, "update_tts_content"):
+        with mock.patch.object(Chapter, "should_update_tts_content"), mock.patch.object(
+            Chapter, "update_tts_content"
+        ):
             response = self.client.get(self.get_url())
             self.assertNotIn("context_object", response.context)
 
-        with mock.patch.object(Chapter, "should_update_tts_content"), \
-            mock.patch.object(Chapter, "update_tts_content"), \
-            mock.patch.object(
-                TestBaseCommodityObjectDetailView,
-                "context_object_name",
-                new_callable=mock.PropertyMock,
-            ) as mock_context_object_name:
+        with mock.patch.object(Chapter, "should_update_tts_content"), mock.patch.object(
+            Chapter, "update_tts_content"
+        ), mock.patch.object(
+            TestBaseCommodityObjectDetailView,
+            "context_object_name",
+            new_callable=mock.PropertyMock,
+        ) as mock_context_object_name:
             mock_context_object_name.return_value = "context_object"
             response = self.client.get(self.get_url())
-            self.assertEqual(
-                response.context["context_object"],
-                self.chapter,
-            )
+            self.assertEqual(response.context["context_object"], self.chapter)
 
 
 class DisplayedSection(CommodityDetailSection):
@@ -239,12 +200,8 @@ class DisplayedSection(CommodityDetailSection):
 
     def get_modals_context_data(self):
         return [
-            {
-                "section_modals_show_me": "section_modals_me_show",
-            },
-            {
-                "section_another_modals_not_show_me": "section_another_modals_me_show",
-            }
+            {"section_modals_show_me": "section_modals_me_show"},
+            {"section_another_modals_not_show_me": "section_another_modals_me_show"},
         ]
 
     def get_context_data(self):
@@ -265,12 +222,10 @@ class ShouldNotBeDisplayedSection(CommodityDetailSection):
 
     def get_modals_context_data(self):
         return [
+            {"section_modals_not_show_me": "section_modals_me_show_not"},
             {
-                "section_modals_not_show_me": "section_modals_me_show_not",
+                "section_another_modals_not_show_me": "section_another_modals_me_show_not"
             },
-            {
-                "section_another_modals_not_show_me": "section_another_modals_me_show_not",
-            }
         ]
 
     def get_context_data(self):
@@ -280,23 +235,17 @@ class ShouldNotBeDisplayedSection(CommodityDetailSection):
         }
 
 
-class TestBaseSectionedCommodityObjectDetailView(BaseSectionedCommodityObjectDetailView):
+class TestBaseSectionedCommodityObjectDetailView(
+    BaseSectionedCommodityObjectDetailView
+):
     model = Chapter
-    sections = [
-        DisplayedSection,
-        ShouldNotBeDisplayedSection,
-    ]
+    sections = [DisplayedSection, ShouldNotBeDisplayedSection]
     template_name = "hierarchy/test_base_sectioned_commodity_object_detail.html"
 
 
-@modify_settings(
-    INSTALLED_APPS={
-        "append": ["hierarchy.tests.views"],
-    }
-)
+@modify_settings(INSTALLED_APPS={"append": ["hierarchy.tests.views"]})
 @override_settings(ROOT_URLCONF="hierarchy.tests.views.urls")
 class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -304,10 +253,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
 
         tree = create_nomenclature_tree()
 
-        self.section = mixer.blend(
-            Section,
-            nomenclature_tree=tree,
-        )
+        self.section = mixer.blend(Section, nomenclature_tree=tree)
         self.chapter = mixer.blend(
             Chapter,
             nomenclature_tree=tree,
@@ -324,11 +270,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         mock_get_commodity_object_path = mock.patch.object(
             TestBaseSectionedCommodityObjectDetailView,
             "get_commodity_object_path",
-            return_value=[
-                [self.heading],
-                [self.chapter],
-                [self.section],
-            ],
+            return_value=[[self.heading], [self.chapter], [self.section]],
         )
         mock_get_commodity_object_path.start()
         self.mock_get_commodity_object_path = mock_get_commodity_object_path
@@ -364,7 +306,9 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         with mock.patch.object(
             TestBaseSectionedCommodityObjectDetailView,
             "sections",
-            new_callable=mock.PropertyMock(return_value=[MockSection, AnotherMockSection]),
+            new_callable=mock.PropertyMock(
+                return_value=[MockSection, AnotherMockSection]
+            ),
         ):
             self.client.get(self.get_url())
 
@@ -375,23 +319,11 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         response = self.client.get(self.get_url())
         ctx = response.context
 
-        self.assertEqual(
-            ctx["section_show_me"],
-            "section_me_show",
-        )
-        self.assertEqual(
-            ctx["another_section_show_me"],
-            "another_section_me_show",
-        )
+        self.assertEqual(ctx["section_show_me"], "section_me_show")
+        self.assertEqual(ctx["another_section_show_me"], "another_section_me_show")
 
-        self.assertNotIn(
-            "section_do_not_show_me",
-            ctx,
-        )
-        self.assertNotIn(
-            "another_section_do_not_show_me",
-            ctx,
-        )
+        self.assertNotIn("section_do_not_show_me", ctx)
+        self.assertNotIn("another_section_do_not_show_me", ctx)
 
     def test_sections_context_data(self):
         response = self.client.get(self.get_url())
@@ -409,8 +341,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.assertEqual(
             section_menu_items,
             [
-                ('Menu item', 'not_shown_menu_item'),
-                ('Another menu item', 'another_not_shown_menu_item'),
+                ("Menu item", "not_shown_menu_item"),
+                ("Another menu item", "another_not_shown_menu_item"),
             ],
         )
 
@@ -418,20 +350,11 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         response = self.client.get(self.get_url())
         modals = response.context["modals"]
 
-        self.assertEqual(
-            modals["section_modals_show_me"],
-            "section_modals_me_show",
-        )
+        self.assertEqual(modals["section_modals_show_me"], "section_modals_me_show")
         self.assertEqual(
             modals["section_another_modals_not_show_me"],
             "section_another_modals_me_show",
         )
 
-        self.assertNotIn(
-            "section_modals_not_show_me",
-            modals,
-        )
-        self.assertNotIn(
-            "section_modals_not_show_me",
-            modals,
-        )
+        self.assertNotIn("section_modals_not_show_me", modals)
+        self.assertNotIn("section_modals_not_show_me", modals)

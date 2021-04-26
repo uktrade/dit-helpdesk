@@ -6,30 +6,28 @@ from ...models import Country
 
 
 class Command(BaseCommand):
-    help = 'Compares the country data with gov register data file'
+    help = "Compares the country data with gov register data file"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'register_country_file',
-            type=str,
-            help='Path for register country file',
+            "register_country_file", type=str, help="Path for register country file"
         )
 
     def handle(self, *args, **options):
-        current_countries = dict(
-            Country.objects.values_list('country_code', 'name'),
-        )
+        current_countries = dict(Country.objects.values_list("country_code", "name"))
 
         register_countries = {}
-        with open(options['register_country_file']) as register_country_file:
+        with open(options["register_country_file"]) as register_country_file:
             reader = csv.DictReader(register_country_file)
 
             for row in reader:
-                register_countries[row['key']] = row['name']
+                register_countries[row["key"]] = row["name"]
 
         added = set(register_countries.keys()) - set(current_countries.keys())
         removed = set(current_countries.keys()) - set(register_countries.keys())
-        potentially_updated = set(register_countries.keys()) & set(current_countries.keys())
+        potentially_updated = set(register_countries.keys()) & set(
+            current_countries.keys()
+        )
 
         updated = []
         for country_code in potentially_updated:
@@ -48,4 +46,6 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Updated: {len(updated)}")
         for u in sorted(updated):
-            self.stdout.write(f"{indent}{u} {current_countries[u]} -> {register_countries[u]}")
+            self.stdout.write(
+                f"{indent}{u} {current_countries[u]} -> {register_countries[u]}"
+            )

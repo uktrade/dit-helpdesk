@@ -7,32 +7,35 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0001_initial'),
-    ]
+    dependencies = [("rules_of_origin", "0001_initial")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RemoveField(
-            model_name='rule',
-            name='description',
-        ),
-        migrations.RemoveField(
-            model_name='rule',
-            name='working_or_processing_one',
-        ),
-        migrations.RemoveField(
-            model_name='rule',
-            name='working_or_processing_two',
-        ),
+        migrations.RemoveField(model_name="rule", name="description"),
+        migrations.RemoveField(model_name="rule", name="working_or_processing_one"),
+        migrations.RemoveField(model_name="rule", name="working_or_processing_two"),
         migrations.CreateModel(
-            name='RuleItem',
+            name="RuleItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order', models.IntegerField()),
-                ('description', models.TextField(blank=True, null=True)),
-                ('working_or_processing', models.TextField(blank=True, null=True)),
-                ('rule', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rules_of_origin.Rule')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order", models.IntegerField()),
+                ("description", models.TextField(blank=True, null=True)),
+                ("working_or_processing", models.TextField(blank=True, null=True)),
+                (
+                    "rule",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="rules_of_origin.Rule",
+                    ),
+                ),
             ],
         ),
     ]

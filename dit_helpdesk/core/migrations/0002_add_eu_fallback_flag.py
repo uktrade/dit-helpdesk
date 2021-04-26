@@ -6,11 +6,7 @@ from django.db import migrations
 def add_flag(apps, schema_editor):
     FlagState = apps.get_model("flags", "FlagState")
 
-    FlagState.objects.create(
-        name="EU_FALLBACK",
-        condition="boolean",
-        value="False",
-    )
+    FlagState.objects.create(name="EU_FALLBACK", condition="boolean", value="False")
 
 
 def delete_flag(apps, schema_editor):
@@ -21,10 +17,6 @@ def delete_flag(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0001_initial_flags'),
-    ]
+    dependencies = [("core", "0001_initial_flags")]
 
-    operations = [
-        migrations.RunPython(add_flag, reverse_code=delete_flag)
-    ]
+    operations = [migrations.RunPython(add_flag, reverse_code=delete_flag)]

@@ -6,12 +6,7 @@ from urllib.parse import parse_qs
 
 from django.test import override_settings, RequestFactory, TestCase
 
-from ..track import (
-    API_VERSION,
-    GOOGLE_ANALYTICS_ENDPOINT,
-    track_event,
-    track_page_view,
-)
+from ..track import API_VERSION, GOOGLE_ANALYTICS_ENDPOINT, track_event, track_page_view
 
 
 FAKE_GA_ID = "ua-12345-1"
@@ -21,12 +16,8 @@ def get_request_data(request):
     return request.qs
 
 
-@override_settings(
-    HELPDESK_GA_UA=FAKE_GA_ID,
-    TRACK_GA_EVENTS=True,
-)
+@override_settings(HELPDESK_GA_UA=FAKE_GA_ID, TRACK_GA_EVENTS=True)
 class TrackingTestCase(TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
 
@@ -35,9 +26,7 @@ class TrackingTestCase(TestCase):
     def test_track_event(self, mock_requests, mock_uuid):
         mock_uuid_value = uuid.uuid4()
         mock_uuid.uuid4.return_value = mock_uuid_value
-        m = mock_requests.post(
-            GOOGLE_ANALYTICS_ENDPOINT,
-        )
+        m = mock_requests.post(GOOGLE_ANALYTICS_ENDPOINT)
 
         original_request = self.factory.get(
             "/test-url/",
@@ -56,22 +45,12 @@ class TrackingTestCase(TestCase):
             "t": ["event"],
         }
 
-        track_event(
-            original_request,
-            "test_category",
-            "test_action",
-        )
+        track_event(original_request, "test_category", "test_action")
         request = m.request_history[0]
         data = get_request_data(request)
         self.assertEqual(
             data,
-            {
-                **common_data_params,
-                **{
-                    "ec": ["test_category"],
-                    "ea": ["test_action"],
-                },
-            },
+            {**common_data_params, **{"ec": ["test_category"], "ea": ["test_action"]}},
         )
 
         track_event(
@@ -101,9 +80,7 @@ class TrackingTestCase(TestCase):
     def test_track_page_view(self, mock_requests, mock_uuid):
         mock_uuid_value = uuid.uuid4()
         mock_uuid.uuid4.return_value = mock_uuid_value
-        m = mock_requests.post(
-            GOOGLE_ANALYTICS_ENDPOINT,
-        )
+        m = mock_requests.post(GOOGLE_ANALYTICS_ENDPOINT)
 
         original_request = self.factory.get(
             "/test-url/",
@@ -132,27 +109,18 @@ class TrackingTestCase(TestCase):
 
     @requests_mock.Mocker()
     def test_unique_user_id(self, mock_requests):
-        m = mock_requests.post(
-            GOOGLE_ANALYTICS_ENDPOINT,
-        )
+        m = mock_requests.post(GOOGLE_ANALYTICS_ENDPOINT)
 
         original_request = self.factory.get("/test-url/")
 
         user_ids = []
         for i in range(20):
-            track_event(
-                original_request,
-                "test_category",
-                "test_action",
-            )
+            track_event(original_request, "test_category", "test_action")
             request = m.request_history[i]
             data = get_request_data(request)
             user_ids.append(data["cid"][0])
 
-        self.assertEqual(
-            len(user_ids),
-            len(set(user_ids)),
-        )
+        self.assertEqual(len(user_ids), len(set(user_ids)))
 
         m.reset()
 
@@ -163,7 +131,4 @@ class TrackingTestCase(TestCase):
             data = get_request_data(request)
             user_ids.append(data["cid"][0])
 
-        self.assertEqual(
-            len(user_ids),
-            len(set(user_ids)),
-        )
+        self.assertEqual(len(user_ids), len(set(user_ids)))

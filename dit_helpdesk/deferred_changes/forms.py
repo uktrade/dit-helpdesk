@@ -14,23 +14,17 @@ def get_field_value(form, key):
 
 
 def get_form_data(form):
-    data = {
-        k: get_field_value(form, k)
-        for k in form.data
-        if k in form.fields
-    }
+    data = {k: get_field_value(form, k) for k in form.data if k in form.fields}
 
     return data
 
 
 class DeferredFormMixin:
-
     def defer_create(self):
         data = get_form_data(self)
 
         deferred_create = DeferredCreate.objects.create(
-            data=data,
-            form_class=get_form_class_name(self),
+            data=data, form_class=get_form_class_name(self)
         )
 
         return deferred_create
@@ -40,9 +34,7 @@ class DeferredFormMixin:
         instance = self.instance
 
         deferred_update = DeferredUpdate.objects.create(
-            data=data,
-            instance=instance,
-            form_class=get_form_class_name(self),
+            data=data, instance=instance, form_class=get_form_class_name(self)
         )
 
         return deferred_update

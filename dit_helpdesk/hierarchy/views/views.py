@@ -8,9 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from countries.models import Country
 from regulations.models import RegulationGroup
 
-from ..helpers import (
-    TABLE_COLUMN_TITLES,
-)
+from ..helpers import TABLE_COLUMN_TITLES
 from ..models import Chapter, Heading, SubHeading
 
 from .base import (
@@ -24,9 +22,7 @@ from .helpers import (
     hierarchy_section_header,
     get_hierarchy_context_from_object,
 )
-from ..helpers import (
-    get_code_argument_by_class,
-)
+from ..helpers import get_code_argument_by_class
 from .mixins import EUCommodityObjectMixin
 from .sections import (
     HeadingOtherMeasuresNorthernIrelandSection,
@@ -92,7 +88,9 @@ def section_detail(request, section_id, country_code):
         "roo_footnotes": rules_of_origin,
         "table_data": table_data,
         "column_titles": TABLE_COLUMN_TITLES,
-        "regulation_groups": RegulationGroup.objects.inherited(section).order_by('title'),
+        "regulation_groups": RegulationGroup.objects.inherited(section).order_by(
+            "title"
+        ),
         "accordion_title": accordion_title,
         "section_hierarchy_context": get_hierarchy_context(
             section_path, country.country_code, section_id
@@ -156,7 +154,7 @@ class HeadingDetailView(BaseSectionedHeadingDetailView):
         QuotasSection,
         OtherMeasuresSection,
         RulesOfOriginSection,
-        ProductRegulationsSection,        
+        ProductRegulationsSection,
     ]
     template_name = "hierarchy/heading_detail.html"
 
@@ -175,7 +173,7 @@ class HeadingDetailNorthernIrelandView(BaseSectionedHeadingDetailView):
         super().initialise(request, *args, **kwargs)
 
         eu_commodity_object = Heading.objects.for_region(
-            settings.SECONDARY_REGION,
+            settings.SECONDARY_REGION
         ).get_by_commodity_code(
             self.commodity_object.commodity_code,
             goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
@@ -234,7 +232,7 @@ class SubHeadingDetailNorthernIrelandView(BaseSectionedSubHeadingDetailView):
         super().initialise(request, *args, **kwargs)
 
         eu_commodity_object = SubHeading.objects.for_region(
-            settings.SECONDARY_REGION,
+            settings.SECONDARY_REGION
         ).get_by_commodity_code(
             commodity_code=self.commodity_object.commodity_code,
             goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
@@ -252,11 +250,15 @@ class MeasureQuotaDetailView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView)
     model = Heading
 
 
-class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureConditionDetailView):
+class MeasureConditionDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureConditionDetailView
+):
     model = Heading
 
 
-class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
+class MeasureQuotaDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureQuotaDetailView
+):
     model = Heading
 
 
@@ -265,29 +267,25 @@ class HierarchyContextTreeView(TemplateView):
     template_name = "hierarchy/_hierarchy_modal.html"
 
     def get_context_data(self, *args, **kwargs):
-        commodity_type = kwargs['commodity_type']
-        country_code = kwargs['country_code']
+        commodity_type = kwargs["commodity_type"]
+        country_code = kwargs["country_code"]
 
         model = {
-            'chapter': Chapter,
-            'heading': Heading,
-            'subheading': SubHeading,
-            'commodity': Commodity,
+            "chapter": Chapter,
+            "heading": Heading,
+            "subheading": SubHeading,
+            "commodity": Commodity,
         }[commodity_type]
 
-        code, sid = kwargs['commodity_code'], kwargs['nomenclature_sid']
+        code, sid = kwargs["commodity_code"], kwargs["nomenclature_sid"]
         code_arg = get_code_argument_by_class(model)
 
-        obj = model.objects.get(
-            **{code_arg: code, 'goods_nomenclature_sid': sid}
-        )
+        obj = model.objects.get(**{code_arg: code, "goods_nomenclature_sid": sid})
 
         hierarchy_tree_html = get_hierarchy_context_from_object(
-            obj, country_code=country_code, links=False)
+            obj, country_code=country_code, links=False
+        )
 
         commodity_code = obj.short_formatted_commodity_code
 
-        return {
-            "hierarchy_html": hierarchy_tree_html,
-            "commodity_code": commodity_code,
-        }
+        return {"hierarchy_html": hierarchy_tree_html, "commodity_code": commodity_code}

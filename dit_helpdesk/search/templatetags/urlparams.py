@@ -9,5 +9,5 @@ register = template.Library()
 def urlparams(*args, **kwargs):
     safe_args = {k: v for k, v in kwargs.items() if v is not None}
     if safe_args:
-        return '?{}'.format(urlencode(safe_args))
-    return ''
+        return "?{}".format(urlencode(safe_args))
+    return ""

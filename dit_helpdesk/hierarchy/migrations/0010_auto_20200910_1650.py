@@ -6,19 +6,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0009_auto_20200908_2043'),
-    ]
+    dependencies = [("hierarchy", "0009_auto_20200908_2043")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AlterField(
-            model_name='section',
-            name='section_id',
-            field=models.IntegerField(),
+            model_name="section", name="section_id", field=models.IntegerField()
         ),
         migrations.AddConstraint(
-            model_name='section',
-            constraint=models.UniqueConstraint(fields=('section_id', 'nomenclature_tree'), name='unique section'),
+            model_name="section",
+            constraint=models.UniqueConstraint(
+                fields=("section_id", "nomenclature_tree"), name="unique section"
+            ),
         ),
     ]

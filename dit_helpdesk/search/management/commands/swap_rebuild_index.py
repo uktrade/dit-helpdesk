@@ -66,7 +66,7 @@ def rebuild():
 
     for doc, old_index_or_alias in indices.items():
         alias = old_index_or_alias._name
-        pattern = PATTERN.format(alias)     # e.g. `section-*`
+        pattern = PATTERN.format(alias)  # e.g. `section-*`
 
         # check if the alias name is actually an alias - if this is run for the first time and there
         # are no aliases but only concrete indices named like e.g. `section` the we'll know the
@@ -80,7 +80,9 @@ def rebuild():
         indices_names_to_remove_conditionally.extend(old_indices)
 
         # build a concrete index name from the pattern
-        new_index_name = pattern.replace("*", dt.datetime.now().strftime("%Y%m%d%H%M%S"))
+        new_index_name = pattern.replace(
+            "*", dt.datetime.now().strftime("%Y%m%d%H%M%S")
+        )
         new_index = old_index_or_alias.clone(new_index_name)
         logger.info("Creating new index %s..", new_index_name)
         new_index.save()
@@ -118,11 +120,7 @@ def rebuild():
 
     if update_aliases_actions:
         logger.info("Updating aliases: %s", update_aliases_actions)
-        es.indices.update_aliases(
-            body={
-                "actions": update_aliases_actions,
-            }
-        )
+        es.indices.update_aliases(body={"actions": update_aliases_actions})
 
     # if there was a concrete index using the same name as the alias we plan to use, we have to
     # delete it before we use this alias
@@ -143,11 +141,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--keep-old-trees", action="store_true", default=False,
-            help="Keep previous NomenclatureTrees, even if they are not marked as active")
+            "--keep-old-trees",
+            action="store_true",
+            default=False,
+            help="Keep previous NomenclatureTrees, even if they are not marked as active",
+        )
         parser.add_argument(
-            "--keep-old-indices", action="store_true", default=False,
-            help="Keep previous ElasticSearch indices, even if no alias points to them anymore")
+            "--keep-old-indices",
+            action="store_true",
+            default=False,
+            help="Keep previous ElasticSearch indices, even if no alias points to them anymore",
+        )
 
     def handle(self, *args, **options):
         # initiate the default connection to elasticsearch
@@ -157,7 +161,8 @@ class Command(BaseCommand):
             # get latest tree - not yet active because we want to activate it only immediately after
             # finishing reindexing (and swapping index aliases)
             new_tree = NomenclatureTree.objects.filter(
-                region=settings.PRIMARY_REGION).latest('start_date')
+                region=settings.PRIMARY_REGION
+            ).latest("start_date")
 
             # get active (but not latest) tree
             prev_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)

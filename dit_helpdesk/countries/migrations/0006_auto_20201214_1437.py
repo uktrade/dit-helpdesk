@@ -6,20 +6,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0005_auto_20201119_1450'),
-    ]
+    dependencies = [("countries", "0005_auto_20201119_1450")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AddField(
-            model_name='country',
-            name='has_eu_trade_agreement',
+            model_name="country",
+            name="has_eu_trade_agreement",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='country',
-            name='has_uk_trade_agreement',
+            model_name="country",
+            name="has_uk_trade_agreement",
             field=models.BooleanField(default=False),
         ),
     ]

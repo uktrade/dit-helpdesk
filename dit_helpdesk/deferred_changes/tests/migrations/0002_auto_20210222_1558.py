@@ -6,14 +6,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('deferred_changes_tests', '0001_initial'),
-    ]
+    dependencies = [("deferred_changes_tests", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='testmodel',
-            name='parent',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='deferred_changes_tests.ParentModel'),
-        ),
+            model_name="testmodel",
+            name="parent",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="deferred_changes_tests.ParentModel",
+            ),
+        )
     ]

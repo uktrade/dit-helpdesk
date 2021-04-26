@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0018_rule_description_processed'),
-    ]
+    dependencies = [("rules_of_origin", "0018_rule_description_processed")]
 
     operations = [
         migrations.AddField(
-            model_name='subrule',
-            name='description_processed',
+            model_name="subrule",
+            name="description_processed",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

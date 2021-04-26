@@ -8,4 +8,5 @@ def page_view_tracking_middleware(get_response):
         track_page_view(request)
 
         return response
+
     return middleware

@@ -12,5 +12,5 @@ class Migration(migrations.Migration):
         linter.IgnoreMigration(),
         migrations.RenameField(
             model_name="subheading", old_name="tts_is_leaf", new_name="leaf"
-        )
+        ),
     ]

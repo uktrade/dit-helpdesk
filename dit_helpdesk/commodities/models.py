@@ -25,6 +25,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     """
     Commodity model
     """
+
     commodity_code = models.CharField(max_length=10)
     goods_nomenclature_sid = models.CharField(max_length=10)
     productline_suffix = models.CharField(max_length=2)
@@ -56,7 +57,11 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
     COMMODITY_CODE_FIELD = "commodity_code"
 
     class Meta:
-        unique_together = ("commodity_code", "goods_nomenclature_sid", "nomenclature_tree")
+        unique_together = (
+            "commodity_code",
+            "goods_nomenclature_sid",
+            "nomenclature_tree",
+        )
         verbose_name_plural = "commodities"
 
     @property
@@ -132,16 +137,16 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return obj
 
     def get_hierarchy_context_ids(self):
-        hierarchy_context = flatten(
-            reversed(self.get_ancestor_data())
-        )
+        hierarchy_context = flatten(reversed(self.get_ancestor_data()))
 
-        chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
-        heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
+        chapter_id = next(d["id"] for d in hierarchy_context if d["type"] == "chapter")
+        heading_id = next(d["id"] for d in hierarchy_context if d["type"] == "heading")
         try:
             # apparently a commodity can be a direct child of a heading, without a subheading
             # in-between
-            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
+            subheading_id = next(
+                d["id"] for d in hierarchy_context if d["type"] == "sub_heading"
+            )
         except StopIteration:
             subheading_id = None
 
@@ -301,10 +306,14 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_tts_content(self, tts_client):
         try:
-            tts_content = tts_client.get_content(tts_client.CommodityType.COMMODITY, self.commodity_code)
+            tts_content = tts_client.get_content(
+                tts_client.CommodityType.COMMODITY, self.commodity_code
+            )
         except tts_client.NotFound:
             try:
-                tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.commodity_code[:4])
+                tts_content = tts_client.get_content(
+                    tts_client.CommodityType.HEADING, self.commodity_code[:4]
+                )
             except tts_client.NotFound:
                 return None
 
@@ -325,7 +334,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
     def get_conditions_url(self, country_code, measure_id):
@@ -336,7 +345,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_northern_ireland_conditions_url(self, country_code, measure_id):
@@ -347,7 +356,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_quotas_url(self, country_code, measure_id, order_number):
@@ -359,7 +368,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )
 
     def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
@@ -371,5 +380,5 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )

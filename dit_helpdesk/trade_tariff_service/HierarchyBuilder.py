@@ -26,7 +26,6 @@ DEFAULT_REGION = settings.PRIMARY_REGION
 
 
 class HierarchyBuilder:
-
     def __init__(self, region=None, new_tree=None):
         """Provide `new_tree` parameter if there is already a NomenclatureTree created which
         should be assigned to all of the items in the hierarchy being built.
@@ -35,7 +34,9 @@ class HierarchyBuilder:
 
         """
         if region and new_tree:
-            raise ValueError("Provider either `region` or `new_tree` argument, not both")
+            raise ValueError(
+                "Provider either `region` or `new_tree` argument, not both"
+            )
 
         self.data = {
             "Commodity": {"data": {}, "objects": []},
@@ -281,18 +282,18 @@ class HierarchyBuilder:
             raise ValueError(f"Invalid data type {data_type}")
 
         logger.info("Getting %s data", data_type)
-        data_type_json = self.hierarchy_client.get_type_data(data_type_mapper[data_type])
+        data_type_json = self.hierarchy_client.get_type_data(
+            data_type_mapper[data_type]
+        )
 
         if data_type == "sections":
-            data_type_ids = [
-                item["id"]
-                for item in data_type_json["data"]
-            ]
+            data_type_ids = [item["id"] for item in data_type_json["data"]]
         elif data_type == "chapters":
             data_type_ids = [
                 item["attributes"]["goods_nomenclature_item_id"][:2]
                 for item in data_type_json["data"]
-                if not item_ids or item["attributes"]["goods_nomenclature_item_id"][:2] in item_ids
+                if not item_ids
+                or item["attributes"]["goods_nomenclature_item_id"][:2] in item_ids
             ]
         else:
             raise ValueError(f"Invalid data type {data_type}")
@@ -300,15 +301,19 @@ class HierarchyBuilder:
         data, child_ids = self.get_item_data_from_api(data_type, data_type_ids)
 
         if data_type == "sections":
+
             def _get_chapter_number(d, key):
                 return int(d["attributes"][key])
 
-            child_ids = flatten([
-                range(
-                    _get_chapter_number(item, "chapter_from"),
-                    _get_chapter_number(item, "chapter_to") + 1,
-                ) for item in data_type_json["data"]
-            ])
+            child_ids = flatten(
+                [
+                    range(
+                        _get_chapter_number(item, "chapter_from"),
+                        _get_chapter_number(item, "chapter_to") + 1,
+                    )
+                    for item in data_type_json["data"]
+                ]
+            )
             child_ids = [str(child_id).rjust(2, "0") for child_id in child_ids]
 
         return data, child_ids
@@ -332,8 +337,7 @@ class HierarchyBuilder:
         for item_id in item_ids:
             try:
                 item_json = hierarchy_client.get_item_data(
-                    data_type_mapper[data_type],
-                    item_id,
+                    data_type_mapper[data_type], item_id
                 )
             except hierarchy_client.NotFound as e:
                 self.hierarchy_client_not_found_errors.append(e)
@@ -376,13 +380,13 @@ class HierarchyBuilder:
 
         # read serialized api data from the filesystem
         sections = self.read_api_from_file(
-            self.get_data_path("downloaded/sections.json"),
+            self.get_data_path("downloaded/sections.json")
         )
         chapters = self.read_api_from_file(
-            self.get_data_path("downloaded/chapters.json"),
+            self.get_data_path("downloaded/chapters.json")
         )
         headings = self.read_api_from_file(
-            self.get_data_path("downloaded/headings.json"),
+            self.get_data_path("downloaded/headings.json")
         )
 
         headings = self.remove_duplicate_headings_from_api(headings)
@@ -560,8 +564,12 @@ class HierarchyBuilder:
                 for sub_heading in sub_headings:
                     parent_sid = sub_heading["attributes"]["parent_sid"]
                     description = sub_heading["attributes"]["description"]
-                    goods_nomenclature_item_id = sub_heading["attributes"]["goods_nomenclature_item_id"]
-                    goods_nomenclature_sid = sub_heading["attributes"]["goods_nomenclature_sid"]
+                    goods_nomenclature_item_id = sub_heading["attributes"][
+                        "goods_nomenclature_item_id"
+                    ]
+                    goods_nomenclature_sid = sub_heading["attributes"][
+                        "goods_nomenclature_sid"
+                    ]
 
                     sub_headings_data.append(
                         {
@@ -600,7 +608,9 @@ class HierarchyBuilder:
 
                 for commodity in commodities:
                     parent_sid = commodity["attributes"]["parent_sid"]
-                    goods_nomenclature_item_id = commodity["attributes"]["goods_nomenclature_item_id"]
+                    goods_nomenclature_item_id = commodity["attributes"][
+                        "goods_nomenclature_item_id"
+                    ]
                     description = commodity["attributes"]["description"]
 
                     commodities_data.append(
@@ -638,24 +648,19 @@ class HierarchyBuilder:
 
         # serialize to filesystem
         self.write_data_to_file(
-            sections_data,
-            self.get_data_path("prepared/sections.json"),
+            sections_data, self.get_data_path("prepared/sections.json")
         )
         self.write_data_to_file(
-            chapters_data,
-            self.get_data_path("prepared/chapters.json"),
+            chapters_data, self.get_data_path("prepared/chapters.json")
         )
         self.write_data_to_file(
-            headings_data,
-            self.get_data_path("prepared/headings.json"),
+            headings_data, self.get_data_path("prepared/headings.json")
         )
         self.write_data_to_file(
-            sub_headings_data,
-            self.get_data_path("prepared/sub_headings.json")
+            sub_headings_data, self.get_data_path("prepared/sub_headings.json")
         )
         self.write_data_to_file(
-            commodities_data,
-            self.get_data_path("prepared/commodities.json"),
+            commodities_data, self.get_data_path("prepared/commodities.json")
         )
 
     @staticmethod
@@ -704,16 +709,14 @@ class HierarchyBuilder:
         sections, chapter_ids = self.get_type_data_from_api(data_type)
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
-            sections,
-            self.get_data_path(f"downloaded/{data_type}.json"),
+            sections, self.get_data_path(f"downloaded/{data_type}.json")
         )
 
         data_type = "chapters"
         chapters, heading_ids = self.get_type_data_from_api(data_type, chapter_ids)
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
-            chapters,
-            self.get_data_path(f"downloaded/{data_type}.json"),
+            chapters, self.get_data_path(f"downloaded/{data_type}.json")
         )
 
         data_type = "headings"
@@ -722,8 +725,7 @@ class HierarchyBuilder:
         )
         logger.info("Writing {0} data".format(data_type))
         self.write_data_to_file(
-            headings,
-            self.get_data_path(f"downloaded/{data_type}.json"),
+            headings, self.get_data_path(f"downloaded/{data_type}.json")
         )
 
         if self.hierarchy_client_not_found_errors:
@@ -732,9 +734,7 @@ class HierarchyBuilder:
                 self.hierarchy_client,
                 len(self.hierarchy_client_not_found_errors),
                 self.region,
-                extra={
-                    "not_found_errors": self.hierarchy_client_not_found_errors,
-                },
+                extra={"not_found_errors": self.hierarchy_client_not_found_errors},
             )
         if self.hierarchy_client_server_errors:
             logger.error(
@@ -742,9 +742,7 @@ class HierarchyBuilder:
                 self.hierarchy_client,
                 len(self.hierarchy_client_server_errors),
                 self.region,
-                extra={
-                    "server_errors": self.hierarchy_client_server_errors,
-                },
+                extra={"server_errors": self.hierarchy_client_server_errors},
             )
 
     def lookup_parent(self, parent_model, child_parent_code):
@@ -762,7 +760,8 @@ class HierarchyBuilder:
             if parent_model is Section:
                 if int(child_parent_code) in item["child_goods_nomenclature_sids"]:
                     return Section.get_active_objects(region=self.region).get(
-                        section_id=int(item["section_id"]))
+                        section_id=int(item["section_id"])
+                    )
             else:
                 try:
                     return parent_model.get_active_objects(region=self.region).get(
@@ -843,7 +842,8 @@ class HierarchyBuilder:
             parent_sid = subheading.parent_goods_nomenclature_sid
             try:
                 parent = SubHeading.get_active_objects(region=self.region).get(
-                    goods_nomenclature_sid=parent_sid)
+                    goods_nomenclature_sid=parent_sid
+                )
                 subheading.parent_subheading_id = parent.pk
                 subheading.save()
             except ObjectDoesNotExist as exception:
@@ -854,7 +854,8 @@ class HierarchyBuilder:
                 )
                 try:
                     parent = Heading.get_active_objects(region=self.region).get(
-                        goods_nomenclature_sid=parent_sid)
+                        goods_nomenclature_sid=parent_sid
+                    )
                     subheading.heading_id = parent.pk
                     subheading.save()
                 except ObjectDoesNotExist as exception:
@@ -888,7 +889,9 @@ class HierarchyBuilder:
                     )
                     parent_sid = subheading.goods_nomenclature_sid
 
-                parent = SubHeading.get_active_objects(region=self.region).get(goods_nomenclature_sid=parent_sid)
+                parent = SubHeading.get_active_objects(region=self.region).get(
+                    goods_nomenclature_sid=parent_sid
+                )
                 commodity.parent_subheading_id = parent.pk
 
             except ObjectDoesNotExist as exception:
@@ -907,7 +910,8 @@ class HierarchyBuilder:
                     parent_sid = heading.goods_nomenclature_sid
 
                 parent = Heading.get_active_objects(region=self.region).get(
-                    goods_nomenclature_sid=parent_sid)
+                    goods_nomenclature_sid=parent_sid
+                )
                 commodity.heading_id = parent.pk
 
             commodity.save()

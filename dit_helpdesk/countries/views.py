@@ -28,7 +28,9 @@ class ChooseCountryView(TemplateView):
     country_not_selected_input_error_message = "Enter a country or territory"
 
     def get(self, request, *args, **kwargs):
-        context = {"country_options": [(c.country_code, c.name) for c in self.countries]}
+        context = {
+            "country_options": [(c.country_code, c.name) for c in self.countries]
+        }
 
         if "select-country" in request.GET:
             context["isError"] = True
@@ -71,7 +73,6 @@ class ChooseCountryOldView(ChooseCountryView):
 
 
 class CountryInformationView(TemplateView):
-
     def get(self, request, *args, **kwargs):
         country_code = kwargs["country_code"].upper()
         try:
@@ -106,46 +107,37 @@ class CountryInformationView(TemplateView):
 
         ctx["original_country"] = self.origin_country
         ctx["country"] = country
-        ctx["country_name"] = "the European Union" if country.country_code == "EU" else country.name
+        ctx["country_name"] = (
+            "the European Union" if country.country_code == "EU" else country.name
+        )
 
-        ctx["trade_agreements_template_name"] = self._get_template_name(self.country_code, "trade_agreements")
+        ctx["trade_agreements_template_name"] = self._get_template_name(
+            self.country_code, "trade_agreements"
+        )
         ctx["goods_template_name"] = self._get_template_name(self.country_code, "goods")
-        ctx["grow_your_business_template_name"] = self._get_template_name(self.country_code, "grow_your_business")
-        ctx["other_information_template_name"] = self._get_template_name(self.country_code, "other_information")
+        ctx["grow_your_business_template_name"] = self._get_template_name(
+            self.country_code, "grow_your_business"
+        )
+        ctx["other_information_template_name"] = self._get_template_name(
+            self.country_code, "other_information"
+        )
 
         return ctx
 
 
 class LocationAutocompleteView(View):
-
     def _get_country_graph_item(self, country):
         return {
-            "names": {
-                "en-GB": country.name,
-            },
-            "meta": {
-                "canonical": True,
-                "canonical-mask": 1,
-                "stable-name": True,
-            },
-            "edges": {
-                "from": [],
-            },
+            "names": {"en-GB": country.name},
+            "meta": {"canonical": True, "canonical-mask": 1, "stable-name": True},
+            "edges": {"from": []},
         }
 
     def _get_country_graph_synonym_item(self, country, synonym):
         return {
-            "names": {
-                "en-GB": synonym,
-            },
-            "meta": {
-                "canonical": False,
-                "canonical-mask": 1,
-                "stable-name": True,
-            },
-            "edges": {
-                "from": [country.country_code.lower()],
-            },
+            "names": {"en-GB": synonym},
+            "meta": {"canonical": False, "canonical-mask": 1, "stable-name": True},
+            "edges": {"from": [country.country_code.lower()]},
         }
 
     def get(self, request):
@@ -160,6 +152,8 @@ class LocationAutocompleteView(View):
 
             synonyms = settings.COUNTRY_SYNONYMS.get(country_code, [])
             for synonym in synonyms:
-                response[f"nym:{synonym.lower()}"] = self._get_country_graph_synonym_item(country, synonym)
+                response[
+                    f"nym:{synonym.lower()}"
+                ] = self._get_country_graph_synonym_item(country, synonym)
 
         return JsonResponse(response)

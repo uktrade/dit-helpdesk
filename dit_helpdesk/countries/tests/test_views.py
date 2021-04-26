@@ -14,13 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-Agreement = namedtuple(
-    "Agreement",
-    [
-        "country_code",
-        "agreements",
-    ],
-)
+Agreement = namedtuple("Agreement", ["country_code", "agreements"])
 
 
 class CountriesViewsTestCase(TestCase):
@@ -59,18 +53,20 @@ class CountriesViewsTestCase(TestCase):
         self.assertTrue(isinstance(resp.context["csrf_token"], SimpleLazyObject))
 
     def test_post_without_values_and_without_session_attribute_gives_correct_error_and_renders_form(
-        self
+        self,
     ):
         resp = self.client.post(reverse("choose-country"))
         self.assertTrue("origin_country" not in self.client.session)
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
+        self.assertEqual(
+            resp.context["errorInputMessage"], "Enter a country or territory"
+        )
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
     def test_post_without_values_and_with_session_attribute_gives_correct_error_and_renders_form(
-        self
+        self,
     ):
         session = self.client.session
         session["origin_country"] = "AU"
@@ -80,11 +76,13 @@ class CountriesViewsTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("isError" in resp.context)
         self.assertEqual(resp.context["isError"], True)
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
+        self.assertEqual(
+            resp.context["errorInputMessage"], "Enter a country or territory"
+        )
         self.assertTemplateUsed(resp, "countries/choose_country.html")
 
     def test_post_with_country_selected_and_country_exists_and_country_code_not_in_session(
-        self
+        self,
     ):
         self.assertTrue("origin_country" not in self.client.session)
         resp = self.client.post(
@@ -92,11 +90,7 @@ class CountriesViewsTestCase(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
-            resp.url,
-            reverse(
-                "search:search-commodity",
-                kwargs={"country_code": "au"},
-            ),
+            resp.url, reverse("search:search-commodity", kwargs={"country_code": "au"})
         )
 
     def test_post_with_country_selected_and_country_not_exist(self):
@@ -106,15 +100,13 @@ class CountriesViewsTestCase(TestCase):
             reverse("choose-country"), data={"origin_country": "xt"}
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.context["errorInputMessage"], "Enter a country or territory")
+        self.assertEqual(
+            resp.context["errorInputMessage"], "Enter a country or territory"
+        )
         self.assertTemplateUsed(resp, "countries/choose_country.html")
         self.assertTrue("origin_country" not in self.client.session)
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", True),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", True)])
     def test_post_with_country_having_fta_and_enabled(self):
         Country.objects.create(country_code="XX", name="Atlantis")
         self.assertTrue("origin_country" not in self.client.session)
@@ -123,18 +115,10 @@ class CountriesViewsTestCase(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
-            resp.url,
-            reverse(
-                "country-information",
-                kwargs={"country_code": "xx"},
-            ),
+            resp.url, reverse("country-information", kwargs={"country_code": "xx"})
         )
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", False),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", False)])
     def test_post_with_country_having_fta_and_disabled(self):
         Country.objects.create(country_code="XX", name="Atlantis")
         self.assertTrue("origin_country" not in self.client.session)
@@ -143,16 +127,10 @@ class CountriesViewsTestCase(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
-            resp.url,
-            reverse(
-                "search:search-commodity",
-                kwargs={"country_code": "xx"},
-            ),
+            resp.url, reverse("search:search-commodity", kwargs={"country_code": "xx"})
         )
 
-    @override_settings(
-        AGREEMENTS=[],
-    )
+    @override_settings(AGREEMENTS=[])
     def test_post_with_country_having_fta_and_without_setting(self):
         Country.objects.create(country_code="XX", name="Atlantis")
         self.assertTrue("origin_country" not in self.client.session)
@@ -161,31 +139,19 @@ class CountriesViewsTestCase(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
-            resp.url,
-            reverse(
-                "search:search-commodity",
-                kwargs={"country_code": "xx"},
-            ),
+            resp.url, reverse("search:search-commodity", kwargs={"country_code": "xx"})
         )
 
 
-@modify_settings(
-    INSTALLED_APPS={
-        "append": ["countries.tests"],
-    }
-)
+@modify_settings(INSTALLED_APPS={"append": ["countries.tests"]})
 class CountryInformationViewTestCase(TestCase):
-
     def setUp(self):
         super().setUp()
 
         self.country = Country.objects.create(country_code="XX", name="Atlantis")
         self.url = reverse(
             "country-information",
-            kwargs={
-                "country_code":
-                self.country.country_code.lower(),
-            },
+            kwargs={"country_code": self.country.country_code.lower()},
         )
 
     def test_agreement_with_invalid_country_code(self):
@@ -201,38 +167,22 @@ class CountryInformationViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", False),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", False)])
     def test_agreement_page_with_setting_disabled(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", True),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", True)])
     def test_agreement_page_with_setting_enabled(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", True),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", True)])
     def test_renders_template(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "countries/XX/information.html")
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", True),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", True)])
     def test_context_data(self):
         response = self.client.get(self.url)
         ctx = response.context_data
@@ -240,13 +190,9 @@ class CountryInformationViewTestCase(TestCase):
         self.assertEqual(ctx["country"], self.country)
         self.assertEqual(ctx["country_code"], "xx")
         self.assertEqual(
-            ctx["trade_agreements_template_name"],
-            "countries/XX/_trade_agreements.html",
+            ctx["trade_agreements_template_name"], "countries/XX/_trade_agreements.html"
         )
-        self.assertEqual(
-            ctx["goods_template_name"],
-            "countries/XX/_goods.html",
-        )
+        self.assertEqual(ctx["goods_template_name"], "countries/XX/_goods.html")
         self.assertEqual(
             ctx["grow_your_business_template_name"],
             "countries/XX/_grow_your_business.html",
@@ -256,11 +202,7 @@ class CountryInformationViewTestCase(TestCase):
             "countries/XX/_other_information.html",
         )
 
-    @override_settings(
-        AGREEMENTS=[
-            ("XX", True),
-        ],
-    )
+    @override_settings(AGREEMENTS=[("XX", True)])
     def test_renders_custom_html(self):
         response = self.client.get(self.url)
 

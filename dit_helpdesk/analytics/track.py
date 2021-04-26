@@ -22,14 +22,14 @@ def build_tracking_data(request, additional_data):
     data = {
         "v": API_VERSION,  # API Version.
         "tid": settings.HELPDESK_GA_UA,  # Tracking aID / Property ID.
-        "cid": str(uuid.uuid4()),  # This needs to be cid not uid or your events won't register in the behaviour section
-
+        "cid": str(
+            uuid.uuid4()
+        ),  # This needs to be cid not uid or your events won't register in the behaviour section
         "uip": request.META.get("REMOTE_ADDR"),  # User ip override
         "aip": "1",  # Anonymise user ip
         "ua": request.META.get("HTTP_USER_AGENT"),  # User agent override
         "dr": request.META.get("HTTP_REFERER"),  # Document referrer
         "dl": request.build_absolute_uri(),  # Document location URL
-
         **additional_data,
     }
 
@@ -40,20 +40,13 @@ def send_tracking_data(tracking_data):
     if not settings.TRACK_GA_EVENTS:
         return
 
-    response = requests.post(
-        GOOGLE_ANALYTICS_ENDPOINT,
-        params=tracking_data,
-    )
+    response = requests.post(GOOGLE_ANALYTICS_ENDPOINT, params=tracking_data)
 
     return response
 
 
 def track_event(request, category, action, label=None, value=None):
-    event_data = {
-        "t": "event",
-        "ec": category,
-        "ea": action,
-    }
+    event_data = {"t": "event", "ec": category, "ea": action}
     if label:
         event_data["el"] = label
 
@@ -66,9 +59,7 @@ def track_event(request, category, action, label=None, value=None):
 
 
 def track_page_view(request):
-    page_view_data = {
-        "t": "pageview",
-    }
+    page_view_data = {"t": "pageview"}
 
     data = build_tracking_data(request, page_view_data)
 

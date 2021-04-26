@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 
 def admin_login_view(request):
     """A replacement admin login view that will direct the user through the SSO
-    authentication flow. """
+    authentication flow."""
 
     next_url = request.GET.get(
         "next", request.session.get("admin_next_url", reverse("admin:index"))

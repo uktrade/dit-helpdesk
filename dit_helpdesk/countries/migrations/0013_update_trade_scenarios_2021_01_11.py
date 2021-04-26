@@ -37,7 +37,9 @@ def update_trade_scenarios(apps, schema_editor):
 
             updated_country_codes.append(country_code)
 
-        not_updated_countries = Country.objects.exclude(country_code__in=updated_country_codes).values_list("country_code", flat=True)
+        not_updated_countries = Country.objects.exclude(
+            country_code__in=updated_country_codes
+        ).values_list("country_code", flat=True)
         not_updated_countries = list(not_updated_countries)
         if not_updated_countries:
             logging.warning("Did not update %s", not_updated_countries)
@@ -45,13 +47,8 @@ def update_trade_scenarios(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0012_update_trade_scenarios_2020_12_31'),
-    ]
+    dependencies = [("countries", "0012_update_trade_scenarios_2020_12_31")]
 
     operations = [
-        migrations.RunPython(
-            update_trade_scenarios,
-            migrations.RunPython.noop,
-        )
+        migrations.RunPython(update_trade_scenarios, migrations.RunPython.noop)
     ]

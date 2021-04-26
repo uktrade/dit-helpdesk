@@ -6,13 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hierarchy', '0010_auto_20200910_1650'),
-        ('commodities', '0004_auto_20200908_2043'),
+        ("hierarchy", "0010_auto_20200910_1650"),
+        ("commodities", "0004_auto_20200908_2043"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='commodity',
-            unique_together={('commodity_code', 'goods_nomenclature_sid', 'nomenclature_tree')},
-        ),
+            name="commodity",
+            unique_together={
+                ("commodity_code", "goods_nomenclature_sid", "nomenclature_tree")
+            },
+        )
     ]

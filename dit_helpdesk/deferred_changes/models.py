@@ -9,20 +9,17 @@ from polymorphic.models import PolymorphicModel
 
 
 class InvalidDataError(Exception):
-
     def __init__(self, form, *args, **kwargs):
         self.form = form
         super().__init__(*args, **kwargs)
 
 
 class DeferredChange(PolymorphicModel):
-
     def apply(self):
         raise NotImplementedError(f"Deferred change subclass requires `apply` method.")
 
 
 class DeferredValue:
-
     def __init__(self, bound_field):
         self.bound_field = bound_field
         self.field = bound_field.field
@@ -49,11 +46,7 @@ class DeferredValue:
         if isinstance(self.field, forms.ModelMultipleChoiceField):
             values = self.bound_field.value()
 
-            return (
-                desc
-                for pk, desc in self.field.choices
-                if str(pk) in values
-            )
+            return (desc for pk, desc in self.field.choices if str(pk) in values)
 
         return self.bound_field.value()
 
@@ -86,10 +79,7 @@ class DeferredFormChange(DeferredChange):
     def get_deferred_changes(self):
         form = self.get_bound_form()
 
-        return (
-            DeferredValue(bound_field)
-            for bound_field in form
-        )
+        return (DeferredValue(bound_field) for bound_field in form)
 
 
 class DeferredCreate(DeferredFormChange):
@@ -99,7 +89,7 @@ class DeferredCreate(DeferredFormChange):
 class DeferredUpdate(DeferredFormChange):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    instance = GenericForeignKey('content_type', 'object_id')
+    instance = GenericForeignKey("content_type", "object_id")
 
     action_type = "update"
 

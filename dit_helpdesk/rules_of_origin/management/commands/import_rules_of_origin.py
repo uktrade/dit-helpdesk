@@ -42,11 +42,11 @@ class Command(BaseCommand):
             access_key=settings.ROO_S3_SECRET_ACCESS_KEY,
         )
 
-        summaries = bucket.objects.filter(Prefix='rules_of_origin/')
-        xml_objects = [s.Object() for s in summaries if s.key.endswith('.xml')]
+        summaries = bucket.objects.filter(Prefix="rules_of_origin/")
+        xml_objects = [s.Object() for s in summaries if s.key.endswith(".xml")]
 
         for obj in xml_objects:
-            with NamedTemporaryFile(mode='w+b') as temp_file:
+            with NamedTemporaryFile(mode="w+b") as temp_file:
                 self.stdout.write(f"Attempting to download object {obj.key} from S3")
                 obj.download_fileobj(temp_file)
                 self.stdout.write(f"Downloaded {obj.key}..")
@@ -76,4 +76,5 @@ class Command(BaseCommand):
             self._import_local(local_path)
         else:
             self.stdout.write(
-                "Neither S3 credentials nor local path for RoO files provided, skipping.")
+                "Neither S3 credentials nor local path for RoO files provided, skipping."
+            )

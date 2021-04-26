@@ -9,20 +9,13 @@ import logging
 
 data_dir = "import_data/prepared"
 
-entities = ['sections', 'chapters', 'headings', 'sub_headings', 'commodities']
+entities = ["sections", "chapters", "headings", "sub_headings", "commodities"]
 
-data_paths = {
-    key: os.path.join(data_dir, f"{key}.json")
-    for key in entities
-}
+data_paths = {key: os.path.join(data_dir, f"{key}.json") for key in entities}
 
 # means how many of these children *each* immediate parent object can have
 # if no entry means every instance of the object is included
-limits = {
-    "headings": 4,
-    "sub_headings": 4,
-    "commodities": 4,
-}
+limits = {"headings": 4, "sub_headings": 4, "commodities": 4}
 
 
 logger = logging.getLogger(__name__)
@@ -50,7 +43,7 @@ def _prepare_subsets(data, subsets, entities_left, parents):
     children_counts = Counter()
 
     for item in data[entity]:
-        parent_sid = item['parent_goods_nomenclature_sid']
+        parent_sid = item["parent_goods_nomenclature_sid"]
         if parent_sid not in parents or children_counts[parent_sid] >= limit:
             continue
 
@@ -77,12 +70,10 @@ def prepare_subsets(data):
 
     children = set()
 
-    for section in sections[:limits.get("sections")]:
+    for section in sections[: limits.get("sections")]:
         subsets["sections"].append(section)
         children = children | (
-            set(
-                section["child_goods_nomenclature_sids"][:limits.get("chapters")]
-            )
+            set(section["child_goods_nomenclature_sids"][: limits.get("chapters")])
         )
 
     for chapter in data["chapters"]:
@@ -106,10 +97,12 @@ def main():
     out_dir = "import_data/test_subsets"
 
     for key, val in subsets.items():
-        with open(os.path.join(out_dir, f"{key}.json"), 'w') as f:
+        with open(os.path.join(out_dir, f"{key}.json"), "w") as f:
             json.dump(val, f, indent=4)
-    import ipdb; ipdb.set_trace()
+    import ipdb
+
+    ipdb.set_trace()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

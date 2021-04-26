@@ -6,14 +6,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('commodities', '0007_remove_commodity_tts_json'),
-    ]
+    dependencies = [("commodities", "0007_remove_commodity_tts_json")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RemoveField(
-            model_name='commodity',
-            name='last_updated',
-        ),
+        migrations.RemoveField(model_name="commodity", name="last_updated"),
     ]

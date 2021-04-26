@@ -17,13 +17,6 @@ def update_country_name(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0010_update_trade_scenarios_2020_12_24'),
-    ]
+    dependencies = [("countries", "0010_update_trade_scenarios_2020_12_24")]
 
-    operations = [
-        migrations.RunPython(
-            update_country_name,
-            migrations.RunPython.noop,
-        )
-    ]
+    operations = [migrations.RunPython(update_country_name, migrations.RunPython.noop)]

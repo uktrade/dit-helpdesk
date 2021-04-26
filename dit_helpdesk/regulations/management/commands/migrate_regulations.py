@@ -10,16 +10,14 @@ from hierarchy.helpers import process_swapped_tree
 
 def _get_codes(m2m, attr_name, prev_tree):
     return (
-        m2m(manager='all_objects')
+        m2m(manager="all_objects")
         .filter(nomenclature_tree=prev_tree)
         .values_list(attr_name, flat=True)
     )
 
 
 class Command(BaseCommand):
-    help = (
-        """Command to migrate regulations from a previous NomenclatureTree to the current one"""
-    )
+    help = """Command to migrate regulations from a previous NomenclatureTree to the current one"""
 
     def handle(self, *args, **options):
         self.stdout.write("Migrating regulations..")
@@ -27,9 +25,8 @@ class Command(BaseCommand):
         with process_swapped_tree():
             new_tree = NomenclatureTree.get_active_tree()
             prev_tree = NomenclatureTree.objects.filter(
-                region=settings.PRIMARY_REGION,
-                start_date__lt=new_tree.start_date
-            ).latest('start_date')
+                region=settings.PRIMARY_REGION, start_date__lt=new_tree.start_date
+            ).latest("start_date")
 
             self.stdout.write(f"New tree: {new_tree}")
             self.stdout.write(f"Previous tree: {prev_tree}")
@@ -39,14 +36,17 @@ class Command(BaseCommand):
             # running this for the first time without running import_initial_regulations),
             # take all of them
             regulation_groups = (
-                prev_tree_groups if prev_tree_groups.exists() else RegulationGroup.objects.all()
+                prev_tree_groups
+                if prev_tree_groups.exists()
+                else RegulationGroup.objects.all()
             )
             new_tree.regulationgroup_set.set(regulation_groups)
 
             prev_tree_regulations = prev_tree.regulation_set.all()
             # same here
             regulations = (
-                prev_tree_regulations if prev_tree_groups.exists()
+                prev_tree_regulations
+                if prev_tree_groups.exists()
                 else Regulation.objects.all()
             )
             new_tree.regulation_set.set(regulations)
@@ -57,22 +57,30 @@ class Command(BaseCommand):
 
                 # assign commodities
                 com_codes = _get_codes(
-                    regulation_group.commodities, 'commodity_code', prev_tree)
+                    regulation_group.commodities, "commodity_code", prev_tree
+                )
                 new_commodities = Commodity.objects.filter(commodity_code__in=com_codes)
 
                 # special case - if there had been an expansion and commodity became a subheading
-                new_subheadings = SubHeading.objects.filter(commodity_code__in=com_codes)
+                new_subheadings = SubHeading.objects.filter(
+                    commodity_code__in=com_codes
+                )
 
                 regulation_group.commodities.add(*new_commodities)
                 regulation_group.subheadings.add(*new_subheadings)
 
                 # assign subheadings
                 subheading_codes = _get_codes(
-                    regulation_group.subheadings, 'commodity_code', prev_tree)
-                new_subheadings = SubHeading.objects.filter(commodity_code__in=subheading_codes)
+                    regulation_group.subheadings, "commodity_code", prev_tree
+                )
+                new_subheadings = SubHeading.objects.filter(
+                    commodity_code__in=subheading_codes
+                )
 
                 # special case - contraction, subheading became a commodity
-                new_commodities = Commodity.objects.filter(commodity_code__in=subheading_codes)
+                new_commodities = Commodity.objects.filter(
+                    commodity_code__in=subheading_codes
+                )
 
                 # special case - expansion - not sure if it ever happens though
                 new_chapters = Chapter.objects.filter(chapter_code__in=subheading_codes)
@@ -83,24 +91,31 @@ class Command(BaseCommand):
 
                 # assign headings
                 heading_codes = _get_codes(
-                    regulation_group.headings, 'heading_code', prev_tree)
+                    regulation_group.headings, "heading_code", prev_tree
+                )
                 new_headings = Heading.objects.filter(heading_code__in=heading_codes)
-                new_subheadings = SubHeading.objects.filter(commodity_code__in=heading_codes)
+                new_subheadings = SubHeading.objects.filter(
+                    commodity_code__in=heading_codes
+                )
                 regulation_group.headings.add(*new_headings)
                 regulation_group.subheadings.add(*new_subheadings)
 
                 # assign chapters
                 chapter_codes = _get_codes(
-                    regulation_group.chapters, 'chapter_code', prev_tree)
+                    regulation_group.chapters, "chapter_code", prev_tree
+                )
                 new_chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
-                new_subheadings = SubHeading.objects.filter(commodity_code__in=chapter_codes)
+                new_subheadings = SubHeading.objects.filter(
+                    commodity_code__in=chapter_codes
+                )
 
                 regulation_group.chapters.add(*new_chapters)
                 regulation_group.subheadings.add(*new_subheadings)
 
                 # assign sections
                 section_codes = _get_codes(
-                    regulation_group.sections, 'roman_numeral', prev_tree)
+                    regulation_group.sections, "roman_numeral", prev_tree
+                )
                 new_sections = Section.objects.filter(roman_numeral__in=section_codes)
                 regulation_group.sections.add(*new_sections)
 

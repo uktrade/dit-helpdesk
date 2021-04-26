@@ -8,9 +8,9 @@ from hierarchy.helpers import process_swapped_tree
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         with process_swapped_tree():
             self.stdout.write(
-                "Post-processing rules of origin - forrmatting HS codes and abbreviations..")
+                "Post-processing rules of origin - forrmatting HS codes and abbreviations.."
+            )
             postprocess_rules_of_origin()

@@ -8,18 +8,16 @@ from django.db import migrations
 
 
 def fill_nomenclature_tree(apps, schema_editor):
-    Section = apps.get_model('hierarchy', 'Section')
-    Chapter = apps.get_model('hierarchy', 'Chapter')
-    Heading = apps.get_model('hierarchy', 'Heading')
-    SubHeading = apps.get_model('hierarchy', 'SubHeading')
-    NomenclatureTree = apps.get_model('hierarchy', 'NomenclatureTree')
+    Section = apps.get_model("hierarchy", "Section")
+    Chapter = apps.get_model("hierarchy", "Chapter")
+    Heading = apps.get_model("hierarchy", "Heading")
+    SubHeading = apps.get_model("hierarchy", "SubHeading")
+    NomenclatureTree = apps.get_model("hierarchy", "NomenclatureTree")
 
     tree = NomenclatureTree.objects.first()
     if not tree:
         tree = NomenclatureTree.objects.create(
-            region='EU',
-            start_date=dt.datetime.today(),
-            end_date=None
+            region="EU", start_date=dt.datetime.today(), end_date=None
         )
 
     Section.objects.all().update(nomenclature_tree=tree)
@@ -29,10 +27,10 @@ def fill_nomenclature_tree(apps, schema_editor):
 
 
 def unfill_nomenclature_tree(apps, schema_editor):
-    Section = apps.get_model('hierarchy', 'Section')
-    Chapter = apps.get_model('hierarchy', 'Chapter')
-    Heading = apps.get_model('hierarchy', 'Heading')
-    SubHeading = apps.get_model('hierarchy', 'SubHeading')
+    Section = apps.get_model("hierarchy", "Section")
+    Chapter = apps.get_model("hierarchy", "Chapter")
+    Heading = apps.get_model("hierarchy", "Heading")
+    SubHeading = apps.get_model("hierarchy", "SubHeading")
 
     Section.objects.all().update(nomenclature_tree=None)
     Chapter.objects.all().update(nomenclature_tree=None)
@@ -42,9 +40,7 @@ def unfill_nomenclature_tree(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0007_auto_20200908_1750'),
-    ]
+    dependencies = [("hierarchy", "0007_auto_20200908_1750")]
 
     operations = [
         migrations.RunPython(fill_nomenclature_tree, unfill_nomenclature_tree)

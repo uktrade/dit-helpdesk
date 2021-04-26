@@ -6,14 +6,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('deferred_changes_tests', '0002_auto_20210222_1558'),
-    ]
+    dependencies = [("deferred_changes_tests", "0002_auto_20210222_1558")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RenameModel(
-            old_name='TestModel',
-            new_name='ChildModel',
-        ),
+        migrations.RenameModel(old_name="TestModel", new_name="ChildModel"),
     ]

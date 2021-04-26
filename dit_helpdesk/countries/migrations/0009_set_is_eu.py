@@ -7,33 +7,33 @@ def forward_set_is_eu(apps, schema_editor):
     Country = apps.get_model("countries", "Country")
 
     country_codes = [
-        'HR',
-        'CY',
-        'CZ',
-        'EE',
-        'FI',
-        'FR',
-        'DE',
-        'HU',
-        'IE',
-        'LV',
-        'LT',
-        'MT',
-        'NL',
-        'PL',
-        'RO',
-        'SK',
-        'SI',
-        'ES',
-        'AT',
-        'BE',
-        'BG',
-        'DK',
-        'GR',
-        'LU',
-        'PT',
-        'SE',
-        'IT',
+        "HR",
+        "CY",
+        "CZ",
+        "EE",
+        "FI",
+        "FR",
+        "DE",
+        "HU",
+        "IE",
+        "LV",
+        "LT",
+        "MT",
+        "NL",
+        "PL",
+        "RO",
+        "SK",
+        "SI",
+        "ES",
+        "AT",
+        "BE",
+        "BG",
+        "DK",
+        "GR",
+        "LU",
+        "PT",
+        "SE",
+        "IT",
     ]
     Country.objects.update(is_eu=False)
 
@@ -48,10 +48,6 @@ def backwards_set_is_eu(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0008_country_is_eu'),
-    ]
+    dependencies = [("countries", "0008_country_is_eu")]
 
-    operations = [
-        migrations.RunPython(forward_set_is_eu, backwards_set_is_eu)
-    ]
+    operations = [migrations.RunPython(forward_set_is_eu, backwards_set_is_eu)]

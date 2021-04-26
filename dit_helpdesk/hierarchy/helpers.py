@@ -194,9 +194,11 @@ IMPORT_MEASURE_GROUPS = {
 }
 
 
-def get_nomenclature_group_measures(nomenclature_model, group_name, country_code, is_eu=None):
+def get_nomenclature_group_measures(
+    nomenclature_model, group_name, country_code, is_eu=None
+):
     if is_eu:
-        country_code = 'EU'
+        country_code = "EU"
 
     group_measure_type_ids = [
         item
@@ -232,9 +234,7 @@ def create_nomenclature_tree(region=settings.PRIMARY_REGION):
         prev_tree.save()
 
     tree = NomenclatureTree.objects.create(
-        region=region,
-        start_date=new_start_date,
-        end_date=None
+        region=region, start_date=new_start_date, end_date=None
     )
 
     return tree
@@ -242,8 +242,7 @@ def create_nomenclature_tree(region=settings.PRIMARY_REGION):
 
 def delete_all_inactive_trees(region):
     inactive_trees = NomenclatureTree.objects.filter(
-        region=region,
-        end_date__isnull=False,
+        region=region, end_date__isnull=False
     ).all()
 
     inactive_trees.delete()
@@ -268,7 +267,7 @@ def process_swapped_tree(region=settings.PRIMARY_REGION):
     with transaction.atomic():
         # get latest tree - not yet active because we want to activate it only immediately after
         # finishing reindexing (and swapping index aliases)
-        new_tree = NomenclatureTree.objects.filter(region=region).latest('start_date')
+        new_tree = NomenclatureTree.objects.filter(region=region).latest("start_date")
         # get active (but not latest) tree
         prev_tree = NomenclatureTree.get_active_tree(region=region)
         if prev_tree:
@@ -319,10 +318,10 @@ def get_eu_commodity_link(commodity_object, country) -> str:
 
 
 _class_name_arg_map = {
-    'Chapter': 'chapter_code',
-    'Heading': 'heading_code',
-    'SubHeading': 'commodity_code',
-    'Commodity': 'commodity_code',
+    "Chapter": "chapter_code",
+    "Heading": "heading_code",
+    "SubHeading": "commodity_code",
+    "Commodity": "commodity_code",
 }
 
 

@@ -6,26 +6,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0013_auto_20201009_1708'),
-    ]
+    dependencies = [("hierarchy", "0013_auto_20201009_1708")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RemoveField(
-            model_name='chapter',
-            name='tts_json',
-        ),
-        migrations.RemoveField(
-            model_name='heading',
-            name='tts_json',
-        ),
-        migrations.RemoveField(
-            model_name='section',
-            name='tts_json',
-        ),
-        migrations.RemoveField(
-            model_name='subheading',
-            name='tts_json',
-        ),
+        migrations.RemoveField(model_name="chapter", name="tts_json"),
+        migrations.RemoveField(model_name="heading", name="tts_json"),
+        migrations.RemoveField(model_name="section", name="tts_json"),
+        migrations.RemoveField(model_name="subheading", name="tts_json"),
     ]

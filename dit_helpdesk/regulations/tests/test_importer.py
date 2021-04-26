@@ -23,12 +23,27 @@ class RegulationsImporterTestCase(TestCase):
 
     @override_settings(
         HIERARCHY_MODEL_MAP={
-            "Commodity": {"file_name": "test_subsets/commodities.json", "app_name": "commodities"},
-            "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
-            "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-            "SubHeading": {"file_name": "test_subsets/sub_headings.json", "app_name": "hierarchy"},
-            "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
-        },
+            "Commodity": {
+                "file_name": "test_subsets/commodities.json",
+                "app_name": "commodities",
+            },
+            "Chapter": {
+                "file_name": "test_subsets/chapters.json",
+                "app_name": "hierarchy",
+            },
+            "Heading": {
+                "file_name": "test_subsets/headings.json",
+                "app_name": "hierarchy",
+            },
+            "SubHeading": {
+                "file_name": "test_subsets/sub_headings.json",
+                "app_name": "hierarchy",
+            },
+            "Section": {
+                "file_name": "test_subsets/sections.json",
+                "app_name": "hierarchy",
+            },
+        }
     )
     def test_regulation_groups_attached_to_commodity_objects(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
@@ -42,11 +57,16 @@ class RegulationsImporterTestCase(TestCase):
 
         commodity_code_list = ["2928001000", "2902500000", "2823000010"]
         commodities = Commodity.objects.filter(commodity_code__in=commodity_code_list)
-        regulation_group_title = "Voluntary - Eco-label for growing media, soil improvers and mulch"
+        regulation_group_title = (
+            "Voluntary - Eco-label for growing media, soil improvers and mulch"
+        )
         for item in commodities:
             self.assertIn(
                 regulation_group_title,
-                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+                [
+                    regulation_group.title
+                    for regulation_group in item.regulationgroup_set.all()
+                ],
             )
 
         commodity_code_list = ["2901100000", "7102100000"]
@@ -55,7 +75,10 @@ class RegulationsImporterTestCase(TestCase):
         for item in commodities:
             self.assertIn(
                 regulation_group_title,
-                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+                [
+                    regulation_group.title
+                    for regulation_group in item.regulationgroup_set.all()
+                ],
             )
 
         commodity_code_list = ["2850009000"]
@@ -64,17 +87,35 @@ class RegulationsImporterTestCase(TestCase):
         for item in commodities:
             self.assertIn(
                 regulation_group_title,
-                [regulation_group.title for regulation_group in item.regulationgroup_set.all()],
+                [
+                    regulation_group.title
+                    for regulation_group in item.regulationgroup_set.all()
+                ],
             )
 
     @override_settings(
         HIERARCHY_MODEL_MAP={
-            "Commodity": {"file_name": "test_subsets/commodities.json", "app_name": "commodities"},
-            "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
-            "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-            "SubHeading": {"file_name": "test_subsets/sub_headings.json", "app_name": "hierarchy"},
-            "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
-        },
+            "Commodity": {
+                "file_name": "test_subsets/commodities.json",
+                "app_name": "commodities",
+            },
+            "Chapter": {
+                "file_name": "test_subsets/chapters.json",
+                "app_name": "hierarchy",
+            },
+            "Heading": {
+                "file_name": "test_subsets/headings.json",
+                "app_name": "hierarchy",
+            },
+            "SubHeading": {
+                "file_name": "test_subsets/sub_headings.json",
+                "app_name": "hierarchy",
+            },
+            "Section": {
+                "file_name": "test_subsets/sections.json",
+                "app_name": "hierarchy",
+            },
+        }
     )
     def test_sets_celex_data(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
@@ -88,9 +129,15 @@ class RegulationsImporterTestCase(TestCase):
 
         mapping = [
             ("http://www.legislation.gov.uk/eudn/2014/763/contents", "CELEX32014D0763"),
-            ("http://www.legislation.gov.uk/eudn/2016/1332/contents", "CELEX32016D1332"),
+            (
+                "http://www.legislation.gov.uk/eudn/2016/1332/contents",
+                "CELEX32016D1332",
+            ),
             ("http://www.legislation.gov.uk/eudn/2014/391/contents", "CELEX32014D0391"),
-            ("http://www.legislation.gov.uk/eudn/2015/2099/contents", "CELEX32015D2099"),
+            (
+                "http://www.legislation.gov.uk/eudn/2015/2099/contents",
+                "CELEX32015D2099",
+            ),
             ("http://www.legislation.gov.uk/eur/2010/66/contents", "CELEX32010R0066"),
             ("http://www.legislation.gov.uk/eudn/2007/64/contents", "CELEX32007D0064"),
             ("http://www.legislation.gov.uk/eudn/2006/799/contents", "CELEX32006D0799"),
@@ -99,18 +146,31 @@ class RegulationsImporterTestCase(TestCase):
         for legislation_url, celex in mapping:
             regulation = Regulation.objects.get(url=legislation_url)
             self.assertEqual(regulation.celex, celex)
-        self.assertFalse(
-            Regulation.objects.filter(celex="").exists(),
-        )
+        self.assertFalse(Regulation.objects.filter(celex="").exists())
 
     @override_settings(
         HIERARCHY_MODEL_MAP={
-            "Commodity": {"file_name": "test_subsets/commodities.json", "app_name": "commodities"},
-            "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
-            "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-            "SubHeading": {"file_name": "test_subsets/sub_headings.json", "app_name": "hierarchy"},
-            "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
-        },
+            "Commodity": {
+                "file_name": "test_subsets/commodities.json",
+                "app_name": "commodities",
+            },
+            "Chapter": {
+                "file_name": "test_subsets/chapters.json",
+                "app_name": "hierarchy",
+            },
+            "Heading": {
+                "file_name": "test_subsets/headings.json",
+                "app_name": "hierarchy",
+            },
+            "SubHeading": {
+                "file_name": "test_subsets/sub_headings.json",
+                "app_name": "hierarchy",
+            },
+            "Section": {
+                "file_name": "test_subsets/sections.json",
+                "app_name": "hierarchy",
+            },
+        }
     )
     def test_updated_celex_data_saves_against_existing(self):
         model_names = ["Section", "Chapter", "Heading", "SubHeading", "Commodity"]
@@ -120,16 +180,22 @@ class RegulationsImporterTestCase(TestCase):
 
         mapping = [
             ("http://www.legislation.gov.uk/eudn/2014/763/contents", "CELEX32014D0763"),
-            ("http://www.legislation.gov.uk/eudn/2016/1332/contents", "CELEX32016D1332"),
+            (
+                "http://www.legislation.gov.uk/eudn/2016/1332/contents",
+                "CELEX32016D1332",
+            ),
             ("http://www.legislation.gov.uk/eudn/2014/391/contents", "CELEX32014D0391"),
-            ("http://www.legislation.gov.uk/eudn/2015/2099/contents", "CELEX32015D2099"),
+            (
+                "http://www.legislation.gov.uk/eudn/2015/2099/contents",
+                "CELEX32015D2099",
+            ),
             ("http://www.legislation.gov.uk/eur/2010/66/contents", "CELEX32010R0066"),
             ("http://www.legislation.gov.uk/eudn/2007/64/contents", "CELEX32007D0064"),
             ("http://www.legislation.gov.uk/eudn/2006/799/contents", "CELEX32006D0799"),
         ]
 
         for legislation_url, _ in mapping:
-            mixer.blend(Regulation, url=legislation_url, celex='')
+            mixer.blend(Regulation, url=legislation_url, celex="")
 
         importer = RegulationsImporter()
         importer.load(data_path)
@@ -138,9 +204,7 @@ class RegulationsImporterTestCase(TestCase):
         for legislation_url, celex in mapping:
             regulation = Regulation.objects.get(url=legislation_url)
             self.assertEqual(regulation.celex, celex)
-        self.assertFalse(
-            Regulation.objects.filter(celex="").exists(),
-        )
+        self.assertFalse(Regulation.objects.filter(celex="").exists())
 
     def test_data_loader_with_csv(self):
         file_path = settings.REGULATIONS_DATA_PATH.format(

@@ -4,11 +4,11 @@ from django.conf import settings
 
 from core.middleware import NoIndexMiddleware
 
+
 class NoIndexMiddlewareTestCase(TestCase):
     def setUp(self):
         self.rf = RequestFactory()
         self.client = Client()
-
 
     def test_get_noindex_header_response(self):
         request = self.rf.get("/any_old_page/")

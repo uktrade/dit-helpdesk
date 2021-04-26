@@ -3,12 +3,7 @@ from mixer.backend.django import mixer
 from django.test import TestCase
 
 from commodities.models import Commodity
-from hierarchy.models import (
-    Chapter,
-    Section,
-    Heading,
-    SubHeading,
-)
+from hierarchy.models import Chapter, Section, Heading, SubHeading
 from hierarchy.helpers import create_nomenclature_tree
 
 from ..models import RegulationGroup
@@ -20,15 +15,9 @@ class InheritedRegulationGroupsTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('UK')
+        self.tree = create_nomenclature_tree("UK")
 
-        self.model_classes = [
-            Chapter,
-            Section,
-            Heading,
-            SubHeading,
-            Commodity,
-        ]
+        self.model_classes = [Chapter, Section, Heading, SubHeading, Commodity]
 
         for model_class in self.model_classes:
             mixer.register(model_class, nomenclature_tree=self.tree)
@@ -44,11 +33,11 @@ class InheritedRegulationGroupsTestCase(TestCase):
 
     def test_model_with_regulation(self):
         model_classes = [
-            (Chapter, 'chapters'),
-            (Section, 'sections'),
-            (Heading, 'headings'),
-            (SubHeading, 'subheadings'),
-            (Commodity, 'commodities'),
+            (Chapter, "chapters"),
+            (Section, "sections"),
+            (Heading, "headings"),
+            (SubHeading, "subheadings"),
+            (Commodity, "commodities"),
         ]
 
         for model_class, relation_attr in model_classes:
@@ -82,7 +71,9 @@ class InheritedRegulationGroupsTestCase(TestCase):
         b_regulation = mixer.blend(RegulationGroup, commodities=commodity)
 
         commodity_regulation_groups = RegulationGroup.objects.inherited(commodity)
-        self.assertEqual(set(commodity_regulation_groups), set([a_regulation, b_regulation]))
+        self.assertEqual(
+            set(commodity_regulation_groups), set([a_regulation, b_regulation])
+        )
 
         heading_regulation_groups = RegulationGroup.objects.inherited(heading)
         self.assertEqual(set(heading_regulation_groups), set([a_regulation]))
@@ -90,7 +81,9 @@ class InheritedRegulationGroupsTestCase(TestCase):
     def test_models_same_regulation_multiple_times_one_level_hierarchy(self):
         heading = mixer.blend(Heading)
         commodity = mixer.blend(Commodity, heading=heading)
-        regulation = mixer.blend(RegulationGroup, headings=heading, commodities=commodity)
+        regulation = mixer.blend(
+            RegulationGroup, headings=heading, commodities=commodity
+        )
 
         commodity_regulation_groups = RegulationGroup.objects.inherited(commodity)
         self.assertEqual(set(commodity_regulation_groups), set([regulation]))
@@ -166,50 +159,44 @@ class InheritedRegulationGroupsTestCase(TestCase):
         commodity_regulation_groups = RegulationGroup.objects.inherited(commodity)
         self.assertEqual(
             set(commodity_regulation_groups),
-            set([
-                section_regulation,
-                chapter_regulation,
-                heading_regulation,
-                sub_heading_regulation,
-                commodity_regulation,
-            ]),
+            set(
+                [
+                    section_regulation,
+                    chapter_regulation,
+                    heading_regulation,
+                    sub_heading_regulation,
+                    commodity_regulation,
+                ]
+            ),
         )
 
         sub_heading_regulation_groups = RegulationGroup.objects.inherited(sub_heading)
         self.assertEqual(
             set(sub_heading_regulation_groups),
-            set([
-                section_regulation,
-                chapter_regulation,
-                heading_regulation,
-                sub_heading_regulation,
-            ]),
+            set(
+                [
+                    section_regulation,
+                    chapter_regulation,
+                    heading_regulation,
+                    sub_heading_regulation,
+                ]
+            ),
         )
 
         heading_regulation_groups = RegulationGroup.objects.inherited(heading)
         self.assertEqual(
             set(heading_regulation_groups),
-            set([
-                section_regulation,
-                chapter_regulation,
-                heading_regulation,
-            ]),
+            set([section_regulation, chapter_regulation, heading_regulation]),
         )
 
         chapter_regulation_groups = RegulationGroup.objects.inherited(chapter)
         self.assertEqual(
             set(chapter_regulation_groups),
-            set([
-                section_regulation,
-                chapter_regulation,
-            ]),
+            set([section_regulation, chapter_regulation]),
         )
 
         section_regulation_groups = RegulationGroup.objects.inherited(section)
-        self.assertEqual(
-            set(section_regulation_groups),
-            set([section_regulation]),
-        )
+        self.assertEqual(set(section_regulation_groups), set([section_regulation]))
 
     def test_regulation_groups_in_multiple_hierarchies(self):
         a_commodity = mixer.blend(Commodity)
@@ -219,13 +206,7 @@ class InheritedRegulationGroupsTestCase(TestCase):
         b_regulation = mixer.blend(RegulationGroup, commodities=b_commodity)
 
         a_commodity_regulation_groups = RegulationGroup.objects.inherited(a_commodity)
-        self.assertEqual(
-            set(a_commodity_regulation_groups),
-            set([a_regulation]),
-        )
+        self.assertEqual(set(a_commodity_regulation_groups), set([a_regulation]))
 
         b_commodity_regulation_groups = RegulationGroup.objects.inherited(b_commodity)
-        self.assertEqual(
-            set(b_commodity_regulation_groups),
-            set([b_regulation]),
-        )
+        self.assertEqual(set(b_commodity_regulation_groups), set([b_regulation]))

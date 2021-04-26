@@ -78,7 +78,9 @@ class RegulationsImporter:
 
         regulation_group_field_data = {"title": data_map["title"]}
 
-        regulation_group = self._create_instance(RegulationGroup, regulation_group_field_data)
+        regulation_group = self._create_instance(
+            RegulationGroup, regulation_group_field_data
+        )
         regulation_group.nomenclature_trees.add(self.tree)
         regulation_group.headings.add(*list(parent_headings))
         regulation_group.commodities.add(*list(parent_commodities))
@@ -86,9 +88,7 @@ class RegulationsImporter:
 
         if data_map["document"]["url"] is None:
             data_map["document"]["url"] = ""
-        kwargs = {
-            "url": data_map["document"]["url"],
-        }
+        kwargs = {"url": data_map["document"]["url"]}
         defaults = {
             "celex": data_map["document"]["celex"],
             "title": data_map["document"]["title"],
@@ -259,7 +259,7 @@ class RegulationsImporter:
                                 "url": item["url"],
                                 "title": item["document_title"],
                             },
-                        },
+                        }
                     )
             except KeyError as key_err:
                 logger.debug(

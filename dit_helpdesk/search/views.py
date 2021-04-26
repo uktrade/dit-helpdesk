@@ -113,13 +113,16 @@ class CommoditySearchView(FormView):
                 term_search_context = helpers.search_by_term(form_data=form_data)
                 context.update(term_search_context)
 
-                hits = term_search_context['_all_results']
+                hits = term_search_context["_all_results"]
 
                 # since we are supplying hits the function will not hit ES again
                 grouped_search_context = helpers.group_search_by_term(
-                    form_data, hits=hits)
+                    form_data, hits=hits
+                )
 
-                context['group_result_count'] = grouped_search_context['group_result_count']
+                context["group_result_count"] = grouped_search_context[
+                    "group_result_count"
+                ]
 
                 curr_url_items = dict((x, y) for x, y in request.GET.items())
 
@@ -138,15 +141,13 @@ class CommoditySearchView(FormView):
                 if not context["results"]:
                     context["title_suffix"] = self.EMPTY_RESULTS_SUFFIX
 
-                search_term = form_data.get('q')
-                total_results = context['total_results']
+                search_term = form_data.get("q")
+                total_results = context["total_results"]
 
                 logger.info(
                     f"Performed search for {search_term}",
-                    extra={
-                        'search_term': search_term,
-                        'search_count': total_results,
-                    })
+                    extra={"search_term": search_term, "search_count": total_results},
+                )
 
                 track_event(
                     request,
@@ -236,8 +237,9 @@ class GroupedCommoditySearchView(FormView):
         context = self.get_context_data(
             kwargs={
                 "country_code": country_code,
-                "selected_origin_country": kwargs["country_code"]
-            })
+                "selected_origin_country": kwargs["country_code"],
+            }
+        )
         context["title_suffix"] = ""
 
         if form.is_valid():
@@ -277,13 +279,21 @@ class GroupedCommoditySearchView(FormView):
 
                 context.update(grouped_context)
 
-                chapters = Chapter.objects.filter(
-                    chapter_code__in=grouped_context["group_chapters"]
-                ).order_by('chapter_code').all()
+                chapters = (
+                    Chapter.objects.filter(
+                        chapter_code__in=grouped_context["group_chapters"]
+                    )
+                    .order_by("chapter_code")
+                    .all()
+                )
 
-                headings = Heading.objects.filter(
-                    heading_code__in=grouped_context["group_headings"]
-                ).order_by("heading_code").all()
+                headings = (
+                    Heading.objects.filter(
+                        heading_code__in=grouped_context["group_headings"]
+                    )
+                    .order_by("heading_code")
+                    .all()
+                )
 
                 # to facilitate lookup
                 chapters_dict = {ch.chapter_code: ch for ch in chapters}
@@ -299,7 +309,8 @@ class GroupedCommoditySearchView(FormView):
                     heading_codes = sorted(heading_codes)
 
                     headings_in_chapter_order = [
-                        heading_code for heading_code in heading_sort_order
+                        heading_code
+                        for heading_code in heading_sort_order
                         if heading_code in heading_codes
                     ]
 
@@ -315,15 +326,13 @@ class GroupedCommoditySearchView(FormView):
 
                 context["results"] = results
 
-                search_term = form_data.get('q')
-                total_results = grouped_context['group_result_count']
+                search_term = form_data.get("q")
+                total_results = grouped_context["group_result_count"]
 
                 logger.info(
                     f"Performed grouped search for {search_term}",
-                    extra={
-                        'search_term': search_term,
-                        'search_count': total_results,
-                    })
+                    extra={"search_term": search_term, "search_count": total_results},
+                )
 
                 track_event(
                     request,
@@ -379,10 +388,10 @@ class CommodityTermSearchAPIView(generics.ListAPIView):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
         data = {
-            'q': serializer.validated_data["q"],
-            'page': serializer.validated_data["page"],
-            'sort': 'ranking',
-            'sort_order': 'desc', 
+            "q": serializer.validated_data["q"],
+            "page": serializer.validated_data["page"],
+            "sort": "ranking",
+            "sort_order": "desc",
         }
         context = helpers.search_by_term(form_data=data)
         context["results"] = [hit.to_dict() for hit in context["results"]]

@@ -8,15 +8,15 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('cms', '0001_initial'),
-        ('deferred_changes', '0001_initial'),
-    ]
+    dependencies = [("cms", "0001_initial"), ("deferred_changes", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='approval',
-            name='deferred_change',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='deferred_changes.DeferredChange'),
-        ),
+            model_name="approval",
+            name="deferred_change",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.PROTECT,
+                to="deferred_changes.DeferredChange",
+            ),
+        )
     ]

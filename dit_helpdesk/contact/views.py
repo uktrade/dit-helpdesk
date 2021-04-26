@@ -39,7 +39,7 @@ CATEGORIES, TOPICS = (dict(CATEGORY_CHOICES), dict(TOPIC_CHOICES))
 
 
 def jump_to_step_two(wizard):
-    """ Returning false bypasses the first form"""
+    """Returning false bypasses the first form"""
     if wizard.request.path == "/feedback/":
         return False
     else:
@@ -47,7 +47,7 @@ def jump_to_step_two(wizard):
 
 
 def jump_to_step_three(wizard):
-    """ Returning False bypasses second form """
+    """Returning False bypasses second form"""
     cleaned_data = wizard.get_cleaned_data_for_step("step_one") or {}
     category = cleaned_data.get("category")
     if not cleaned_data:

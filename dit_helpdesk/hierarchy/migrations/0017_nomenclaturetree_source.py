@@ -6,15 +6,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0016_remove_chapter_last_updated'),
-    ]
+    dependencies = [("hierarchy", "0016_remove_chapter_last_updated")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AddField(
-            model_name='nomenclaturetree',
-            name='source',
-            field=models.CharField(default='original', max_length=255),
+            model_name="nomenclaturetree",
+            name="source",
+            field=models.CharField(default="original", max_length=255),
         ),
     ]

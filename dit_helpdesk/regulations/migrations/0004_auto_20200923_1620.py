@@ -6,18 +6,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('regulations', '0003_auto_20200923_1138'),
-    ]
+    dependencies = [("regulations", "0003_auto_20200923_1138")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RenameModel(
-            old_name='Document',
-            new_name='Regulation',
-        ),
-        migrations.AlterModelOptions(
-            name='regulation',
-            options={},
-        ),
+        migrations.RenameModel(old_name="Document", new_name="Regulation"),
+        migrations.AlterModelOptions(name="regulation", options={}),
     ]

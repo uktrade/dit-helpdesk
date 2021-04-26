@@ -16,7 +16,6 @@ always_true_Q = ~Q(pk__in=[])
 
 
 class Timer:
-
     def __init__(self):
         self.start_time = None
         self.stop_time = None
@@ -29,7 +28,7 @@ class Timer:
 
     def elapsed(self):
         if not (self.start_time and self.stop_time):
-            return 0.
+            return 0.0
 
         return self.stop_time - self.start_time
 
@@ -53,11 +52,7 @@ def reset_urls_for_settings(urlconf=None, **kwargs):
 
 
 def flatten(list_of_lists):
-    return [
-        item
-        for inner_list in list_of_lists
-        for item in inner_list
-    ]
+    return [item for inner_list in list_of_lists for item in inner_list]
 
 
 def unique_maintain_order(iterable):
@@ -83,8 +78,6 @@ def patch_tts_json(model_class, tts_json_data_path):
     test_data = json.dumps(_get_test_data(tts_json_data_path))
 
     with mock.patch.object(
-        model_class,
-        "tts_json",
-        new_callable=mock.PropertyMock(return_value=test_data),
+        model_class, "tts_json", new_callable=mock.PropertyMock(return_value=test_data)
     ):
         yield

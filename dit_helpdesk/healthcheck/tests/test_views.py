@@ -52,7 +52,9 @@ class TestViews(TestCase):
     def test_tree_freshness__stale(self):
         tree = create_nomenclature_tree()
 
-        old_date = timezone.now() - TreeRefreshCheckView.MAX_DELTA - dt.timedelta(days=1)
+        old_date = (
+            timezone.now() - TreeRefreshCheckView.MAX_DELTA - dt.timedelta(days=1)
+        )
         tree.start_date = old_date
         tree.save()
 

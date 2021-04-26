@@ -5,55 +5,26 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0015_rule_commodities'),
-    ]
+    dependencies = [("rules_of_origin", "0015_rule_commodities")]
 
     operations = [
+        migrations.RemoveField(model_name="oldruleitem", name="old_rule"),
+        migrations.AlterUniqueTogether(name="oldrulesdocument", unique_together=None),
+        migrations.RemoveField(model_name="oldrulesdocument", name="old_rules_group"),
         migrations.RemoveField(
-            model_name='oldruleitem',
-            name='old_rule',
+            model_name="oldrulesdocumentfootnote", name="old_rules_document"
         ),
         migrations.AlterUniqueTogether(
-            name='oldrulesdocument',
-            unique_together=None,
+            name="oldrulesgroupmember", unique_together=None
         ),
+        migrations.RemoveField(model_name="oldrulesgroupmember", name="country"),
         migrations.RemoveField(
-            model_name='oldrulesdocument',
-            name='old_rules_group',
+            model_name="oldrulesgroupmember", name="old_rules_group"
         ),
-        migrations.RemoveField(
-            model_name='oldrulesdocumentfootnote',
-            name='old_rules_document',
-        ),
-        migrations.AlterUniqueTogether(
-            name='oldrulesgroupmember',
-            unique_together=None,
-        ),
-        migrations.RemoveField(
-            model_name='oldrulesgroupmember',
-            name='country',
-        ),
-        migrations.RemoveField(
-            model_name='oldrulesgroupmember',
-            name='old_rules_group',
-        ),
-        migrations.DeleteModel(
-            name='OldRule',
-        ),
-        migrations.DeleteModel(
-            name='OldRuleItem',
-        ),
-        migrations.DeleteModel(
-            name='OldRulesDocument',
-        ),
-        migrations.DeleteModel(
-            name='OldRulesDocumentFootnote',
-        ),
-        migrations.DeleteModel(
-            name='OldRulesGroup',
-        ),
-        migrations.DeleteModel(
-            name='OldRulesGroupMember',
-        ),
+        migrations.DeleteModel(name="OldRule"),
+        migrations.DeleteModel(name="OldRuleItem"),
+        migrations.DeleteModel(name="OldRulesDocument"),
+        migrations.DeleteModel(name="OldRulesDocumentFootnote"),
+        migrations.DeleteModel(name="OldRulesGroup"),
+        migrations.DeleteModel(name="OldRulesGroupMember"),
     ]

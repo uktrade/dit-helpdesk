@@ -7,9 +7,7 @@ from django.template import loader
 def render_gtm_template(template_filename):
     t = loader.get_template(template_filename)
 
-    return t.render({
-        'HELPDESK_GA_GTM': settings.HELPDESK_GA_GTM
-    })
+    return t.render({"HELPDESK_GA_GTM": settings.HELPDESK_GA_GTM})
 
 
 @register.simple_tag()

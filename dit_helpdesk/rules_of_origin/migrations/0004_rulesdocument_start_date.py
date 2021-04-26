@@ -6,15 +6,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0003_auto_20200918_0951'),
-    ]
+    dependencies = [("rules_of_origin", "0003_auto_20200918_0951")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AddField(
-            model_name='rulesdocument',
-            name='start_date',
+            model_name="rulesdocument",
+            name="start_date",
             field=models.DateField(auto_now=True),
         ),
     ]

@@ -6,14 +6,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0015_remove_last_updated'),
-    ]
+    dependencies = [("hierarchy", "0015_remove_last_updated")]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RemoveField(
-            model_name='chapter',
-            name='last_updated',
-        ),
+        migrations.RemoveField(model_name="chapter", name="last_updated"),
     ]

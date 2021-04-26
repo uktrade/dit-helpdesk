@@ -6,15 +6,11 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0007_auto_20201214_1438'),
-    ]
+    dependencies = [("countries", "0007_auto_20201214_1438")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AddField(
-            model_name='country',
-            name='is_eu',
-            field=models.BooleanField(default=False),
+            model_name="country", name="is_eu", field=models.BooleanField(default=False)
         ),
     ]

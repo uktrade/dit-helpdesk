@@ -9,46 +9,80 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-    ]
+    dependencies = [("contenttypes", "0002_remove_content_type_name")]
 
     operations = [
         migrations.CreateModel(
-            name='DeferredChange',
+            name="DeferredChange",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_deferred_changes.deferredchange_set+', to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "polymorphic_ctype",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="polymorphic_deferred_changes.deferredchange_set+",
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-                'base_manager_name': 'objects',
-            },
+            options={"abstract": False, "base_manager_name": "objects"},
         ),
         migrations.CreateModel(
-            name='DeferredCreate',
+            name="DeferredCreate",
             fields=[
-                ('deferredchange_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='deferred_changes.DeferredChange')),
-                ('data', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('form_class', models.CharField(max_length=255)),
+                (
+                    "deferredchange_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="deferred_changes.DeferredChange",
+                    ),
+                ),
+                ("data", django.contrib.postgres.fields.jsonb.JSONField()),
+                ("form_class", models.CharField(max_length=255)),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('deferred_changes.deferredchange',),
+            options={"abstract": False},
+            bases=("deferred_changes.deferredchange",),
         ),
         migrations.CreateModel(
-            name='DeferredUpdate',
+            name="DeferredUpdate",
             fields=[
-                ('deferredchange_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='deferred_changes.DeferredChange')),
-                ('data', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('form_class', models.CharField(max_length=255)),
-                ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    "deferredchange_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="deferred_changes.DeferredChange",
+                    ),
+                ),
+                ("data", django.contrib.postgres.fields.jsonb.JSONField()),
+                ("form_class", models.CharField(max_length=255)),
+                ("object_id", models.PositiveIntegerField()),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('deferred_changes.deferredchange',),
+            options={"abstract": False},
+            bases=("deferred_changes.deferredchange",),
         ),
     ]

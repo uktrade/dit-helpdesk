@@ -34,18 +34,13 @@ def get_data(file_path, tree):
 
 def create_instance(data, model_class):
     skip_attributes = ["tts_json"]
-    filtered_data = {
-        k: v
-        for k, v in data.items()
-        if k not in skip_attributes
-    }
+    filtered_data = {k: v for k, v in data.items() if k not in skip_attributes}
     instance = model_class(**filtered_data)
     instance.save()
     return instance
 
 
 class HierarchyViewTestCase(TestCase):
-
     def setUp(self):
         """
         To test fully test a commodity we need to load a parent subheading and its parent heading and save the
@@ -64,7 +59,7 @@ class HierarchyViewTestCase(TestCase):
             kwargs={
                 "country_code": self.country.country_code.lower(),
                 "section_id": self.section.section_id,
-            }
+            },
         )
 
         self.chapter = create_instance(
@@ -92,7 +87,9 @@ class HierarchyViewTestCase(TestCase):
             get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
         )
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
+        self.commodity.tts_json = json.dumps(
+            get_data(settings.COMMODITY_DATA, self.tree)
+        )
         self.commodity.save()
 
         self.client = Client()
@@ -114,141 +111,71 @@ class HierarchyViewTestCase(TestCase):
 
 
 class ChapterDetailViewTestCase(HierarchyViewTestCase):
-
     def test_commodity_object(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["commodity"],
-            self.chapter,
-        )
-        self.assertEqual(
-            ctx["object"],
-            self.chapter,
-        )
+        self.assertEqual(ctx["commodity"], self.chapter)
+        self.assertEqual(ctx["object"], self.chapter)
 
     def test_commodity_object_path(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
         accordion_title = ctx["accordion_title"]
-        self.assertEqual(
-            accordion_title,
-            "Section I: Live animals; animal products",
-        )
+        self.assertEqual(accordion_title, "Section I: Live animals; animal products")
 
         hierarchy_context = ctx["hierarchy_context"]
-        self.assertInHTML(
-            self.section_url,
-            hierarchy_context,
-            count=0,
-        )
-        self.assertInHTML(
-            "Live animals",
-            hierarchy_context,
-        )
-        self.assertNotIn(
-            self.chapter_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Live horses, asses, mules and hinnies",
-            hierarchy_context,
-        )
-        self.assertIn(
-            self.heading_url,
-            hierarchy_context,
-        )
+        self.assertInHTML(self.section_url, hierarchy_context, count=0)
+        self.assertInHTML("Live animals", hierarchy_context)
+        self.assertNotIn(self.chapter_url, hierarchy_context)
+        self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
+        self.assertIn(self.heading_url, hierarchy_context)
 
     def test_notes_context_data(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["section_notes"],
-            self.section.section_notes,
-        )
-        self.assertEqual(
-            ctx["chapter_notes"],
-            self.chapter.chapter_notes,
-        )
+        self.assertEqual(ctx["section_notes"], self.section.section_notes)
+        self.assertEqual(ctx["chapter_notes"], self.chapter.chapter_notes)
         self.assertNotIn("heading_notes", ctx)
         self.assertNotIn("commodity_notes", ctx)
 
 
 class HeadingDetailViewTestCase(HierarchyViewTestCase):
-
     def test_commodity_object(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["commodity"],
-            self.heading,
-        )
-        self.assertEqual(
-            ctx["object"],
-            self.heading,
-        )
+        self.assertEqual(ctx["commodity"], self.heading)
+        self.assertEqual(ctx["object"], self.heading)
 
     def test_commodity_object_path(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
         accordion_title = ctx["accordion_title"]
-        self.assertEqual(
-            accordion_title,
-            "Section I: Live animals; animal products",
-        )
+        self.assertEqual(accordion_title, "Section I: Live animals; animal products")
 
         hierarchy_context = ctx["hierarchy_context"]
-        self.assertIn(
-            self.chapter_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Live animals",
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Live horses, asses, mules and hinnies",
-            hierarchy_context,
-        )
-        self.assertNotIn(
-            self.heading_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Horses",
-            hierarchy_context,
-        )
-        self.assertIn(
-            self.subheading_url,
-            hierarchy_context,
-        )
+        self.assertIn(self.chapter_url, hierarchy_context)
+        self.assertInHTML("Live animals", hierarchy_context)
+        self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
+        self.assertNotIn(self.heading_url, hierarchy_context)
+        self.assertInHTML("Horses", hierarchy_context)
+        self.assertIn(self.subheading_url, hierarchy_context)
 
     def test_notes_context_data(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["section_notes"],
-            self.section.section_notes,
-        )
-        self.assertEqual(
-            ctx["chapter_notes"],
-            self.chapter.chapter_notes,
-        )
-        self.assertEqual(
-            ctx["heading_notes"],
-            self.heading.heading_notes,
-        )
+        self.assertEqual(ctx["section_notes"], self.section.section_notes)
+        self.assertEqual(ctx["chapter_notes"], self.chapter.chapter_notes)
+        self.assertEqual(ctx["heading_notes"], self.heading.heading_notes)
         self.assertNotIn("commodity_notes", ctx)
 
 
 class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -268,31 +195,38 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
         self.heading_eu = create_instance(self.heading_eu_data, Heading)
         self.heading_eu.chapter_id = self.chapter_eu.pk
         self.heading_eu.save()
-        self.heading_northern_ireland_url = self.heading_eu.get_northern_ireland_detail_url(self.country.country_code)
+        self.heading_northern_ireland_url = self.heading_eu.get_northern_ireland_detail_url(
+            self.country.country_code
+        )
 
         self.subheading_eu = create_instance(
             get_data(settings.SUBHEADING_STRUCTURE, self.tree_eu), SubHeading
         )
         self.subheading_eu.heading_id = self.heading_eu.id
         self.subheading_eu.save()
-        self.subheading_northern_ireland_url = self.subheading_eu.get_northern_ireland_detail_url(self.country.country_code)
+        self.subheading_northern_ireland_url = self.subheading_eu.get_northern_ireland_detail_url(
+            self.country.country_code
+        )
 
         self.commodity_eu = create_instance(
             get_data(settings.COMMODITY_STRUCTURE, self.tree_eu), Commodity
         )
         self.commodity_eu.parent_subheading_id = self.subheading_eu.id
-        self.commodity_eu.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree_eu))
+        self.commodity_eu.tts_json = json.dumps(
+            get_data(settings.COMMODITY_DATA, self.tree_eu)
+        )
         self.commodity_eu.save()
 
 
 class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
-
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):
-            with mock.patch.object(Heading, "should_update_tts_content", return_value=should_update), \
-                mock.patch.object(Heading, "update_tts_content"), \
-                patch_tts_json(Heading, settings.HEADINGJSON_DATA):
+            with mock.patch.object(
+                Heading, "should_update_tts_content", return_value=should_update
+            ), mock.patch.object(Heading, "update_tts_content"), patch_tts_json(
+                Heading, settings.HEADINGJSON_DATA
+            ):
                 yield
 
         with tts_content_mock(False):
@@ -305,87 +239,48 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
 
 
 class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
-
     def test_commodity_object(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["commodity"],
-            self.subheading,
-        )
-        self.assertEqual(
-            ctx["object"],
-            self.subheading,
-        )
+        self.assertEqual(ctx["commodity"], self.subheading)
+        self.assertEqual(ctx["object"], self.subheading)
 
     def test_commodity_object_path(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
         accordion_title = ctx["accordion_title"]
-        self.assertEqual(
-            accordion_title,
-            "Section I: Live animals; animal products",
-        )
+        self.assertEqual(accordion_title, "Section I: Live animals; animal products")
 
         hierarchy_context = ctx["hierarchy_context"]
-        self.assertIn(
-            self.chapter_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Live animals",
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Live horses, asses, mules and hinnies",
-            hierarchy_context,
-        )
-        self.assertIn(
-            self.heading_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Horses",
-            hierarchy_context,
-        )
-        self.assertNotIn(
-            self.subheading_url,
-            hierarchy_context,
-        )
-        self.assertInHTML(
-            "Pure-bred breeding animals",
-            hierarchy_context,
-        )
+        self.assertIn(self.chapter_url, hierarchy_context)
+        self.assertInHTML("Live animals", hierarchy_context)
+        self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
+        self.assertIn(self.heading_url, hierarchy_context)
+        self.assertInHTML("Horses", hierarchy_context)
+        self.assertNotIn(self.subheading_url, hierarchy_context)
+        self.assertInHTML("Pure-bred breeding animals", hierarchy_context)
 
     def test_notes_context_data(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
-        self.assertEqual(
-            ctx["section_notes"],
-            self.section.section_notes,
-        )
-        self.assertEqual(
-            ctx["chapter_notes"],
-            self.chapter.chapter_notes,
-        )
-        self.assertEqual(
-            ctx["heading_notes"],
-            self.subheading.heading_notes,
-        )
+        self.assertEqual(ctx["section_notes"], self.section.section_notes)
+        self.assertEqual(ctx["chapter_notes"], self.chapter.chapter_notes)
+        self.assertEqual(ctx["heading_notes"], self.subheading.heading_notes)
         self.assertNotIn("commodity_notes", ctx)
 
 
 class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
-
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):
-            with mock.patch.object(SubHeading, "should_update_tts_content", return_value=should_update), \
-                mock.patch.object(SubHeading, "update_tts_content"), \
-                patch_tts_json(SubHeading, settings.SUBHEADINGJSON_DATA):
+            with mock.patch.object(
+                SubHeading, "should_update_tts_content", return_value=should_update
+            ), mock.patch.object(SubHeading, "update_tts_content"), patch_tts_json(
+                SubHeading, settings.SUBHEADINGJSON_DATA
+            ):
                 yield
 
         with tts_content_mock(False):

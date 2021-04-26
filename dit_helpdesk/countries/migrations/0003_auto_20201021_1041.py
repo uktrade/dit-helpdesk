@@ -6,21 +6,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0002_auto_20200908_1357'),
-    ]
+    dependencies = [("countries", "0002_auto_20200908_1357")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AddField(
-            model_name='country',
-            name='content_url',
+            model_name="country",
+            name="content_url",
             field=models.URLField(null=True, blank=True),
         ),
         migrations.AddField(
-            model_name='country',
-            name='scenario',
-            field=models.CharField(default='WTO', max_length=255),
+            model_name="country",
+            name="scenario",
+            field=models.CharField(default="WTO", max_length=255),
             preserve_default=False,
         ),
     ]

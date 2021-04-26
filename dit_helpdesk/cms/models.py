@@ -15,7 +15,6 @@ User = get_user_model()
 
 
 class ApprovalManager(models.Manager):
-
     def pending(self):
         return self.filter(approved_at__isnull=True)
 
@@ -25,14 +24,11 @@ class Approval(models.Model):
 
     approved_at = models.DateTimeField(null=True)
     approved_by = models.ForeignKey(
-        User,
-        null=True,
-        on_delete=models.PROTECT,
-        related_name="approved_approvals",
+        User, null=True, on_delete=models.PROTECT, related_name="approved_approvals"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
-        User, on_delete=models.PROTECT, related_name="created_approvals",
+        User, on_delete=models.PROTECT, related_name="created_approvals"
     )
     deferred_change = models.OneToOneField(DeferredChange, on_delete=models.PROTECT)
     description = models.CharField(max_length=255)

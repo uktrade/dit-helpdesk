@@ -28,7 +28,7 @@ class HealthCheckView(TemplateView):
             return False
 
     def get_context_data(self, **kwargs):
-        """ Adds status and response time to response context"""
+        """Adds status and response time to response context"""
         context = super().get_context_data(**kwargs)
         context["status"] = "OK" if self._do_check() is True else "FAIL"
         # nearest approximation of a response time
@@ -47,9 +47,9 @@ class BaseCheckView(View):
         is_check_successful = self.check(request)
 
         if is_check_successful:
-            resp = HttpResponse('OK', status=self.CHECK_SUCCEEDED_STATUS)
+            resp = HttpResponse("OK", status=self.CHECK_SUCCEEDED_STATUS)
         else:
-            resp = HttpResponse('Failed', status=self.CHECK_FAILED_STATUS)
+            resp = HttpResponse("Failed", status=self.CHECK_FAILED_STATUS)
 
         return resp
 
@@ -62,7 +62,6 @@ class TreeRefreshCheckView(BaseCheckView):
 
 
 class CMSCheckView(BaseCheckView):
-
     def check(self, request):
         url = request.build_absolute_uri("/cms/")
         response = requests.get(url, allow_redirects=False)

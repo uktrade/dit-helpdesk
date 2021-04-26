@@ -7,19 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hierarchy', '0016_remove_chapter_last_updated'),
-        ('rules_of_origin', '0005_auto_20201117_1221'),
+        ("hierarchy", "0016_remove_chapter_last_updated"),
+        ("rules_of_origin", "0005_auto_20201117_1221"),
     ]
 
     operations = [
         linter.IgnoreMigration(),
-        migrations.RemoveField(
-            model_name='rule',
-            name='chapter',
-        ),
+        migrations.RemoveField(model_name="rule", name="chapter"),
         migrations.AddField(
-            model_name='rule',
-            name='chapters',
-            field=models.ManyToManyField(blank=True, null=True, related_name='rules_of_origin', to='hierarchy.Chapter'),
+            model_name="rule",
+            name="chapters",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                related_name="rules_of_origin",
+                to="hierarchy.Chapter",
+            ),
         ),
     ]

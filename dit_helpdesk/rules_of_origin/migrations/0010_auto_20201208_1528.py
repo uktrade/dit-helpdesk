@@ -7,107 +7,192 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('countries', '0005_auto_20201119_1450'),
-        ('hierarchy', '0017_nomenclaturetree_source'),
-        ('rules_of_origin', '0009_auto_20201117_2057'),
+        ("countries", "0005_auto_20201119_1450"),
+        ("hierarchy", "0017_nomenclaturetree_source"),
+        ("rules_of_origin", "0009_auto_20201117_2057"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Old_Rule',
+            name="Old_Rule",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rule_id', models.CharField(max_length=255)),
-                ('is_exclusion', models.BooleanField(default=False)),
-                ('chapter', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='old_rules_of_origin', to='hierarchy.Chapter')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("rule_id", models.CharField(max_length=255)),
+                ("is_exclusion", models.BooleanField(default=False)),
+                (
+                    "chapter",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="old_rules_of_origin",
+                        to="hierarchy.Chapter",
+                    ),
+                ),
             ],
-            options={
-                'verbose_name_plural': 'rules of origin',
-            },
+            options={"verbose_name_plural": "rules of origin"},
         ),
         migrations.CreateModel(
-            name='Old_RulesDocument',
+            name="Old_RulesDocument",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('source_url', models.URLField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("source_url", models.URLField(blank=True, null=True)),
             ],
-            options={
-                'verbose_name_plural': 'rules of origin documents',
-            },
+            options={"verbose_name_plural": "rules of origin documents"},
         ),
         migrations.CreateModel(
-            name='Old_RulesGroup',
+            name="Old_RulesGroup",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(max_length=255, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.CharField(max_length=255, unique=True)),
             ],
-            options={
-                'verbose_name_plural': 'rules of origin',
-            },
+            options={"verbose_name_plural": "rules of origin"},
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='chapters',
-            field=models.ManyToManyField(related_name='rules_of_origin', to='hierarchy.Chapter'),
+            model_name="rule",
+            name="chapters",
+            field=models.ManyToManyField(
+                related_name="rules_of_origin", to="hierarchy.Chapter"
+            ),
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='headings',
-            field=models.ManyToManyField(related_name='rules_of_origin', to='hierarchy.Heading'),
+            model_name="rule",
+            name="headings",
+            field=models.ManyToManyField(
+                related_name="rules_of_origin", to="hierarchy.Heading"
+            ),
         ),
         migrations.CreateModel(
-            name='Old_RulesDocumentFootnote',
+            name="Old_RulesDocumentFootnote",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.PositiveSmallIntegerField()),
-                ('link_html', models.TextField()),
-                ('note', models.TextField()),
-                ('rules_document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='footnotes', to='rules_of_origin.Old_RulesDocument')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("number", models.PositiveSmallIntegerField()),
+                ("link_html", models.TextField()),
+                ("note", models.TextField()),
+                (
+                    "rules_document",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="footnotes",
+                        to="rules_of_origin.Old_RulesDocument",
+                    ),
+                ),
             ],
-            options={
-                'verbose_name_plural': 'rules document footnotes',
-            },
+            options={"verbose_name_plural": "rules document footnotes"},
         ),
         migrations.AddField(
-            model_name='old_rulesdocument',
-            name='rules_group',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='rules_of_origin.Old_RulesGroup'),
+            model_name="old_rulesdocument",
+            name="rules_group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="rules_of_origin.Old_RulesGroup",
+            ),
         ),
         migrations.CreateModel(
-            name='Old_RuleItem',
+            name="Old_RuleItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order', models.IntegerField()),
-                ('description', models.TextField(blank=True, null=True)),
-                ('working_or_processing', models.TextField(blank=True, null=True)),
-                ('rule', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rules_of_origin.Old_Rule')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order", models.IntegerField()),
+                ("description", models.TextField(blank=True, null=True)),
+                ("working_or_processing", models.TextField(blank=True, null=True)),
+                (
+                    "rule",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="rules_of_origin.Old_Rule",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ['order'],
-            },
+            options={"ordering": ["order"]},
         ),
         migrations.AddField(
-            model_name='old_rule',
-            name='rules_document',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='rules_of_origin.Old_RulesDocument'),
+            model_name="old_rule",
+            name="rules_document",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="rules_of_origin.Old_RulesDocument",
+            ),
         ),
         migrations.CreateModel(
-            name='Old_RulesGroupMember',
+            name="Old_RulesGroupMember",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField()),
-                ('finish_date', models.DateField(blank=True, null=True)),
-                ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='countries.Country')),
-                ('rules_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rules_of_origin.Old_RulesGroup')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_date", models.DateField()),
+                ("finish_date", models.DateField(blank=True, null=True)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="countries.Country",
+                    ),
+                ),
+                (
+                    "rules_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="rules_of_origin.Old_RulesGroup",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'rules of origin group members',
-                'unique_together': {('country', 'rules_group', 'start_date')},
+                "verbose_name_plural": "rules of origin group members",
+                "unique_together": {("country", "rules_group", "start_date")},
             },
         ),
         migrations.AlterUniqueTogether(
-            name='old_rulesdocument',
-            unique_together={('rules_group', 'source_url')},
+            name="old_rulesdocument", unique_together={("rules_group", "source_url")}
         ),
     ]

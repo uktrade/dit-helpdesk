@@ -6,20 +6,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0011_auto_20200910_1653'),
-    ]
+    dependencies = [("hierarchy", "0011_auto_20200910_1653")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AlterField(
-            model_name='nomenclaturetree',
-            name='end_date',
+            model_name="nomenclaturetree",
+            name="end_date",
             field=models.DateTimeField(null=True),
         ),
         migrations.AlterField(
-            model_name='nomenclaturetree',
-            name='start_date',
+            model_name="nomenclaturetree",
+            name="start_date",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

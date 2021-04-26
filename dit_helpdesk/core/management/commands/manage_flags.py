@@ -9,19 +9,23 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("-l", "--list", action="store_true", help="List flags")
         parser.add_argument(
-            "-s", "--set", nargs="*", action="store",
-            help="Set a flag value. Usage: --set flag_name flag_value")
+            "-s",
+            "--set",
+            nargs="*",
+            action="store",
+            help="Set a flag value. Usage: --set flag_name flag_value",
+        )
 
     def list_flags(self):
-        flags = FlagState.objects.order_by('name').all()
+        flags = FlagState.objects.order_by("name").all()
 
         for flag in flags:
             self.stdout.write(
-                f"Name: {flag.name}\t Condition: {flag.condition}\t Value: {flag.value}")
+                f"Name: {flag.name}\t Condition: {flag.condition}\t Value: {flag.value}"
+            )
 
     def set_flag(self, name, value):
-        flag = FlagState.objects.get(
-            name=name)
+        flag = FlagState.objects.get(name=name)
 
         flag.value = value
         flag.save()

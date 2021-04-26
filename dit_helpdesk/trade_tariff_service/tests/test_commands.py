@@ -13,30 +13,52 @@ logger.setLevel(logging.INFO)
 
 
 test_hierarchy_model_map = {
-    "Commodity": {"file_name": "test_subsets/commodities.json", "app_name": "commodities"},
+    "Commodity": {
+        "file_name": "test_subsets/commodities.json",
+        "app_name": "commodities",
+    },
     "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
     "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {"file_name": "test_subsets/sub_headings.json", "app_name": "hierarchy"},
+    "SubHeading": {
+        "file_name": "test_subsets/sub_headings.json",
+        "app_name": "hierarchy",
+    },
     "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
 }
 
 
 test_hierarchy_model_map_modified = {
-    "Commodity": {"file_name": "test_subsets_modified/commodities.json", "app_name": "commodities"},
-    "Chapter": {"file_name": "test_subsets_modified/chapters.json", "app_name": "hierarchy"},
-    "Heading": {"file_name": "test_subsets_modified/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {"file_name": "test_subsets_modified/sub_headings.json", "app_name": "hierarchy"},
-    "Section": {"file_name": "test_subsets_modified/sections.json", "app_name": "hierarchy"},
+    "Commodity": {
+        "file_name": "test_subsets_modified/commodities.json",
+        "app_name": "commodities",
+    },
+    "Chapter": {
+        "file_name": "test_subsets_modified/chapters.json",
+        "app_name": "hierarchy",
+    },
+    "Heading": {
+        "file_name": "test_subsets_modified/headings.json",
+        "app_name": "hierarchy",
+    },
+    "SubHeading": {
+        "file_name": "test_subsets_modified/sub_headings.json",
+        "app_name": "hierarchy",
+    },
+    "Section": {
+        "file_name": "test_subsets_modified/sections.json",
+        "app_name": "hierarchy",
+    },
 }
 
 
 class ScrapeSectionHierarchyTest(TestCase):
-
     @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
     def test_command_output(self):
-        call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
+        call_command(
+            "scrape_section_hierarchy", activate_new_tree=True, stdout=sys.stdout
+        )
 
-        for region in ('EU', 'UK'):
+        for region in ("EU", "UK"):
             self.assertTrue(Section.get_active_objects(region).exists())
             self.assertEquals(Section.get_active_objects(region).count(), 21)
 
@@ -59,7 +81,9 @@ class ScrapeSectionHierarchyTest(TestCase):
 
             sh1 = c1.parent_subheading
             self.assertEquals(sh1.commodity_code, "2849000000")
-            self.assertEquals(sh1.description, "Carbides, whether or not chemically defined")
+            self.assertEquals(
+                sh1.description, "Carbides, whether or not chemically defined"
+            )
 
             h1 = sh1.heading
             self.assertEquals(h1.commodity_code, "2843000000")
@@ -70,7 +94,7 @@ class ScrapeSectionHierarchyTest(TestCase):
             self.assertEquals(
                 ch1.description,
                 "INORGANIC CHEMICALS; ORGANIC OR INORGANIC COMPOUNDS OF PRECIOUS METALS, "
-                "OF RARE-EARTH METALS, OF RADIOACTIVE ELEMENTS OR OF ISOTOPES"
+                "OF RARE-EARTH METALS, OF RADIOACTIVE ELEMENTS OR OF ISOTOPES",
             )
 
             s1 = ch1.section
@@ -79,12 +103,16 @@ class ScrapeSectionHierarchyTest(TestCase):
 
     def test_subsequent_run(self):
         with override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map):
-            call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
+            call_command(
+                "scrape_section_hierarchy", activate_new_tree=True, stdout=sys.stdout
+            )
 
         with override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map_modified):
-            call_command('scrape_section_hierarchy', activate_new_tree=True, stdout=sys.stdout)
+            call_command(
+                "scrape_section_hierarchy", activate_new_tree=True, stdout=sys.stdout
+            )
 
-        for region in ('EU', 'UK'):
+        for region in ("EU", "UK"):
 
             self.assertTrue(Section.get_active_objects(region).exists())
             self.assertEquals(Section.get_active_objects(region).count(), 21)
@@ -109,7 +137,8 @@ class ScrapeSectionHierarchyTest(TestCase):
             sh1 = c1.parent_subheading
             self.assertEquals(sh1.commodity_code, "2849000000")
             self.assertEquals(
-                sh1.description, "Carbides, whether or not chemically defined (UPDATED)")
+                sh1.description, "Carbides, whether or not chemically defined (UPDATED)"
+            )
 
             h1 = sh1.heading
             self.assertEquals(h1.commodity_code, "2843000000")
@@ -120,9 +149,11 @@ class ScrapeSectionHierarchyTest(TestCase):
             self.assertEquals(
                 ch1.description,
                 "INORGANIC CHEMICALS; ORGANIC OR INORGANIC COMPOUNDS OF PRECIOUS METALS, "
-                "OF RARE-EARTH METALS, OF RADIOACTIVE ELEMENTS OR OF ISOTOPES (UPDATED)"
+                "OF RARE-EARTH METALS, OF RADIOACTIVE ELEMENTS OR OF ISOTOPES (UPDATED)",
             )
 
             s1 = ch1.section
             self.assertEquals(s1.roman_numeral, "VI")
-            self.assertEquals(s1.title, "Products of the chemical or allied industries (UPDATED)")
+            self.assertEquals(
+                s1.title, "Products of the chemical or allied industries (UPDATED)"
+            )

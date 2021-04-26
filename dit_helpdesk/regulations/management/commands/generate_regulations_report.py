@@ -5,12 +5,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from commodities.models import Commodity
-from hierarchy.models import (
-    Section,
-    Chapter,
-    Heading,
-    SubHeading,
-)
+from hierarchy.models import Section, Chapter, Heading, SubHeading
 
 from ...models import RegulationGroup
 
@@ -22,10 +17,7 @@ def get_url(object, country_code):
     if isinstance(object, Section):
         return reverse(
             "section-detail",
-            kwargs={
-                "country_code": country_code,
-                "section_id": object.pk,
-            },
+            kwargs={"country_code": country_code, "section_id": object.pk},
         )
     elif isinstance(object, Chapter):
         return reverse(
@@ -77,9 +69,7 @@ def get_urls(objects, num_desired_urls, country_code):
     if len(urls) < num_desired_urls:
         for obj in objects:
             urls += get_urls(
-                obj.get_hierarchy_children(),
-                num_desired_urls,
-                country_code,
+                obj.get_hierarchy_children(), num_desired_urls, country_code
             )
 
             if len(urls) >= num_desired_urls:
@@ -89,7 +79,6 @@ def get_urls(objects, num_desired_urls, country_code):
 
 
 class RegulationGroupProxy:
-
     def __init__(self, regulation_group, country_code):
         self.regulation_group = regulation_group
         self.country_code = country_code
@@ -103,50 +92,47 @@ class RegulationGroupProxy:
         urls = []
 
         section_urls = get_urls(
-            self.regulation_group.sections.all(),
-            num_desired_urls,
-            self.country_code,
+            self.regulation_group.sections.all(), num_desired_urls, self.country_code
         )
 
         chapter_urls = get_urls(
-            self.regulation_group.chapters.all(),
-            num_desired_urls,
-            self.country_code,
+            self.regulation_group.chapters.all(), num_desired_urls, self.country_code
         )
 
         heading_urls = get_urls(
-            self.regulation_group.headings.all(),
-            num_desired_urls,
-            self.country_code,
+            self.regulation_group.headings.all(), num_desired_urls, self.country_code
         )
 
         subheading_urls = get_urls(
-            self.regulation_group.subheadings.all(),
-            num_desired_urls,
-            self.country_code,
+            self.regulation_group.subheadings.all(), num_desired_urls, self.country_code
         )
 
         commodity_urls = get_urls(
-            self.regulation_group.commodities.all(),
-            num_desired_urls,
-            self.country_code,
+            self.regulation_group.commodities.all(), num_desired_urls, self.country_code
         )
 
-        url_groups = [section_urls, chapter_urls, heading_urls, subheading_urls, commodity_urls]
-        while len(urls) < num_desired_urls and any(len(url_group) for url_group in url_groups):
+        url_groups = [
+            section_urls,
+            chapter_urls,
+            heading_urls,
+            subheading_urls,
+            commodity_urls,
+        ]
+        while len(urls) < num_desired_urls and any(
+            len(url_group) for url_group in url_groups
+        ):
             for url_group in url_groups:
                 try:
                     url = url_group.pop()
                 except IndexError:
                     continue
                 urls.append(url)
-                if len(urls) >= num_desired_urls or all(len(url_group) for url_group in url_groups):
+                if len(urls) >= num_desired_urls or all(
+                    len(url_group) for url_group in url_groups
+                ):
                     break
 
-        return [
-            ROOT_URL + url
-            for url in urls
-        ]
+        return [ROOT_URL + url for url in urls]
 
 
 class Command(BaseCommand):
@@ -170,7 +156,7 @@ class Command(BaseCommand):
                     "regulation_groups": (
                         RegulationGroupProxy(regulation_group, options["country_code"])
                         for regulation_group in RegulationGroup.objects.all()
-                    ),
+                    )
                 },
             )
             index_file.write(html)

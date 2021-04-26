@@ -6,20 +6,22 @@ import logging
 
 
 trade_data = [
-    {'Country code': 'UA',
-     'GOVUK FTA URL': 'https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement',
-     'Mendel agreement label': 'EU-AGR-SIGNED-NO-LINK',
-     'TWUK content template label': 'EU-AGR-SIGNED-NO-LINK'},
+    {
+        "Country code": "UA",
+        "GOVUK FTA URL": "https://www.gov.uk/government/collections/uk-ukraine-political-free-trade-and-strategic-partnership-agreement",
+        "Mendel agreement label": "EU-AGR-SIGNED-NO-LINK",
+        "TWUK content template label": "EU-AGR-SIGNED-NO-LINK",
+    }
 ]
 
 
 def update_trade_scenarios(apps, schema_editor):
-    Country = apps.get_model('countries', 'Country')
+    Country = apps.get_model("countries", "Country")
 
     for item in trade_data:
-        country_code = item['Country code']
-        trade_scenario = item['TWUK content template label']
-        content_url = item['GOVUK FTA URL']
+        country_code = item["Country code"]
+        trade_scenario = item["TWUK content template label"]
+        content_url = item["GOVUK FTA URL"]
 
         try:
             country = Country.objects.get(country_code=country_code)
@@ -33,13 +35,8 @@ def update_trade_scenarios(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0004_auto_20201021_1041'),
-    ]
+    dependencies = [("countries", "0004_auto_20201021_1041")]
 
     operations = [
-        migrations.RunPython(
-            update_trade_scenarios,
-            migrations.RunPython.noop,
-        )
+        migrations.RunPython(update_trade_scenarios, migrations.RunPython.noop)
     ]

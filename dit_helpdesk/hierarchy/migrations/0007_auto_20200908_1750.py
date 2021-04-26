@@ -6,38 +6,60 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0006_chapter_last_updated'),
-    ]
+    dependencies = [("hierarchy", "0006_chapter_last_updated")]
 
     operations = [
         migrations.CreateModel(
-            name='NomenclatureTree',
+            name="NomenclatureTree",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('region', models.CharField(max_length=2)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("region", models.CharField(max_length=2)),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField(null=True)),
             ],
         ),
         migrations.AddField(
-            model_name='chapter',
-            name='nomenclature_tree',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hierarchy.NomenclatureTree'),
+            model_name="chapter",
+            name="nomenclature_tree",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="hierarchy.NomenclatureTree",
+            ),
         ),
         migrations.AddField(
-            model_name='heading',
-            name='nomenclature_tree',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hierarchy.NomenclatureTree'),
+            model_name="heading",
+            name="nomenclature_tree",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="hierarchy.NomenclatureTree",
+            ),
         ),
         migrations.AddField(
-            model_name='section',
-            name='nomenclature_tree',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hierarchy.NomenclatureTree'),
+            model_name="section",
+            name="nomenclature_tree",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="hierarchy.NomenclatureTree",
+            ),
         ),
         migrations.AddField(
-            model_name='subheading',
-            name='nomenclature_tree',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hierarchy.NomenclatureTree'),
+            model_name="subheading",
+            name="nomenclature_tree",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="hierarchy.NomenclatureTree",
+            ),
         ),
     ]

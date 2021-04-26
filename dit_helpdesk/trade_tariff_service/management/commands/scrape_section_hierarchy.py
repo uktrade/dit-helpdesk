@@ -18,19 +18,23 @@ class Command(BaseCommand):
     help = """
         Process output files created from `pull_api_update` and `prepare_import_data` commands.
         Creates model instances and binds them to a new NomenclatureTree.
-        The new NomenclatureTree is left inactive (so that it can be switched on after 
+        The new NomenclatureTree is left inactive (so that it can be switched on after
         ElasticSearch indexing is completed), unless specifically enabled by a flag.
     """
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--skip_commodity", action="store_true", default=False,
-            help="Skip processing orphaned commodities"
+            "--skip_commodity",
+            action="store_true",
+            default=False,
+            help="Skip processing orphaned commodities",
         )
         parser.add_argument(
-            "--activate_new_tree", action="store_true", default=False,
+            "--activate_new_tree",
+            action="store_true",
+            default=False,
             help="Activate new NomenclatureTree with newly populated data right away. "
-                 "May lead to inconsistent state if there is other data to be loaded/updated."
+            "May lead to inconsistent state if there is other data to be loaded/updated.",
         )
 
     def handle(self, *args, **options):
@@ -48,7 +52,7 @@ class Command(BaseCommand):
                 builder = HierarchyBuilder(new_tree=new_tree)
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
-                builder.process_orphaned_commodities(options['skip_commodity'])
+                builder.process_orphaned_commodities(options["skip_commodity"])
 
                 if not options["activate_new_tree"]:
                     # switch back active tree to previous since we only want to properly activate
@@ -67,4 +71,4 @@ class Command(BaseCommand):
                 builder = HierarchyBuilder(region=settings.SECONDARY_REGION)
                 builder.data_scanner(model_names)
                 builder.process_orphaned_subheadings()
-                builder.process_orphaned_commodities(options['skip_commodity'])
+                builder.process_orphaned_commodities(options["skip_commodity"])
