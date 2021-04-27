@@ -1,6 +1,5 @@
-version: '2'
+version: "2"
 services:
-
   helpdesk:
     build: .
     ports:
@@ -24,11 +23,10 @@ services:
     tty: true
   webpack:
     image: node:14
-    command:
-      bash -c "
-        npm set unsafe-perm true
-        && npm install
-        && npm run dev
+    command: bash -c "
+      npm set unsafe-perm true
+      && npm install
+      && npm run dev
       "
     volumes:
       - .:/app

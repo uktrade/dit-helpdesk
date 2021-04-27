@@ -66,19 +66,21 @@ class CommodityDetailView(BaseSectionedCommodityDetailView):
 
 class CommodityEUCommodityObjectMixin:
     def get_eu_commodity_object(self, commodity_object):
-        return Commodity.objects.for_region(
-            settings.SECONDARY_REGION,
-        ).get(
+        return Commodity.objects.for_region(settings.SECONDARY_REGION).get(
             commodity_code=commodity_object.commodity_code,
             goods_nomenclature_sid=commodity_object.goods_nomenclature_sid,
         )
 
 
-class TariffsAndTaxesNorthernIrelandSection(CommodityEUCommodityObjectMixin, BaseTariffsAndTaxesNorthernIrelandSection):
+class TariffsAndTaxesNorthernIrelandSection(
+    CommodityEUCommodityObjectMixin, BaseTariffsAndTaxesNorthernIrelandSection
+):
     pass
 
 
-class OtherMeasuresNorthernIrelandSection(CommodityEUCommodityObjectMixin, BaseOtherMeasuresNorthernIrelandSection):
+class OtherMeasuresNorthernIrelandSection(
+    CommodityEUCommodityObjectMixin, BaseOtherMeasuresNorthernIrelandSection
+):
     pass
 
 
@@ -96,7 +98,7 @@ class CommodityDetailNorthernIrelandView(BaseSectionedCommodityDetailView):
         super().initialise(request, *args, **kwargs)
 
         eu_commodity_object = Commodity.objects.for_region(
-            settings.SECONDARY_REGION,
+            settings.SECONDARY_REGION
         ).get(
             commodity_code=self.commodity_object.commodity_code,
             goods_nomenclature_sid=self.commodity_object.goods_nomenclature_sid,
@@ -114,9 +116,13 @@ class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
     model = Commodity
 
 
-class MeasureConditionDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureConditionDetailView):
+class MeasureConditionDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureConditionDetailView
+):
     model = Commodity
 
 
-class MeasureQuotaDetailNorthernIrelandView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
+class MeasureQuotaDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureQuotaDetailView
+):
     model = Commodity

@@ -1,23 +1,23 @@
 @font-face {
-    font-family: "ntatabularnumbers";
-    font-style: normal;
-    font-weight: normal;
-    src: url("../fonts/light-tabular-498ea8ffe2-v1.eot");
-    src:
-        url("../fonts/light-tabular-498ea8ffe2-v1.eot?#iefix") format("embedded-opentype"),
-        url("../fonts/light-tabular-851b10ccdd-v1.woff2") format("woff2"),
-        url("../fonts/light-tabular-62cc6f0a28-v1.woff") format("woff");
-    font-display: fallback;
+  font-family: "ntatabularnumbers";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/light-tabular-498ea8ffe2-v1.eot");
+  src: url("../fonts/light-tabular-498ea8ffe2-v1.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/light-tabular-851b10ccdd-v1.woff2") format("woff2"),
+    url("../fonts/light-tabular-62cc6f0a28-v1.woff") format("woff");
+  font-display: fallback;
 }
 
 @font-face {
-    font-family: "ntatabularnumbers";
-    font-style: bold;
-    font-weight: bold;
-    src: url("../fonts/bold-tabular-357fdfbcc3-v1.eot");
-    src:
-        url("../fonts/bold-tabular-357fdfbcc3-v1.eot?#iefix") format("embedded-opentype"),
-        url("../fonts/bold-tabular-b89238d840-v1.woff2") format("woff2"),
-        url("../fonts/bold-tabular-784c21afb8-v1.woff") format("woff");
-    font-display: fallback;
+  font-family: "ntatabularnumbers";
+  font-style: bold;
+  font-weight: bold;
+  src: url("../fonts/bold-tabular-357fdfbcc3-v1.eot");
+  src: url("../fonts/bold-tabular-357fdfbcc3-v1.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/bold-tabular-b89238d840-v1.woff2") format("woff2"),
+    url("../fonts/bold-tabular-784c21afb8-v1.woff") format("woff");
+  font-display: fallback;
 }

@@ -6,15 +6,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0007_auto_20201117_1626'),
-    ]
+    dependencies = [("rules_of_origin", "0007_auto_20201117_1626")]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.AlterField(
-            model_name='rule',
-            name='description',
+            model_name="rule",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
     ]

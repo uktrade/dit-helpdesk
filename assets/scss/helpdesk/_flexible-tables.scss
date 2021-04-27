@@ -55,7 +55,6 @@
     &:nth-child(even) {
       th,
       td {
-
       }
     }
   }
@@ -82,7 +81,6 @@
     border: 1px solid govuk-colour("mid-grey", $legacy: "grey-2");
   }
 
-
   .app-flexible-table__header {
     background: govuk-colour("light-grey", $legacy: "grey-4");
     display: block;
@@ -94,7 +92,6 @@
       padding-right: 0.5em;
     }
   }
-
 
   .app-flexible-table__cell {
     border: 0;

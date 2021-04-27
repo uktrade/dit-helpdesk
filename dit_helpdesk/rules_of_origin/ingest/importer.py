@@ -7,10 +7,7 @@ import logging
 from django.db.models import Q
 from django.conf import settings
 
-from rules_of_origin.models import (
-    RulesDocument, RulesDocumentFootnote,
-    Rule, SubRule,
-)
+from rules_of_origin.models import RulesDocument, RulesDocumentFootnote, Rule, SubRule
 from hierarchy.models import NomenclatureTree, Chapter, Heading, SubHeading
 from commodities.models import Commodity
 from countries.models import Country
@@ -30,26 +27,23 @@ class MultipleStartDatesException(InvalidDocumentException):
 
 
 def _create_document(name, countries_with_dates, gb_start_date, region):
-    country_codes = [d['code'] for d in countries_with_dates]
+    country_codes = [d["code"] for d in countries_with_dates]
 
-    start_date = dt.datetime.strptime(gb_start_date, '%Y-%m-%d')
+    start_date = dt.datetime.strptime(gb_start_date, "%Y-%m-%d")
 
-    countries = Country.objects.filter(
-        country_code__in=country_codes
-    )
+    countries = Country.objects.filter(country_code__in=country_codes)
     if countries.count() != len(country_codes):
-        found_codes = countries.values_list('country_code', flat=True)
+        found_codes = countries.values_list("country_code", flat=True)
         missing_codes = set(country_codes) - set(found_codes)
         raise InvalidDocumentException(
-            f"Couldn't find countries with country codes: {missing_codes}")
+            f"Couldn't find countries with country codes: {missing_codes}"
+        )
 
     logger.info("Creating document %s..", name)
     nomenclature_tree = NomenclatureTree.get_active_tree(region)
 
     rules_document = RulesDocument.objects.create(
-        nomenclature_tree=nomenclature_tree,
-        description=name,
-        start_date=start_date,
+        nomenclature_tree=nomenclature_tree, description=name, start_date=start_date
     )
     rules_document.countries.set(countries)
     rules_document.save()
@@ -64,9 +58,9 @@ def _create_subrules(rule, subpositions):
         subrule = SubRule.objects.create(
             rule=rule,
             order=idx,
-            description=subposition['description'],
-            rule_text=subposition['rule1'],
-            alt_rule_text=subposition['rule2'],
+            description=subposition["description"],
+            rule_text=subposition["rule1"],
+            alt_rule_text=subposition["rule2"],
         )
         subrules.append(subrule)
 
@@ -74,19 +68,19 @@ def _create_subrules(rule, subpositions):
 
 
 def _commodity_code_to_int(heading_code):
-    return int(heading_code.lstrip('0'))
+    return int(heading_code.lstrip("0"))
 
 
 def _fill_zeros(code: Union[int, str]) -> str:
     code = str(code)
 
-    return code.ljust(10, '0')
+    return code.ljust(10, "0")
 
 
 def _left_fill_zeros(code: Union[int, str], length) -> str:
     code = str(code)
 
-    return code.rjust(length, '0')
+    return code.rjust(length, "0")
 
 
 def _int_to_code(code: int, left_pad=0):
@@ -99,9 +93,9 @@ def _normalise_code(code: str):
 
 
 def _determine_range_models(hs_type, hs_from):
-    if hs_type == 'CH':
+    if hs_type == "CH":
         return [Chapter]
-    elif hs_type == 'PO':
+    elif hs_type == "PO":
         if len(hs_from) == 4:
             return [Heading, SubHeading]
         elif len(hs_from) == 6:
@@ -125,12 +119,14 @@ def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
     hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
     if hs_to and len(hs_from) != len(hs_to):
         raise InvalidDocumentException(
-            f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes")
+            f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes"
+        )
 
     range_models = _determine_range_models(hs_type, hs_from)
     if not range_models:
         raise InvalidDocumentException(
-            f"Unsupported HS range for hs_type {hs_type} and length {len(hs_from)}")
+            f"Unsupported HS range for hs_type {hs_type} and length {len(hs_from)}"
+        )
 
     hs_range = [_fill_zeros(hs_from)]
 
@@ -144,10 +140,10 @@ def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
         ]
 
     arg_name_map = {
-        Commodity: 'commodity_code__in',
-        SubHeading: 'commodity_code__in',
-        Heading: 'heading_code__in',
-        Chapter: 'chapter_code__in',
+        Commodity: "commodity_code__in",
+        SubHeading: "commodity_code__in",
+        Heading: "heading_code__in",
+        Chapter: "chapter_code__in",
     }
 
     objects = []
@@ -178,42 +174,44 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
 
     if not hs_to or len(hs_from) == len(hs_to):
         return _group_by_class(
-            _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region))
+            _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region)
+        )
 
     if len(hs_from) > len(hs_to):
         subheadings_to = _higher_level_prefix(hs_from) + "99"
         headings_from = _left_fill_zeros(
-            int(_higher_level_prefix(hs_from)) + 1,
-            length=4
+            int(_higher_level_prefix(hs_from)) + 1, length=4
         )
 
         subheadings_range = _get_same_level_objects_for_range(
-            hs_type, hs_from, subheadings_to, region)
+            hs_type, hs_from, subheadings_to, region
+        )
         headings_range = _get_same_level_objects_for_range(
-            hs_type, headings_from, hs_to, region)
+            hs_type, headings_from, hs_to, region
+        )
 
     elif len(hs_to) > len(hs_from):
-        headings_to = _left_fill_zeros(
-            int(_higher_level_prefix(hs_to)) - 1,
-            length=4
-        )
-        subheadings_from = _higher_level_prefix(hs_to) + "00"     # beginning of subheading range
+        headings_to = _left_fill_zeros(int(_higher_level_prefix(hs_to)) - 1, length=4)
+        subheadings_from = (
+            _higher_level_prefix(hs_to) + "00"
+        )  # beginning of subheading range
 
         subheadings_range = _get_same_level_objects_for_range(
-            hs_type, subheadings_from, hs_to, region)
+            hs_type, subheadings_from, hs_to, region
+        )
         headings_range = _get_same_level_objects_for_range(
-            hs_type, hs_from, headings_to, region)
+            hs_type, hs_from, headings_to, region
+        )
 
-    return _group_by_class(
-        chain(subheadings_range, headings_range))
+    return _group_by_class(chain(subheadings_range, headings_range))
 
 
 def _process_inclusion(rule, inclusion, region):
 
-    rule.is_exclusion = inclusion.get('ex') == 'true'
+    rule.is_exclusion = inclusion.get("ex") == "true"
 
-    hs_type = inclusion['hsFromType']
-    hs_to_type = inclusion.get('hsToType')
+    hs_type = inclusion["hsFromType"]
+    hs_to_type = inclusion.get("hsToType")
     if hs_to_type and hs_type != hs_to_type:
         raise InvalidDocumentException(
             f"RoO HS range has to be defined in consistent units: {inclusion}"
@@ -221,8 +219,8 @@ def _process_inclusion(rule, inclusion, region):
 
     ranges_objects = _get_objects_for_range(
         hs_type=hs_type,
-        hs_from=inclusion['hsFrom'],
-        hs_to=inclusion.get('hsTo'),
+        hs_from=inclusion["hsFrom"],
+        hs_to=inclusion.get("hsTo"),
         region=region,
     )
 
@@ -246,34 +244,36 @@ def _create_rules(rules_document, positions, region):
 
     for position in positions:
 
-        description = position['description']
+        description = position["description"]
         logger.info(
-            "Creating rule %s..", description[:25] if description else "(empty description)")
+            "Creating rule %s..",
+            description[:25] if description else "(empty description)",
+        )
 
         rule = Rule.objects.create(
             rules_document=rules_document,
-            code=position['code'],
+            code=position["code"],
             description=description,
-            rule_text=position['rule1'],
-            alt_rule_text=position['rule2'],
+            rule_text=position["rule1"],
+            alt_rule_text=position["rule2"],
         )
 
-        _process_inclusion(rule, position['inclusion'], region)
+        _process_inclusion(rule, position["inclusion"], region)
 
-        _create_subrules(rule, position['subpositions'])
+        _create_subrules(rule, position["subpositions"])
 
 
 def _create_notes(rules_document, notes):
     note_objects = []
 
     for idx, note in enumerate(notes, start=1):
-        content = note['content']
+        content = note["content"]
         logger.info("Creating note %s..", content[:25])
 
         note_obj = RulesDocumentFootnote.objects.create(
             rules_document=rules_document,
             number=idx,
-            identifier=note['identifier'],
+            identifier=note["identifier"],
             note=content,
         )
         note_objects.append(note_obj)
@@ -287,17 +287,19 @@ def import_roo(f, region=settings.PRIMARY_REGION):
     roo_data = parse_file(f)
 
     rules_document = _create_document(
-        name=roo_data['name'],
-        countries_with_dates=roo_data['countries_with_dates'],
-        gb_start_date=roo_data['gb_start_date'],
+        name=roo_data["name"],
+        countries_with_dates=roo_data["countries_with_dates"],
+        gb_start_date=roo_data["gb_start_date"],
         region=region,
     )
 
-    _create_rules(rules_document, roo_data['positions'], region=region)
+    _create_rules(rules_document, roo_data["positions"], region=region)
 
-    _create_notes(rules_document, roo_data['notes'])
+    _create_notes(rules_document, roo_data["notes"])
 
 
-if __name__ == '__main__':
-    import_roo('PSRO_UK_EN-UK-CL-FTA.xml')
-    import ipdb; ipdb.set_trace()
+if __name__ == "__main__":
+    import_roo("PSRO_UK_EN-UK-CL-FTA.xml")
+    import ipdb
+
+    ipdb.set_trace()

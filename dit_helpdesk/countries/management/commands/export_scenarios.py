@@ -12,8 +12,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-o', '--output',
-            help='Specifies file to which the output is written.'
+            "-o", "--output", help="Specifies file to which the output is written."
         )
 
     def get_fieldnames(self):
@@ -34,7 +33,7 @@ class Command(BaseCommand):
             return csv.DictWriter(out, fieldnames=fieldnames)
 
         if output:
-            with open(output, 'w') as csv_file:
+            with open(output, "w") as csv_file:
                 yield _writer(csv_file)
         else:
             yield _writer(self.stdout)
@@ -44,11 +43,13 @@ class Command(BaseCommand):
             writer.writeheader()
 
             for country in Country.objects.order_by("country_code"):
-                writer.writerow({
-                    "Country code": country.country_code,
-                    "Country name": country.name,
-                    "UK agreement status": country.has_uk_trade_agreement,
-                    "EU agreement status": country.has_eu_trade_agreement,
-                    "Scenario": country.scenario,
-                    "GOVUK FTA URL": country.content_url,
-                })
+                writer.writerow(
+                    {
+                        "Country code": country.country_code,
+                        "Country name": country.name,
+                        "UK agreement status": country.has_uk_trade_agreement,
+                        "EU agreement status": country.has_eu_trade_agreement,
+                        "Scenario": country.scenario,
+                        "GOVUK FTA URL": country.content_url,
+                    }
+                )

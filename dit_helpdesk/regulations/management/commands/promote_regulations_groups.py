@@ -5,9 +5,7 @@ from regulations.hierarchy import promote_regulation_groups
 
 
 class Command(BaseCommand):
-    help = (
-        """Command to promote and dedupe regulations"""
-    )
+    help = """Command to promote and dedupe regulations"""
 
     def handle(self, *args, **options):
         self.stdout.write("Promoting and de-duping regulations")

@@ -8,29 +8,39 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hierarchy', '0017_nomenclaturetree_source'),
-        ('rules_of_origin', '0013_auto_20201209_2156'),
+        ("hierarchy", "0017_nomenclaturetree_source"),
+        ("rules_of_origin", "0013_auto_20201209_2156"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rule',
-            name='subheadings',
-            field=models.ManyToManyField(related_name='rules_of_origin', to='hierarchy.SubHeading'),
+            model_name="rule",
+            name="subheadings",
+            field=models.ManyToManyField(
+                related_name="rules_of_origin", to="hierarchy.SubHeading"
+            ),
         ),
         migrations.AddField(
-            model_name='rulesdocument',
-            name='nomenclature_tree',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hierarchy.NomenclatureTree'),
+            model_name="rulesdocument",
+            name="nomenclature_tree",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="hierarchy.NomenclatureTree",
+            ),
         ),
         migrations.AlterField(
-            model_name='rulesdocument',
-            name='start_date',
+            model_name="rulesdocument",
+            name="start_date",
             field=models.DateField(default=datetime.datetime.now),
         ),
         migrations.AlterField(
-            model_name='subrule',
-            name='rule',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subrules', to='rules_of_origin.Rule'),
+            model_name="subrule",
+            name="rule",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="subrules",
+                to="rules_of_origin.Rule",
+            ),
         ),
     ]

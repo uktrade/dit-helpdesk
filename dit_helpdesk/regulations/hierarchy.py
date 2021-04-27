@@ -32,7 +32,9 @@ def promote_regulation_groups(commodity_object):
         if regulation_groups_to_promote is None:
             regulation_groups_to_promote = child_regulations
         else:
-            regulation_groups_to_promote = regulation_groups_to_promote.intersection(child_regulations)
+            regulation_groups_to_promote = regulation_groups_to_promote.intersection(
+                child_regulations
+            )
 
     if not regulation_groups_to_promote:
         return

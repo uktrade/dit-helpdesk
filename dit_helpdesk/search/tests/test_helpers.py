@@ -7,11 +7,7 @@ from django.test import TestCase
 
 from commodities.models import Commodity
 from hierarchy.helpers import create_nomenclature_tree
-from hierarchy.models import (
-    Heading,
-    SubHeading,
-    Chapter,
-)
+from hierarchy.models import Heading, SubHeading, Chapter
 
 from search import helpers
 
@@ -21,31 +17,26 @@ class NormaliseCommodityCodeTestCase(TestCase):
     Test Search app config
     """
 
-    @parameterized.expand([
-        ("5555", "5555"),
-        ("5555.", "5555"),
-        ("0123.45", "012345"),
-        ("0123..45", "012345"),
-        (".", ""),
-        ("..", ""),
-    ])
+    @parameterized.expand(
+        [
+            ("5555", "5555"),
+            ("5555.", "5555"),
+            ("0123.45", "012345"),
+            ("0123..45", "012345"),
+            (".", ""),
+            ("..", ""),
+        ]
+    )
     def test_normalise_commodity_code(self, value, normalised):
-        self.assertEqual(
-            helpers.normalise_commodity_code(value), normalised
-        )
+        self.assertEqual(helpers.normalise_commodity_code(value), normalised)
 
 
 class GetObjectFromHitTestCase(TestCase):
-
     def _get_hit(self, index, id, commodity_code):
         hit = mock.MagicMock()
-        hit.meta = {
-            "index": index,
-        }
+        hit.meta = {"index": index}
         hit.id = id
-        hit.__getitem__.side_effect = lambda x: {
-            "commodity_code": commodity_code,
-        }[x]
+        hit.__getitem__.side_effect = lambda x: {"commodity_code": commodity_code}[x]
 
         return hit
 

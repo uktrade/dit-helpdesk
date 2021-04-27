@@ -28,7 +28,7 @@ class AdminSSOLoginTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_login_authenticated_without_next_url_redirects_to_admin_when_admin_enabled(
-        self
+        self,
     ):
         self.user.is_staff = True
         self.user.save()

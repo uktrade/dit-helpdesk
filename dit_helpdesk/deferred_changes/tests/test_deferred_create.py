@@ -25,7 +25,6 @@ class ChildModelForm(DeferredFormMixin, forms.ModelForm):
 
 
 class DeferredCreateTestCase(TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
 
@@ -82,10 +81,7 @@ class DeferredCreateTestCase(TestCase):
         deferred_change = deferred_changes[0]
         self.assertEqual(deferred_change.description, "Others")
         self.assertFalse(deferred_change.single_value)
-        self.assertEqual(
-            list(deferred_change.values),
-            [str(a_other), str(b_other)],
-        )
+        self.assertEqual(list(deferred_change.values), [str(a_other), str(b_other)])
 
         deferred_create.apply()
         obj = ParentModel.objects.get()

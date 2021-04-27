@@ -55,7 +55,9 @@ class BaseCommodityJson:
             return []
 
         measures = [
-            ImportMeasureJson(self.commodity_obj, d, self.code, self.title, origin_country)
+            ImportMeasureJson(
+                self.commodity_obj, d, self.code, self.title, origin_country
+            )
             for d in self.di["import_measures"]
         ]
 
@@ -83,7 +85,6 @@ class BaseCommodityJson:
 
 
 class CommodityJson(BaseCommodityJson):
-
     def __repr__(self):
         return "CommodityJson"
 
@@ -97,7 +98,6 @@ class CommodityJson(BaseCommodityJson):
 
 
 class ChapterJson(BaseCommodityJson):
-
     @property
     def chapter_note(self):
         if self.di and "chapter_note" in self.di.keys():
@@ -114,7 +114,9 @@ class SubHeadingJson(BaseCommodityJson):
 
 
 class ImportMeasureJson:
-    def __init__(self, commodity_obj, di, commodity_code, commodity_title, country_code):
+    def __init__(
+        self, commodity_obj, di, commodity_code, commodity_title, country_code
+    ):
         self.commodity_obj = commodity_obj
         self.di = di
         self.commodity_code = commodity_code
@@ -170,7 +172,10 @@ class ImportMeasureJson:
     def geographical_area_description(self):
         geographical_area_description = self.di["geographical_area"]["description"]
         if self.di["geographical_area"]["id"][0].isalpha():
-            geographical_area_description = geographical_area_description + " (%s)" % self.di["geographical_area"]["id"]
+            geographical_area_description = (
+                geographical_area_description
+                + " (%s)" % self.di["geographical_area"]["id"]
+            )
 
         return geographical_area_description
 
@@ -201,10 +206,7 @@ class ImportMeasureJson:
         if not self.num_conditions:
             html = "-"
         else:
-            url = get_conditions_url(
-                self.country_code.lower(),
-                self.measure_id,
-            )
+            url = get_conditions_url(self.country_code.lower(), self.measure_id)
             modal_id = "{0}-{1}".format(self.commodity_code, self.measure_id)
             html = """<a data-toggle="modal" data-target="{0}" href="{1}">Conditions</a>""".format(
                 modal_id, url
@@ -315,11 +317,7 @@ class ImportMeasureJson:
         """
         html = ""
         order_number = self.di["order_number"]["number"]
-        url = get_quotas_url(
-            self.country_code.lower(),
-            self.measure_id,
-            order_number,
-        )
+        url = get_quotas_url(self.country_code.lower(), self.measure_id, order_number)
 
         modal_id = "{0}-{1}".format(self.measure_id, order_number)
         html = ' - <a data-toggle="modal" data-target="{0}" href="{1}">Order No: {2}</a>'.format(

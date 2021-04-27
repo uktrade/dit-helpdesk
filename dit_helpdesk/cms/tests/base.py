@@ -6,7 +6,6 @@ User = get_user_model()
 
 
 class CMSTestCase(TestCase):
-
     def login(self):
         username = "testuser"
         email = "test@example.com"

@@ -5,24 +5,26 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0008_auto_20201117_1642'),
-    ]
+    dependencies = [("rules_of_origin", "0008_auto_20201117_1642")]
 
     operations = [
         migrations.AddField(
-            model_name='rule',
-            name='code',
+            model_name="rule",
+            name="code",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='chapters',
-            field=models.ManyToManyField(null=True, related_name='rules_of_origin', to='hierarchy.Chapter'),
+            model_name="rule",
+            name="chapters",
+            field=models.ManyToManyField(
+                null=True, related_name="rules_of_origin", to="hierarchy.Chapter"
+            ),
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='headings',
-            field=models.ManyToManyField(null=True, related_name='rules_of_origin', to='hierarchy.Heading'),
+            model_name="rule",
+            name="headings",
+            field=models.ManyToManyField(
+                null=True, related_name="rules_of_origin", to="hierarchy.Heading"
+            ),
         ),
     ]

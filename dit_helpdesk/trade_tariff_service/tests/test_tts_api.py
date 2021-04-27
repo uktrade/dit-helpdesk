@@ -29,7 +29,7 @@ class CommodityJsonTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('UK')
+        self.tree = create_nomenclature_tree("UK")
 
         self.heading = mixer.blend(
             Heading,
@@ -102,8 +102,7 @@ class CommodityJsonTestCase(TestCase):
 
     def test_footnotes(self):
         self.assertEqual(
-            self.commodity.tts_obj.footnotes,
-            self.commodity_data['footnotes'],
+            self.commodity.tts_obj.footnotes, self.commodity_data["footnotes"]
         )
 
     def test_footnotes_does_not_exist(self):
@@ -120,7 +119,7 @@ class ImportMeasureJsonTestCase(TestCase):
     """
 
     def setUp(self):
-        tree = create_nomenclature_tree('UK')
+        tree = create_nomenclature_tree("UK")
         commodity = mixer.blend(
             Commodity,
             commodity_code=settings.TEST_COMMODITY_CODE,
@@ -183,7 +182,9 @@ class ImportMeasureJsonTestCase(TestCase):
             return "TEST URL"
 
         self.assertEqual(self.import_measure.conditions_html(get_conditions_url), "-")
-        self.assertTrue(isinstance(self.import_measure.conditions_html(get_conditions_url), str))
+        self.assertTrue(
+            isinstance(self.import_measure.conditions_html(get_conditions_url), str)
+        )
 
     def test_get_table_dict(self):
         def get_quotas_url(*args):
@@ -203,7 +204,12 @@ class ImportMeasureJsonTestCase(TestCase):
                 "start_end_date": "2015-02-01",
             },
         )
-        self.assertTrue(isinstance(self.import_measure.get_table_dict(get_quotas_url, get_conditions_url), dict))
+        self.assertTrue(
+            isinstance(
+                self.import_measure.get_table_dict(get_quotas_url, get_conditions_url),
+                dict,
+            )
+        )
 
     def test_get_table_row(self):
         # self.assertTrue(isinstance(self.import_measure, list))

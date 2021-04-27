@@ -10,7 +10,6 @@ User = get_user_model()
 
 
 class TestConfig(CMSTestCase):
-
     def setUp(self):
         with reset_urls_for_settings(CMS_ENABLED=True):
             self.url = reverse("cms:regulation-groups-list")

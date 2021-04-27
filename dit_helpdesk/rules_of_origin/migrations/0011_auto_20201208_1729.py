@@ -7,43 +7,41 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('countries', '0005_auto_20201119_1450'),
-        ('rules_of_origin', '0010_auto_20201208_1528'),
+        ("countries", "0005_auto_20201119_1450"),
+        ("rules_of_origin", "0010_auto_20201208_1528"),
     ]
 
     operations = [
         linter.IgnoreMigration(),
         migrations.RenameField(
-            model_name='old_rule',
-            old_name='rules_document',
-            new_name='old_rules_document',
+            model_name="old_rule",
+            old_name="rules_document",
+            new_name="old_rules_document",
         ),
         migrations.RenameField(
-            model_name='old_ruleitem',
-            old_name='rule',
-            new_name='old_rule',
+            model_name="old_ruleitem", old_name="rule", new_name="old_rule"
         ),
         migrations.RenameField(
-            model_name='old_rulesdocument',
-            old_name='rules_group',
-            new_name='old_rules_group',
+            model_name="old_rulesdocument",
+            old_name="rules_group",
+            new_name="old_rules_group",
         ),
         migrations.RenameField(
-            model_name='old_rulesdocumentfootnote',
-            old_name='rules_document',
-            new_name='old_rules_document',
+            model_name="old_rulesdocumentfootnote",
+            old_name="rules_document",
+            new_name="old_rules_document",
         ),
         migrations.RenameField(
-            model_name='old_rulesgroupmember',
-            old_name='rules_group',
-            new_name='old_rules_group',
+            model_name="old_rulesgroupmember",
+            old_name="rules_group",
+            new_name="old_rules_group",
         ),
         migrations.AlterUniqueTogether(
-            name='old_rulesdocument',
-            unique_together={('old_rules_group', 'source_url')},
+            name="old_rulesdocument",
+            unique_together={("old_rules_group", "source_url")},
         ),
         migrations.AlterUniqueTogether(
-            name='old_rulesgroupmember',
-            unique_together={('country', 'old_rules_group', 'start_date')},
+            name="old_rulesgroupmember",
+            unique_together={("country", "old_rules_group", "start_date")},
         ),
     ]

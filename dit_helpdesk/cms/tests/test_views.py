@@ -9,7 +9,6 @@ from .base import CMSTestCase
 
 
 class TestRegulationGroupsList(CMSTestCase):
-
     def setUp(self):
         self.login()
 
@@ -38,12 +37,7 @@ class TestRegulationGroupsList(CMSTestCase):
         search_query = response.context["search_query"]
         self.assertEqual(search_query, None)
 
-        response = self.client.get(
-            reverse("cms:regulation-groups-list"),
-            {
-                "q": "foo",
-            },
-        )
+        response = self.client.get(reverse("cms:regulation-groups-list"), {"q": "foo"})
         object_list = response.context["object_list"]
         self.assertIn(foo_regulation, object_list)
         self.assertNotIn(bar_regulation, object_list)
@@ -52,12 +46,7 @@ class TestRegulationGroupsList(CMSTestCase):
         search_query = response.context["search_query"]
         self.assertEqual(search_query, "foo")
 
-        response = self.client.get(
-            reverse("cms:regulation-groups-list"),
-            {
-                "q": "bar",
-            },
-        )
+        response = self.client.get(reverse("cms:regulation-groups-list"), {"q": "bar"})
         object_list = response.context["object_list"]
         self.assertNotIn(foo_regulation, object_list)
         self.assertIn(bar_regulation, object_list)
@@ -67,10 +56,7 @@ class TestRegulationGroupsList(CMSTestCase):
         self.assertEqual(search_query, "bar")
 
         response = self.client.get(
-            reverse("cms:regulation-groups-list"),
-            {
-                "q": "regulation",
-            },
+            reverse("cms:regulation-groups-list"), {"q": "regulation"}
         )
         object_list = response.context["object_list"]
         self.assertIn(foo_regulation, object_list)
@@ -81,10 +67,7 @@ class TestRegulationGroupsList(CMSTestCase):
         self.assertEqual(search_query, "regulation")
 
         response = self.client.get(
-            reverse("cms:regulation-groups-list"),
-            {
-                "q": "madeup",
-            },
+            reverse("cms:regulation-groups-list"), {"q": "madeup"}
         )
         object_list = response.context["object_list"]
         self.assertNotIn(foo_regulation, object_list)

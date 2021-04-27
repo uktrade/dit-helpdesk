@@ -16,17 +16,9 @@ from backports.datetime_fromisoformat import MonkeyPatch
 
 from countries.models import Country
 from hierarchy.clients import get_json_obj_client
-from rules_of_origin.models import (
-    Rule,
-    RulesDocument,
-    RulesDocumentFootnote,
-)
+from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
-from trade_tariff_service.tts_api import (
-    ChapterJson,
-    HeadingJson,
-    SubHeadingJson,
-)
+from trade_tariff_service.tts_api import ChapterJson, HeadingJson, SubHeadingJson
 from core.helpers import flatten, always_true_Q, unique_maintain_order
 
 
@@ -38,18 +30,11 @@ CHAPTER_CODE_REGEX = "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
 
 
 class HierarchyQuerySet(models.QuerySet):
-
     def get_by_commodity_code(self, commodity_code, **kwargs):
-        return self.get(
-            **{
-                self.model.COMMODITY_CODE_FIELD: commodity_code,
-                **kwargs,
-            },
-        )
+        return self.get(**{self.model.COMMODITY_CODE_FIELD: commodity_code, **kwargs})
 
 
 class HierarchyManager(models.Manager):
-
     def get_queryset(self):
         return HierarchyQuerySet(self.model, using=self._db)
 
@@ -62,33 +47,36 @@ class RegionHierarchyManager(HierarchyManager):
         return self.for_region(settings.PRIMARY_REGION)
 
     def for_region(self, region):
-        return super().get_queryset().filter(
-            nomenclature_tree__region=region,
-            nomenclature_tree__end_date__isnull=True
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                nomenclature_tree__region=region,
+                nomenclature_tree__end_date__isnull=True,
+            )
         )
 
 
 class TreeSelectorMixin:
-
     def __init__(self):
         pass
 
     @classmethod
     def get_active_objects(cls, region):
         return cls.all_objects.filter(
-            nomenclature_tree__region=region,
-            nomenclature_tree__end_date__isnull=True,
+            nomenclature_tree__region=region, nomenclature_tree__end_date__isnull=True
         )
 
     def save(self):
         if not self.nomenclature_tree:
-            self.nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
+            self.nomenclature_tree = NomenclatureTree.get_active_tree(
+                settings.PRIMARY_REGION
+            )
 
         super().save()
 
 
 class RulesOfOriginMixin:
-
     def get_chapter(self):
         raise NotImplementedError()
 
@@ -103,18 +91,23 @@ class RulesOfOriginMixin:
         """
 
         rule.rule_text_processed = footnote_processor.replace_all_notes_references(
-            rule.rule_text_processed)
+            rule.rule_text_processed
+        )
 
         rule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
             rule.alt_rule_text_processed
         )
 
         for subrule in rule.subrules.all():
-            subrule.rule_text_processed = footnote_processor.replace_all_notes_references(
-                subrule.rule_text_processed
+            subrule.rule_text_processed = (
+                footnote_processor.replace_all_notes_references(
+                    subrule.rule_text_processed
+                )
             )
-            subrule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
-                subrule.alt_rule_text_processed
+            subrule.alt_rule_text_processed = (
+                footnote_processor.replace_all_notes_references(
+                    subrule.alt_rule_text_processed
+                )
             )
 
     def process_footnotes(self, rules, notes):
@@ -133,7 +126,8 @@ class RulesOfOriginMixin:
             note_id = note.identifier
             note.number = footnote_processor.note_number_by_id[note_id]
             note.note = footnote_processor.replace_all_introductory_notes_references(
-                note.note)
+                note.note
+            )
 
         return filtered_notes
 
@@ -147,26 +141,31 @@ class RulesOfOriginMixin:
         :return: dictionary
         """
 
-        if country_code == 'EU':
-            country_code = 'FR'     # pick one of the EU countries, the RoO are the same for all
+        if country_code == "EU":
+            country_code = (
+                "FR"  # pick one of the EU countries, the RoO are the same for all
+            )
 
         tree = NomenclatureTree.get_active_tree()
         country = Country.objects.get(country_code=country_code)
 
-        chapter_id, heading_id, subheading_id, commodity_id = self.get_hierarchy_context_ids()
+        (
+            chapter_id,
+            heading_id,
+            subheading_id,
+            commodity_id,
+        ) = self.get_hierarchy_context_ids()
 
         document_filter = Q(
-            rules_document__countries=country,
-            rules_document__nomenclature_tree=tree,
+            rules_document__countries=country, rules_document__nomenclature_tree=tree
         )
         date_filter = (
-            Q(rules_document__start_date__lte=starting_before) if starting_before
+            Q(rules_document__start_date__lte=starting_before)
+            if starting_before
             else always_true_Q
         )
 
-        rule_filter = (
-            Q(chapters__id=chapter_id)
-        )
+        rule_filter = Q(chapters__id=chapter_id)
         if heading_id:
             rule_filter = rule_filter | Q(headings__id=heading_id)
         if subheading_id:
@@ -174,16 +173,12 @@ class RulesOfOriginMixin:
         if commodity_id:
             rule_filter = rule_filter | Q(commodities__id=commodity_id)
 
-        rules = Rule.objects.prefetch_related(
-            'subrules',
-            'chapters',
-            'headings',
-            'subheadings',
-            'commodities'
-        ).select_related(
-            'rules_document'
-        ).filter(
-            document_filter & date_filter & rule_filter
+        rules = (
+            Rule.objects.prefetch_related(
+                "subrules", "chapters", "headings", "subheadings", "commodities"
+            )
+            .select_related("rules_document")
+            .filter(document_filter & date_filter & rule_filter)
         )
 
         chapter_rules = [r for r in rules if r.chapters.exists()]
@@ -203,7 +198,7 @@ class RulesOfOriginMixin:
             rules = [r for r in rules if not r.is_exclusion]
 
         footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__countries=country, rules_document__nomenclature_tree=tree,
+            rules_document__countries=country, rules_document__nomenclature_tree=tree
         ).order_by("id")
         relevant_footnotes = self.process_footnotes(rules, footnotes)
 
@@ -242,6 +237,7 @@ class NomenclatureTree(models.Model):
     by region (e.g. `EU`, `UK`) and date range.
 
     """
+
     region = models.CharField(max_length=2)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True)
@@ -252,9 +248,8 @@ class NomenclatureTree(models.Model):
 
         try:
             prev_tree = NomenclatureTree.objects.filter(
-                region=region,
-                end_date__isnull=True,
-            ).latest('start_date')
+                region=region, end_date__isnull=True
+            ).latest("start_date")
         except NomenclatureTree.DoesNotExist:
             prev_tree = None
 
@@ -350,7 +345,9 @@ class BaseHierarchyModel(models.Model):
         return json.dumps(obj)
 
     def get_conditions_url(self, country_code, measure_id):
-        raise NotImplementedError(f"Implement `get_conditions_url` for {self.__class__}")
+        raise NotImplementedError(
+            f"Implement `get_conditions_url` for {self.__class__}"
+        )
 
     def get_quotas_url(self, country_code, measure_id, order_number):
         raise NotImplementedError(f"Implement `get_quotas_url` for {self.__class__}")
@@ -359,10 +356,14 @@ class BaseHierarchyModel(models.Model):
         raise NotImplementedError(f"Implement `get_path` for {self.__class__}")
 
     def get_hierarchy_children_count(self):
-        raise NotImplementedError(f"Implement `get_hierarchy_children_count` for {self.__class__}")
+        raise NotImplementedError(
+            f"Implement `get_hierarchy_children_count` for {self.__class__}"
+        )
 
     def get_hierarchy_children(self):
-        raise NotImplementedError(f"Implement `get_hierarchy_children` for {self.__class__}")
+        raise NotImplementedError(
+            f"Implement `get_hierarchy_children` for {self.__class__}"
+        )
 
     def get_commodity_object_path(self):
         chapter_path = self.get_path()
@@ -387,6 +388,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the top level section of the hierarchy
     """
+
     section_id = models.IntegerField()
     roman_numeral = models.CharField(max_length=5)
     title = models.TextField()
@@ -397,8 +399,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['section_id', 'nomenclature_tree'],
-                name='unique section'
+                fields=["section_id", "nomenclature_tree"], name="unique section"
             )
         ]
 
@@ -500,7 +501,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
 
                 # '* 1\\. This is some text'
                 # Matches:
-                #   1: * 
+                #   1: *
                 #   2: 1
                 #   3: This is some text
                 #
@@ -520,7 +521,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
 
                 # 12.This is some text
                 # Matches:
-                #   1: 
+                #   1:
                 #   2: 12
                 #   3: This is some text
                 match = re.search(r"^(\* )?([\d]+)\\*\.(.+)$", item)
@@ -636,6 +637,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
     """
     Model representing the second level chapters of the hierarchy
     """
+
     COMMODITY_CODE_FIELD = "chapter_code"
 
     goods_nomenclature_sid = models.CharField(max_length=10)
@@ -833,7 +835,9 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
 
     def get_tts_content(self, tts_client):
         try:
-            tts_content = tts_client.get_content(tts_client.CommodityType.CHAPTER, self.chapter_code[:2])
+            tts_content = tts_client.get_content(
+                tts_client.CommodityType.CHAPTER, self.chapter_code[:2]
+            )
         except tts_client.NotFound:
             return None
 
@@ -911,7 +915,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
 
@@ -1081,7 +1085,9 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_tts_content(self, tts_client):
         try:
-            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.heading_code[:4])
+            tts_content = tts_client.get_content(
+                tts_client.CommodityType.HEADING, self.heading_code[:4]
+            )
         except tts_client.NotFound:
             return None
 
@@ -1179,7 +1185,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
     def get_northern_ireland_detail_url(self, country_code):
@@ -1189,7 +1195,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
     def get_conditions_url(self, country_code, measure_id):
@@ -1200,7 +1206,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_northern_ireland_conditions_url(self, country_code, measure_id):
@@ -1211,7 +1217,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_quotas_url(self, country_code, measure_id, order_number):
@@ -1223,7 +1229,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )
 
     def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
@@ -1235,7 +1241,7 @@ class Heading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )
 
 
@@ -1342,14 +1348,15 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
         return reverse("search:search-hierarchy", kwargs=kwargs)
 
     def get_hierarchy_context_ids(self):
-        hierarchy_context = flatten(
-            reversed(self.get_ancestor_data()))
+        hierarchy_context = flatten(reversed(self.get_ancestor_data()))
 
-        chapter_id = next(d['id'] for d in hierarchy_context if d['type'] == 'chapter')
-        heading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'heading')
+        chapter_id = next(d["id"] for d in hierarchy_context if d["type"] == "chapter")
+        heading_id = next(d["id"] for d in hierarchy_context if d["type"] == "heading")
 
         try:
-            subheading_id = next(d['id'] for d in hierarchy_context if d['type'] == 'sub_heading')
+            subheading_id = next(
+                d["id"] for d in hierarchy_context if d["type"] == "sub_heading"
+            )
         except StopIteration:
             subheading_id = self.id
 
@@ -1472,7 +1479,9 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_tts_content(self, tts_client):
         try:
-            tts_content = tts_client.get_content(tts_client.CommodityType.HEADING, self.commodity_code[:4])
+            tts_content = tts_client.get_content(
+                tts_client.CommodityType.HEADING, self.commodity_code[:4]
+            )
         except tts_client.NotFound:
             return None
 
@@ -1580,7 +1589,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
     def get_northern_ireland_detail_url(self, country_code):
@@ -1590,7 +1599,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "commodity_code": self.commodity_code,
                 "country_code": country_code.lower(),
                 "nomenclature_sid": self.goods_nomenclature_sid,
-            }
+            },
         )
 
     def get_conditions_url(self, country_code, measure_id):
@@ -1601,7 +1610,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_northern_ireland_conditions_url(self, country_code, measure_id):
@@ -1612,7 +1621,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "country_code": country_code,
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
-            }
+            },
         )
 
     def get_quotas_url(self, country_code, measure_id, order_number):
@@ -1624,7 +1633,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )
 
     def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
@@ -1636,5 +1645,5 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                 "nomenclature_sid": self.goods_nomenclature_sid,
                 "measure_id": measure_id,
                 "order_number": order_number,
-            }
+            },
         )

@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hierarchy', '0009_auto_20200908_2043'),
-        ('regulations', '0001_initial'),
+        ("hierarchy", "0009_auto_20200908_2043"),
+        ("regulations", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='regulation',
-            name='chapters',
-            field=models.ManyToManyField(to='hierarchy.Chapter'),
+            model_name="regulation",
+            name="chapters",
+            field=models.ManyToManyField(to="hierarchy.Chapter"),
         ),
         migrations.AddField(
-            model_name='regulation',
-            name='sections',
-            field=models.ManyToManyField(to='hierarchy.Section'),
+            model_name="regulation",
+            name="sections",
+            field=models.ManyToManyField(to="hierarchy.Section"),
         ),
     ]

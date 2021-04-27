@@ -5,29 +5,27 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0016_auto_20210104_1306'),
-    ]
+    dependencies = [("rules_of_origin", "0016_auto_20210104_1306")]
 
     operations = [
         migrations.AddField(
-            model_name='rule',
-            name='alt_rule_text_processed',
+            model_name="rule",
+            name="alt_rule_text_processed",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='rule',
-            name='rule_text_processed',
+            model_name="rule",
+            name="rule_text_processed",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subrule',
-            name='alt_rule_text_processed',
+            model_name="subrule",
+            name="alt_rule_text_processed",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subrule',
-            name='rule_text_processed',
+            model_name="subrule",
+            name="rule_text_processed",
             field=models.TextField(blank=True, null=True),
         ),
     ]

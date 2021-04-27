@@ -17,23 +17,18 @@ class GlobalTariffResult(Enum):
 
 
 def get_global_tariff_context(commodity):
-    context = {
-        "result_types": GlobalTariffResult.__members__,
-    }
+    context = {"result_types": GlobalTariffResult.__members__}
     try:
-        context_result = get_global_tariff_commodity_data(permute_code_hierarchy(commodity))
-        context.update({
-            "result_type": GlobalTariffResult.HAS_RESULTS,
-            "result": context_result,
-        })
+        context_result = get_global_tariff_commodity_data(
+            permute_code_hierarchy(commodity)
+        )
+        context.update(
+            {"result_type": GlobalTariffResult.HAS_RESULTS, "result": context_result}
+        )
     except GlobalTariffMultipleResultsError:
-        context.update({
-            "result_type": GlobalTariffResult.MULTIPLE_RESULTS,
-        })
+        context.update({"result_type": GlobalTariffResult.MULTIPLE_RESULTS})
     except GlobalTariffNoResultError:
-        context.update({
-            "result_type": GlobalTariffResult.NO_RESULT,
-        })
+        context.update({"result_type": GlobalTariffResult.NO_RESULT})
 
     return context
 
@@ -46,9 +41,9 @@ def get_tariff_content_context(country, commodity):
     if has_trade_scenario(country):
         tariff_content_label = f"_content_{country.scenario.replace('-', '_')}"
     else:
-        tariff_content_label = ''
+        tariff_content_label = ""
 
-    country_suffix = '' if country.name.endswith('s') else 's'
+    country_suffix = "" if country.name.endswith("s") else "s"
 
     context = {
         "tariff_content_label": tariff_content_label,

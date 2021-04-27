@@ -23,7 +23,13 @@ from search.documents.heading import INDEX as heading_index
 from search.documents.subheading import INDEX as sub_heading_index
 from search.documents.commodity import INDEX as commodity_index
 
-indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
+indices = [
+    section_index,
+    chapter_index,
+    heading_index,
+    sub_heading_index,
+    commodity_index,
+]
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 class CommoditySetupTestCase(TestCase):
     def setUp(self):
-        self.tree = create_nomenclature_tree('UK')
+        self.tree = create_nomenclature_tree("UK")
         self.section = mixer.blend(
             Section,
             section_id=10,
@@ -157,10 +163,10 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = reverse("search:search-commodity-old", kwargs={
-            "country_code": "au"})
-        self.grouped_url = reverse("search:search-commodity", kwargs={
-            "country_code": "au"})
+        self.url = reverse("search:search-commodity-old", kwargs={"country_code": "au"})
+        self.grouped_url = reverse(
+            "search:search-commodity", kwargs={"country_code": "au"}
+        )
 
     def test_section_1_exists(self):
         self.assertTrue(Section.objects.filter(section_id=10).exists())
@@ -183,17 +189,18 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
 
     def test_grouped_commodity_search_is_using_the_correct_template(self):
         response = self.client.get(self.grouped_url)
-        self.assertTemplateUsed(
-            response, "search/grouped_commodity_search.html")
+        self.assertTemplateUsed(response, "search/grouped_commodity_search.html")
 
     def test_search_view_returns_http_200(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
     def test_search_view_tracks_event(self):
-        with mock.patch("search.views.track_event") as mock_track_event, \
-            mock.patch("search.views.helpers.search_by_term") as mock_search_by_term, \
-            mock.patch("search.views.helpers.get_alias_from_hit") as mock_get_alias_from_hit:
+        with mock.patch("search.views.track_event") as mock_track_event, mock.patch(
+            "search.views.helpers.search_by_term"
+        ) as mock_search_by_term, mock.patch(
+            "search.views.helpers.get_alias_from_hit"
+        ) as mock_get_alias_from_hit:
 
             mock_get_alias_from_hit.return_value = "chapter"
             mock_hit = mock.MagicMock()
@@ -315,7 +322,7 @@ class CommodityKeywordSearchViewTestCase(TestCase):
                 "toggle_headings": 0,
                 "sort": "ranking",
                 "sort_order": "asc",
-                "page": 1
+                "page": 1,
             },
         )
 
@@ -453,25 +460,20 @@ def get_data(file_path, tree):
 
 def create_instance(data, model_class):
     skip_attributes = ["tts_json"]
-    filtered_data = {
-        k: v
-        for k, v in data.items()
-        if k not in skip_attributes
-    }
+    filtered_data = {k: v for k, v in data.items() if k not in skip_attributes}
     instance = model_class(**filtered_data)
     instance.save()
     return instance
 
 
 class TestHierarchyData(TestCase):
-
     def setUp(self):
         """
         To test fully test a commodity we need to load a parent subheading and its parent heading and save the
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region="UK")
 
         self.section = create_instance(
             get_data(settings.SECTION_STRUCTURE, self.tree), Section
@@ -499,7 +501,9 @@ class TestHierarchyData(TestCase):
             get_data(settings.COMMODITY_STRUCTURE, self.tree), Commodity
         )
         self.commodity.parent_subheading_id = self.subheading.id
-        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA, self.tree))
+        self.commodity.tts_json = json.dumps(
+            get_data(settings.COMMODITY_DATA, self.tree)
+        )
 
         self.commodity.save()
 

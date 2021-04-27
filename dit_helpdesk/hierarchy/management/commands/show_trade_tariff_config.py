@@ -6,8 +6,5 @@ from ...clients import get_settings_config
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
-        self.stdout.write(
-            pprint.pformat(get_settings_config()),
-        )
+        self.stdout.write(pprint.pformat(get_settings_config()))

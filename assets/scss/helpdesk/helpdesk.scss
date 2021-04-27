@@ -63,7 +63,7 @@ abbr {
   font-family: "ntatabularnumbers", Arial, sans-serif;
   letter-spacing: 0.05em;
   margin: 0 0 0 0.25em;
-  padding: 0.25em 0.25em 0.125em  0.25em;
+  padding: 0.25em 0.25em 0.125em 0.25em;
 
   &--1 {
     background-color: lighten(govuk-colour("light-purple"), 30%);
@@ -87,7 +87,6 @@ abbr {
 }
 
 .app-footnotes {
-
   a[name] {
     @include govuk-link-common;
     @include govuk-link-style-default;
@@ -97,10 +96,10 @@ abbr {
   }
 }
 
-.text-button{
-  background: none!important;
+.text-button {
+  background: none !important;
   border: none;
-  padding: 0!important;
+  padding: 0 !important;
   /*optional*/
   font-family: arial, sans-serif;
   /*input has OS specific font-family*/
@@ -109,12 +108,12 @@ abbr {
   cursor: pointer;
   box-shadow: none;
 }
-.text-button:hover{
+.text-button:hover {
   color: red;
 }
 
 .govuk-table td,
-.govuk-table  th {
+.govuk-table th {
   vertical-align: top;
 }
 
@@ -123,7 +122,7 @@ abbr {
 }
 
 .helpdesk-direction__left-to-right:after {
-    content: ' \279E';
+  content: " \279E";
 }
 
 .govuk-hint {
@@ -131,8 +130,8 @@ abbr {
 }
 
 .app-select--inline {
-    @include mq ($from: tablet) {
-      @include govuk-clearfix;
+  @include mq($from: tablet) {
+    @include govuk-clearfix;
   }
   text-align: right;
 }
@@ -158,14 +157,14 @@ abbr {
 }
 
 .app-contents li:before {
-      content: "\2014";
-      margin: 0 1em 0 0;
-    }
+  content: "\2014";
+  margin: 0 1em 0 0;
+}
 
-.app-info{
+.app-info {
   background-color: #e9f4f9;
-  border-left: solid .5em #098dc1;
-  padding: .5em;
+  border-left: solid 0.5em #098dc1;
+  padding: 0.5em;
 }
 
 .app-contents {
@@ -175,23 +174,22 @@ abbr {
 }
 
 .helpdesk-breadcrumbs {
-
   position: relative;
   padding-top: 1em;
   padding-left: 1em;
   padding-right: 1em;
   margin: 0 0 20px 0;
 
-   nav {
-     padding-left: 0.5em;
-     ul {
-        position: relative;
-        list-style: none;
-        padding-left: 5px;
+  nav {
+    padding-left: 0.5em;
+    ul {
+      position: relative;
+      list-style: none;
+      padding-left: 5px;
 
-        @include govuk-media-query($from: tablet) {
-          padding-left: 15px;
-        }
+      @include govuk-media-query($from: tablet) {
+        padding-left: 15px;
+      }
 
       li {
         position: relative;
@@ -199,7 +197,7 @@ abbr {
         line-height: 25px;
         word-wrap: break-word;
       }
-     }
+    }
   }
 }
 
@@ -207,45 +205,45 @@ abbr {
   border-top: 1px solid #000;
   top: 10px;
   width: 10px;
-  height: 0
+  height: 0;
 }
 
 .helpdesk-breadcrumbs nav ul li::after {
   border-left: 1px solid #000;
   height: 100%;
   width: 0px;
-  top: 2px
+  top: 2px;
 }
 
 .helpdesk-breadcrumbs nav ul li::before,
 .helpdesk-breadcrumbs nav ul li::after {
   content: "";
   position: absolute;
-  left: -15px
+  left: -15px;
 }
 
 .helpdesk-breadcrumbs nav ul li:last-child::after {
-  height: 8px
+  height: 8px;
 }
 
 .helpdesk-breadcrumbs nav ul li .chapter-code,
 .helpdesk-breadcrumbs nav ul li .heading-code,
 .helpdesk-breadcrumbs nav ul li .commodity-code {
-    float: left;
-    margin-right: 8px
+  float: left;
+  margin-right: 8px;
 }
 
 .helpdesk-breadcrumbs nav ul li.chapter-and-heading-li .chapter-code {
-    margin-right: 0
+  margin-right: 0;
 }
 
 .helpdesk-breadcrumbs nav ul li.commodity-li .chapter-code,
 .helpdesk-breadcrumbs nav ul li.commodity-li .heading-code {
-    margin-right: 0
+  margin-right: 0;
 }
 
 .helpdesk-breadcrumbs nav ul li ul.commodities {
-    padding-left: 15px
+  padding-left: 15px;
 }
 
 .app-hierarchy-context__wrapper {
@@ -253,14 +251,14 @@ abbr {
 }
 
 .helpdesk-icon {
-    background-position-x: -2px;
-    background-position-y: 0;
-    background-size: 24px 24px;
-    background-repeat: no-repeat;
-    display: inline-block;
-    height: 24px;
-    width: 24px;
-    vertical-align: bottom;
+  background-position-x: -2px;
+  background-position-y: 0;
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  vertical-align: bottom;
 }
 
 .helpdesk-caption {
@@ -344,5 +342,5 @@ label[for="sort"] {
 }
 
 p.doc_header {
-    font-weight: bold;
+  font-weight: bold;
 }

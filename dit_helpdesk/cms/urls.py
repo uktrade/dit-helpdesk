@@ -7,9 +7,21 @@ app_name = "cms"
 
 urlpatterns = [
     path("", views.CMSView.as_view(), name="home"),
-    path("regulation-groups/", views.RegulationGroupsListView.as_view(), name="regulation-groups-list"),
-    path("regulation-group/create/", views.RegulationGroupCreateView.as_view(), name="regulation-group-create"),
-    path("regulation-group/<int:pk>/", views.RegulationGroupDetailView.as_view(), name="regulation-group-detail"),
+    path(
+        "regulation-groups/",
+        views.RegulationGroupsListView.as_view(),
+        name="regulation-groups-list",
+    ),
+    path(
+        "regulation-group/create/",
+        views.RegulationGroupCreateView.as_view(),
+        name="regulation-group-create",
+    ),
+    path(
+        "regulation-group/<int:pk>/",
+        views.RegulationGroupDetailView.as_view(),
+        name="regulation-group-detail",
+    ),
     path(
         "regulation-group/<int:pk>/regulation/create/",
         views.RegulationGroupRegulationCreateView.as_view(),
@@ -80,15 +92,12 @@ urlpatterns = [
         views.RegulationGroupCommodityRemoveView.as_view(),
         name="regulation-group-commodity-remove",
     ),
-
     path(
         "pending-approvals/",
         views.PendingApprovalListView.as_view(),
         name="pending-approvals-list",
     ),
     path(
-        "approval/<int:pk>/",
-        views.ApprovalDetailView.as_view(),
-        name="approval-detail",
+        "approval/<int:pk>/", views.ApprovalDetailView.as_view(), name="approval-detail"
     ),
 ]

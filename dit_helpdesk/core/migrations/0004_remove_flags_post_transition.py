@@ -7,7 +7,7 @@ def delete_flags(apps, schema_editor):
     FlagState = apps.get_model("flags", "FlagState")
 
     FlagState.objects.filter(
-        name__in=['PRE21', 'JAPAN_FTA', 'NI_JOURNEY', 'TREE_PRELOAD']
+        name__in=["PRE21", "JAPAN_FTA", "NI_JOURNEY", "TREE_PRELOAD"]
     ).all().delete()
 
 
@@ -15,24 +15,16 @@ def create_flags(apps, schema_editor):
     FlagState = apps.get_model("flags", "FlagState")
 
     def _create_bool_flag(name, value):
-        FlagState.objects.create(
-            name=name,
-            condition='boolean',
-            value=str(value),
-        )
+        FlagState.objects.create(name=name, condition="boolean", value=str(value))
 
-    _create_bool_flag('PRE21', False)
-    _create_bool_flag('JAPAN_FTA', True)
-    _create_bool_flag('NI_JOURNEY', True)
-    _create_bool_flag('TREE_PRELOAD', False)
+    _create_bool_flag("PRE21", False)
+    _create_bool_flag("JAPAN_FTA", True)
+    _create_bool_flag("NI_JOURNEY", True)
+    _create_bool_flag("TREE_PRELOAD", False)
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0003_tree_preload_flag'),
-    ]
+    dependencies = [("core", "0003_tree_preload_flag")]
 
-    operations = [
-        migrations.RunPython(delete_flags, reverse_code=create_flags),
-    ]
+    operations = [migrations.RunPython(delete_flags, reverse_code=create_flags)]

@@ -14,5 +14,5 @@ class Migration(migrations.Migration):
             model_name="chapter",
             name="last_updated",
             field=models.DateTimeField(auto_now=True),
-        )
+        ),
     ]

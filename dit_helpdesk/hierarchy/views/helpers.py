@@ -130,7 +130,9 @@ def _commodity_code_html(item, ignore_duplicate=True):
     return commodity_code_html
 
 
-def get_hierarchy_context(commodity_path, country_code, commodity_code, current_item, links=True):
+def get_hierarchy_context(
+    commodity_path, country_code, commodity_code, current_item, links=True
+):
     """
     View helper function that returns an html representation of the context of the commodity within the
     hierarchy takes three arguments: the path to the commodity, the country code of the exporting country and the
@@ -182,18 +184,18 @@ def get_hierarchy_context_from_object(commodity_object, country_code, links=True
         country_code=country_code,
         commodity_code=commodity_code,
         current_item=commodity_object,
-        links=links
+        links=links,
     )
 
 
 def sentry_emit_commodity_not_found(commodity_code, nomenclature_sid):
     sentry_sdk.capture_event(
         {
-            'message': 'Commodity object not found',
-            'level': 'warning',
-            'extra': {
-                'commodity_code': commodity_code,
-                'nomenclature_sid': nomenclature_sid,
+            "message": "Commodity object not found",
+            "level": "warning",
+            "extra": {
+                "commodity_code": commodity_code,
+                "nomenclature_sid": nomenclature_sid,
             },
-        },
+        }
     )

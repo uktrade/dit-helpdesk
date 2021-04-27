@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('rules_of_origin', '0017_auto_20210201_2038'),
-    ]
+    dependencies = [("rules_of_origin", "0017_auto_20210201_2038")]
 
     operations = [
         migrations.AddField(
-            model_name='rule',
-            name='description_processed',
+            model_name="rule",
+            name="description_processed",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

@@ -4,16 +4,8 @@ from django.urls import reverse
 
 from commodities.models import Commodity
 from deferred_changes.forms import DeferredFormMixin
-from hierarchy.models import (
-    Chapter,
-    Heading,
-    NomenclatureTree,
-    SubHeading,
-)
-from regulations.models import (
-    Regulation,
-    RegulationGroup,
-)
+from hierarchy.models import Chapter, Heading, NomenclatureTree, SubHeading
+from regulations.models import Regulation, RegulationGroup
 
 
 class RegulationGroupForm(DeferredFormMixin, forms.ModelForm):
@@ -26,12 +18,7 @@ class RegulationGroupForm(DeferredFormMixin, forms.ModelForm):
         self.instance.nomenclature_trees.add(NomenclatureTree.get_active_tree())
 
     def get_post_approval_url(self):
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": self.instance.pk,
-            },
-        )
+        return reverse("cms:regulation-group-detail", kwargs={"pk": self.instance.pk})
 
 
 class RegulationSearchForm(forms.Form):
@@ -49,16 +36,12 @@ class RegulationForm(DeferredFormMixin, forms.ModelForm):
         fields = ["regulation_group", "title", "url"]
 
     regulation_group = RegulationGroupChoiceField(
-        queryset=RegulationGroup.objects.all(),
-        widget=forms.HiddenInput,
+        queryset=RegulationGroup.objects.all(), widget=forms.HiddenInput
     )
     url = forms.URLField(
         label="URL",
         validators=[
-            RegexValidator(
-                Regulation.VALID_URL_REGEX,
-                "Invalid legislation URL."
-            ),
+            RegexValidator(Regulation.VALID_URL_REGEX, "Invalid legislation URL.")
         ],
     )
 
@@ -72,10 +55,7 @@ class RegulationForm(DeferredFormMixin, forms.ModelForm):
         regulation_group = self.cleaned_data["regulation_group"]
 
         return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                "pk": regulation_group.pk,
-            },
+            "cms:regulation-group-detail", kwargs={"pk": regulation_group.pk}
         )
 
 
@@ -90,8 +70,7 @@ class RegulationRemoveForm(DeferredFormMixin, forms.ModelForm):
         fields = ["regulation"]
 
     regulation = RegulationChoiceField(
-        queryset=Regulation.objects.all(),
-        widget=forms.HiddenInput,
+        queryset=Regulation.objects.all(), widget=forms.HiddenInput
     )
 
     def save(self, commit=True):
@@ -104,12 +83,7 @@ class RegulationRemoveForm(DeferredFormMixin, forms.ModelForm):
         return instance
 
     def get_post_approval_url(self):
-        return reverse(
-            "cms:regulation-group-detail",
-            kwargs={
-                'pk': self.instance.pk,
-            },
-        )
+        return reverse("cms:regulation-group-detail", kwargs={"pk": self.instance.pk})
 
 
 class ChapterAddSearchForm(forms.Form):
@@ -129,7 +103,9 @@ class ChapterLabelFromInstanceMixin:
         return f"{obj.description} ({obj.chapter_code})"
 
 
-class ChapterModelMultipleChoiceField(ChapterLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+class ChapterModelMultipleChoiceField(
+    ChapterLabelFromInstanceMixin, forms.ModelMultipleChoiceField
+):
     pass
 
 
@@ -139,8 +115,7 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
         fields = ["chapters"]
 
     chapters = ChapterModelMultipleChoiceField(
-        queryset=Chapter.objects.all(),
-        to_field_name="goods_nomenclature_sid",
+        queryset=Chapter.objects.all(), to_field_name="goods_nomenclature_sid"
     )
 
     def save(self, commit=True):
@@ -154,10 +129,7 @@ class ChapterAddForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': self.instance.pk,
-            },
+            "cms:regulation-group-chapter-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -187,10 +159,7 @@ class ChapterRemoveForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-chapter-list",
-            kwargs={
-                'pk': self.instance.pk,
-            },
+            "cms:regulation-group-chapter-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -211,7 +180,9 @@ class HeadingLabelFromInstanceMixin:
         return f"{obj.description} ({obj.heading_code})"
 
 
-class HeadingModelMultipleChoiceField(HeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+class HeadingModelMultipleChoiceField(
+    HeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField
+):
     pass
 
 
@@ -221,8 +192,7 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
         fields = ["headings"]
 
     headings = HeadingModelMultipleChoiceField(
-        queryset=Heading.objects.all(),
-        to_field_name="goods_nomenclature_sid",
+        queryset=Heading.objects.all(), to_field_name="goods_nomenclature_sid"
     )
 
     def save(self, commit=True):
@@ -236,10 +206,7 @@ class HeadingAddForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                'pk': self.instance.pk,
-            },
+            "cms:regulation-group-heading-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -269,10 +236,7 @@ class HeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-heading-list",
-            kwargs={
-                "pk": self.instance.pk,
-            },
+            "cms:regulation-group-heading-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -293,7 +257,9 @@ class SubHeadingLabelFromInstanceMixin:
         return f"{obj.description} ({obj.commodity_code})"
 
 
-class SubHeadingModelMultipleChoiceField(SubHeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+class SubHeadingModelMultipleChoiceField(
+    SubHeadingLabelFromInstanceMixin, forms.ModelMultipleChoiceField
+):
     pass
 
 
@@ -303,8 +269,7 @@ class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
         fields = ["subheadings"]
 
     subheadings = SubHeadingModelMultipleChoiceField(
-        queryset=SubHeading.objects.all(),
-        to_field_name="goods_nomenclature_sid",
+        queryset=SubHeading.objects.all(), to_field_name="goods_nomenclature_sid"
     )
 
     def save(self, commit=True):
@@ -318,10 +283,7 @@ class SubHeadingAddForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                'pk': self.instance.pk,
-            },
+            "cms:regulation-group-subheading-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -351,10 +313,7 @@ class SubHeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-subheading-list",
-            kwargs={
-                "pk": self.instance.pk,
-            },
+            "cms:regulation-group-subheading-list", kwargs={"pk": self.instance.pk}
         )
 
 
@@ -375,7 +334,9 @@ class CommodityLabelFromInstanceMixin:
         return f"{obj.description} ({obj.commodity_code})"
 
 
-class CommodityModelMultipleChoiceField(CommodityLabelFromInstanceMixin, forms.ModelMultipleChoiceField):
+class CommodityModelMultipleChoiceField(
+    CommodityLabelFromInstanceMixin, forms.ModelMultipleChoiceField
+):
     pass
 
 
@@ -385,8 +346,7 @@ class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
         fields = ["commodities"]
 
     commodities = CommodityModelMultipleChoiceField(
-        queryset=Commodity.objects.all(),
-        to_field_name="goods_nomenclature_sid",
+        queryset=Commodity.objects.all(), to_field_name="goods_nomenclature_sid"
     )
 
     def save(self, commit=True):
@@ -400,14 +360,13 @@ class CommodityAddForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                'pk': self.instance.pk,
-            },
+            "cms:regulation-group-commodity-list", kwargs={"pk": self.instance.pk}
         )
 
 
-class CommodityModelChoiceField(CommodityLabelFromInstanceMixin, forms.ModelChoiceField):
+class CommodityModelChoiceField(
+    CommodityLabelFromInstanceMixin, forms.ModelChoiceField
+):
     pass
 
 
@@ -433,8 +392,5 @@ class CommodityRemoveForm(DeferredFormMixin, forms.ModelForm):
 
     def get_post_approval_url(self):
         return reverse(
-            "cms:regulation-group-commodity-list",
-            kwargs={
-                "pk": self.instance.pk,
-            },
+            "cms:regulation-group-commodity-list", kwargs={"pk": self.instance.pk}
         )

@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hierarchy', '0002_subheading_last_updated'),
-    ]
+    dependencies = [("hierarchy", "0002_subheading_last_updated")]
 
     operations = [
         migrations.AddField(
-            model_name='subheading',
-            name='tts_json',
+            model_name="subheading",
+            name="tts_json",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

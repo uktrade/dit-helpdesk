@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commodities', '0008_remove_commodity_last_updated'),
-        ('rules_of_origin', '0014_auto_20201209_2316'),
+        ("commodities", "0008_remove_commodity_last_updated"),
+        ("rules_of_origin", "0014_auto_20201209_2316"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rule',
-            name='commodities',
-            field=models.ManyToManyField(related_name='rules_of_origin', to='commodities.Commodity'),
-        ),
+            model_name="rule",
+            name="commodities",
+            field=models.ManyToManyField(
+                related_name="rules_of_origin", to="commodities.Commodity"
+            ),
+        )
     ]

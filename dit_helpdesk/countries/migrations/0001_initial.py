@@ -16,10 +16,7 @@ def init_countries(apps, schema_editor):
         reader = csv.DictReader(countries_file)
 
         for row in reader:
-            Country.objects.create(
-                country_code=row["country_code"],
-                name=row["name"],
-            )
+            Country.objects.create(country_code=row["country_code"], name=row["name"])
 
 
 def remove_all_countries(apps, schema_editor):
@@ -32,20 +29,24 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Country',
+            name="Country",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('country_code', models.CharField(max_length=2)),
-                ('name', models.CharField(max_length=250)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("country_code", models.CharField(max_length=2)),
+                ("name", models.CharField(max_length=250)),
             ],
         ),
-        migrations.RunPython(
-            init_countries,
-            remove_all_countries,
-        ),
+        migrations.RunPython(init_countries, remove_all_countries),
     ]

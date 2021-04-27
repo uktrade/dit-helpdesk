@@ -1,11 +1,11 @@
 # ~/.circleci/config.yml
 version: 2
 aliases:
-  - &redis_version              redis:3.2.10
-  - &postgres_version           circleci/postgres:10
-  - &elasticsearch_version      docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-  - &python_version             circleci/python:3.6
-  - &kibana_version             docker.elastic.co/kibana/kibana:7.9.3
+  - &redis_version redis:3.2.10
+  - &postgres_version circleci/postgres:10
+  - &elasticsearch_version docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+  - &python_version circleci/python:3.7
+  - &kibana_version docker.elastic.co/kibana/kibana:7.9.3
 
   - &unit_base_envs
     DEBUG: True
@@ -50,10 +50,6 @@ aliases:
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: "./test-reports/"
     FEEDBACK_DESTINATION_EMAIL: going@to.com
-
-
-
-
 
   - &ui_test_base_envs
     ADMIN_ENABLED: True
@@ -101,9 +97,6 @@ aliases:
     TEST_OUTPUT_DIR: "./test-reports/"
     FEEDBACK_DESTINATION_EMAIL: FEEDBACK_DESTINATION_EMAIL
 
-
-
-
   # Redis container
   - &docker_redis
     image: *redis_version
@@ -114,7 +107,7 @@ aliases:
   - &docker_postgres
     image: *postgres_version
     name: postgres
-#    password: test_db_psswd
+    #    password: test_db_psswd
     environment:
       POSTGRES_DB: helpdesk
       POSTGRES_HOST_AUTH_METHOD: trust
@@ -162,8 +155,7 @@ jobs:
       - checkout
       - run:
           name: Install system deps
-          command:
-            sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
+          command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -176,12 +168,10 @@ jobs:
             - ~/.local/share/virtualenvs/venv
       - run:
           name: Webpack build
-          command:
-            npm install && npm run build
+          command: npm install && npm run build
       - run:
           name: Running tests
-          command:
-            coverage run manage.py test dit_helpdesk --settings=config.settings.test
+          command: coverage run manage.py test dit_helpdesk --settings=config.settings.test
       - run:
           name: Generate coverage
           command: |
@@ -189,8 +179,13 @@ jobs:
             coverage html -d ./test-reports/coverage_html
       - run:
           name: Lint migrations
-          command:
-            ./lint_migrations.sh
+          command: ./lint_migrations.sh
+      - run:
+          name: Python code formatting check
+          command: black ./dit_helpdesk --check
+      - run:
+          name: Javascript code formatting check
+          command: npx prettier ./dit_helpdesk --check
       - store_test_results:
           path: ./test-reports/
       - store_artifacts:
@@ -218,8 +213,7 @@ jobs:
             - "."
       - run:
           name: Start app
-          command:
-            ./compose/automation/django/start.sh
+          command: ./compose/automation/django/start.sh
           background: true
       - *wait_for_backend
       - run:
@@ -229,7 +223,6 @@ jobs:
             pytest ui_test/specs
       - store_artifacts:
           path: screenshots
-
 
 # CircleCI workflows
 workflows:

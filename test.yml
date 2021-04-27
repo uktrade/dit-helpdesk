@@ -1,6 +1,5 @@
-version: '2'
+version: "2"
 services:
-
   helpdesk_test:
     build:
       context: .
@@ -17,7 +16,6 @@ services:
       - es
       - redis
     command: /app/compose/test/django/start.sh
-
 
   postgres:
     image: postgres:10

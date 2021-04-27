@@ -14,7 +14,7 @@ class FootnoteReferenceProcessor:
 
     def _replace_note_reference(self, ref_match):
         ref = ref_match.group()
-        ref_id = ref.strip('[]')
+        ref_id = ref.strip("[]")
 
         self.found_note_ids.append(ref_id)
         self.unique_note_ids.add(ref_id)

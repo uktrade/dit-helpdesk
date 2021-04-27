@@ -13,18 +13,18 @@ from .helpers import get_hierarchy_context, sentry_emit_commodity_not_found
 
 
 class GetCommodityObjectMixin:
-
     @property
     def model(self):
-        raise AttributeError(f"Add `model` attribute for getting of commodity object for {self.__class__}")
+        raise AttributeError(
+            f"Add `model` attribute for getting of commodity object for {self.__class__}"
+        )
 
     def get_commodity_object(self, **kwargs):
         commodity_code = kwargs["commodity_code"]
         goods_nomenclature_sid = kwargs["nomenclature_sid"]
 
         return self.model.objects.get_by_commodity_code(
-            commodity_code,
-            goods_nomenclature_sid=goods_nomenclature_sid,
+            commodity_code, goods_nomenclature_sid=goods_nomenclature_sid
         )
 
 
@@ -43,8 +43,8 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
             sentry_emit_commodity_not_found(
-                commodity_code=kwargs.get('commodity_code'),
-                nomenclature_sid=kwargs.get('nomenclature_sid'),
+                commodity_code=kwargs.get("commodity_code"),
+                nomenclature_sid=kwargs.get("nomenclature_sid"),
             )
 
             raise Http404
@@ -79,8 +79,12 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
 
         return html
 
-    def get_hierarchy_context(self, commodity_path, country_code, commodity_code, current_item):
-        return get_hierarchy_context(commodity_path, country_code, commodity_code, current_item)
+    def get_hierarchy_context(
+        self, commodity_path, country_code, commodity_code, current_item
+    ):
+        return get_hierarchy_context(
+            commodity_path, country_code, commodity_code, current_item
+        )
 
     def get_notes_context_data(self, commodity_object):
         return {}
@@ -95,7 +99,9 @@ class BaseCommodityObjectDetailView(GetCommodityObjectMixin, TemplateView):
         ctx["selected_origin_country_name"] = country.name
 
         commodity_object_path = self.get_commodity_object_path(self.commodity_object)
-        ctx["accordion_title"] = self.get_hierarchy_section_header(commodity_object_path)
+        ctx["accordion_title"] = self.get_hierarchy_section_header(
+            commodity_object_path
+        )
         ctx["hierarchy_context"] = self.get_hierarchy_context(
             commodity_object_path,
             country.country_code,
@@ -122,7 +128,9 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
 
     @property
     def sections(self):
-        raise NotImplementedError("Add property `sections` as a list of `CommodityDetailSection` classes")
+        raise NotImplementedError(
+            "Add property `sections` as a list of `CommodityDetailSection` classes"
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -166,8 +174,8 @@ class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
             sentry_emit_commodity_not_found(
-                commodity_code=kwargs.get('commodity_code'),
-                nomenclature_sid=kwargs.get('nomenclature_sid'),
+                commodity_code=kwargs.get("commodity_code"),
+                nomenclature_sid=kwargs.get("nomenclature_sid"),
             )
             raise Http404
 
@@ -176,14 +184,13 @@ class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
 
         measure_id = int(kwargs["measure_id"])
         self.import_measure = self.commodity_object.tts_obj.get_import_measure_by_id(
-            measure_id,
-            country_code=country_code
+            measure_id, country_code=country_code
         )
         if not self.import_measure:
             raise Http404
 
         self.conditions = self.import_measure.get_measure_conditions_by_measure_id(
-            measure_id,
+            measure_id
         )
         if not self.conditions:
             raise Http404
@@ -198,26 +205,30 @@ class BaseMeasureConditionDetailView(GetCommodityObjectMixin, TemplateView):
         import_measure = self.import_measure
         conditions = self.conditions
 
-        ctx.update({
-            "back_url": commodity_object.get_detail_url(country.country_code.lower()),
-            "commodity_object": commodity_object,
-            "nomenclature_sid": commodity_object.goods_nomenclature_sid,
-            "selected_origin_country": country.country_code,
-            "commodity_code": commodity_object.commodity_code,
-            "commodity_description": commodity_object.description,
-            "selected_origin_country_name": country.name,
-            "conditions": conditions,
-            "commodity_code_split": commodity_object.commodity_code_split,
-            "measure_type": import_measure.type_description,
-            "column_headers": [
-                "Condition code",
-                "Condition",
-                "Document code",
-                "Requirement",
-                "Action",
-                "Duty",
-            ],
-        })
+        ctx.update(
+            {
+                "back_url": commodity_object.get_detail_url(
+                    country.country_code.lower()
+                ),
+                "commodity_object": commodity_object,
+                "nomenclature_sid": commodity_object.goods_nomenclature_sid,
+                "selected_origin_country": country.country_code,
+                "commodity_code": commodity_object.commodity_code,
+                "commodity_description": commodity_object.description,
+                "selected_origin_country_name": country.name,
+                "conditions": conditions,
+                "commodity_code_split": commodity_object.commodity_code_split,
+                "measure_type": import_measure.type_description,
+                "column_headers": [
+                    "Condition code",
+                    "Condition",
+                    "Document code",
+                    "Requirement",
+                    "Action",
+                    "Duty",
+                ],
+            }
+        )
 
         return ctx
 
@@ -238,8 +249,8 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
             self.commodity_object = self.get_commodity_object(**kwargs)
         except ObjectDoesNotExist:
             sentry_emit_commodity_not_found(
-                commodity_code=kwargs.get('commodity_code'),
-                nomenclature_sid=kwargs.get('nomenclature_sid'),
+                commodity_code=kwargs.get("commodity_code"),
+                nomenclature_sid=kwargs.get("nomenclature_sid"),
             )
             raise Http404
 
@@ -248,12 +259,13 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
 
         measure_id = int(kwargs["measure_id"])
         self.import_measure = self.commodity_object.tts_obj.get_import_measure_by_id(
-            measure_id,
-            country_code=country_code
+            measure_id, country_code=country_code
         )
         order_number = kwargs["order_number"]
-        self.quota_def = self.import_measure.get_measure_quota_definition_by_order_number(
-            order_number
+        self.quota_def = (
+            self.import_measure.get_measure_quota_definition_by_order_number(
+                order_number
+            )
         )
         self.geographical_area = self.import_measure.get_geographical_area()
 
@@ -265,18 +277,22 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
         commodity_object = self.commodity_object
         country = self.country
 
-        ctx.update({
-            "back_url": commodity_object.get_detail_url(country.country_code.lower()),
-            "commodity_object": commodity_object,
-            "nomenclature_sid": commodity_object.goods_nomenclature_sid,
-            "selected_origin_country": country.country_code,
-            "commodity_description": commodity_object.description,
-            "commodity_code": commodity_object.commodity_code,
-            "selected_origin_country_name": country.name,
-            "quota_def": self.quota_def,
-            "geographical_area": self.geographical_area,
-            "commodity_code_split": commodity_object.commodity_code_split,
-            "measure_type": self.import_measure.type_description,
-        })
+        ctx.update(
+            {
+                "back_url": commodity_object.get_detail_url(
+                    country.country_code.lower()
+                ),
+                "commodity_object": commodity_object,
+                "nomenclature_sid": commodity_object.goods_nomenclature_sid,
+                "selected_origin_country": country.country_code,
+                "commodity_description": commodity_object.description,
+                "commodity_code": commodity_object.commodity_code,
+                "selected_origin_country_name": country.name,
+                "quota_def": self.quota_def,
+                "geographical_area": self.geographical_area,
+                "commodity_code_split": commodity_object.commodity_code_split,
+                "measure_type": self.import_measure.type_description,
+            }
+        )
 
         return ctx

@@ -3,9 +3,7 @@ import logging
 from django.test import TestCase
 from model_mommy import mommy
 
-from rules_of_origin.models import (
-    RulesDocument, RulesDocumentFootnote, Rule,
-)
+from rules_of_origin.models import RulesDocument, RulesDocumentFootnote, Rule
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -30,9 +28,7 @@ class RuleTestCase(TestCase):
     """
 
     def setUp(self):
-        self.rule = mommy.make(
-            Rule,
-            description="test description")
+        self.rule = mommy.make(Rule, description="test description")
 
     def test_str(self):
         self.assertEquals(str(self.rule), self.rule.description)

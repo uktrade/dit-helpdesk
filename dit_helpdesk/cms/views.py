@@ -9,15 +9,8 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 
 from commodities.models import Commodity
-from hierarchy.models import (
-    Chapter,
-    Heading,
-    SubHeading,
-)
-from regulations.models import (
-    Regulation,
-    RegulationGroup,
-)
+from hierarchy.models import Chapter, Heading, SubHeading
+from regulations.models import Regulation, RegulationGroup
 
 from .forms import (
     ChapterAddForm,
@@ -44,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class BaseCMSMixin(object):
-
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
@@ -58,7 +50,6 @@ class BaseCMSMixin(object):
 
 
 class CMSView(BaseCMSMixin, View):
-
     def get(self, request):
         return redirect("cms:regulation-groups-list")
 
@@ -133,14 +124,15 @@ class SearchResult:
         self.commodity_object = commodity_object
 
     def is_already_associated(self):
-        return self.regulation_group in RegulationGroup.objects.inherited(self.commodity_object)
+        return self.regulation_group in RegulationGroup.objects.inherited(
+            self.commodity_object
+        )
 
     def __getattr__(self, attr):
         return getattr(self.commodity_object, attr)
 
 
 class BaseAddView(BaseRegulationGroupDetailView):
-
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
@@ -153,7 +145,8 @@ class BaseAddView(BaseRegulationGroupDetailView):
             ctx["searching"] = True
             regulation_group = self.get_object()
             ctx["search_results"] = (
-                SearchResult(regulation_group, obj) for obj in self.get_search_results(search_form)
+                SearchResult(regulation_group, obj)
+                for obj in self.get_search_results(search_form)
             )
 
         add_form = self.get_add_form()
@@ -244,9 +237,7 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         if not regulation_form:
             regulation_form_class = self.get_regulation_form_class()
             regulation_form = regulation_form_class(
-                initial={
-                    "regulation_group": self.get_object(),
-                },
+                initial={"regulation_group": self.get_object()}
             )
         ctx["regulation_form"] = regulation_form
 
@@ -261,17 +252,16 @@ class RegulationGroupRegulationCreateView(BaseRegulationGroupDetailView):
         if regulation_form.is_valid():
             deferred_create = regulation_form.defer_create()
             regulation_title = regulation_form.cleaned_data["title"]
-            regulation_group_title = regulation_form.cleaned_data["regulation_group"].title
+            regulation_group_title = regulation_form.cleaned_data[
+                "regulation_group"
+            ].title
 
             approval = Approval.objects.create(
                 created_by=self.request.user,
                 deferred_change=deferred_create,
                 description=f'Add regulation "{regulation_title}" to "{regulation_group_title}"',
             )
-            return redirect(
-                "cms:approval-detail",
-                pk=approval.pk,
-            )
+            return redirect("cms:approval-detail", pk=approval.pk)
 
         self.object = self.get_object()
         ctx = self.get_context_data(object=self.object, regulation_form=regulation_form)

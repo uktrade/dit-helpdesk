@@ -42,37 +42,32 @@ class CommodityViewTestCase(TestCase):
         relationships between the three model instances
         :return:
         """
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region="UK")
 
         self.section = self.create_instance(
-            Section,
-            get_data(settings.SECTION_STRUCTURE),
+            Section, get_data(settings.SECTION_STRUCTURE)
         )
 
         self.chapter = self.create_instance(
-            Chapter,
-            get_data(settings.CHAPTER_STRUCTURE),
+            Chapter, get_data(settings.CHAPTER_STRUCTURE)
         )
         self.chapter.section_id = self.section.pk
         self.chapter.save()
 
         self.heading = self.create_instance(
-            Heading,
-            get_data(settings.HEADING_STRUCTURE),
+            Heading, get_data(settings.HEADING_STRUCTURE)
         )
         self.heading.chapter_id = self.chapter.id
         self.heading.save()
 
         self.subheading = self.create_instance(
-            SubHeading,
-            get_data(settings.SUBHEADING_STRUCTURE),
+            SubHeading, get_data(settings.SUBHEADING_STRUCTURE)
         )
         self.subheading.heading_id = self.heading.id
         self.subheading.save()
 
         self.commodity = self.create_instance(
-            Commodity,
-            get_data(settings.COMMODITY_STRUCTURE),
+            Commodity, get_data(settings.COMMODITY_STRUCTURE)
         )
         self.commodity.parent_subheading_id = self.subheading.id
         self.commodity.goods_nomenclature_sid = 12345
@@ -81,7 +76,9 @@ class CommodityViewTestCase(TestCase):
         self.mock_commodity_tts_json = patch.object(
             Commodity,
             "tts_json",
-            new_callable=PropertyMock(return_value=json.dumps(get_data(settings.COMMODITY_DATA))),
+            new_callable=PropertyMock(
+                return_value=json.dumps(get_data(settings.COMMODITY_DATA))
+            ),
         )
         self.mock_commodity_tts_json.start()
 
@@ -182,8 +179,11 @@ class CommodityViewTestCase(TestCase):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
         commodity.save()
 
-        with patch.object(Commodity, "should_update_tts_content") as mock_should_update_tts_content, \
-            patch.object(Commodity, "update_tts_content") as mock_update_tts_content:
+        with patch.object(
+            Commodity, "should_update_tts_content"
+        ) as mock_should_update_tts_content, patch.object(
+            Commodity, "update_tts_content"
+        ) as mock_update_tts_content:
             mock_should_update_tts_content.return_value = True
 
             resp = self.client.get(
@@ -217,9 +217,10 @@ class CommodityViewTestCase(TestCase):
         rule = mixer.blend(Rule, rules_document=rules_document)
         rule.chapters.add(self.chapter)
 
-        with patch('commodities.models.Commodity.get_hierarchy_context_ids') as mock_context_ids:
-            mock_context_ids.return_value = (
-                self.chapter.id, None, None, None)
+        with patch(
+            "commodities.models.Commodity.get_hierarchy_context_ids"
+        ) as mock_context_ids:
+            mock_context_ids.return_value = (self.chapter.id, None, None, None)
             resp = self.client.get(
                 reverse(
                     "commodity-detail",
@@ -263,7 +264,7 @@ class MeasureConditionDetailTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree(region='UK')
+        self.tree = create_nomenclature_tree(region="UK")
 
         self.commodity = mixer.blend(
             Commodity,

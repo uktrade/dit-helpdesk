@@ -31,13 +31,6 @@ def update_countries(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('countries', '0001_initial'),
-    ]
+    dependencies = [("countries", "0001_initial")]
 
-    operations = [
-        migrations.RunPython(
-            update_countries,
-            migrations.RunPython.noop,
-        ),
-    ]
+    operations = [migrations.RunPython(update_countries, migrations.RunPython.noop)]

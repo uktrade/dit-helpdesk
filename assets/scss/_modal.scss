@@ -1,7 +1,8 @@
 $govuk-modal-margin: govuk-spacing(6);
 $govuk-modal-close-button-size: 44px;
 $govuk-modal-z-index: 1000;
-$govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $govuk-border-width-form-element * 2;
+$govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 +
+  $govuk-border-width-form-element * 2;
 
 .app-modal-dialogue {
   display: none;
@@ -19,7 +20,7 @@ $govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $gov
 .app-modal-dialogue__box {
   display: block;
   position: fixed;
-  background: govuk-colour('white');
+  background: govuk-colour("white");
   top: 0;
   right: 0;
   bottom: 0;
@@ -51,7 +52,10 @@ $govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $gov
     max-width: 1024px;
   }
 
-  @include govuk-media-query($from: tablet, $until: $govuk-modal-wide-breakpoint) {
+  @include govuk-media-query(
+    $from: tablet,
+    $until: $govuk-modal-wide-breakpoint
+  ) {
     margin: $govuk-modal-margin;
   }
 }
@@ -64,7 +68,7 @@ $govuk-modal-wide-breakpoint: $govuk-page-width + $govuk-modal-margin * 2 + $gov
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: .8;
+  opacity: 0.8;
   background: govuk-colour("black");
   pointer-events: none;
   touch-action: none;

@@ -29,19 +29,27 @@ class CommodityTestCase(TestCase):
     """
 
     def setUp(self):
-        self.tree = create_nomenclature_tree('UK')
+        self.tree = create_nomenclature_tree("UK")
         self.section = mixer.blend(Section, section_id=1, nomenclature_tree=self.tree)
         self.chapter = mixer.blend(
-            Chapter, chapter_code="0100000000", section=self.section, nomenclature_tree=self.tree
+            Chapter,
+            chapter_code="0100000000",
+            section=self.section,
+            nomenclature_tree=self.tree,
         )
 
         self.heading = mixer.blend(
-            Heading, heading_code="0101000000", chapter=self.chapter, nomenclature_tree=self.tree
+            Heading,
+            heading_code="0101000000",
+            chapter=self.chapter,
+            nomenclature_tree=self.tree,
         )
 
         self.subheading = mixer.blend(
-            SubHeading, commodity_code="0101210000", heading=self.heading,
-            nomenclature_tree=self.tree
+            SubHeading,
+            commodity_code="0101210000",
+            heading=self.heading,
+            nomenclature_tree=self.tree,
         )
 
         self.commodity = mixer.blend(
@@ -154,7 +162,11 @@ class CommodityTestCase(TestCase):
         section = mixer.blend(Section, section_id=10, nomenclature_tree=self.tree)
 
         chapter = mixer.blend(
-            Chapter, chapter_code="4700000000", section=section, nomenclature_tree=self.tree)
+            Chapter,
+            chapter_code="4700000000",
+            section=section,
+            nomenclature_tree=self.tree,
+        )
 
         heading = mixer.blend(
             Heading,
@@ -258,7 +270,9 @@ class CommodityTestCase(TestCase):
         )
 
     def test_heading_leaf_update_content(self):
-        commodity = mixer.blend(Commodity, commodity_code="0510000000", nomenclature_tree=self.tree)
+        commodity = mixer.blend(
+            Commodity, commodity_code="0510000000", nomenclature_tree=self.tree
+        )
 
         commodity.update_tts_content()
         content = json.loads(commodity.tts_json)

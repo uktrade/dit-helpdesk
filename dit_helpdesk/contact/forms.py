@@ -2,10 +2,7 @@ from directory_forms_api_client.forms import ZendeskAPIForm, EmailAPIForm
 from django import forms
 from django.forms import fields
 
-CATEGORY_CHOICES = (
-    (1, "Exporting to the UK"),
-    (2, "Technical help"),
-)
+CATEGORY_CHOICES = ((1, "Exporting to the UK"), (2, "Technical help"))
 
 TOPIC_CHOICES = (
     (1, "Commodity codes, tariffs and measures, import procedures"),
@@ -88,14 +85,14 @@ class ZendeskEmailForm(EmailAPIForm):
 
     @property
     def text_body(self):
-        """ Override text_body to text template of email body."""
+        """Override text_body to text template of email body."""
 
         text = str(self.cleaned_data["message"])
         return text
 
     @property
     def html_body(self):
-        """ Override html_body to return html template of email body."""
+        """Override html_body to return html template of email body."""
         cleaned = str(self.cleaned_data["message"]).replace("\n", "<br />")
         cleaned_html = "<p>" + cleaned + "</p>"
         return cleaned_html

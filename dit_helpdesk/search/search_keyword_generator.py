@@ -342,7 +342,7 @@ class SearchKeywordGenerator:
         # TODO: determine why the "Col8" values appear in rows in the first place
         self.subhead = self.subhead[self.subhead.Col8 != "Col8"]
         # cast all to int so that we can take `.max`
-        self.subhead["Col8"] = self.subhead["Col8"].astype('int32')
+        self.subhead["Col8"] = self.subhead["Col8"].astype("int32")
 
         self.subhead["ranking_score"] = (
             self.subhead["Col8"].max() - self.subhead["Col8"]

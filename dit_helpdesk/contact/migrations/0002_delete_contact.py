@@ -6,13 +6,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('contact', '0001_initial'),
-    ]
+    dependencies = [("contact", "0001_initial")]
 
-    operations = [
-        linter.IgnoreMigration(),
-        migrations.DeleteModel(
-            name='Contact',
-        ),
-    ]
+    operations = [linter.IgnoreMigration(), migrations.DeleteModel(name="Contact")]

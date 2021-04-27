@@ -25,7 +25,6 @@ class ChildModelForm(DeferredFormMixin, forms.ModelForm):
 
 
 class DeferredUpdateTestCase(TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
 

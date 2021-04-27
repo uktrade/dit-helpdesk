@@ -13,12 +13,7 @@ from elasticsearch import Elasticsearch
 from django.conf import settings
 
 from commodities.models import Commodity
-from hierarchy.models import (
-    Heading,
-    Section,
-    SubHeading,
-    Chapter,
-)
+from hierarchy.models import Heading, Section, SubHeading, Chapter
 from hierarchy.views import _commodity_code_html
 
 from search.documents.section import INDEX as section_index
@@ -32,7 +27,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-indices = [section_index, chapter_index, heading_index, sub_heading_index, commodity_index]
+indices = [
+    section_index,
+    chapter_index,
+    heading_index,
+    sub_heading_index,
+    commodity_index,
+]
 alias_names = [idx._name for idx in indices]
 
 
@@ -54,11 +55,7 @@ def _build_search_request(query, sort_key, sort_order, filter_on_leaf=None):
     }
 
     request = (
-        Search()
-        .index(*alias_names)
-        .using(client)
-        .query(query_object)
-        .sort(sort_object)
+        Search().index(*alias_names).using(client).query(query_object).sort(sort_object)
     )
 
     if filter_on_leaf:
@@ -90,12 +87,14 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
         score = hit.meta["score"]
 
         index = get_alias_from_hit(hit)
-        if index == 'section':
+        if index == "section":
             continue
 
-        if index == 'chapter':
+        if index == "chapter":
             hits_by_chapter_heading[commodity_code] = defaultdict(list)
-            chapter_scores[commodity_code] = score_strategy(chapter_scores[commodity_code], score)
+            chapter_scores[commodity_code] = score_strategy(
+                chapter_scores[commodity_code], score
+            )
             continue
 
         try:
@@ -103,31 +102,40 @@ def group_hits_by_chapter_heading(hits, score_strategy=_no_score):
             if isinstance(hierarchy_context, (bytes, str)):
                 hit["hierarchy_context"] = json.loads(hierarchy_context)
         except KeyError as exception:
-            logger.warning("%s has no hierarchy context: %s", commodity_code, exception.args)
+            logger.warning(
+                "%s has no hierarchy context: %s", commodity_code, exception.args
+            )
             continue
 
         flattened_context = [
-            item
-            for item_list in hit["hierarchy_context"]
-            for item in item_list
+            item for item_list in hit["hierarchy_context"] for item in item_list
         ]
 
-        chapter_data = next(item for item in flattened_context if item["type"] == "chapter")
+        chapter_data = next(
+            item for item in flattened_context if item["type"] == "chapter"
+        )
         chapter_code = chapter_data["commodity_code"]
 
         try:
-            heading_data = next(item for item in flattened_context if item["type"] == "heading")
+            heading_data = next(
+                item for item in flattened_context if item["type"] == "heading"
+            )
             heading_code = heading_data["commodity_code"]
         except StopIteration as e:
-            if index == 'heading':
+            if index == "heading":
                 heading_code = commodity_code
             else:
                 raise HierarchyIntegrityError(
-                    f"Can't find parent heading for {commodity_code}") from e
+                    f"Can't find parent heading for {commodity_code}"
+                ) from e
 
         hits_by_chapter_heading[chapter_code][heading_code].append(hit)
-        heading_scores[heading_code] = score_strategy(heading_scores[heading_code], score)
-        chapter_scores[chapter_code] = score_strategy(chapter_scores[chapter_code], score)
+        heading_scores[heading_code] = score_strategy(
+            heading_scores[heading_code], score
+        )
+        chapter_scores[chapter_code] = score_strategy(
+            chapter_scores[chapter_code], score
+        )
 
     return hits_by_chapter_heading, chapter_scores, heading_scores
 
@@ -138,7 +146,7 @@ def search_by_term(form_data=None, page_size=None):
         sort_key=form_data.get("sort"),
         sort_order=form_data.get("sort_order"),
         query=form_data.get("q"),
-        filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False
+        filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False,
     )
 
     start = (int(form_data.get("page")) - 1) * settings.RESULTS_PER_PAGE
@@ -161,9 +169,7 @@ def search_by_term(form_data=None, page_size=None):
             logger.info("{0} {1}".format(hit["commodity_code"], exception.args))
 
     page_range_start = start if start != 0 else start + 1
-    page_range_end = (
-        end if len(hits) == page_size else start + len(hits)
-    )
+    page_range_end = end if len(hits) == page_size else start + len(hits)
     total_pages = total_full_pages + 1 if orphan_results > 0 else total_full_pages
 
     return {
@@ -190,7 +196,7 @@ def group_search_by_term(form_data=None, page_size=None, hits=None):
             sort_key=sort_key,
             sort_order=form_data.get("sort_order"),
             query=form_data.get("q"),
-            filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False
+            filter_on_leaf=True if form_data.get("toggle_headings") == "1" else False,
         )
 
         total_results = len(list(request.scan()))
@@ -200,10 +206,11 @@ def group_search_by_term(form_data=None, page_size=None, hits=None):
     else:
         total_results = len(hits)
 
-    score_strategy = _no_score if sort_key == 'commodity_code' else _choose_max_score
+    score_strategy = _no_score if sort_key == "commodity_code" else _choose_max_score
 
     grouped_hits, chapter_scores, heading_scores = group_hits_by_chapter_heading(
-        hits, score_strategy=score_strategy)
+        hits, score_strategy=score_strategy
+    )
     group_chapters = grouped_hits.keys()
 
     group_headings = []
@@ -213,7 +220,7 @@ def group_search_by_term(form_data=None, page_size=None, hits=None):
     chapter_sort_order = group_chapters
     heading_sort_order = group_headings
 
-    if sort_key == '_score':
+    if sort_key == "_score":
         chapter_sort_order = _sorted_dict_keys_by_values(chapter_scores)
         heading_sort_order = _sorted_dict_keys_by_values(heading_scores)
 
@@ -236,12 +243,7 @@ def search_by_code(code):
     query_object = {"term": {"commodity_code": processed_query}}
 
     client = Elasticsearch(hosts=[settings.ES_URL])
-    hits = (
-        Search()
-        .index(*alias_names)
-        .using(client)
-        .query(query_object)
-    )
+    hits = Search().index(*alias_names).using(client).query(query_object)
     for hit in hits:
         try:
             hit["hierarchy_context"] = json.loads(hit["hierarchy_context"])
@@ -322,9 +324,7 @@ def get_object_from_hit(hit: Hit) -> Union[Chapter, Heading, SubHeading, Commodi
     try:
         model = model_class.objects.get(
             goods_nomenclature_sid=hit.id,
-            **{
-                model_class.COMMODITY_CODE_FIELD: hit["commodity_code"],
-            },
+            **{model_class.COMMODITY_CODE_FIELD: hit["commodity_code"]},
         )
     except model_class.DoesNotExist:
         raise ObjectNotFoundFromHit()
@@ -338,7 +338,7 @@ def normalise_commodity_code(code: str) -> str:
     Removes all dots.
 
     """
-    code = code.replace('.', '')
+    code = code.replace(".", "")
     return code
 
 
@@ -471,7 +471,9 @@ def _get_hierarchy_level_json(node, expanded, origin_country):
                 if isinstance(child, Commodity)
                 else child.harmonized_code
             )
-            code_regex = re.compile("([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})")
+            code_regex = re.compile(
+                "([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})"
+            )
             element["commodity_code"] = code_regex.search(code).groups()
             element["label"] = child.description
 
