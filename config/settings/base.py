@@ -16,7 +16,6 @@ APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
 DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
-IMPORTER_JOURNEY_HOST = env.str("IMPORTER_JOURNEY_HOST", '')
 
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
@@ -26,9 +25,7 @@ READ_ONLY = True
 CMS_ENABLED = False
 
 # Feature flags
-FLAGS = {
-    "EU_FALLBACK": [],
-}
+FLAGS = {"EU_FALLBACK": []}
 
 
 # Application definition
@@ -48,7 +45,6 @@ INSTALLED_APPS = [
     "commodities",
     "cookies",
     "countries",
-    "feedback",
     "contact",
     "iee_contact",
     "hierarchy",
@@ -178,9 +174,7 @@ USE_THOUSAND_SEPARATOR = True
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets"),
-]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "assets")]
 
 STATIC_ROOT = "static_root"
 
@@ -190,8 +184,8 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedStaticFilesStorage"
-)  # compression without caching
+    "whitenoise.storage.CompressedStaticFilesStorage"  # compression without caching
+)
 
 # The correct index of the client IP in the X-Forwarded-For header.  It should be set to
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
@@ -211,9 +205,6 @@ LOGIN_REDIRECT_URL = env.str("LOGIN_REDIRECT_URL")
 
 AUTH_USER_MODEL = "user.User"
 
-FEEDBACK_MAX_LENGTH = 1000
-CONTACT_MAX_LENGTH = 1000
-
 # Trade Tariff
 
 # trade tariff service arguments
@@ -223,29 +214,22 @@ IMPORT_DATA_PATH = APPS_DIR + "/trade_tariff_service/import_data/{0}"
 def get_trade_tariff_config():
     return {
         "UK": {
-            "TREE": {
-                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/",
-            },
-            "JSON_OBJ": {
-                "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/",
-            },
+            "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
+            "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
         },
         "EU": {
-            "TREE": {
-                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/",
-            },
+            "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/"},
             "JSON_OBJ": {
-                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/",
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/"
             },
         },
     }
 
+
 TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 # regulation import arguments
-REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
-OLD_RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
@@ -268,67 +252,60 @@ LOG_ECS = env.bool("LOG_ECS", True)
 
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'ecs_formatter': {
-            '()': UserLogFormatter,
-
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "ecs_formatter": {
+            "()": UserLogFormatter,
             # Kibana mapping expects different types to what is sent by the library
-            'exclude_fields': [
-                'process',  # expects (long) but sends (object)
-                'service',  # expects (string) but sends (object)
+            "exclude_fields": [
+                "process",  # expects (long) but sends (object)
+                "service",  # expects (string) but sends (object)
             ],
         },
-        'console_formatter': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        "console_formatter": {
+            "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
         },
     },
-    'handlers': {
-        'ecs': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'ecs_formatter',
-            'stream': sys.stdout,
+    "handlers": {
+        "ecs": {
+            "class": "logging.StreamHandler",
+            "formatter": "ecs_formatter",
+            "stream": sys.stdout,
         },
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'console_formatter',
-        },
+        "console": {"class": "logging.StreamHandler", "formatter": "console_formatter"},
     },
-    'loggers': {
-        '': {
-            'level': LOG_LEVEL,
-            'handlers': ['console' if not LOG_ECS else 'ecs'],
-        },
+    "loggers": {
+        "": {"level": LOG_LEVEL, "handlers": ["console" if not LOG_ECS else "ecs"]}
     },
 }
 
 
 ELASTIC_APM = {
-  'SERVICE_NAME': env.str('APM_SERVICE_NAME'),
-  'SECRET_TOKEN': env.str('APM_SECRET_TOKEN'),
-  'SERVER_URL': env.str('APM_SERVER_URL'),
-  'ENVIRONMENT': env.str("APM_ENVIRONMENT"),
-  'SERVER_TIMEOUT': env.str("APM_TIMEOUT"),
-  'DEBUG': env.str("APM_DEBUG"),
-  'ENABLED': env.str("APM_ENABLED", True),
-  'RECORDING': env.str("APM_RECORDING", True),
+    "SERVICE_NAME": env.str("APM_SERVICE_NAME"),
+    "SECRET_TOKEN": env.str("APM_SECRET_TOKEN"),
+    "SERVER_URL": env.str("APM_SERVER_URL"),
+    "ENVIRONMENT": env.str("APM_ENVIRONMENT"),
+    "SERVER_TIMEOUT": env.str("APM_TIMEOUT"),
+    "DEBUG": env.str("APM_DEBUG"),
+    "ENABLED": env.str("APM_ENABLED", True),
+    "RECORDING": env.str("APM_RECORDING", True),
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN")
-SENTRY_SECURITY_ENDPOINT = env.str("SENTRY_SECURITY_ENDPOINT", '')
-SENTRY_KEY = env.str("SENTRY_KEY", '')
+SENTRY_SECURITY_ENDPOINT = env.str("SENTRY_SECURITY_ENDPOINT", "")
+SENTRY_KEY = env.str("SENTRY_KEY", "")
 SENTRY_ENVIRONMENT = env.str("SENTRY_ENVIRONMENT")
 
-SENTRY_SKIP_ENVIRONMENTS = [
-    "docker-development",
-]
+SENTRY_SKIP_ENVIRONMENTS = ["docker-development"]
+
 
 def skip_sentry_logging(event, hint):
     if SENTRY_ENVIRONMENT in SENTRY_SKIP_ENVIRONMENTS:
         return
 
     return event
+
 
 sentry_sdk.init(
     SENTRY_DSN,
@@ -339,8 +316,7 @@ sentry_sdk.init(
 
 
 CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", True)
-_CSP_REPORT_URI = (
-    f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_environment={SENTRY_ENVIRONMENT}")
+_CSP_REPORT_URI = f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_environment={SENTRY_ENVIRONMENT}"
 CSP_REPORT_URI = (_CSP_REPORT_URI,)
 _GOOGLE_DOMAINS = (
     "www.googletagmanager.com",
@@ -349,25 +325,10 @@ _GOOGLE_DOMAINS = (
     "www.google.com",
     "www.google.co.uk",
 )
-CSP_DEFAULT_SRC = (
-    "'self'",
-    *_GOOGLE_DOMAINS,
-)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-    "'unsafe-eval'",
-    *_GOOGLE_DOMAINS,
-)
-CSP_SCRIPT_SRC_ELEM = (
-    "'self'",
-    "'unsafe-inline'",
-    *_GOOGLE_DOMAINS,
-)
-CSP_STYLE_SRC_ATTR = (
-    "'self'",
-    "'unsafe-inline'",
-)
+CSP_DEFAULT_SRC = ("'self'", *_GOOGLE_DOMAINS)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", *_GOOGLE_DOMAINS)
+CSP_SCRIPT_SRC_ELEM = ("'self'", "'unsafe-inline'", *_GOOGLE_DOMAINS)
+CSP_STYLE_SRC_ATTR = ("'self'", "'unsafe-inline'")
 
 
 RESULTS_PER_PAGE = 20
@@ -412,36 +373,6 @@ GA_MEASUREMENT_PROTOCOL_TRACK_EVENTS = env.bool("TRACK_GA_EVENTS", False)
 
 QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
 
-EU_COUNTRY_CODES = [
-    "AT",
-    "BE",
-    "BG",
-    "HR",
-    "CY",
-    "CZ",
-    "DK",
-    "EE",
-    "FI",
-    "FR",
-    "DE",
-    "GR",
-    "HU",
-    "IE",
-    "IT",
-    "LV",
-    "LT",
-    "LU",
-    "MT",
-    "NL",
-    "PL",
-    "PT",
-    "RO",
-    "SK",
-    "SI",
-    "ES",
-    "SE",
-]
-
 COUNTRIES_TO_REMOVE = ["XC", "XL"]
 # Example:
 # {
@@ -459,8 +390,8 @@ HIERARCHY_MODEL_MAP = {
 }
 
 
-PRIMARY_REGION = 'UK'
-SECONDARY_REGION = 'EU'
+PRIMARY_REGION = "UK"
+SECONDARY_REGION = "EU"
 
 MIGRATION_LINTER_OVERRIDE_MAKEMIGRATIONS = True
 
@@ -487,11 +418,8 @@ SUPPORTED_TRADE_SCENARIOS = (
     "MONTENEGRO",
 )
 
-AGREEMENTS = [
-    ("JP", True),
-    ("EU", True),
-]
+AGREEMENTS = [("JP", True), ("EU", True)]
 
-ROO_S3_BUCKET_NAME = env.str('ROO_S3_BUCKET_NAME', '')
-ROO_S3_ACCESS_KEY_ID = env.str('ROO_S3_ACCESS_KEY_ID', '')
-ROO_S3_SECRET_ACCESS_KEY = env.str('ROO_S3_SECRET_ACCESS_KEY', '')
+ROO_S3_BUCKET_NAME = env.str("ROO_S3_BUCKET_NAME", "")
+ROO_S3_ACCESS_KEY_ID = env.str("ROO_S3_ACCESS_KEY_ID", "")
+ROO_S3_SECRET_ACCESS_KEY = env.str("ROO_S3_SECRET_ACCESS_KEY", "")
