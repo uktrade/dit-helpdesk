@@ -18,10 +18,6 @@ products that they want to export to the UK.
 
 ### With Docker (recommended)
 
-- Docker (if developing locally with docker)
-
-### Install using Docker
-
 If you have Docker installed, you can run this service without needing to set up the database yourself or worrying about
 virtual environments - it's all within the Docker instance.
 
@@ -240,6 +236,100 @@ coverage -d reports html
 
 you will then be able to access the coverage report html from within your project folder's root
 from your host machine at /reports
+
+## Management commands
+
+### pull_api_update
+
+```bash
+./manage.py pull_api_update
+```
+
+This pulls the initial data from the trade tariff service API and stores the data in json files for future processing.
+
+This will download the data for both the EU and the UK.
+
+### prepare_import_data
+
+```bash
+./manage.py prepare_import_data
+```
+
+This takes the information downloaded from `pull_api_update` and transforms it by building the correct parent/child relationships in the data and removes any duplication.
+
+This information is stored in json files.
+
+### prepare_search_data
+
+```bash
+./manage.py prepare_search_data
+```
+
+This prepares the data from the `prepare_import_data` step by converting the json data into a csv format.
+
+### scrape_section_hierarchy
+
+```bash
+./manage.py scrape_section_hierarchy
+```
+
+This creates the database instances of the nomenclature tree based on the data gathered from `prepare_import_data`.
+
+This will generate the full nomenclature trees for the UK and the EU.
+
+This doesn't activate the newly created tree but generates it ready for it to be activated in other steps.
+
+### import_rules_of_origin
+
+```bash
+./manage.py import_rules_of_origin
+```
+
+Imports the rules of origin into the database.
+
+The rules of origin files are stored in an S3 bucket and this command will download these files and produce rules of origin objects tied to the currently active nomenclature tree.
+
+### postprocess_rules_of_origin
+
+```bash
+./manage.py postprocess_rules_of_origin
+```
+
+After the rules of origin are fully imported the rule text is post-processed for display purposes e.g. to display hyperlinks to the commodities a rule pertains to.
+
+### migrate_regulations
+
+```bash
+./manage.py migrate_regulations
+```
+
+This will link regulations that are attached to the previous nomenclature tree to the new tree which is to be activated (which will have been generated in other commands).
+
+### generate_search_keywords
+
+```bash
+./manage.py generate_search_keywords -f search/data
+```
+
+This generates the search keywords for the nomenclature tree.
+
+Outputs the keywords into a csv file.
+
+### import_search_keywords
+
+```bash
+./manage.py import_search_keywords -f output/keywords_and_synonyms_merged.csv
+```
+
+Imports the search data from `generate_search_keywords` into the database models for the nomenclature tree.
+
+### swap_rebuild_index
+
+```bash
+./manage.py swap_rebuild_index
+```
+
+Creates a new search index for the most recent nomenclature tree and swaps it out at the end.
 
 
 [1]: https://nodejs.org/en/about/releases/
