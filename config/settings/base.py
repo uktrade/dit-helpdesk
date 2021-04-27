@@ -16,7 +16,6 @@ APPS_DIR = os.path.join(BASE_DIR, "dit_helpdesk")
 DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
-IMPORTER_JOURNEY_HOST = env.str("IMPORTER_JOURNEY_HOST", "")
 
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
@@ -185,8 +184,8 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedStaticFilesStorage"
-)  # compression without caching
+    "whitenoise.storage.CompressedStaticFilesStorage"  # compression without caching
+)
 
 # The correct index of the client IP in the X-Forwarded-For header.  It should be set to
 # -2 if accessing the private domain and -3 if accessing the site via the public URL.
@@ -205,9 +204,6 @@ LOGIN_URL = env.str("LOGIN_URL")
 LOGIN_REDIRECT_URL = env.str("LOGIN_REDIRECT_URL")
 
 AUTH_USER_MODEL = "user.User"
-
-FEEDBACK_MAX_LENGTH = 1000
-CONTACT_MAX_LENGTH = 1000
 
 # Trade Tariff
 
@@ -233,9 +229,7 @@ def get_trade_tariff_config():
 TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 # regulation import arguments
-REGULATIONS_MODEL_ARG = ["Regulation"]
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
-OLD_RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/data/{0}"
 RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
@@ -378,36 +372,6 @@ GA_MEASUREMENT_PROTOCOL_UA = HELPDESK_GA_UA
 GA_MEASUREMENT_PROTOCOL_TRACK_EVENTS = env.bool("TRACK_GA_EVENTS", False)
 
 QUOTA_DEFAULT_MESSAGE = "You can check the availability of this quota by contacting the relevant department."
-
-EU_COUNTRY_CODES = [
-    "AT",
-    "BE",
-    "BG",
-    "HR",
-    "CY",
-    "CZ",
-    "DK",
-    "EE",
-    "FI",
-    "FR",
-    "DE",
-    "GR",
-    "HU",
-    "IE",
-    "IT",
-    "LV",
-    "LT",
-    "LU",
-    "MT",
-    "NL",
-    "PL",
-    "PT",
-    "RO",
-    "SK",
-    "SI",
-    "ES",
-    "SE",
-]
 
 COUNTRIES_TO_REMOVE = ["XC", "XL"]
 # Example:
