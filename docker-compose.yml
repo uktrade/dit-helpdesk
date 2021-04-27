@@ -6,11 +6,13 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      - HISTFILE=root/hist/.bash_history
     networks:
       - inside-network
       - directory-forms-api_outside-network
     volumes:
       - .:/app
+      - bashhistory:/root/hist
     entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
     env_file:
       - .env
@@ -72,4 +74,5 @@ networks:
     external: true
 
 volumes:
+  bashhistory:
   db-volume:
