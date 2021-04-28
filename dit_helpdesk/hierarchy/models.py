@@ -493,7 +493,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^(\d\.[A-Z]\.)$", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}</span><span></span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                             match.group(1)
                         )
                     )
@@ -513,7 +513,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^(\* )?([\dA-Z])\\*\. (.+)", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(  # noqa: E501
                             match.group(2), match.group(3)
                         )
                     )
@@ -527,7 +527,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^(\* )?([\d]+)\\*\.(.+)$", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(  # noqa: E501
                             match.group(2), match.group(3)
                         )
                     )
@@ -540,7 +540,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^ *\* *\((\w+)\) (.+)", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(  # noqa: E501
                             match.group(1), match.group(2)
                         )
                     )
@@ -552,7 +552,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^— (.+)", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(  # noqa: E501
                             "-", match.group(1)
                         )
                     )
@@ -564,7 +564,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^\* ([^\d.]+)", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                             match.group(1)
                         )
                     )
@@ -576,7 +576,7 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^#{2,3} ?([\w ]+)#{2,3} ?", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                             match.group(1)
                         )
                     )
@@ -585,14 +585,14 @@ class Section(BaseHierarchyModel, TreeSelectorMixin):
                 match = re.search(r"^(Subheading note|Additional notes)", item)
                 if match:
                     section_notes.append(
-                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                        '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                             match.group(1)
                         )
                     )
                     continue
 
                 section_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span></span><span>{0}</span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span></span><span>{0}</span></div>'.format(  # noqa: E501
                         item
                     )
                 )
@@ -866,7 +866,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             match = re.search(r"^\* (\d)\\. (.*)", item)
             if match:
                 chapter_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-1"><span>{0}.</span><span>{1}</span></div>'.format(  # noqa: E501
                         match.group(1), match.group(2)
                     )
                 )
@@ -874,7 +874,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             match = re.search(r"^  \* \((\w)\) (.*)", item)
             if match:
                 chapter_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-2"><span>({0})</span><span>{1}</span></div>'.format(  # noqa: E501
                         match.group(1), match.group(2)
                     )
                 )
@@ -882,7 +882,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             match = re.search(r"^    ([\s*\\-]*)(.*)", item)
             if match:
                 chapter_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__level-3"><span>{0}</span><span>{1}</span></div>'.format(  # noqa: E501
                         "-", match.group(2)
                     )
                 )
@@ -890,7 +890,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             match = re.search(r"^\* ([^\d.]+)", item)
             if match:
                 chapter_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__text"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                         match.group(1)
                     )
                 )
@@ -898,7 +898,7 @@ class Chapter(BaseHierarchyModel, TreeSelectorMixin):
             match = re.search(r"^##(.+)##", item)
             if match:
                 chapter_notes.append(
-                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(
+                    '<div class="helpdesk-chapter-note-item helpdesk-chapter-note-item__heading"><span>{0}</span><span></span></div>'.format(  # noqa: E501
                         match.group(1)
                     )
                 )

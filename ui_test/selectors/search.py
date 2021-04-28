@@ -1,5 +1,5 @@
 SEARCH = {
-  'country':  '#country-picker',
-  'continue': '[type="submit"]',
-  'commodity': '#search',
+    "country": "#country-picker",
+    "continue": '[type="submit"]',
+    "commodity": "#search",
 }

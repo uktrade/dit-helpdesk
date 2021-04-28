@@ -1,8 +1,6 @@
 import json
 import logging
-from datetime import datetime
 
-from dateutil.tz import tzlocal
 from django.conf import settings
 from django.test import TestCase
 from mixer.backend.django import mixer

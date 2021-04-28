@@ -243,7 +243,7 @@ class HeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
 class SubHeadingAddSearchForm(forms.Form):
     subheading_codes = forms.CharField(
         label="Search subheadings",
-        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",
+        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",  # noqa: E501
     )
 
     def clean_subheading_codes(self):
@@ -320,7 +320,7 @@ class SubHeadingRemoveForm(DeferredFormMixin, forms.ModelForm):
 class CommodityAddSearchForm(forms.Form):
     commodity_codes = forms.CharField(
         label="Search commodities",
-        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",
+        help_text="Comma separated list of subheading codes e.g. 010101,2101220000,822020 (6, 8 and 10 digits accepted)",  # noqa: E501
     )
 
     def clean_commodity_codes(self):

@@ -107,7 +107,7 @@ class FootnoteProcessorTestCase(TestCase):
             note_text
         )
 
-        expected_replaced_text = f"""
+        expected_replaced_text = """
             For special conditions relating to products made of a mixture of textile materials,
             see Introductory Note 6 (below).
         """

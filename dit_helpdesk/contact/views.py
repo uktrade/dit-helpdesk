@@ -160,7 +160,8 @@ class ContactFormWizardView(SessionWizardView):
 
                 context["topic"] = TOPICS[int(form_data["topic"])]
                 if form_data["topic"] == "2":
-                    # Importing animals, plants or food, environmental regulations, sanitary and phytosanitary regulations
+                    # Importing animals, plants or food, environmental regulations,
+                    # sanitary and phytosanitary regulations
                     context["type"] = "Email"
                     context["recipient_email"] = settings.DEFRA_EMAIL
                     context["recipient_fullname"] = settings.DEFRA_CONTACT

@@ -1,10 +1,8 @@
 import logging
 import re
-import requests
 
 from datetime import datetime
 
-from django.db import connection
 from django.template import loader
 from dateutil.parser import parse as parse_dt
 from django.conf import settings
@@ -365,7 +363,7 @@ class ImportMeasureJson:
     def reformat_date(self, data):
 
         row_last_index = len(data) - 1
-        pattern = "^((\d{4})-(\d{2})-(\d{2}))$|^((\d{4})-(\d{2})-(\d{2}))\s(\(((\d{4})-(\d{2})-(\d{2}))\))$"
+        pattern = r"^((\d{4})-(\d{2})-(\d{2}))$|^((\d{4})-(\d{2})-(\d{2}))\s(\(((\d{4})-(\d{2})-(\d{2}))\))$"
         target = re.compile(pattern)
         matched = target.match(data[row_last_index])
         if not matched.group(9):

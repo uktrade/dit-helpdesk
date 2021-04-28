@@ -1,6 +1,5 @@
 from django.conf import settings
 from django_elasticsearch_dsl import Document, Index, fields
-from django_elasticsearch_dsl.registries import registry
 
 from hierarchy.models import Heading
 from search.documents.util import html_strip

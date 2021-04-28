@@ -1,6 +1,5 @@
-from django.test import TestCase, Client, RequestFactory, override_settings
+from django.test import TestCase, Client, RequestFactory
 from django.http import HttpResponse
-from django.conf import settings
 
 from core.middleware import NoIndexMiddleware
 

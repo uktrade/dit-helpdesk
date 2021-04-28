@@ -1,7 +1,8 @@
-from mixer.backend.django import mixer
-from django.test import TestCase
-from model_mommy import mommy
 import logging
+
+from django.test import TestCase
+
+from mixer.backend.django import mixer
 
 from regulations.models import RegulationGroup, Regulation
 

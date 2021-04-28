@@ -124,7 +124,7 @@ class BaseTariffsAndTaxesNorthernIrelandSection(TariffsAndTaxesSection):
     def _get_meursing_calculator_link(self, commodity_object):
         commodity_code = commodity_object.commodity_code
 
-        return f"https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20201208&Taric={commodity_code}&LangDescr=en"
+        return f"https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20201208&Taric={commodity_code}&LangDescr=en"  # noqa: E501
 
     def _get_is_meursing_code(self, commodity_object):
         return commodity_object.tts_obj.is_meursing_code

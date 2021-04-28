@@ -1,11 +1,9 @@
 import logging
-import datetime as dt
 
 from django.apps import apps
 from django.conf import settings
 from django.test import override_settings, TestCase
 
-from hierarchy.models import SubHeading, Heading
 from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.HierarchyBuilder import HierarchyBuilder
 

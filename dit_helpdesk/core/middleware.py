@@ -1,7 +1,5 @@
-import re
-
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import resolve
 
 from .ip_filter import is_valid_admin_ip, get_client_ip

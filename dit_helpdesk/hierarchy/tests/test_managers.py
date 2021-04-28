@@ -20,7 +20,6 @@ class RegionHierarchyManagerTestCase(TestCase):
     """
 
     def setUp(self):
-
         self.old_eu_tree = create_nomenclature_tree("EU")
         self.eu_tree = create_nomenclature_tree("EU")
 
@@ -28,29 +27,26 @@ class RegionHierarchyManagerTestCase(TestCase):
         self.uk_tree = create_nomenclature_tree("UK")
 
     def test_retrieval_eu(self):
-
         for model in models:
             mixer.blend(model, nomenclature_tree=self.eu_tree)
             self.assertFalse(model.objects.all().exists())
 
     def test_retrieval_uk(self):
-
         for model in models:
             instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
             self.assertEquals(model.objects.count(), 1)
             self.assertEquals(model.objects.first(), instance)
 
     def test_retrieval_eu_uk(self):
-
         for model in models:
             uk_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
-            eu_instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
+            mixer.blend(model, nomenclature_tree=self.eu_tree)
             self.assertEquals(model.objects.count(), 1)
             self.assertEquals(model.objects.first(), uk_instance)
 
     def test_retrieval_old_tree(self):
         for model in models:
-            old_instance = mixer.blend(model, nomenclature_tree=self.old_uk_tree)
+            mixer.blend(model, nomenclature_tree=self.old_uk_tree)
             new_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
 
             self.assertEquals(model.objects.count(), 1)
@@ -59,21 +55,18 @@ class RegionHierarchyManagerTestCase(TestCase):
 
 class TreeSelectorMixinTestCase(TestCase):
     def setUp(self):
-
         self.old_eu_tree = create_nomenclature_tree("EU")
         self.eu_tree = create_nomenclature_tree("EU")
         self.old_uk_tree = create_nomenclature_tree("UK")
         self.uk_tree = create_nomenclature_tree("UK")
 
     def test_retrieval_eu(self):
-
         for model in models:
             instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
             self.assertEquals(model.get_active_objects("EU").count(), 1)
             self.assertEquals(model.get_active_objects("EU").first(), instance)
 
     def test_retrieval_uk(self):
-
         for model in models:
             uk_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
             eu_objects = model.get_active_objects("EU")
@@ -83,7 +76,6 @@ class TreeSelectorMixinTestCase(TestCase):
             self.assertEquals(uk_objects.first(), uk_instance)
 
     def test_retrieval_eu_uk(self):
-
         for model in models:
             uk_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
             eu_instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
@@ -97,11 +89,10 @@ class TreeSelectorMixinTestCase(TestCase):
             self.assertEquals(uk_objects.first(), uk_instance)
 
     def test_retrieval_old_tree(self):
-
         for model in models:
-            uk_old_instance = mixer.blend(model, nomenclature_tree=self.old_uk_tree)
+            mixer.blend(model, nomenclature_tree=self.old_uk_tree)
             uk_instance = mixer.blend(model, nomenclature_tree=self.uk_tree)
-            eu_old_instance = mixer.blend(model, nomenclature_tree=self.old_eu_tree)
+            mixer.blend(model, nomenclature_tree=self.old_eu_tree)
             eu_instance = mixer.blend(model, nomenclature_tree=self.eu_tree)
             eu_objects = model.get_active_objects("EU")
             uk_objects = model.get_active_objects("UK")

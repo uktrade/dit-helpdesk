@@ -24,7 +24,6 @@ from cookies import views as cookie_views
 from countries import views as country_views
 from contact import views as contact_views
 from iee_contact import views as iee_contact_views
-from healthcheck.views import HealthCheckView
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
 
@@ -71,7 +70,7 @@ urlpatterns = [
         name="subheading-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        r"^country/(?P<country_code>\w+)/subheading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",  # noqa: E501
         hierarchy_views.SubHeadingDetailNorthernIrelandView.as_view(),
         name="subheading-detail-northern-ireland",
     ),
@@ -81,7 +80,7 @@ urlpatterns = [
         name="heading-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        r"^country/(?P<country_code>\w+)/heading/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",  # noqa: E501
         hierarchy_views.HeadingDetailNorthernIrelandView.as_view(),
         name="heading-detail-northern-ireland",
     ),
@@ -91,7 +90,7 @@ urlpatterns = [
         name="commodity-detail",
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",
+        r"^country/(?P<country_code>\w+)/commodity/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/northern-ireland/$",  # noqa: E501
         commodity_views.CommodityDetailNorthernIrelandView.as_view(),
         name="commodity-detail-northern-ireland",
     ),

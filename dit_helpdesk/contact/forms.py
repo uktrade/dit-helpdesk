@@ -48,7 +48,7 @@ class ContactFormStepThree(forms.Form):
     country_code = forms.CharField(widget=forms.HiddenInput, required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)
     message.label = "Tell us how we can help"
-    message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."
+    message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."  # noqa: E501
 
     class Meta:
 

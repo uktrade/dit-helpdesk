@@ -41,7 +41,7 @@ class BaseCheckView(View):
     CHECK_FAILED_STATUS = 503
 
     def check(self):
-        raise NotImplementedError(f"Implement `check`")
+        raise NotImplementedError("Implement `check`")
 
     def get(self, request, *args, **kwargs):
         is_check_successful = self.check(request)

@@ -1,7 +1,4 @@
 import re
-
-from django.shortcuts import reverse
-
 import sentry_sdk
 
 from commodities.models import Commodity
@@ -118,7 +115,7 @@ def _commodity_code_html(item, ignore_duplicate=True):
             else:
                 blank_span = ["", ""]
 
-            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(
+            commodity_code_html += '<span class="app-commodity-code__highlight app-commodity-code__highlight--{0}">{1}{2}{3}</span>'.format(  # noqa: E501
                 counter, blank_span[0], code_segment, blank_span[1]
             )
 
@@ -152,17 +149,17 @@ def get_hierarchy_context(
             # We dont want to retrieve section as it is explicity renders by commodity_hierarchy_section_header
             html += "<nav>"
         else:
-            html += f"<ul>"
+            html += "<ul>"
             for i, item in enumerate(lista):
                 if item.commodity_code == commodity_code and item == current_item:
-                    html += f"""<li><div class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</div><div class="govuk-visually-hidden"> &ndash; </div><strong>{_commodity_code_html(item)}</strong></li>"""
+                    html += f"""<li><div class="govuk-body govuk-!-font-weight-bold app-hierarchy-tree__link govuk-!-font-size-16">{item.description.capitalize()}</div><div class="govuk-visually-hidden"> &ndash; </div><strong>{_commodity_code_html(item)}</strong></li>"""  # noqa: E501
                 else:
                     nomenclature_link = item.get_detail_url(country_code)
 
                     if links:
-                        html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""
+                        html += f"""<li><a href="{nomenclature_link}" class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</a>{_commodity_code_html(item)}"""  # noqa: E501
                     else:
-                        html += f"""<li><span class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</span>{_commodity_code_html(item)}"""
+                        html += f"""<li><span class="app-hierarchy-tree__link app-hierarchy-tree__link--parent">{item.description.capitalize()}</span>{_commodity_code_html(item)}"""  # noqa: E501
 
                 if index == list_size:
                     html += "</li>"
