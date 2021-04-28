@@ -181,6 +181,9 @@ jobs:
           name: Lint migrations
           command: ./lint_migrations.sh
       - run:
+          name: flake8 lint check
+          command: flake8
+      - run:
           name: Python code formatting check
           command: black ./dit_helpdesk --check
       - run:
