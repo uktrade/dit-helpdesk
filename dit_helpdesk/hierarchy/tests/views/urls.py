@@ -11,12 +11,12 @@ from .test_sections import TestSectionsView
 
 test_urlpatterns = [
     re_path(
-        r"test-base-commodity-object-detail-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",
+        r"test-base-commodity-object-detail-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",  # noqa: E501
         TestBaseCommodityObjectDetailView.as_view(),
         name="test-base-commodity-object-detail-view",
     ),
     re_path(
-        r"test-base-sectioned-commodity-object-detail-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",
+        r"test-base-sectioned-commodity-object-detail-view/(?P<country_code>\w+)/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)/$",  # noqa: E501
         TestBaseSectionedCommodityObjectDetailView.as_view(),
         name="test-base-sectioned-commodity-object-detail-view",
     ),

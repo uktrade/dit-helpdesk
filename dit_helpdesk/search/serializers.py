@@ -6,7 +6,6 @@ from search.documents.chapter import ChapterDocument
 from search.documents.heading import HeadingDocument
 from search.documents.section import SectionDocument
 from search.documents.subheading import SubHeadingDocument
-from search.forms import CommoditySearchForm
 
 
 class CommodityDocumentSerializer(DocumentSerializer):

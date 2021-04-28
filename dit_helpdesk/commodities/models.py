@@ -290,7 +290,7 @@ class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
                         }
                     )
         except Exception as err:
-            logger.debug("_append descendant data".format(err.args))
+            logger.debug("_append descendant data: %s", err.args)
 
     @staticmethod
     def _append_path_children(parent, tree, level):

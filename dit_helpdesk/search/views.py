@@ -1,5 +1,5 @@
 import logging
-import re
+
 from urllib.parse import urlencode
 
 from rest_framework import generics

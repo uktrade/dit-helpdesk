@@ -311,7 +311,6 @@ class PromoteRegulationGroupsTestCase(TestCase):
 
         a_chapter = mixer.blend(Chapter, chapter_code="a", section=section)
         b_chapter = mixer.blend(Chapter, chapter_code="b", section=section)
-        chapters = [a_chapter, b_chapter]
 
         a_a_heading = mixer.blend(Heading, heading_code="a_a", chapter=a_chapter)
         a_b_heading = mixer.blend(Heading, heading_code="a_b", chapter=a_chapter)

@@ -39,7 +39,7 @@ class IEEContactFormStepThree(forms.Form):
     terms_and_conditions = forms.BooleanField(required=True)
 
     message.label = "Tell us how we can help"
-    message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."
+    message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."  # noqa: E501
 
     class Meta:
         fields = ["message", "name", "email_address", "terms_and_conditions"]

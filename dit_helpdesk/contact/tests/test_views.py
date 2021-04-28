@@ -1,7 +1,6 @@
 import logging
 
 from django.test import TestCase, Client
-from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -23,27 +22,6 @@ class ContactFormViewTestCase(TestCase):
         session = self.client.session
         session["origin_country"] = "eu"
         session.save()
-
-        contact_form_step_one = {
-            "step_two-category": "1",
-            "session_contact_wizard-current_step": "step_two",
-        }
-        contact_form_step_two = {
-            "step_four-topic": "2",
-            "session_contact_wizard-current_step": "step_three",
-        }
-        contact_form_step_three = {
-            "step_four-name": "John Doe",
-            "step_four-email_address": "john.doe@domain.com",
-            "step_four-message": "The test message for the form",
-            "step_four-terms_and_conditions": "True",
-            "session_contact_wizard-current_step": "step_four",
-        }
-        wizard_steps_data = (
-            contact_form_step_one,
-            contact_form_step_two,
-            contact_form_step_three,
-        )
 
         response = self.client.get(self.wizard_url, follow=True)
         self.assertEqual(response.status_code, 200)

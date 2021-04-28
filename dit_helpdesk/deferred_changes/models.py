@@ -16,7 +16,7 @@ class InvalidDataError(Exception):
 
 class DeferredChange(PolymorphicModel):
     def apply(self):
-        raise NotImplementedError(f"Deferred change subclass requires `apply` method.")
+        raise NotImplementedError("Deferred change subclass requires `apply` method.")
 
 
 class DeferredValue:

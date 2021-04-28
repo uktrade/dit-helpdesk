@@ -445,7 +445,7 @@ class HierarchyBuilder:
                 heading_leaves = [
                     item
                     for item in chapter["included"]
-                    if item["type"] == "heading" and item["attributes"]["leaf"] == True
+                    if item["type"] == "heading" and item["attributes"]["leaf"]
                 ]
 
                 if child_headings:

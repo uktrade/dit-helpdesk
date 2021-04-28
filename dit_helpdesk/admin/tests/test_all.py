@@ -1,10 +1,8 @@
 import os
 
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client
 
-from django.contrib.auth import get_user_model
 from mixer.backend.django import mixer
 
 from user.models import User

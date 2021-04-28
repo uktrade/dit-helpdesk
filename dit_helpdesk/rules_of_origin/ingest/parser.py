@@ -1,5 +1,4 @@
 from typing import List, Dict, Optional
-import os
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element

@@ -1,5 +1,3 @@
-import pytest
-from ui_test.selectors.search import SEARCH
 from ui_test.user_flows import search_country, search_commodity
 
 
@@ -12,7 +10,7 @@ def test_back_button_redirects_to_commodity_search(browser):
 
 
 def test_country_form_errors_when_resubmitting_after_hitting_back_button_from_search_page(
-    browser
+    browser,
 ):
     search_country(browser, "Brazil")
     assert browser.is_text_present("Brazil United Kingdom")

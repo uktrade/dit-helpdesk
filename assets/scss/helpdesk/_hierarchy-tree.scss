@@ -1,13 +1,13 @@
 .app-hierarchy-tree,
 .app-hierarchy-tree--child {
-  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 .app-hierarchy-tree {
-  & > .app-hierarchy-tree__parent {
+  > .app-hierarchy-tree__parent {
     margin-left: 0;
 
     &:nth-child(odd) {
@@ -23,8 +23,8 @@
 .app-hierarchy-tree__part {
   @extend .govuk-body;
   line-height: 1.35;
-  margin: 0.5em 0 0 0;
-  padding: 0.5em 0 0.5em 0;
+  margin: 0.5em 0 0;
+  padding: 0.5em 0;
   text-align: right;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .app-hierarchy-tree__part.app-hierarchy-tree__parent--open:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .app-hierarchy-tree__parent--closed {
@@ -43,7 +43,7 @@
 }
 
 .app-hierarchy-tree__section:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .app-hierarchy-tree__parent--open .app-hierarchy-tree--child {
@@ -56,7 +56,7 @@
 }
 
 .app-hierarchy-tree__parent--open {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .app-hierarchy-tree__part {
@@ -89,8 +89,8 @@
   width: (8.8em / 2);
 
   @include govuk-media-query($from: tablet) {
-    padding-top: 0.5em;
     margin-bottom: 20px;
+    padding-top: 0.5em;
   }
 }
 
@@ -105,8 +105,8 @@
 }
 
 .app-hierarchy-tree__commodity-code {
-  margin-top: 0.125em;
   margin-bottom: 6px;
+  margin-top: 0.125em;
 
   @include govuk-media-query($from: tablet) {
     width: 10.5em;
@@ -114,7 +114,7 @@
 }
 
 .app-hierarchy-tree a {
-  padding-bottom: 0px;
+  padding-bottom: 0;
   vertical-align: -webkit-baseline-middle;
 }
 
@@ -161,46 +161,49 @@
   color: govuk-colour("white");
   display: block;
   line-height: 1;
-  margin: 0.2em 0 0 0;
-  padding: 0.6em 0.7em 0.4em 0.7em;
-  text-decoration: none;
-  width: 3em;
+  margin: 0.2em 0 0;
+  padding: 0.6em 0.7em 0.4em;
   text-align: center;
+  text-decoration: none;
   text-transform: none;
+  width: 3em;
 }
 
 .app-hierarchy-tree__link--parent {
   padding-left: -0.5em;
-  &:before {
+
+  &::before {
     color: #005fa2;
     display: inline-block;
     margin-left: 0;
 
+    padding-right: 0.5em;
+    text-decoration: underline;
+
     @include govuk-media-query($from: tablet) {
       margin-left: -1.25em;
     }
-
-    padding-right: 0.5em;
-    text-decoration: underline;
   }
 
   .app-hierarchy-tree__parent--open & {
-    &:before {
+    font-weight: normal;
+
+    &::before {
       content: "\25BC";
       font-size: 16px;
     }
-    font-weight: normal;
   }
 
   .app-hierarchy-tree__parent--closed & {
-    &:before {
+    font-weight: normal;
+
+    &::before {
       content: "\25B6";
       font-size: 15px;
     }
-    font-weight: normal;
   }
 
-  &:link:before {
+  &:link::before {
     text-decoration: none;
   }
 }

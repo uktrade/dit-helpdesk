@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from countries.models import Country
 from regulations.models import RegulationGroup
-from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
+from rules_of_origin.models import Rule, RulesDocument
 from trade_tariff_service.tts_api import ImportMeasureJson
 
 from ...helpers import create_nomenclature_tree

@@ -314,7 +314,7 @@ def get_eu_commodity_link(commodity_object, country) -> str:
 
     country_code = {"EU": "FR"}.get(country.country_code, country.country_code)
 
-    return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={commodity_code}&origin={country_code}&destination=IE"
+    return f"https://trade.ec.europa.eu/access-to-markets/en/results?product={commodity_code}&origin={country_code}&destination=IE"  # noqa: E501
 
 
 _class_name_arg_map = {

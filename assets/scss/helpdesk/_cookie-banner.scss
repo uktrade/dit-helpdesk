@@ -54,8 +54,8 @@
 
   .app-cookie-banner__button-fixed-desktop {
     @include govuk-media-query($from: tablet) {
-      width: 280px;
       margin-right: 30px;
+      width: 280px;
     }
   }
 }

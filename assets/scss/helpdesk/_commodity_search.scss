@@ -4,18 +4,18 @@
 }
 
 .breadcrumb-item::after {
-  content: "\25B6";
-  font-size: 12px;
   color: #000;
+  content: "\25B6";
   display: inline-block;
+  font-size: 12px;
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
 
 .breadcrumb-item-last::after {
-  font-size: 12px;
   color: #000;
   display: inline-block;
+  font-size: 12px;
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
@@ -26,16 +26,16 @@
 }
 
 .chapter-result h1 {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 @media (min-width: 1000px) {
-  .chapter-result div.text-right {
-    position: absolute;
-    top: 50%;
+  .chapter-result .text-right {
     height: 32px;
     margin-top: -16px;
-    right: 0px;
+    position: absolute;
+    right: 0;
+    top: 50%;
   }
 }
 
@@ -45,17 +45,17 @@
 }
 
 .heading-result:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 @media (min-width: 1000px) {
-  .heading-result div.text-right {
+  .heading-result .text-right {
     display: block;
-    position: absolute;
-    top: 50%;
     height: 32px;
     margin-top: -16px;
-    right: 0px;
+    position: absolute;
+    right: 0;
+    top: 50%;
   }
 }
 
@@ -70,15 +70,12 @@
 }
 
 .govuk-search-pagination__item {
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
-  font-size: 14px;
   line-height: 1.25;
   list-style: none;
-
-  .govuk-search-pagination__item--previous {
-  }
 }
 
 .govuk-search-pagination__link {
@@ -89,18 +86,19 @@
 
 .govuk-search-pagination__link-icon {
   color: #005ea5;
+  display: inline-block;
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
-  font-size: 18px;
-  line-height: 1.25;
-  display: inline-block;
-  margin-bottom: 1px;
   height: 0.482em;
+  line-height: 1.25;
+  margin-bottom: 1px;
   width: 0.63em;
 }
 
 .govuk-search-pagination__link-text {
+  font-size: 16px;
   //display: inline-block;
   //margin: 0 0 0 0.5em;
   //line-height: 1.5;
@@ -109,7 +107,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
-  font-size: 16px;
   line-height: 1.25;
   margin-left: 10px;
 }
@@ -120,9 +117,9 @@
 
 .govuk-search-pagination__link-label {
   display: inline-block;
+  margin-left: 22px;
   margin-top: 0.1em;
   text-decoration: underline;
-  margin-left: 22px;
 }
 
 //.govuk-search-previous::before{
@@ -162,6 +159,7 @@
 #search-results h1 {
   text-transform: lowercase;
 }
-#search-results h1:first-letter {
+
+#search-results h1::first-letter {
   text-transform: capitalize;
 }

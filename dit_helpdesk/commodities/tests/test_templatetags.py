@@ -1,4 +1,3 @@
-from django.template import Context, Template
 from django.test import TestCase
 
 from commodities.templatetags.cell_cleaner import cell_cleaner

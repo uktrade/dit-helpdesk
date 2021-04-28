@@ -8,7 +8,7 @@
   &__previous {
     margin-right: 10px;
 
-    &:before {
+    &::before {
       content: "< ";
     }
   }
@@ -20,7 +20,7 @@
   &__next {
     margin-left: 10px;
 
-    &:after {
+    &::after {
       content: " >";
     }
   }

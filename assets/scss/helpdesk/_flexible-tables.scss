@@ -51,14 +51,6 @@
 }
 
 @media screen and (min-width: 800px) {
-  .app-flexible-table__row {
-    &:nth-child(even) {
-      th,
-      td {
-      }
-    }
-  }
-
   .app-flexible-table__cell,
   .app-flexible-table__header {
     &:last-child {
@@ -71,14 +63,15 @@
   .app-flexible-table__head {
     display: none;
   }
+
   .app-flexible-table__body {
     display: block;
   }
 
   .app-flexible-table__row {
-    display: block;
-    margin: 0 0 1em 0;
     border: 1px solid govuk-colour("mid-grey", $legacy: "grey-2");
+    display: block;
+    margin: 0 0 1em;
   }
 
   .app-flexible-table__header {
@@ -102,17 +95,18 @@
     &::before {
       box-sizing: border-box;
       content: attr(data-column-heading);
-      width: 33%;
-      font-weight: bold;
       display: inline-block;
+      font-weight: bold;
       min-width: 5em;
       padding-right: 0.5em;
       vertical-align: middle;
+      width: 33%;
     }
 
     &:nth-child(odd) {
       background: govuk-colour("light-grey", $legacy: "grey-4");
     }
+
     &:empty {
       display: none;
     }
@@ -121,8 +115,9 @@
       box-sizing: border-box;
       display: inline-block;
       padding: 0;
-      width: 67%;
       vertical-align: middle;
+      width: 67%;
+
       &:empty {
         display: none;
       }

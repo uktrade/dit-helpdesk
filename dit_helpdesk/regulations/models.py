@@ -44,7 +44,7 @@ class Regulation(models.Model):
     url = models.URLField()
 
     VALID_URL_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/"
-    REGULATION_NUMBER_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/(eur|eudn|eudr|uksi|ukpga)\/(?P<year>\d{4})\/(?P<number>\d+)\/"
+    REGULATION_NUMBER_REGEX = r"^https?:\/\/www\.legislation\.gov\.uk\/(eur|eudn|eudr|uksi|ukpga)\/(?P<year>\d{4})\/(?P<number>\d+)\/"  # noqa: E501
 
     def __str__(self):
         return self.url
