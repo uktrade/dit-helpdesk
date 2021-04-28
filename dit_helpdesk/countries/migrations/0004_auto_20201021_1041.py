@@ -1013,6 +1013,12 @@ trade_data = [
         "Mendel agreement label": "WTO",
         "TWUK content template label": "WTO",
     },
+    {
+        "Country code": "EU",
+        "GOVUK FTA URL": "",
+        "Mendel agreement label": "",
+        "TWUK content template label": "EU-MEMBER",
+    },
 ]
 
 
