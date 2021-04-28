@@ -8,10 +8,8 @@ var commodityTree = require("./modules/commodity-tree");
 var Modal = require("./modules/modal");
 var CookiePolicy = require("./modules/cookie-policy");
 var nodeListForEach = common.nodeListForEach;
-var $ = require("jquery");
 
 var addListener = function (target, event, handler) {
-  var self = this;
   if (target.attachEvent) {
     target.attachEvent("on" + event, handler);
   } else {
@@ -90,7 +88,7 @@ if ($hierarchyModalLinks) {
           ".app-modal-dialogue__content"
         ).innerHTML = responseText;
 
-        modalWindow = new Modal(modal);
+        var modalWindow = new Modal(modal);
         modalWindow.start();
         modal.open();
       });

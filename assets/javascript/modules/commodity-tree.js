@@ -14,6 +14,7 @@ var commodityTree = {
       return false;
     }
 
+    var childList;
     var $parentNode = $target.parentNode;
 
     if (
@@ -24,7 +25,7 @@ var commodityTree = {
         /app-hierarchy-tree__parent--open/,
         "app-hierarchy-tree__parent--closed js-closed"
       );
-      var childList = Array.prototype.filter.call(
+      childList = Array.prototype.filter.call(
         $parentNode.childNodes,
         function (el) {
           return el.className === "app-hierarchy-tree--child";
@@ -38,7 +39,7 @@ var commodityTree = {
         /app-hierarchy-tree__parent--closed js-closed/,
         "app-hierarchy-tree__parent--open"
       );
-      var childList = Array.prototype.filter.call(
+      childList = Array.prototype.filter.call(
         $parentNode.childNodes,
         function (el) {
           return el.className === "app-hierarchy-tree--child";

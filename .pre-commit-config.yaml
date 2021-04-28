@@ -13,8 +13,19 @@ repos:
     rev: v2.2.1
     hooks:
       - id: prettier
+        files: assets/javascript
         types: [javascript]
   - repo: https://github.com/pycqa/flake8
     rev: 3.9.1
     hooks:
       - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.25.0
+    hooks:
+      - id: eslint
+        files: assets/javascript
+        additional_dependencies:
+          - eslint@7.25.0
+          - eslint-config-prettier@8.3.0
+          - eslint-plugin-prettier@3.4.0
+        types: [javascript]
