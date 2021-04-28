@@ -29,3 +29,11 @@ repos:
           - eslint-config-prettier@8.3.0
           - eslint-plugin-prettier@3.4.0
         types: [javascript]
+  - repo: https://github.com/awebdeveloper/pre-commit-stylelint
+    rev: 0.0.2
+    hooks:
+      - id: stylelint
+        additional_dependencies:
+          - stylelint@13.13.0
+          - stylelint-config-sass-guidelines@8.0.0
+          - stylelint-config-standard@22.0.0

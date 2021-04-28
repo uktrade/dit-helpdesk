@@ -192,6 +192,9 @@ jobs:
       - run:
           name: eslint check
           command: npx eslint assets/javascript
+      - run:
+          name: stylelint check
+          command: npx stylelint assets/scss
       - store_test_results:
           path: ./test-reports/
       - store_artifacts:
