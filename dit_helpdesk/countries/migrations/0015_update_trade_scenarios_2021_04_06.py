@@ -4,17 +4,74 @@ from django.db import migrations
 
 GSP_COUNTRIES = [
     # Least Developed countries Framework
-    "AF", "AO", "BD", "BJ", "BT", "BF", "BI", "CF", "KH", "TD", "KM", "CD", "DJ",
-    "ER", "ET", "GN", "GW", "HT", "KI", "LA", "LS", "LR", "MG", "MW", "ML", "MR",
-    "MZ", "MM", "NP", "NE", "RW", "ST", "SN", "SL", "SB", "SO", "SS", "SD", "TZ",
-    "TG", "TV", "UG", "VU", "YE", "ZM",
-
+    "AF",
+    "AO",
+    "BD",
+    "BJ",
+    "BT",
+    "BF",
+    "BI",
+    "CF",
+    "KH",
+    "TD",
+    "KM",
+    "CD",
+    "DJ",
+    "ER",
+    "ET",
+    "GN",
+    "GW",
+    "HT",
+    "KI",
+    "LA",
+    "LS",
+    "LR",
+    "MG",
+    "MW",
+    "ML",
+    "MR",
+    "MZ",
+    "MM",
+    "NP",
+    "NE",
+    "RW",
+    "ST",
+    "SN",
+    "SL",
+    "SB",
+    "SO",
+    "SS",
+    "SD",
+    "TZ",
+    "TG",
+    "TV",
+    "UG",
+    "VU",
+    "YE",
+    "ZM",
     # Enhanced Framework
-    "AM", "BO", "CV", "KG", "MN", "PK", "PH", "LK",
+    "AM",
+    "BO",
+    "CV",
+    "KG",
+    "MN",
+    "PK",
+    "PH",
+    "LK",
 ]
 
 GSP_WITH_EXCLUSIONS_COUNTRIES = [
-    "DZ", "CG", "CK", "IN", "ID", "FM", "NG", "NU", "SY", "TJ", "UZ",
+    "DZ",
+    "CG",
+    "CK",
+    "IN",
+    "ID",
+    "FM",
+    "NG",
+    "NU",
+    "SY",
+    "TJ",
+    "UZ",
 ]
 
 SCENARIOS = [
@@ -25,6 +82,10 @@ SCENARIOS = [
     (["VN"], "VIETNAM"),
 ]
 
+URLS = {
+    "GH": "https://www.gov.uk/government/collections/uk-ghana-interim-trade-partnership-agreement",
+}
+
 
 def update_trade_scenarios(apps, schema_editor):
     Country = apps.get_model("countries", "Country")
@@ -33,15 +94,20 @@ def update_trade_scenarios(apps, schema_editor):
         for country_code in countries:
             country = Country.objects.get(country_code=country_code)
             country.scenario = scenario
+            if country_code in URLS:
+                country.content_url = URLS[country_code]
             country.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('countries', '0014_update_trade_scenarios_2021_03_08'),
+        ("countries", "0014_update_trade_scenarios_2021_03_08"),
     ]
 
     operations = [
-        migrations.RunPython(update_trade_scenarios)
+        migrations.RunPython(
+            update_trade_scenarios,
+            migrations.RunPython.noop,
+        )
     ]
