@@ -1,1 +1,1 @@
-BASE_URL = "http://localhost:8000/choose-country/"
+BASE_URL = "http://helpdesk:8000/choose-country/"

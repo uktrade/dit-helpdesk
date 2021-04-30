@@ -3,7 +3,7 @@ services:
   helpdesk:
     build:
       context: .
-      dockerfile: ./compose/automation/django/Dockerfile
+      dockerfile: ./ui_test/Dockerfile
     ports:
       - "8000:8000"
     volumes:
@@ -14,7 +14,24 @@ services:
       - postgres
       - es
       - redis
-    command: /app/compose/automation/django/start.sh
+    command: ./start.sh
+
+  ui-tests:
+    build:
+      context: .
+      dockerfile: ./ui_test/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -wait tcp://helpdesk:8000 -timeout 120s
+    env_file: .env.test
+    depends_on:
+      - postgres
+      - es
+      - redis
+      - helpdesk
+    command: pipenv run pytest ui_test/specs
 
   postgres:
     image: postgres:10
