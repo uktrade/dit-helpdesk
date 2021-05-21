@@ -1,11 +1,26 @@
 {% extends "hierarchy/_modal_wrapper.html" %}
 
 {% block modal_content %}
-<h3 class="govuk-heading-m govuk-!-margin-top-2">CTH - Change of Tariff Heading</h3>
-<p>
-This means that any non-originating material used in the production of the product must be classified in a heading (4-digit level of the Harmonised System) other than that of the product (i.e. a change in heading).
-</p>
+    <h3 class="govuk-heading-m govuk-!-margin-top-2">Change in tariff heading (CTH)</h3>
+    <p>
+        When a non-originating material is used to produce another finished product, the 4-digit level of its original commodity code will need to change once it’s incorporated into the final product. This is referred to as a change in tariff heading.
+    </p>
+    <p>
+        Example:
+    </p>
+    <p>
+        Thin copper wire with a diameter below 6mm comes under the commodity code 740819.
+    </p>
+    <p>
+        A UK manufacturer makes wire from copper sheets sourced from outside the UK.
+    </p>
+    <p>
+        The 6-digit commodity code for the copper sheets is 74<strong>09</strong>19
+    </p>
+    <p>
+        The 6-digit commodity code for the thin UK wire is 74<strong>08</strong>19
+    </p>
+    <p>
+        The commodity code changes at the 4-digit level when the copper sheets become wire. This means it has gone through a change in tariff heading.
+    </p>
 {% endblock %}
-
-
-
