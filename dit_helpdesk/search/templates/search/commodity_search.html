@@ -32,7 +32,7 @@
 
                 <div class="govuk-grid-column-full">
 
-                    <form id="commodity-search"
+                    <form id="commodity-search" action="{% url 'search:search-commodity' country_code=country_code %}"
                           class="govuk-!-padding-bottom-8" name="commodity_search" method="get">
 
                         {% if form_q_error %}
