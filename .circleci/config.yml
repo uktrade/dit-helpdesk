@@ -146,9 +146,34 @@ jobs:
       - store_artifacts:
           path: ./test-reports/coverage_html
 
+  format_checks:
+    docker:
+      - <<: *docker_python
+        environment: *unit_base_envs
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Install system deps
+          command:
+            sudo apt-get update && sudo apt-get install -y nodejs npm
+      - run:
+          command: pipenv install --system --dev --deploy
+      - restore_cache:
+          keys:
+            - pre-commit-cache-{{ arch }}-{{ .Branch }}
+      - run:
+          name: Formatting checks
+          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
+      - save_cache:
+          key: pre-commit-cache-{{ arch }}-{{ .Branch }}
+          paths:
+            - ~/.cache/pre-commit
+
 # CircleCI workflows
 workflows:
   version: 2
   helpdesk:
     jobs:
       - unit_tests
+      - format_checks
