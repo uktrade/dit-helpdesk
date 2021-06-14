@@ -84,9 +84,8 @@ if ($hierarchyModalLinks) {
 
       var url = $modalLink.getAttribute("data-href");
       makeRequest(url, function (responseText) {
-        modal.querySelector(
-          ".app-modal-dialogue__content"
-        ).innerHTML = responseText;
+        modal.querySelector(".app-modal-dialogue__content").innerHTML =
+          responseText;
 
         var modalWindow = new Modal(modal);
         modalWindow.start();
