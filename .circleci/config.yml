@@ -139,10 +139,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install system deps
-          command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
-      - run:
-          command: pipenv install --system --dev
+          command: pip install pre-commit
       - restore_cache:
           keys:
             - pre-commit-cache-{{ arch }}-{{ .Branch }}
