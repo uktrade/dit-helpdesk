@@ -126,21 +126,6 @@ jobs:
       - run:
           name: Lint migrations
           command: ./lint_migrations.sh
-      - run:
-          name: flake8 lint check
-          command: flake8
-      - run:
-          name: Python code formatting check
-          command: black ./dit_helpdesk --check
-      - run:
-          name: Javascript code formatting check
-          command: npx prettier assets/javascript --check
-      - run:
-          name: eslint check
-          command: npx eslint assets/javascript
-      - run:
-          name: stylelint check
-          command: npx stylelint assets/scss
       - store_test_results:
           path: ./test-reports/
       - store_artifacts:
