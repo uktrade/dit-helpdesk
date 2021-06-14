@@ -126,25 +126,33 @@ jobs:
       - run:
           name: Lint migrations
           command: ./lint_migrations.sh
-      - run:
-          name: flake8 lint check
-          command: flake8
-      - run:
-          name: Python code formatting check
-          command: black ./dit_helpdesk --check
-      - run:
-          name: Javascript code formatting check
-          command: npx prettier assets/javascript --check
-      - run:
-          name: eslint check
-          command: npx eslint assets/javascript
-      - run:
-          name: stylelint check
-          command: npx stylelint assets/scss
       - store_test_results:
           path: ./test-reports/
       - store_artifacts:
           path: ./test-reports/coverage_html
+
+  format_checks:
+    docker:
+      - <<: *docker_python
+        environment: *unit_base_envs
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Install system deps
+          command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
+      - run:
+          command: pipenv install --system --dev
+      - restore_cache:
+          keys:
+            - pre-commit-cache-{{ arch }}-{{ .Branch }}
+      - run:
+          name: Formatting checks
+          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
+      - save_cache:
+          key: pre-commit-cache-{{ arch }}-{{ .Branch }}
+          paths:
+            - ~/.cache/pre-commit
 
 # CircleCI workflows
 workflows:
@@ -152,3 +160,4 @@ workflows:
   helpdesk:
     jobs:
       - unit_tests
+      - format_checks
