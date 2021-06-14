@@ -141,9 +141,6 @@ jobs:
       - run:
           name: Install system deps
           command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --system --dev
       - restore_cache:
