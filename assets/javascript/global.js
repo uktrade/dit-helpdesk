@@ -144,7 +144,3 @@ var $selectSortBy = document.querySelectorAll("#select-sortby select");
 if ($selectSortBy) {
   CommoditySearchForm.init($selectSortBy, "change", $searchForm);
 }
-
-module.exports = {
-  bindCookiePolicyForm: cookiePolicy.bindForm,
-};

@@ -9,6 +9,7 @@ module.exports = {
     cms: ["./assets/javascript/cms.js", "./assets/scss/cms.scss"],
     "global-old-ie": "./assets/scss/oldie.scss",
     "location-autocomplete": "./assets/javascript/location-autocomplete.js",
+    "cookie-policy-form": "./assets/javascript/cookie-policy-form.js",
   },
 
   output: {
