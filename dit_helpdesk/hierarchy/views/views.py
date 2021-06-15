@@ -246,7 +246,7 @@ class MeasureConditionDetailView(BaseMeasureConditionDetailView):
     model = Heading
 
 
-class MeasureQuotaDetailView(EUCommodityObjectMixin, BaseMeasureQuotaDetailView):
+class MeasureQuotaDetailView(BaseMeasureQuotaDetailView):
     model = Heading
 
 
