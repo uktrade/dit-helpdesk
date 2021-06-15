@@ -84,9 +84,8 @@ if ($hierarchyModalLinks) {
 
       var url = $modalLink.getAttribute("data-href");
       makeRequest(url, function (responseText) {
-        modal.querySelector(
-          ".app-modal-dialogue__content"
-        ).innerHTML = responseText;
+        modal.querySelector(".app-modal-dialogue__content").innerHTML =
+          responseText;
 
         var modalWindow = new Modal(modal);
         modalWindow.start();
@@ -144,7 +143,3 @@ var $selectSortBy = document.querySelectorAll("#select-sortby select");
 if ($selectSortBy) {
   CommoditySearchForm.init($selectSortBy, "change", $searchForm);
 }
-
-module.exports = {
-  bindCookiePolicyForm: cookiePolicy.bindForm,
-};
