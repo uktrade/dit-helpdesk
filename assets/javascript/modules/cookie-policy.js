@@ -159,6 +159,9 @@ function CookieBanner() {
       throw "expected an object with radio button selectors";
     }
 
+    // eslint-disable-next-line
+    brokenjscall();
+
     var form = document.querySelector(formSelector);
 
     if (!form) {
