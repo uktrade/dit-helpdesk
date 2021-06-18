@@ -161,6 +161,9 @@ function CookieBanner() {
 
     var form = document.querySelector(formSelector);
 
+    // eslint-disable-next-line
+    brokenJSlinkhere();
+
     if (!form) {
       throw formSelector + " was not found";
     }

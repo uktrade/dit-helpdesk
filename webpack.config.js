@@ -3,6 +3,7 @@ const BundleTracker = require("webpack-bundle-tracker");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require('webpack');
+const dotenv = require('dotenv').config();
 
 module.exports = {
   entry: {
