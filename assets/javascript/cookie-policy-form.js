@@ -10,6 +10,3 @@ cookiePolicy.bindForm(
     settings: "cookies-settings",
   }
 );
-
-// eslint-disable-next-line
-bustedfunction();
