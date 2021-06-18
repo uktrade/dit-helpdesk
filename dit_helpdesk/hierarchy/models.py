@@ -33,6 +33,16 @@ class HierarchyQuerySet(models.QuerySet):
     def get_by_commodity_code(self, commodity_code, **kwargs):
         return self.get(**{self.model.COMMODITY_CODE_FIELD: commodity_code, **kwargs})
 
+    def get(self, *args, **kwargs):
+        try:
+            return super().get(*args, **kwargs)
+        except self.model.DoesNotExist:
+            raise self.model.DoesNotExist(
+                "%s matching query does not exist.\n"
+                "NOTE: This query is pre-filtered for a region. Try `all_objects` instead."
+                % self.model._meta.object_name,
+            )
+
 
 class HierarchyManager(models.Manager):
     def get_queryset(self):
