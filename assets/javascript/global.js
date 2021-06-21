@@ -19,9 +19,6 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-console.log(SENTRY_DSN);
-console.log(SENTRY_ENVIRONMENT);
-
 var addListener = function (target, event, handler) {
   if (target.attachEvent) {
     target.attachEvent("on" + event, handler);
