@@ -325,9 +325,16 @@ _GOOGLE_DOMAINS = (
     "www.google.com",
     "www.google.co.uk",
 )
-CSP_DEFAULT_SRC = ("'self'", *_GOOGLE_DOMAINS)
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", *_GOOGLE_DOMAINS)
-CSP_SCRIPT_SRC_ELEM = ("'self'", "'unsafe-inline'", *_GOOGLE_DOMAINS)
+_SENTRY_DOMAINS = ("raven.ci.uktrade.io",)
+CSP_DEFAULT_SRC = ("'self'", *_GOOGLE_DOMAINS, *_SENTRY_DOMAINS)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    "'unsafe-eval'",
+    *_GOOGLE_DOMAINS,
+    *_SENTRY_DOMAINS,
+)
+CSP_SCRIPT_SRC_ELEM = ("'self'", "'unsafe-inline'", *_GOOGLE_DOMAINS, *_SENTRY_DOMAINS)
 CSP_STYLE_SRC_ATTR = ("'self'", "'unsafe-inline'")
 
 
