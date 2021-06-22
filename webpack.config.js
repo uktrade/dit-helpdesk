@@ -7,6 +7,7 @@ const dotenv = require('dotenv').config();
 
 module.exports = {
   entry: {
+    sentry: "./assets/javascript/sentry.js",
     main: ["./assets/javascript/global.js", "./assets/scss/global.scss"],
     cms: ["./assets/javascript/cms.js", "./assets/scss/cms.scss"],
     "global-old-ie": "./assets/scss/oldie.scss",

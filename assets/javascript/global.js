@@ -8,16 +8,6 @@ var commodityTree = require("./modules/commodity-tree");
 var Modal = require("./modules/modal");
 var CookiePolicy = require("./modules/cookie-policy");
 var nodeListForEach = common.nodeListForEach;
-var Sentry = require("@sentry/browser");
-
-// include Sentry initialisation for frontend errors
-// Next comment needed to define globals for format checks
-/*global SENTRY_DSN, SENTRY_ENVIRONMENT*/
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: SENTRY_ENVIRONMENT,
-  tracesSampleRate: 1.0,
-});
 
 var addListener = function (target, event, handler) {
   if (target.attachEvent) {
