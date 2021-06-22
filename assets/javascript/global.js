@@ -17,6 +17,9 @@ var addListener = function (target, event, handler) {
   }
 };
 
+/* eslint-disable-next-line */
+var test_var = brokenJScall_global();
+
 var cookiePolicy = new CookiePolicy();
 cookiePolicy.initBanner(".app-cookie-banner", ".js-accept-cookie", "cookies");
 
