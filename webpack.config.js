@@ -2,9 +2,12 @@ const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require('webpack');
+const dotenv = require('dotenv').config();
 
 module.exports = {
   entry: {
+    sentry: "./assets/javascript/sentry.js",
     main: ["./assets/javascript/global.js", "./assets/scss/global.scss"],
     cms: ["./assets/javascript/cms.js", "./assets/scss/cms.scss"],
     "global-old-ie": "./assets/scss/oldie.scss",
@@ -26,6 +29,10 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [{ from: "./assets/images/", to: "images" }],
+    }),
+    new webpack.DefinePlugin({
+      'SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN),
+      'SENTRY_ENVIRONMENT': JSON.stringify(process.env.SENTRY_ENVIRONMENT),
     }),
   ],
 
