@@ -2,8 +2,7 @@ const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require('webpack');
-const dotenv = require('dotenv').config();
+const webpack = require("webpack");
 
 module.exports = {
   entry: {
@@ -31,8 +30,8 @@ module.exports = {
       patterns: [{ from: "./assets/images/", to: "images" }],
     }),
     new webpack.DefinePlugin({
-      'SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN),
-      'SENTRY_ENVIRONMENT': JSON.stringify(process.env.SENTRY_ENVIRONMENT),
+      SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN),
+      SENTRY_ENVIRONMENT: JSON.stringify(process.env.SENTRY_ENVIRONMENT),
     }),
   ],
 
@@ -74,4 +73,7 @@ module.exports = {
     modules: ["node_modules"],
     extensions: [".js", ".scss"],
   },
+
+  devtool:
+    process.env.NODE_ENV == "development" ? "eval-source-map" : "source-map",
 };

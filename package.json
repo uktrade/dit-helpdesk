@@ -5,15 +5,15 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "clean": "rm -f ./assets/webpack_bundles/*",
-    "dev": "webpack --config webpack.config.js --watch --mode development",
+    "dev": "webpack --config webpack.config.js --watch",
     "heroku-postbuild": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@sentry/browser": "6.7.1",
     "accessible-autocomplete": "^2.0.3",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.1",
-    "dotenv": "10.0.0",
     "file-loader": "^6.2.0",
     "govuk-country-and-territory-autocomplete": "^1.0.1",
     "govuk-frontend": "^3.9.1",
@@ -21,7 +21,6 @@
     "prettier": "^2.3.1",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
-    "@sentry/browser": "6.7.1",
     "webpack": "^5.33.2",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^4.6.0"
