@@ -30,6 +30,8 @@ services:
       && npm install
       && npm run dev
       "
+    env_file:
+      - .env
     volumes:
       - .:/app
     working_dir: /app
