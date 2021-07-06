@@ -7,6 +7,7 @@ const webpack = require("webpack");
 module.exports = {
   entry: {
     sentry: "./assets/javascript/sentry.js",
+    polyfills: "./assets/javascript/polyfills.js",
     main: ["./assets/javascript/global.js", "./assets/scss/global.scss"],
     cms: ["./assets/javascript/cms.js", "./assets/scss/cms.scss"],
     "global-old-ie": "./assets/scss/oldie.scss",
