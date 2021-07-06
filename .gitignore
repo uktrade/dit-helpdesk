@@ -25,8 +25,6 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-dit_helpdesk/trade_tarrif_service/import_data/prepared/*
-dit_helpdesk/trade_tarrif_service/import_data/downloaded/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -136,3 +134,7 @@ test-reports/*
 
 webpack-stats.json
 /assets/webpack_bundles
+
+dit_helpdesk/trade_tarrif_service/import_data/prepared/*
+dit_helpdesk/trade_tarrif_service/import_data/downloaded/*
+dit_helpdesk/rules_of_origin/ingest/data/*.xml
