@@ -49,6 +49,40 @@ class FootnoteProcessorTestCase(TestCase):
 
         self.assertEqual(footnote_processor.note_number_by_id, {"2": 1, "4": 2, "3": 3})
 
+    def test_replace_footnote_alpha_references_in_rule_text(self):
+        footnote_processor = FootnoteReferenceProcessor()
+
+        rule_text = """
+            [b][d] Weaving or knitting/crocheting combined with making-up including cutting of
+            fabric
+            or
+            Manufacture from unembroidered fabric (other than knitted or crocheted), provided that
+            the value of the unembroidered fabric [c] used does not exceed 40 % of the ex-works
+            price
+            of the product [b]
+        """
+
+        replaced_text = footnote_processor.replace_all_notes_references(rule_text)
+
+        def sup(num):
+            return f"<sup>{str(num)})</sup>"
+
+        expected_replaced_text = f"""
+            {sup(1)}{sup(2)} Weaving or knitting/crocheting combined with making-up including cutting of
+            fabric
+            or
+            Manufacture from unembroidered fabric (other than knitted or crocheted), provided that
+            the value of the unembroidered fabric {sup(3)} used does not exceed 40 % of the ex-works
+            price
+            of the product {sup(1)}
+        """
+
+        self.assertEqual(replaced_text, expected_replaced_text)
+
+        self.assertEqual(len(footnote_processor.unique_note_ids), 3)
+
+        self.assertEqual(footnote_processor.note_number_by_id, {"b": 1, "d": 2, "c": 3})
+
     def test_replace_footnote_references_in_multiple_rule_texts(self):
         footnote_processor = FootnoteReferenceProcessor()
 

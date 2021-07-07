@@ -128,18 +128,21 @@ class RulesOfOriginMixin:
 
         found_note_ids = unique_maintain_order(footnote_processor.found_note_ids)
 
-        notes_by_id = {note.identifier: note for note in notes}
+        notes_by_id = {}
+        for alpha_ord, note in enumerate(notes, ord("a")):
+            notes_by_id[note.identifier] = note
+            alpha_identifier = chr(alpha_ord)
+            notes_by_id[alpha_identifier] = note
 
-        filtered_notes = [notes_by_id[note_id] for note_id in found_note_ids]
+        filtered_notes = [(note_id, notes_by_id[note_id]) for note_id in found_note_ids]
 
-        for note in filtered_notes:
-            note_id = note.identifier
+        for note_id, note in filtered_notes:
             note.number = footnote_processor.note_number_by_id[note_id]
             note.note = footnote_processor.replace_all_introductory_notes_references(
                 note.note
             )
 
-        return filtered_notes
+        return [note for _, note in filtered_notes]
 
     def get_rules_of_origin(self, country_code, starting_before=None):
         """
