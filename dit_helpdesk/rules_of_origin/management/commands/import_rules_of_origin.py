@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 import os
+
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
@@ -14,6 +16,9 @@ from hierarchy.models import NomenclatureTree
 from hierarchy.helpers import process_swapped_tree
 
 
+logger = logging.getLogger(__name__)
+
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--reset-all", action="store_true")
@@ -24,15 +29,17 @@ class Command(BaseCommand):
 
     def _import_local(self, path):
         if os.path.isdir(path):
-
-            for root, dirs, files in os.walk(path):
+            for root, _, files in os.walk(path):
                 for filename in files:
                     if not filename.endswith(".xml"):
                         continue
 
-                    import_roo(os.path.join(root, filename))
+                    full_path = os.path.join(root, filename)
+                    logger.info("Importing from local path %s", full_path)
+                    import_roo(full_path)
 
         else:
+            logger.info("Importing from local path %s", path)
             import_roo(path)
 
     def _import_from_s3(self):
@@ -54,25 +61,31 @@ class Command(BaseCommand):
                 temp_file.flush()
                 temp_file.seek(0)
 
+                logger.info("Importing from S3 path %s", obj.key)
                 import_roo(temp_file)
 
     def _handle(self, *args, **options):
-
         local_path = settings.RULES_OF_ORIGIN_DATA_PATH
         s3_bucket = settings.ROO_S3_BUCKET_NAME
 
         active_tree = NomenclatureTree.get_active_tree()
+        logger.info("Importing rules of origin for %s", active_tree)
 
         if any([local_path, s3_bucket]):
+            logger.info("Deleting rules documents…")
             RulesDocument.objects.filter(nomenclature_tree=active_tree).all().delete()
 
             if options["reset_all"]:
+                logger.info("Resetting all…")
                 for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
+                    logger.info("Deleting %s objects", cls)
                     cls.objects.all().delete()
 
         if s3_bucket:
+            logger.info("Importing from S3")
             self._import_from_s3()
         elif local_path:
+            logger.info("Importing from local path")
             self._import_local(local_path)
         else:
             self.stdout.write(
