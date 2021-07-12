@@ -210,3 +210,40 @@ class CountryInformationViewTestCase(TestCase):
         self.assertContains(response, "Custom XX goods")
         self.assertContains(response, "Custom XX grow your business")
         self.assertContains(response, "Custom XX other information")
+
+
+@modify_settings(INSTALLED_APPS={"append": ["countries.tests"]})
+class CountryInformationViewTestCaseEUVersion(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.country = Country.objects.create(
+            country_code="XX", name="Atlantis", is_eu=True
+        )
+        self.url = reverse(
+            "country-information",
+            kwargs={"country_code": self.country.country_code.lower()},
+        )
+
+    def test_EU_country_code_updates(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "countries/EU/information.html")
+
+
+class LocationAutocompleteViewTestCase(TestCase):
+    def setUp(self):
+        self.url = reverse("location-autocomplete")
+
+    def test_location_autocomplete(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, '{"en-GB": "Italy"}')
+
+    @override_settings(COUNTRIES_TO_REMOVE={"IT"})
+    def test_location_autocomplete_remove_country(self):
+        response = self.client.get(self.url)
+        self.assertNotContains(response, '{"en-GB": "Italy"}')
+
+    @override_settings(COUNTRY_SYNONYMS={"IT": ["Italia"]})
+    def test_location_autocomplete_synonym(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, "nym:italia")
