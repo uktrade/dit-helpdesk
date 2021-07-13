@@ -142,25 +142,22 @@ SITE_READ_ONLY = False
 INSTALLED_APPS += [
     "cms",
     "deferred_changes.tests.apps.DeferredChangesTestsConfig",
+    "hierarchy.tests.apps.HierarchyTestsConfig",
 ]
 
 TRADE_TARIFF_CONFIG = {
     "UK": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
-        },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
-        }
+        "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
+        "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
     },
     "EU": {
-        "TREE": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"
-        },
-        "JSON_OBJ": {
-            "BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"
-        }
-    }
+        "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
+        "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
+    },
 }
 
 TRACK_GA_EVENTS = False
+
+ROO_S3_BUCKET_NAME = ""
+ROO_S3_ACCESS_KEY_ID = ""
+ROO_S3_SECRET_ACCESS_KEY = ""

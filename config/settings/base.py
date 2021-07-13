@@ -230,7 +230,7 @@ TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 # regulation import arguments
 REGULATIONS_DATA_PATH = APPS_DIR + "/regulations/data/{0}"
-RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest"
+RULES_OF_ORIGIN_DATA_PATH = APPS_DIR + "/rules_of_origin/ingest/data"
 SEARCH_DATA_PATH = APPS_DIR + "/search/data/{0}"
 
 COMMODITY_CODE_REGEX = "([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})"
@@ -430,7 +430,3 @@ SUPPORTED_TRADE_SCENARIOS = (
 )
 
 AGREEMENTS = [("JP", True), ("EU", True)]
-
-ROO_S3_BUCKET_NAME = env.str("ROO_S3_BUCKET_NAME", "")
-ROO_S3_ACCESS_KEY_ID = env.str("ROO_S3_ACCESS_KEY_ID", "")
-ROO_S3_SECRET_ACCESS_KEY = env.str("ROO_S3_SECRET_ACCESS_KEY", "")
