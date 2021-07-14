@@ -4,6 +4,7 @@ from mixer.backend.django import mixer
 
 from django.urls import reverse
 from django.test import RequestFactory
+from django.contrib.auth import get_user_model
 
 from commodities.models import Commodity
 from core.helpers import reset_urls_for_settings
@@ -23,6 +24,8 @@ from ..forms import (
     SubHeadingAddSearchForm,
 )
 
+from ..models import Approval
+
 from .base import CMSTestCase
 
 from ..views import (
@@ -33,58 +36,67 @@ from ..views import (
     RegulationGroupCommodityAddView,
 )
 
+
 logger = logging.getLogger(__name__)
 
 
-def set_up_nomenclature(self):
-    self.country = Country.objects.all().first()
+class NomenclatureTestCase:
+    def set_up_nomenclature(self):
+        self.country = Country.objects.all().first()
 
-    self.tree = create_nomenclature_tree("UK")
+        self.tree = create_nomenclature_tree("UK")
 
-    self.section = mixer.blend(
-        Section,
-        nomenclature_tree=self.tree,
-    )
+        self.section = mixer.blend(
+            Section,
+            nomenclature_tree=self.tree,
+        )
 
-    self.chapter = mixer.blend(
-        Chapter,
-        nomenclature_tree=self.tree,
-        section=self.section,
-        chapter_code="0100000000",
-        goods_nomenclature_sid="264127",
-    )
+        self.chapter = mixer.blend(
+            Chapter,
+            nomenclature_tree=self.tree,
+            section=self.section,
+            chapter_code="0100000000",
+            goods_nomenclature_sid="264127",
+            description="Inanimate Carbon Rods",
+        )
 
-    self.heading = mixer.blend(
-        Heading,
-        nomenclature_tree=self.tree,
-        chapter=self.chapter,
-        heading_code="0101000000",
-        goods_nomenclature_sid="2",
-    )
+        self.heading = mixer.blend(
+            Heading,
+            nomenclature_tree=self.tree,
+            chapter=self.chapter,
+            heading_code="0101000000",
+            goods_nomenclature_sid="2",
+        )
 
-    self.subheading = mixer.blend(
-        SubHeading,
-        nomenclature_tree=self.tree,
-        heading=self.heading,
-        commodity_code="010101000",
-        goods_nomenclature_sid="2",
-    )
+        self.subheading = mixer.blend(
+            SubHeading,
+            nomenclature_tree=self.tree,
+            heading=self.heading,
+            commodity_code="010101000",
+            goods_nomenclature_sid="2",
+        )
 
-    self.commodity = mixer.blend(
-        Commodity,
-        nomenclature_tree=self.tree,
-        parent_subheading=self.subheading,
-        commodity_code="010101011",
-        goods_nomenclature_sid="2",
-        description="Self Sealing Stem-Bolts",
-    )
+        self.commodity = mixer.blend(
+            Commodity,
+            nomenclature_tree=self.tree,
+            parent_subheading=self.subheading,
+            commodity_code="010101011",
+            goods_nomenclature_sid="2",
+            description="Self Sealing Stem-Bolts",
+        )
 
-    self.reg_group = mixer.blend(
-        RegulationGroup,
-        nomenclature_trees=[self.tree],
-        chapters=[self.chapter],
-        headings=[self.heading],
-    )
+        self.reg_group = mixer.blend(
+            RegulationGroup,
+            nomenclature_trees=[self.tree],
+            chapters=[self.chapter],
+            headings=[self.heading],
+            title="Just an average regulation group",
+        )
+
+        self.reg_group_unlinked = mixer.blend(
+            RegulationGroup,
+            title="Just an empty regulation group",
+        )
 
 
 class TestRegulationGroupsList(CMSTestCase):
@@ -94,7 +106,7 @@ class TestRegulationGroupsList(CMSTestCase):
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_initial_redirect(self):
         response = self.client.get(reverse("cms:home"))
-        self.assertRedirects(response, "/cms/regulation-groups/")
+        self.assertRedirects(response, reverse("cms:regulation-groups-list"))
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_list(self):
@@ -164,6 +176,8 @@ class TestRegulationGroupsList(CMSTestCase):
 class TestRegulationGroupsCreate(CMSTestCase):
     def setUp(self):
         self.login()
+        User = get_user_model()
+        self.user = User.objects.get(username="testuser")
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_group_create_view_form_template_loaded(self):
@@ -179,14 +193,22 @@ class TestRegulationGroupsCreate(CMSTestCase):
                 "title": "Test_Form_Input",
             },
         )
-        self.assertRedirects(response, "/cms/approval/2/")
+        # Get the approval primary key from the redirect URL made by the request above
+        approval_id = response.url.split("/")[3]
+        # Retrieve the approval object from the DB
+        test_approval = Approval.objects.get(pk=approval_id)
+        # Confirm the approval to add the new regulation group
+        test_approval.approve(self.user)
+        # Regulation group should now be added to DB, so retrieve and assert it exists
+        test_reg_group = RegulationGroup.objects.get(title="Test_Form_Input")
+        self.assertIsNotNone(test_reg_group)
 
 
-class TestRegulationGroupDetailView(CMSTestCase):
+class TestRegulationGroupDetailView(CMSTestCase, NomenclatureTestCase):
     def setUp(self):
         self.login()
+        self.set_up_nomenclature()
         self.request_factory = RequestFactory()
-        set_up_nomenclature(self)
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_detail_panel_base(self):
@@ -252,11 +274,13 @@ class TestRegulationGroupDetailView(CMSTestCase):
         )
 
 
-class TestRegulationGroupAddViews(CMSTestCase):
+class TestRegulationGroupAddViews(CMSTestCase, NomenclatureTestCase):
     def setUp(self):
         self.login()
+        self.set_up_nomenclature()
+        User = get_user_model()
+        self.user = User.objects.get(username="testuser")
         self.request_factory = RequestFactory()
-        set_up_nomenclature(self)
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_chapter_add_view(self):
@@ -278,12 +302,22 @@ class TestRegulationGroupAddViews(CMSTestCase):
     def test_chapter_add_form_submitted(self):
         response = self.client.post(
             reverse(
-                "cms:regulation-group-chapter-add", kwargs={"pk": self.reg_group.pk}
+                "cms:regulation-group-chapter-add",
+                kwargs={"pk": self.reg_group_unlinked.pk},
             ),
             data={"chapters": self.chapter.goods_nomenclature_sid},
         )
-        url_str = "/cms/approval/" + str(self.reg_group.pk) + "/"
-        self.assertRedirects(response, url_str)
+
+        # Get the approval primary key from the redirect URL made by the request above
+        approval_id = response.url.split("/")[3]
+        # Retrieve the approval object from the DB
+        test_approval = Approval.objects.get(pk=approval_id)
+        # Confirm the approval to link the chapter to the regulation group
+        test_approval.approve(self.user)
+        # The chapter and Regulation Group should now be linked, so assert it has been added
+        self.assertIsNotNone(
+            self.reg_group_unlinked.chapters.get(chapter_code=self.chapter.chapter_code)
+        )
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_chapter_remove_form_submitted(self):
@@ -292,20 +326,18 @@ class TestRegulationGroupAddViews(CMSTestCase):
                 "cms:regulation-group-chapter-remove",
                 kwargs={"pk": self.reg_group.pk, "chapter_pk": self.chapter.pk},
             ),
+            data={"chapter": self.chapter.goods_nomenclature_sid},
         )
-        remove_content_html = (
-            "Remove <em>"
-            + self.chapter.description
-            + "</em> from <em>"
-            + self.reg_group.title
-            + "</em>?"
-        )
-        self.assertContains(
-            response,
-            remove_content_html,
-            status_code=200,
-            html=True,
-        )
+        # Assert that the chapter is linked to the regulation group before approval
+        self.assertTrue(self.reg_group.chapters.all().exists())
+        # Get the approval primary key from the redirect URL made by the request above
+        approval_id = response.url.split("/")[3]
+        # Retrieve the approval object from the DB
+        test_approval = Approval.objects.get(pk=approval_id)
+        # Confirm the approval to link the chapter to the regulation group
+        test_approval.approve(self.user)
+        # The chapter and Regulation Group should now be unlinked, so assert it has been removed
+        self.assertFalse(self.reg_group.chapters.all().exists())
 
     @reset_urls_for_settings(CMS_ENABLED=True)
     def test_heading_add_view(self):
