@@ -1617,7 +1617,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_conditions_url(self, country_code, measure_id):
         return reverse(
-            "heading-measure-conditions",
+            "subheading-measure-conditions",
             kwargs={
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
@@ -1628,7 +1628,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_northern_ireland_conditions_url(self, country_code, measure_id):
         return reverse(
-            "heading-measure-conditions-northern-ireland",
+            "subheading-measure-conditions-northern-ireland",
             kwargs={
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
@@ -1639,7 +1639,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_quotas_url(self, country_code, measure_id, order_number):
         return reverse(
-            "heading-measure-quota",
+            "subheading-measure-quota",
             kwargs={
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
@@ -1651,7 +1651,7 @@ class SubHeading(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
 
     def get_northern_ireland_quotas_url(self, country_code, measure_id, order_number):
         return reverse(
-            "heading-measure-quota-northern-ireland",
+            "subheading-measure-quota-northern-ireland",
             kwargs={
                 "commodity_code": self.commodity_code,
                 "country_code": country_code,
