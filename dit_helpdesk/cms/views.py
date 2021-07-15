@@ -151,7 +151,6 @@ class BaseAddView(BaseRegulationGroupDetailView):
 
         add_form = self.get_add_form()
         ctx["add_form"] = add_form
-
         return ctx
 
     def get_search_form(self):

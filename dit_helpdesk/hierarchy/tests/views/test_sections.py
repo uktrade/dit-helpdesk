@@ -1,3 +1,5 @@
+import logging
+
 from contextlib import contextmanager
 from unittest import mock
 
@@ -24,7 +26,7 @@ from ...views.sections import (
     TradeStatusSection,
 )
 
-
+logger = logging.getLogger(__name__)
 faker = Faker()
 
 
@@ -709,3 +711,14 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
             self.country, self.heading
         )
         self.assertEqual(response.context["tariff_content_key"], "tariff_content_value")
+
+    def test_context_data_no_trade_scenario(self):
+        with self.mock_has_trade_scenario(False), mock.patch(
+            "hierarchy.views.sections.get_tariff_content_context"
+        ) as mock_get_tariff_content_context:
+            mock_get_tariff_content_context.return_value = {
+                "tariff_content_key": "tariff_content_value"
+            }
+            response = self.client.get(self.get_url())
+        mock_get_tariff_content_context.assert_not_called()
+        self.assertNotIn("tariff_content_key", response.context)
