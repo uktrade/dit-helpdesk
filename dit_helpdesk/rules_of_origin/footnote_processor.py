@@ -28,7 +28,7 @@ class FootnoteReferenceProcessor:
 
         note_number = self.note_number_by_id[ref_id]
 
-        return f"<sup>{note_number})</sup>"
+        return f'<sup><a href="#roo_note_{note_number}" class="govuk-link">{note_number})</a></sup>'
 
     def replace_all_notes_references(self, text):
         if not text:
