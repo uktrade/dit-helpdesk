@@ -262,6 +262,26 @@ class MeasureQuotaDetailNorthernIrelandView(
     model = Heading
 
 
+class MeasureSubHeadingConditionDetailView(BaseMeasureConditionDetailView):
+    model = SubHeading
+
+
+class MeasureSubHeadingQuotaDetailView(BaseMeasureQuotaDetailView):
+    model = SubHeading
+
+
+class MeasureSubHeadingConditionDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureConditionDetailView
+):
+    model = SubHeading
+
+
+class MeasureSubHeadingQuotaDetailNorthernIrelandView(
+    EUCommodityObjectMixin, BaseMeasureQuotaDetailView
+):
+    model = SubHeading
+
+
 class HierarchyContextTreeView(TemplateView):
 
     template_name = "hierarchy/_hierarchy_modal.html"
