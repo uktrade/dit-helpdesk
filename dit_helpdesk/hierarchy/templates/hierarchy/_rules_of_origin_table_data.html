@@ -47,7 +47,7 @@
         {% if data_dict.footnotes %}
             <h4 class="govuk-heading-s govuk-!-margin-top-4">Notes</h4>
             {% for note in data_dict.footnotes %}
-                <a name="roo_note_{{ note.number }}"></a>
+                <a class="roo-footnote-anchor" name="roo_note_{{ note.number }}"></a>
                 <p class="govuk-body govuk-!-font-size-16">{{ note.number }}) {{ note.note }}</p>
             {% endfor %}
         {% endif %}
