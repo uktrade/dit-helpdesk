@@ -196,6 +196,9 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_search_view_tracks_event(self):
+        session = self.client.session
+        session["origin_country"] = None
+        session.save()
         with mock.patch("search.views.track_event") as mock_track_event, mock.patch(
             "search.views.helpers.search_by_term"
         ) as mock_search_by_term, mock.patch(
@@ -237,6 +240,47 @@ class CommoditySearchViewTestCase(CommoditySetupTestCase):
                 value=10,
             )
 
+    def test_search_view_with_commodity_term_not_found(self):
+        with mock.patch("search.views.helpers.search_by_term") as mock_search_by_term:
+
+            mock_search_by_term.return_value = {
+                "results": [],
+                "_all_results": [],
+                "page_range_start": 1,
+                "page_range_end": 1,
+                "total_pages": 1,
+                "total_results": 0,
+                "no_results": True,
+            }
+
+            response = self.client.get(
+                self.url,
+                data={
+                    "q": "socks",
+                    "toggle_headings": 0,
+                    "sort": "ranking",
+                    "sort_order": "desc",
+                    "country": "jp",
+                    "page": 0,
+                },
+            )
+
+            self.assertEqual(response.context["title_suffix"], " (no results)")
+
+    def test_search_view_with_commodity_code_not_found(self):
+        response = self.client.get(
+            self.url,
+            data={
+                "q": "4911910010",
+                "toggle_headings": 0,
+                "sort": "ranking",
+                "sort_order": "desc",
+                "country": "jp",
+                "page": 0,
+            },
+        )
+        self.assertEqual(response.context["title_suffix"], " (no results)")
+
 
 class CommodityTermSearchAPIViewTestCase(CommoditySetupTestCase):
     """
@@ -247,7 +291,7 @@ class CommodityTermSearchAPIViewTestCase(CommoditySetupTestCase):
         resp = self.client.get(reverse("search:commodity-term-api-search"))
         self.assertEqual(resp.status_code, 400)
 
-    def test_search_view_with_code__the_form_is_valid_follow_is_ok(self):
+    def test_search_view_with_term_the_form_is_valid_follow_is_ok(self):
         url = reverse("search:commodity-term-api-search")
         resp = self.client.get(url, data={"q": "Scissors"})
         self.assertEqual(resp.status_code, 200)
@@ -261,6 +305,13 @@ class CommodityCodeSearchAPIViewTestCase(CommoditySetupTestCase):
     def test_search_view_missing_term_returns_http_400(self):
         resp = self.client.get(reverse("search:commodity-code-api-search"))
         self.assertEqual(resp.status_code, 400)
+
+    def test_search_view_with_code_the_form_is_valid_follow_is_ok(self):
+        url = reverse("search:commodity-code-api-search")
+        with mock.patch("search.views.helpers.search_by_code") as mock_search_by_code:
+            resp = self.client.get(url, data={"q": "611500000"})
+            self.assertEqual(resp.status_code, 200)
+        mock_search_by_code.assert_called_with(code="611500000")
 
 
 class SearchFormTestCase(TestCase):

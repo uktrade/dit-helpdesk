@@ -12,5 +12,6 @@ class CMSTestCase(TestCase):
         password = "test"
         user = User.objects.create(username=username, email=email)
         user.set_password(password)
+        user.is_superuser = True
         user.save()
         self.client.login(username=user.username, password=password)
