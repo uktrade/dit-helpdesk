@@ -31,7 +31,7 @@ class FootnoteProcessorTestCase(TestCase):
         replaced_text = footnote_processor.replace_all_notes_references(rule_text)
 
         def sup(num):
-            return f"<sup>{str(num)})</sup>"
+            return f'<sup><a href="#roo_note_{str(num)}" class="govuk-link">{str(num)})</a></sup>'
 
         expected_replaced_text = f"""
             {sup(1)}{sup(2)} Weaving or knitting/crocheting combined with making-up including cutting of
@@ -65,7 +65,7 @@ class FootnoteProcessorTestCase(TestCase):
         replaced_text = footnote_processor.replace_all_notes_references(rule_text)
 
         def sup(num):
-            return f"<sup>{str(num)})</sup>"
+            return f'<sup><a href="#roo_note_{str(num)}" class="govuk-link">{str(num)})</a></sup>'
 
         expected_replaced_text = f"""
             {sup(1)}{sup(2)} Weaving or knitting/crocheting combined with making-up including cutting of
@@ -105,7 +105,7 @@ class FootnoteProcessorTestCase(TestCase):
         replaced_text2 = footnote_processor.replace_all_notes_references(rule_text2)
 
         def sup(num):
-            return f"<sup>{str(num)})</sup>"
+            return f'<sup><a href="#roo_note_{str(num)}" class="govuk-link">{str(num)})</a></sup>'
 
         expected_replaced_text1 = f"""
             {sup(1)}{sup(2)} Weaving or knitting/crocheting combined with making-up including cutting of

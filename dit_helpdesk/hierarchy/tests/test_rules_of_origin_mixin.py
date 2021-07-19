@@ -38,7 +38,7 @@ class RulesOfOriginMixinTestCase(TestCase):
         self.assertEqual(processed_footnotes, [note])
         self.assertEqual(
             rule.rule_text_processed,
-            "This has a footnote <sup>1)</sup>.",
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_with_filtering(self):
@@ -57,7 +57,7 @@ class RulesOfOriginMixinTestCase(TestCase):
         self.assertEqual(processed_footnotes, [note_002])
         self.assertEqual(
             rule.rule_text_processed,
-            "This has a footnote <sup>1)</sup>.",
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_alphabetical_notes(self):
@@ -72,7 +72,7 @@ class RulesOfOriginMixinTestCase(TestCase):
         self.assertEqual(processed_footnotes, [note])
         self.assertEqual(
             rule.rule_text_processed,
-            "This has a footnote <sup>1)</sup>.",
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_alphabetical_notes_filtered(self):
@@ -91,5 +91,5 @@ class RulesOfOriginMixinTestCase(TestCase):
         self.assertEqual(processed_footnotes, [note_002])
         self.assertEqual(
             rule.rule_text_processed,
-            "This has a footnote <sup>1)</sup>.",
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
