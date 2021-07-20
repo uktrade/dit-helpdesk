@@ -30,8 +30,20 @@ class Command(BaseCommand):
     def _import_local(self, path):
         if os.path.isdir(path):
             for root, _, files in os.walk(path):
+                if len(files) <= 1:
+                    # If the only file is the .gitkeep file, we have no data files and need to error
+                    raise Exception(
+                        "There are no Rule Of Origin XML files stored at the given filepath: "
+                        + path
+                    )
+
                 for filename in files:
                     if not filename.endswith(".xml"):
+                        logger.info(
+                            "Local import file "
+                            + filename
+                            + " is not an XML file, skipping to next file."
+                        )
                         continue
 
                     full_path = os.path.join(root, filename)
@@ -51,6 +63,14 @@ class Command(BaseCommand):
 
         summaries = bucket.objects.filter(Prefix="rules_of_origin/")
         xml_objects = [s.Object() for s in summaries if s.key.endswith(".xml")]
+
+        logger.info(
+            "Retrieved "
+            + str(len(xml_objects))
+            + " XML files containing Rules of Origin data from s3 bucket"
+        )
+        if len(xml_objects) < 1:
+            raise Exception("No Rules of Origin files in s3 Bucket")
 
         for obj in xml_objects:
             with NamedTemporaryFile(mode="w+b") as temp_file:
