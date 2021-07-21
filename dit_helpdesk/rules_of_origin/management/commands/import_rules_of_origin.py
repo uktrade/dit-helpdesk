@@ -33,8 +33,7 @@ class Command(BaseCommand):
                 if len(files) <= 1:
                     # If the only file is the .gitkeep file, we have no data files and need to error
                     raise Exception(
-                        "There are no Rule Of Origin XML files stored at the given filepath: "
-                        + path
+                        f"There are no Rule Of Origin XML files stored at the given filepath: {path}"
                     )
 
                 for filename in files:
@@ -65,9 +64,7 @@ class Command(BaseCommand):
         xml_objects = [s.Object() for s in summaries if s.key.endswith(".xml")]
 
         logger.info(
-            "Retrieved "
-            + str(len(xml_objects))
-            + " XML files containing Rules of Origin data from s3 bucket"
+            f"Retrieved {len(xml_objects)} XML files containing Rules of Origin data from s3 bucket"
         )
         if len(xml_objects) < 1:
             raise Exception("No Rules of Origin files in s3 Bucket")

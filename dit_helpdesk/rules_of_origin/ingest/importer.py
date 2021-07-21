@@ -18,6 +18,10 @@ from .parser import parse_file
 logger = logging.getLogger(__name__)
 
 
+# Global used to track countries which have already been processed during this run
+countries_with_docs = []
+
+
 class InvalidDocumentException(Exception):
     pass
 
@@ -28,6 +32,15 @@ class MultipleStartDatesException(InvalidDocumentException):
 
 def _create_document(name, countries_with_dates, gb_start_date, region):
     country_codes = [d["code"] for d in countries_with_dates]
+
+    for country_code in country_codes:
+        if country_code in countries_with_docs:
+            raise InvalidDocumentException(
+                f"RulesDocument has already been created for country_code {country_code} during\
+                this operation, check your source folder for duplicate XMLs or errors."
+            )
+        else:
+            countries_with_docs.append(country_code)
 
     start_date = dt.datetime.strptime(gb_start_date, "%Y-%m-%d")
 
