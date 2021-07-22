@@ -36,8 +36,8 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
     for country_code in country_codes:
         if country_code in countries_with_docs:
             raise InvalidDocumentException(
-                f"RulesDocument has already been created for country_code {country_code} during\
-                this operation, check your source folder for duplicate XMLs or errors."
+                f"RulesDocument has already been created for country_code {country_code} \n"
+                "during this operation, check your source folder for duplicate XMLs or errors."
             )
         else:
             countries_with_docs.append(country_code)
