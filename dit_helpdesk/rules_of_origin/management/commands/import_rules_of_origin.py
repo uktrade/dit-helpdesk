@@ -57,6 +57,7 @@ class Command(BaseCommand):
             bucket_name=settings.ROO_S3_BUCKET_NAME,
             access_key_id=settings.ROO_S3_ACCESS_KEY_ID,
             access_key=settings.ROO_S3_SECRET_ACCESS_KEY,
+            endpoint_url=settings.S3_URL,
         )
 
         summaries = bucket.objects.filter(Prefix="rules_of_origin/")

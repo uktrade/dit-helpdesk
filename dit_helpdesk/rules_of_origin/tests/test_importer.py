@@ -42,7 +42,12 @@ def _just10(val):
     return val.ljust(10, "0")
 
 
-@override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path)
+@override_settings(
+    RULES_OF_ORIGIN_DATA_PATH=test_data_path,
+    ROO_S3_SECRET_ACCESS_KEY="minio_password",
+    ROO_S3_ACCESS_KEY_ID="minio_username",
+    S3_URL="http://host.docker.internal:9000",
+)
 class ImporterTestCase(TestCase):
     """
     Test Rules of Origin Importer
@@ -197,6 +202,45 @@ class ImporterTestCase(TestCase):
 
     @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_empty)
     def test_no_files_in_local_folder(self):
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-success")
+    def test_s3_bucket_success(self):
+        call_command("import_rules_of_origin")
+
+        self.assertEqual(RulesDocument.objects.count(), 1)
+        self.assertEqual(Rule.objects.count(), 6)
+        self.assertEqual(SubRule.objects.count(), 5)
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
+
+        rules_document = RulesDocument.objects.first()
+        self.assertIn(self.country, rules_document.countries.all())
+
+        rule1 = self.chapter1.rules_of_origin.first()
+        self.assertEqual(rule1.description, "Live animals")
+        self.assertFalse(rule1.is_exclusion)
+        self.assertFalse(rule1.subrules.exists())
+
+        rule4 = self.chapter4.rules_of_origin.first()
+        self.assertTrue(rule4.is_exclusion)
+
+        rule0403 = self.heading0403.rules_of_origin.first()
+        self.assertFalse(rule0403.is_exclusion)
+
+        rule_multiple = Rule.objects.get(code="1507 to 1515")
+        self.assertEqual(rule_multiple.headings.count(), 9)
+
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
+    def test_no_files_in_s3_bucket(self):
+        with self.assertRaises(Exception) as empty_exception:
+            call_command("import_rules_of_origin")
+
+        exception_msg = str(empty_exception.exception)
+        self.assertEqual(
+            exception_msg,
+            "No Rules of Origin files in s3 Bucket",
+        )
+
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-missing-prefix")
+    def test_no_roo_prefix_in_s3_bucket(self):
         with self.assertRaises(Exception) as empty_exception:
             call_command("import_rules_of_origin")
 
@@ -204,6 +248,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(
             exception_msg,
             f"There are no Rule Of Origin XML files stored at the given filepath: {test_data_path_empty}",
+            "No Rules of Origin files in s3 Bucket",
         )
 
     @override_settings(

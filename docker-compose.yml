@@ -78,16 +78,16 @@ services:
     hostname: s3
     volumes:
       - ./minio_config:/root/.minio
-      - ./volumes/s3:/export
+      - ./test_data/s3:/export/
     expose:
       - "9000"
     ports:
       - "9000:9000"
     entrypoint: sh
-    command: -c 'mkdir -p "/export/${S3_BUCKET}" && /usr/bin/minio server /export'
+    command: -c '/usr/bin/minio server /export'
     environment:
-      - MINIO_ACCESS_KEY=${S3_ACCESS_KEY_ID}
-      - MINIO_SECRET_KEY=${S3_SECRET_ACCESS_KEY}
+      - MINIO_ROOT_USER=minio_username
+      - MINIO_ROOT_PASSWORD=minio_password
 
 networks:
   inside-network:
