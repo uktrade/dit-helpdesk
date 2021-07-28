@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-import os
 
 from tempfile import NamedTemporaryFile
 
@@ -26,31 +25,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with process_swapped_tree():
             self._handle(*args, **options)
-
-    def _import_local(self, path):
-        if os.path.isdir(path):
-            for root, _, files in os.walk(path):
-                if files == [".gitkeep"]:
-                    # If the only file is the .gitkeep file, we have no data files and need to error
-                    raise Exception(
-                        f"There are no Rule Of Origin XML files stored at the given filepath: {path}"
-                    )
-
-                for filename in files:
-                    if not filename.endswith(".xml"):
-                        logger.info(
-                            "Local import file %s is not an XML file, skipping to next file.",
-                            filename,
-                        )
-                        continue
-
-                    full_path = os.path.join(root, filename)
-                    logger.info("Importing from local path %s", full_path)
-                    import_roo(full_path)
-
-        else:
-            logger.info("Importing from local path %s", path)
-            import_roo(path)
 
     def _import_from_s3(self):
         bucket = _get_s3_bucket(
@@ -83,13 +57,12 @@ class Command(BaseCommand):
                 import_roo(temp_file)
 
     def _handle(self, *args, **options):
-        local_path = settings.RULES_OF_ORIGIN_DATA_PATH
         s3_bucket = settings.ROO_S3_BUCKET_NAME
 
         active_tree = NomenclatureTree.get_active_tree()
         logger.info("Importing rules of origin for %s", active_tree)
 
-        if any([local_path, s3_bucket]):
+        if s3_bucket:
             logger.info("Deleting rules documents…")
             RulesDocument.objects.filter(nomenclature_tree=active_tree).all().delete()
 
@@ -99,13 +72,6 @@ class Command(BaseCommand):
                     logger.info("Deleting %s objects", cls)
                     cls.objects.all().delete()
 
-        if s3_bucket:
-            logger.info("Importing from S3")
             self._import_from_s3()
-        elif local_path:
-            logger.info("Importing from local path")
-            self._import_local(local_path)
         else:
-            self.stdout.write(
-                "Neither S3 credentials nor local path for RoO files provided, skipping."
-            )
+            self.stdout.write("S3 bucket for RoO files not provided, skipping.")
