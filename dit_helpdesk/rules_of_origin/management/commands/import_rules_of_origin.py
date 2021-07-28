@@ -39,9 +39,8 @@ class Command(BaseCommand):
                 for filename in files:
                     if not filename.endswith(".xml"):
                         logger.info(
-                            "Local import file "
-                            + filename
-                            + " is not an XML file, skipping to next file."
+                            "Local import file %s is not an XML file, skipping to next file.",
+                            filename,
                         )
                         continue
 
@@ -64,7 +63,8 @@ class Command(BaseCommand):
         xml_objects = [s.Object() for s in summaries if s.key.endswith(".xml")]
 
         logger.info(
-            f"Retrieved {len(xml_objects)} XML files containing Rules of Origin data from s3 bucket"
+            "Retrieved %s XML files containing Rules of Origin data from s3 bucket",
+            len(xml_objects),
         )
         if len(xml_objects) < 1:
             raise Exception("No Rules of Origin files in s3 Bucket")

@@ -17,7 +17,6 @@ from hierarchy.helpers import create_nomenclature_tree
 from countries.models import Country
 from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFootnote
 
-import rules_of_origin.ingest.importer
 from rules_of_origin.ingest.importer import InvalidDocumentException
 
 
@@ -31,7 +30,10 @@ test_data_path = os.path.join(apps_dir, "rules_of_origin", "data", "test_import"
 test_data_path_missing = os.path.join(
     apps_dir, "rules_of_origin", "data", "test_import", "SAMPLE_FTA_MISSING.xml"
 )
-test_data_path_empty = os.path.join(apps_dir, "rules_of_origin", "ingest", "data")
+test_data_path_empty = os.path.join(apps_dir, "rules_of_origin", "data", "test_empty")
+test_data_path_duplicate = os.path.join(
+    apps_dir, "rules_of_origin", "data", "test_duplicate"
+)
 
 
 def _just10(val):
@@ -45,9 +47,6 @@ class ImporterTestCase(TestCase):
     """
 
     def setUp(self):
-        # Clear global list of already added countries to allow multiple tests use the same sample file
-        rules_of_origin.ingest.importer.countries_with_docs = []
-
         self.country = mixer.blend(Country, name="Test Country", country_code="XT")
 
         self.tree = create_nomenclature_tree()
@@ -169,8 +168,8 @@ class ImporterTestCase(TestCase):
         self.assertFalse(rule.is_exclusion)
         self.assertFalse(rule.chapters.exists())
 
+    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_duplicate)
     def test_duplicate_country_found(self):
-        rules_of_origin.ingest.importer.countries_with_docs = ["XT"]
         with self.assertRaises(InvalidDocumentException) as duplicate_exception:
             call_command("import_rules_of_origin")
 
