@@ -78,7 +78,7 @@ services:
     hostname: s3
     volumes:
       - ./minio_config:/root/.minio
-      - ./test_data/s3:/export/
+      - ./volumes/s3:/export/
     expose:
       - "9000"
     ports:
