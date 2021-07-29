@@ -39,8 +39,12 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
             f"Couldn't find countries with country codes: {missing_codes}"
         )
 
+    nomenclature_tree = NomenclatureTree.get_active_tree(region)
+
     for country in countries:
-        existing_rules_document = RulesDocument.objects.filter(countries=country)
+        existing_rules_document = RulesDocument.objects.filter(
+            countries=country, nomenclature_tree=nomenclature_tree
+        )
         if existing_rules_document:
             raise InvalidDocumentException(
                 f"RulesDocument has already been created for country_code {country.country_code} \n"
@@ -48,7 +52,6 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
             )
 
     logger.info("Creating document %s..", name)
-    nomenclature_tree = NomenclatureTree.get_active_tree(region)
 
     rules_document = RulesDocument.objects.create(
         nomenclature_tree=nomenclature_tree, description=name, start_date=start_date
