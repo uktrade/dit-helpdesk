@@ -4,7 +4,7 @@ import logging
 from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
-from mixer.backend.django import mixer
+from mixer.backend.django import Mixer
 
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter
@@ -42,15 +42,17 @@ class TestHeadingModel(TestCase):
         """
         self.tree = create_nomenclature_tree("UK")
 
-        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
-            mixer.register(model, nomenclature_tree=self.tree)
+        self.heading_model_mixer = Mixer()
 
-        self.section = mixer.blend(Section, section_id=1)
-        self.chapter = mixer.blend(
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            self.heading_model_mixer.register(model, nomenclature_tree=self.tree)
+
+        self.section = self.heading_model_mixer.blend(Section, section_id=1)
+        self.chapter = self.heading_model_mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
         )
 
-        self.heading = mixer.blend(
+        self.heading = self.heading_model_mixer.blend(
             Heading, heading_code="0101000000", chapter=self.chapter
         )
 
@@ -77,19 +79,21 @@ class TestSubHeadingModel(TestCase):
         """
         self.tree = create_nomenclature_tree("UK")
 
-        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
-            mixer.register(model, nomenclature_tree=self.tree)
+        self.subheading_model_mixer = Mixer()
 
-        self.section = mixer.blend(Section, section_id=1)
-        self.chapter = mixer.blend(
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            self.subheading_model_mixer.register(model, nomenclature_tree=self.tree)
+
+        self.section = self.subheading_model_mixer.blend(Section, section_id=1)
+        self.chapter = self.subheading_model_mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
         )
 
-        self.heading = mixer.blend(
+        self.heading = self.subheading_model_mixer.blend(
             Heading, heading_code="0101000000", chapter=self.chapter
         )
 
-        self.subheading = mixer.blend(
+        self.subheading = self.subheading_model_mixer.blend(
             SubHeading, commodity_code="0101210000", heading=self.heading
         )
 
@@ -122,15 +126,17 @@ class TestCommodityModel(TestCase):
         """
         self.tree = create_nomenclature_tree("UK")
 
-        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
-            mixer.register(model, nomenclature_tree=self.tree)
+        self.commodity_model_mixer = Mixer()
 
-        self.section = mixer.blend(Section, section_id=1)
-        self.chapter = mixer.blend(
+        for model in [Section, Chapter, Heading, SubHeading, Commodity]:
+            self.commodity_model_mixer.register(model, nomenclature_tree=self.tree)
+
+        self.section = self.commodity_model_mixer.blend(Section, section_id=1)
+        self.chapter = self.commodity_model_mixer.blend(
             Chapter, chapter_code="0100000000", section=self.section
         )
 
-        self.heading = mixer.blend(
+        self.heading = self.commodity_model_mixer.blend(
             Heading,
             heading_code="0101000000",
             chapter=self.chapter,
@@ -138,13 +144,13 @@ class TestCommodityModel(TestCase):
             tts_json=json.dumps(get_data(settings.HEADING_STRUCTURE)),
         )
 
-        self.subheading = mixer.blend(
+        self.subheading = self.commodity_model_mixer.blend(
             SubHeading,
             commodity_code="0101210000",
             heading=self.heading,
             tts_json=json.dumps(get_data(settings.SUBHEADING_STRUCTURE)),
         )
-        self.commodity = mixer.blend(
+        self.commodity = self.commodity_model_mixer.blend(
             Commodity,
             commodity_code="0101210000",
             tts_json=json.dumps(get_data(settings.COMMODITY_STRUCTURE)),
