@@ -16,6 +16,7 @@ from hierarchy.models import Chapter, Heading
 from hierarchy.helpers import create_nomenclature_tree
 from countries.models import Country
 from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFootnote
+
 from rules_of_origin.ingest.importer import InvalidDocumentException
 
 
@@ -25,8 +26,13 @@ logger.setLevel(logging.INFO)
 
 
 apps_dir = settings.APPS_DIR
-test_data_path = os.path.join(
-    apps_dir, "rules_of_origin", "data", "test_import", "SAMPLE_FTA.xml"
+test_data_path = os.path.join(apps_dir, "rules_of_origin", "data", "test_import")
+test_data_path_missing = os.path.join(
+    apps_dir, "rules_of_origin", "data", "test_import", "SAMPLE_FTA_MISSING.xml"
+)
+test_data_path_empty = os.path.join(apps_dir, "rules_of_origin", "data", "test_empty")
+test_data_path_duplicate = os.path.join(
+    apps_dir, "rules_of_origin", "data", "test_duplicate"
 )
 
 
@@ -97,7 +103,7 @@ class ImporterTestCase(TestCase):
         rule_multiple = Rule.objects.get(code="1507 to 1515")
         self.assertEqual(rule_multiple.headings.count(), 9)
 
-    def test_import_roo__invalid_country(self):
+    def test_import_roo_invalid_country(self):
         Country.objects.all().delete()
 
         with self.assertRaises(InvalidDocumentException):
@@ -109,7 +115,7 @@ class ImporterTestCase(TestCase):
         self.assertFalse(RulesDocumentFootnote.objects.exists())
 
     @freeze_time("2020-12-30")
-    def test_get_rules__pre_start_date(self):
+    def test_get_rules_pre_start_date(self):
         call_command("import_rules_of_origin")
 
         h1509 = Heading.objects.get(heading_code_4="1509")
@@ -126,7 +132,7 @@ class ImporterTestCase(TestCase):
         self.assertFalse(roo_data)
 
     @freeze_time("2021-01-01")
-    def test_get_rules__post_start_date(self):
+    def test_get_rules_post_start_date(self):
         call_command("import_rules_of_origin")
 
         h1509 = Heading.objects.get(heading_code_4="1509")
@@ -161,3 +167,37 @@ class ImporterTestCase(TestCase):
         self.assertTrue(rule.headings.exists())
         self.assertFalse(rule.is_exclusion)
         self.assertFalse(rule.chapters.exists())
+
+    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_duplicate)
+    def test_duplicate_country_found(self):
+        with self.assertRaises(InvalidDocumentException) as duplicate_exception:
+            call_command("import_rules_of_origin")
+
+        exception_msg = str(duplicate_exception.exception)
+        self.assertEqual(
+            exception_msg,
+            "RulesDocument has already been created for country_code XT \n"
+            "during this operation, check your source folder for duplicate XMLs or errors.",
+        )
+
+    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_missing)
+    def test_no_specific_file_in_local_folder(self):
+        with self.assertRaises(FileNotFoundError) as missing_exception:
+            call_command("import_rules_of_origin")
+
+        exception_msg = str(missing_exception.exception)
+        self.assertEqual(
+            exception_msg,
+            f"[Errno 2] No such file or directory: '{test_data_path_missing}'",
+        )
+
+    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_empty)
+    def test_no_files_in_local_folder(self):
+        with self.assertRaises(Exception) as empty_exception:
+            call_command("import_rules_of_origin")
+
+        exception_msg = str(empty_exception.exception)
+        self.assertEqual(
+            exception_msg,
+            f"There are no Rule Of Origin XML files stored at the given filepath: {test_data_path_empty}",
+        )
