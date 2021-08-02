@@ -5,7 +5,9 @@ class FootnoteReferenceProcessor:
     """Used to keep state of encountered notes references in multiple rule texts."""
 
     NOTE_REFERENCE_REGEX = re.compile(r"\[[A-Za-z0-9.]+\]")
-    INTRODUCTORY_NOTE_REFERENCE_REGEX = re.compile(r"@{doc:COMM}\[([A-Za-z0-9\s]+)\]")
+    INTRODUCTORY_NOTE_REFERENCE_REGEX = re.compile(
+        r"@{doc:COMM}\[([A-Za-z0-9\.?\s]+)\]"
+    )
 
     def __init__(self):
         self.found_note_ids = []
