@@ -36,3 +36,8 @@ if READ_ONLY:
 CMS_ENABLED = env.bool("CMS_ENABLED", False)
 if CMS_ENABLED:
     INSTALLED_APPS += ["cms"]
+
+ROO_S3_BUCKET_NAME = env.str("ROO_S3_BUCKET_NAME", "")
+ROO_S3_ACCESS_KEY_ID = env.str("ROO_S3_ACCESS_KEY_ID", "")
+ROO_S3_SECRET_ACCESS_KEY = env.str("ROO_S3_SECRET_ACCESS_KEY", "")
+S3_URL = "http://host.docker.internal:9000"

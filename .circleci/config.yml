@@ -1,4 +1,30 @@
 # ~/.circleci/config.yml
+#version: 2.1
+#jobs:
+#  unit_tests:
+#    machine:
+#      image: ubuntu-2004:202010-01
+#    steps:
+#      - checkout
+#      - run:
+#          name: "step 1"
+#          command: docker-compose up -d
+#      - run:
+#          name: "Testing"
+#          command: docker-compose exec helpdesk /bin/bash
+#
+## CircleCI workflows
+#workflows:
+#  version: 2
+#  helpdesk:
+#    jobs:
+#      - unit_tests
+
+
+
+
+
+
 version: 2
 aliases:
   - &redis_version redis:3.2.10
@@ -6,6 +32,7 @@ aliases:
   - &elasticsearch_version docker.elastic.co/elasticsearch/elasticsearch:7.9.3
   - &python_version circleci/python:3.7
   - &kibana_version docker.elastic.co/kibana/kibana:7.9.3
+  - &s3_version minio/minio:latest
 
   - &unit_base_envs
     DEBUG: True
@@ -74,6 +101,17 @@ aliases:
       ES_URL: http://es:9200
       discovery.type: single-node
 
+  # S3 container
+  - &docker_s3
+    image: *s3_version
+    name: s3
+    entrypoint: sh
+    command: -c '/usr/bin/minio server /export'
+    environment:
+      S3_URL: https://s3:9000
+      MINIO_ROOT_USER: minio_username
+      MINIO_ROOT_PASSWORD: minio_password
+
   # Python container
   - &docker_python
     image: *python_version
@@ -88,48 +126,44 @@ aliases:
       name: Wait for backend
       command: dockerize -wait http://localhost:8000/choose-country/ -timeout 300s
 
+variables:
+ - name: env_list
+   value: "SENTRY_DSN=https://ed15553d18ef4fb289aca57e86c414c3@raven.ci.uktrade.io/168 SENTRY_SECURITY_ENDPOINT=https://sentry.ci.uktrade.digital/api/168/security/ SENTRY_KEY=ed15553d18ef4fb289aca57e86c414c3 SENTRY_ENVIRONMENT=docker-development"
+
 jobs:
   unit_tests:
-    docker:
-      - <<: *docker_python
-        environment: *unit_base_envs
-      - *docker_postgres
-      - *docker_elasticsearch
-      - *docker_redis
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: medium
     working_directory: /tmp/app
     steps:
       - checkout
       - run:
-          name: Install system deps
-          command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
-      - restore_cache:
-          keys:
-            # when lock file changes, use increasingly general patterns to restore cache
-            - v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-      - run:
-          command: pipenv install --system --dev
-      - save_cache:
-          key: v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-          paths:
-            - ~/.local/share/virtualenvs/venv
-      - run:
-          name: Webpack build
-          command: npm install && npm run build
-      - run:
-          name: Running tests
-          command: coverage run manage.py test dit_helpdesk --settings=config.settings.test
-      - run:
-          name: Generate coverage
+          name: Create env file
           command: |
-            coverage report
-            coverage html -d ./test-reports/coverage_html
+            mv .env.template .env
+            printf \\nSENTRY_DSN=`printenv SENTRY_DSN` >> .env
+            printf \\nSENTRY_ENVIRONMENT=development >> .env
+            printf \\nAPM_SERVER_URL=`printenv APM_SERVER_URL` >> .env
+            printf \\nAPM_SECRET_TOKEN=`printenv APM_SECRET_TOKEN` >> .env
+            printf \\nROO_S3_ACCESS_KEY_ID=`printenv ROO_S3_ACCESS_KEY_ID` >> .env
+            printf \\nROO_S3_SECRET_ACCESS_KEY=`printenv ROO_S3_SECRET_ACCESS_KEY` >> .env
+            printf \\nROO_S3_BUCKET_NAME=`printenv ROO_S3_BUCKET_NAME` >> .env
+            printf \\nS3_URL=`printenv S3_URL` >> .env
       - run:
-          name: Lint migrations
-          command: ./lint_migrations.sh
-      - store_test_results:
-          path: ./test-reports/
-      - store_artifacts:
-          path: ./test-reports/coverage_html
+          name: Create docker network
+          command: docker network create directory-forms-api_outside-network
+      - run:
+          name: Start docker container
+          command: docker-compose up -d
+      - run:
+          name: Install Webpack dependencies
+          command: |
+            docker exec app_helpdesk_1 bash -c "apt-get install -y graphviz libgraphviz-dev nodejs npm"
+            docker exec app_helpdesk_1 bash -c "npm install && npm run build"
+      - run:
+          name: Run tests on Docker instance
+          command: docker exec app_helpdesk_1 bash -c "pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test"
 
   format_checks:
     docker:
