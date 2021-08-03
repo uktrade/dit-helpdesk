@@ -147,3 +147,19 @@ class FootnoteProcessorTestCase(TestCase):
         """
 
         self.assertEqual(replaced_text, expected_replaced_text)
+
+        note_text = """
+            For special conditions relating to products made of a mixture of textile materials,
+            see @{doc:COMM}[Introductory Note 6.2].
+        """
+
+        replaced_text = footnote_processor.replace_all_introductory_notes_references(
+            note_text
+        )
+
+        expected_replaced_text = """
+            For special conditions relating to products made of a mixture of textile materials,
+            see Introductory Note 6.2 (below).
+        """
+
+        self.assertEqual(replaced_text, expected_replaced_text)
