@@ -13,12 +13,12 @@ class RulesOfOriginMixinTestCase(TestCase):
     def setUp(self):
         tree = create_nomenclature_tree("UK")
 
-        self.roo_mixer = Mixer()
+        self.mixer = Mixer()
 
-        self.roo_mixer.register(Chapter, nomenclature_tree=tree)
+        self.mixer.register(Chapter, nomenclature_tree=tree)
 
     def test_process_footnotes_no_footnotes(self):
-        chapter = self.roo_mixer.blend(Chapter)
+        chapter = self.mixer.blend(Chapter)
 
         hierarchy_node = RulesOfOriginMixinModel.objects.create(chapter=chapter)
 
@@ -29,12 +29,10 @@ class RulesOfOriginMixinTestCase(TestCase):
         self.assertEqual(processed_footnotes, [])
 
     def test_process_footnotes_with_footnote(self):
-        chapter = self.roo_mixer.blend(Chapter)
+        chapter = self.mixer.blend(Chapter)
 
-        rule = self.roo_mixer.blend(
-            Rule, rule_text_processed="This has a footnote [001]."
-        )
-        note = self.roo_mixer.blend(RulesDocumentFootnote, identifier="001")
+        rule = self.mixer.blend(Rule, rule_text_processed="This has a footnote [001].")
+        note = self.mixer.blend(RulesDocumentFootnote, identifier="001")
         hierarchy_node = RulesOfOriginMixinModel.objects.create(chapter=chapter)
 
         processed_footnotes = hierarchy_node.process_footnotes([rule], [note])
@@ -46,14 +44,12 @@ class RulesOfOriginMixinTestCase(TestCase):
         )
 
     def test_process_footnotes_with_filtering(self):
-        chapter = self.roo_mixer.blend(Chapter)
+        chapter = self.mixer.blend(Chapter)
 
-        rule = self.roo_mixer.blend(
-            Rule, rule_text_processed="This has a footnote [002]."
-        )
-        note_001 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="001")
-        note_002 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="002")
-        note_003 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="003")
+        rule = self.mixer.blend(Rule, rule_text_processed="This has a footnote [002].")
+        note_001 = self.mixer.blend(RulesDocumentFootnote, identifier="001")
+        note_002 = self.mixer.blend(RulesDocumentFootnote, identifier="002")
+        note_003 = self.mixer.blend(RulesDocumentFootnote, identifier="003")
         hierarchy_node = RulesOfOriginMixinModel.objects.create(chapter=chapter)
 
         processed_footnotes = hierarchy_node.process_footnotes(
@@ -67,12 +63,10 @@ class RulesOfOriginMixinTestCase(TestCase):
         )
 
     def test_process_footnotes_alphabetical_notes(self):
-        chapter = self.roo_mixer.blend(Chapter)
+        chapter = self.mixer.blend(Chapter)
 
-        rule = self.roo_mixer.blend(
-            Rule, rule_text_processed="This has a footnote [a]."
-        )
-        note = self.roo_mixer.blend(RulesDocumentFootnote, identifier="001")
+        rule = self.mixer.blend(Rule, rule_text_processed="This has a footnote [a].")
+        note = self.mixer.blend(RulesDocumentFootnote, identifier="001")
         hierarchy_node = RulesOfOriginMixinModel.objects.create(chapter=chapter)
 
         processed_footnotes = hierarchy_node.process_footnotes([rule], [note])
@@ -84,14 +78,12 @@ class RulesOfOriginMixinTestCase(TestCase):
         )
 
     def test_process_footnotes_alphabetical_notes_filtered(self):
-        chapter = self.roo_mixer.blend(Chapter)
+        chapter = self.mixer.blend(Chapter)
 
-        rule = self.roo_mixer.blend(
-            Rule, rule_text_processed="This has a footnote [b]."
-        )
-        note_001 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="001")
-        note_002 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="002")
-        note_003 = self.roo_mixer.blend(RulesDocumentFootnote, identifier="003")
+        rule = self.mixer.blend(Rule, rule_text_processed="This has a footnote [b].")
+        note_001 = self.mixer.blend(RulesDocumentFootnote, identifier="001")
+        note_002 = self.mixer.blend(RulesDocumentFootnote, identifier="002")
+        note_003 = self.mixer.blend(RulesDocumentFootnote, identifier="003")
         hierarchy_node = RulesOfOriginMixinModel.objects.create(chapter=chapter)
 
         processed_footnotes = hierarchy_node.process_footnotes(

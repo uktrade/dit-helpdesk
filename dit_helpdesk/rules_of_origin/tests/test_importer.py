@@ -47,35 +47,33 @@ class ImporterTestCase(TestCase):
     """
 
     def setUp(self):
-        importer_mixer = Mixer()
+        mixer = Mixer()
 
-        self.country = importer_mixer.blend(
-            Country, name="Test Country", country_code="XT"
-        )
+        self.country = mixer.blend(Country, name="Test Country", country_code="XT")
 
         self.tree = create_nomenclature_tree()
 
         for model_class in (Chapter, Heading):
-            importer_mixer.register(model_class, nomenclature_tree=self.tree)
+            mixer.register(model_class, nomenclature_tree=self.tree)
 
-        self.chapter1 = importer_mixer.blend(Chapter, chapter_code=_just10("01"))
+        self.chapter1 = mixer.blend(Chapter, chapter_code=_just10("01"))
 
-        self.chapter4 = importer_mixer.blend(Chapter, chapter_code=_just10("04"))
-        self.heading0403 = importer_mixer.blend(
+        self.chapter4 = mixer.blend(Chapter, chapter_code=_just10("04"))
+        self.heading0403 = mixer.blend(
             Heading,
             heading_code=_just10("0403"),
             heading_code_4="0403",
             chapter=self.chapter4,
         )
 
-        self.chapter13 = importer_mixer.blend(Chapter, chapter_code=_just10("13"))
-        self.heading1302 = importer_mixer.blend(
+        self.chapter13 = mixer.blend(Chapter, chapter_code=_just10("13"))
+        self.heading1302 = mixer.blend(
             Heading, heading_code=_just10("1302"), heading_code_4="1302"
         )
 
         start_code_int = 1507
-        self.chapter15 = importer_mixer.blend(Chapter, chapter_code=_just10("15"))
-        importer_mixer.cycle(9).blend(
+        self.chapter15 = mixer.blend(Chapter, chapter_code=_just10("15"))
+        mixer.cycle(9).blend(
             Heading,
             heading_code=(_just10(str(start_code_int + inc)) for inc in range(9)),
             heading_code_4=(str(start_code_int + inc) for inc in range(9)),
