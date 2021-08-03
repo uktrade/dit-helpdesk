@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 
-from mixer.backend.django import mixer
+from mixer.backend.django import Mixer
 
 from freezegun import freeze_time
 
@@ -47,6 +47,8 @@ class ImporterTestCase(TestCase):
     """
 
     def setUp(self):
+        mixer = Mixer()
+
         self.country = mixer.blend(Country, name="Test Country", country_code="XT")
 
         self.tree = create_nomenclature_tree()

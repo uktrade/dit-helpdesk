@@ -1,4 +1,4 @@
-from mixer.backend.django import mixer
+from mixer.backend.django import Mixer
 
 from django.test import TestCase
 
@@ -20,13 +20,15 @@ class PromoteRegulationGroupsTestCase(TestCase):
 
         self.model_classes = [Chapter, Section, Heading, SubHeading, Commodity]
 
+        self.mixer = Mixer()
+
         for model_class in self.model_classes:
-            mixer.register(model_class, nomenclature_tree=self.tree)
+            self.mixer.register(model_class, nomenclature_tree=self.tree)
 
     def test_models_without_regulations(self):
 
         for model_class in self.model_classes:
-            obj = mixer.blend(model_class)
+            obj = self.mixer.blend(model_class)
             self.assertFalse(obj.regulationgroup_set.exists())
             promote_regulation_groups(obj)
             self.assertFalse(obj.regulationgroup_set.exists())
@@ -42,8 +44,8 @@ class PromoteRegulationGroupsTestCase(TestCase):
         ]
 
         for model_class, relation_attr in model_classes:
-            obj = mixer.blend(model_class)
-            regulation = mixer.blend(RegulationGroup, **{relation_attr: obj})
+            obj = self.mixer.blend(model_class)
+            regulation = self.mixer.blend(RegulationGroup, **{relation_attr: obj})
 
             promote_regulation_groups(obj)
             self.assertEqual(obj.regulationgroup_set.count(), 1)
@@ -66,9 +68,9 @@ class PromoteRegulationGroupsTestCase(TestCase):
            |
         Commodity  - No regulation
         """
-        heading = mixer.blend(Heading)
-        commodity = mixer.blend(Commodity, heading=heading)
-        regulation = mixer.blend(RegulationGroup, commodities=commodity)
+        heading = self.mixer.blend(Heading)
+        commodity = self.mixer.blend(Commodity, heading=heading)
+        regulation = self.mixer.blend(RegulationGroup, commodities=commodity)
 
         self.assertFalse(heading.regulationgroup_set.exists())
         self.assertEqual(commodity.regulationgroup_set.count(), 1)
@@ -97,10 +99,10 @@ class PromoteRegulationGroupsTestCase(TestCase):
                   |                              |
         Commodity - No regulation    Commodity - No regulation
         """
-        heading = mixer.blend(Heading)
-        a_commodity = mixer.blend(Commodity, heading=heading)
-        b_commodity = mixer.blend(Commodity, heading=heading)
-        regulation = mixer.blend(
+        heading = self.mixer.blend(Heading)
+        a_commodity = self.mixer.blend(Commodity, heading=heading)
+        b_commodity = self.mixer.blend(Commodity, heading=heading)
+        regulation = self.mixer.blend(
             RegulationGroup, commodities=[a_commodity, b_commodity]
         )
 
@@ -136,13 +138,13 @@ class PromoteRegulationGroupsTestCase(TestCase):
                   |                              |
         Commodity - <RegulationGroup: B>    Commodity - No regulation
         """
-        heading = mixer.blend(Heading)
-        a_commodity = mixer.blend(Commodity, heading=heading)
-        b_commodity = mixer.blend(Commodity, heading=heading)
-        a_regulation = mixer.blend(
+        heading = self.mixer.blend(Heading)
+        a_commodity = self.mixer.blend(Commodity, heading=heading)
+        b_commodity = self.mixer.blend(Commodity, heading=heading)
+        a_regulation = self.mixer.blend(
             RegulationGroup, commodities=[a_commodity, b_commodity]
         )
-        b_regulation = mixer.blend(RegulationGroup, commodities=[a_commodity])
+        b_regulation = self.mixer.blend(RegulationGroup, commodities=[a_commodity])
 
         self.assertFalse(heading.regulationgroup_set.exists())
         self.assertEqual(a_commodity.regulationgroup_set.count(), 2)
@@ -182,12 +184,12 @@ class PromoteRegulationGroupsTestCase(TestCase):
            |
         Commodity    - No RegulationGroup
         """
-        section = mixer.blend(Section)
-        chapter = mixer.blend(Chapter, section=section)
-        heading = mixer.blend(Heading, chapter=chapter)
-        sub_heading = mixer.blend(SubHeading, heading=heading)
-        commodity = mixer.blend(Commodity, parent_subheading=sub_heading)
-        regulation = mixer.blend(RegulationGroup, commodities=commodity)
+        section = self.mixer.blend(Section)
+        chapter = self.mixer.blend(Chapter, section=section)
+        heading = self.mixer.blend(Heading, chapter=chapter)
+        sub_heading = self.mixer.blend(SubHeading, heading=heading)
+        commodity = self.mixer.blend(Commodity, parent_subheading=sub_heading)
+        regulation = self.mixer.blend(RegulationGroup, commodities=commodity)
 
         self.assertFalse(section.regulationgroup_set.exists())
         self.assertFalse(chapter.regulationgroup_set.exists())
@@ -208,26 +210,26 @@ class PromoteRegulationGroupsTestCase(TestCase):
         """
         Test multi children level hierarchy
         """
-        section = mixer.blend(Section)
+        section = self.mixer.blend(Section)
 
-        a_chapter = mixer.blend(Chapter, section=section)
-        b_chapter = mixer.blend(Chapter, section=section)
+        a_chapter = self.mixer.blend(Chapter, section=section)
+        b_chapter = self.mixer.blend(Chapter, section=section)
         chapters = [a_chapter, b_chapter]
 
-        a_a_heading = mixer.blend(Heading, chapter=a_chapter)
-        a_b_heading = mixer.blend(Heading, chapter=a_chapter)
-        b_a_heading = mixer.blend(Heading, chapter=b_chapter)
-        b_b_heading = mixer.blend(Heading, chapter=b_chapter)
+        a_a_heading = self.mixer.blend(Heading, chapter=a_chapter)
+        a_b_heading = self.mixer.blend(Heading, chapter=a_chapter)
+        b_a_heading = self.mixer.blend(Heading, chapter=b_chapter)
+        b_b_heading = self.mixer.blend(Heading, chapter=b_chapter)
         headings = [a_a_heading, a_b_heading, b_a_heading, b_b_heading]
 
-        a_a_a_sub_heading = mixer.blend(SubHeading, heading=a_a_heading)
-        a_a_b_sub_heading = mixer.blend(SubHeading, heading=a_a_heading)
-        a_b_a_sub_heading = mixer.blend(SubHeading, heading=a_b_heading)
-        a_b_b_sub_heading = mixer.blend(SubHeading, heading=a_b_heading)
-        b_a_a_sub_heading = mixer.blend(SubHeading, heading=b_a_heading)
-        b_a_b_sub_heading = mixer.blend(SubHeading, heading=b_a_heading)
-        b_b_a_sub_heading = mixer.blend(SubHeading, heading=b_b_heading)
-        b_b_b_sub_heading = mixer.blend(SubHeading, heading=b_b_heading)
+        a_a_a_sub_heading = self.mixer.blend(SubHeading, heading=a_a_heading)
+        a_a_b_sub_heading = self.mixer.blend(SubHeading, heading=a_a_heading)
+        a_b_a_sub_heading = self.mixer.blend(SubHeading, heading=a_b_heading)
+        a_b_b_sub_heading = self.mixer.blend(SubHeading, heading=a_b_heading)
+        b_a_a_sub_heading = self.mixer.blend(SubHeading, heading=b_a_heading)
+        b_a_b_sub_heading = self.mixer.blend(SubHeading, heading=b_a_heading)
+        b_b_a_sub_heading = self.mixer.blend(SubHeading, heading=b_b_heading)
+        b_b_b_sub_heading = self.mixer.blend(SubHeading, heading=b_b_heading)
         sub_headings = [
             a_a_a_sub_heading,
             a_a_b_sub_heading,
@@ -239,22 +241,54 @@ class PromoteRegulationGroupsTestCase(TestCase):
             b_b_b_sub_heading,
         ]
 
-        a_a_a_a_commodity = mixer.blend(Commodity, parent_subheading=a_a_a_sub_heading)
-        a_a_a_b_commodity = mixer.blend(Commodity, parent_subheading=a_a_a_sub_heading)
-        a_a_b_a_commodity = mixer.blend(Commodity, parent_subheading=a_a_b_sub_heading)
-        a_a_b_b_commodity = mixer.blend(Commodity, parent_subheading=a_a_b_sub_heading)
-        a_b_a_a_commodity = mixer.blend(Commodity, parent_subheading=a_b_a_sub_heading)
-        a_b_a_b_commodity = mixer.blend(Commodity, parent_subheading=a_b_a_sub_heading)
-        a_b_b_a_commodity = mixer.blend(Commodity, parent_subheading=a_b_b_sub_heading)
-        a_b_b_b_commodity = mixer.blend(Commodity, parent_subheading=a_b_b_sub_heading)
-        b_a_a_a_commodity = mixer.blend(Commodity, parent_subheading=b_a_a_sub_heading)
-        b_a_a_b_commodity = mixer.blend(Commodity, parent_subheading=b_a_a_sub_heading)
-        b_a_b_a_commodity = mixer.blend(Commodity, parent_subheading=b_a_b_sub_heading)
-        b_a_b_b_commodity = mixer.blend(Commodity, parent_subheading=b_a_b_sub_heading)
-        b_b_a_a_commodity = mixer.blend(Commodity, parent_subheading=b_b_a_sub_heading)
-        b_b_a_b_commodity = mixer.blend(Commodity, parent_subheading=b_b_a_sub_heading)
-        b_b_b_a_commodity = mixer.blend(Commodity, parent_subheading=b_b_b_sub_heading)
-        b_b_b_b_commodity = mixer.blend(Commodity, parent_subheading=b_b_b_sub_heading)
+        a_a_a_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_a_a_sub_heading
+        )
+        a_a_a_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_a_a_sub_heading
+        )
+        a_a_b_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_a_b_sub_heading
+        )
+        a_a_b_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_a_b_sub_heading
+        )
+        a_b_a_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_b_a_sub_heading
+        )
+        a_b_a_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_b_a_sub_heading
+        )
+        a_b_b_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_b_b_sub_heading
+        )
+        a_b_b_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=a_b_b_sub_heading
+        )
+        b_a_a_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_a_a_sub_heading
+        )
+        b_a_a_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_a_a_sub_heading
+        )
+        b_a_b_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_a_b_sub_heading
+        )
+        b_a_b_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_a_b_sub_heading
+        )
+        b_b_a_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_b_a_sub_heading
+        )
+        b_b_a_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_b_a_sub_heading
+        )
+        b_b_b_a_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_b_b_sub_heading
+        )
+        b_b_b_b_commodity = self.mixer.blend(
+            Commodity, parent_subheading=b_b_b_sub_heading
+        )
         commodities = [
             a_a_a_a_commodity,
             a_a_a_b_commodity,
@@ -274,7 +308,7 @@ class PromoteRegulationGroupsTestCase(TestCase):
             b_b_b_b_commodity,
         ]
 
-        regulation = mixer.blend(
+        regulation = self.mixer.blend(
             RegulationGroup, commodities=[c.pk for c in commodities]
         )
 
@@ -307,39 +341,39 @@ class PromoteRegulationGroupsTestCase(TestCase):
         """
         Test multi regulations and multi children level hierarchy
         """
-        section = mixer.blend(Section)
+        section = self.mixer.blend(Section)
 
-        a_chapter = mixer.blend(Chapter, chapter_code="a", section=section)
-        b_chapter = mixer.blend(Chapter, chapter_code="b", section=section)
+        a_chapter = self.mixer.blend(Chapter, chapter_code="a", section=section)
+        b_chapter = self.mixer.blend(Chapter, chapter_code="b", section=section)
 
-        a_a_heading = mixer.blend(Heading, heading_code="a_a", chapter=a_chapter)
-        a_b_heading = mixer.blend(Heading, heading_code="a_b", chapter=a_chapter)
-        b_a_heading = mixer.blend(Heading, heading_code="b_a", chapter=b_chapter)
-        b_b_heading = mixer.blend(Heading, heading_code="b_b", chapter=b_chapter)
+        a_a_heading = self.mixer.blend(Heading, heading_code="a_a", chapter=a_chapter)
+        a_b_heading = self.mixer.blend(Heading, heading_code="a_b", chapter=a_chapter)
+        b_a_heading = self.mixer.blend(Heading, heading_code="b_a", chapter=b_chapter)
+        b_b_heading = self.mixer.blend(Heading, heading_code="b_b", chapter=b_chapter)
         headings = [a_a_heading, a_b_heading, b_a_heading, b_b_heading]
 
-        a_a_a_sub_heading = mixer.blend(
+        a_a_a_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="a_a_a", heading=a_a_heading
         )
-        a_a_b_sub_heading = mixer.blend(
+        a_a_b_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="a_a_b", heading=a_a_heading
         )
-        a_b_a_sub_heading = mixer.blend(
+        a_b_a_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="a_b_a", heading=a_b_heading
         )
-        a_b_b_sub_heading = mixer.blend(
+        a_b_b_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="a_b_b", heading=a_b_heading
         )
-        b_a_a_sub_heading = mixer.blend(
+        b_a_a_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="b_a_a", heading=b_a_heading
         )
-        b_a_b_sub_heading = mixer.blend(
+        b_a_b_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="b_a_b", heading=b_a_heading
         )
-        b_b_a_sub_heading = mixer.blend(
+        b_b_a_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="b_b_a", heading=b_b_heading
         )
-        b_b_b_sub_heading = mixer.blend(
+        b_b_b_sub_heading = self.mixer.blend(
             SubHeading, commodity_code="b_b_b", heading=b_b_heading
         )
         sub_headings = [
@@ -353,52 +387,52 @@ class PromoteRegulationGroupsTestCase(TestCase):
             b_b_b_sub_heading,
         ]
 
-        a_a_a_a_commodity = mixer.blend(
+        a_a_a_a_commodity = self.mixer.blend(
             Commodity, commodity_code="a_a_a_a", parent_subheading=a_a_a_sub_heading
         )
-        a_a_a_b_commodity = mixer.blend(
+        a_a_a_b_commodity = self.mixer.blend(
             Commodity, commodity_code="a_a_a_b", parent_subheading=a_a_a_sub_heading
         )
-        a_a_b_a_commodity = mixer.blend(
+        a_a_b_a_commodity = self.mixer.blend(
             Commodity, commodity_code="a_a_b_a", parent_subheading=a_a_b_sub_heading
         )
-        a_a_b_b_commodity = mixer.blend(
+        a_a_b_b_commodity = self.mixer.blend(
             Commodity, commodity_code="a_a_b_b", parent_subheading=a_a_b_sub_heading
         )
-        a_b_a_a_commodity = mixer.blend(
+        a_b_a_a_commodity = self.mixer.blend(
             Commodity, commodity_code="a_b_a_a", parent_subheading=a_b_a_sub_heading
         )
-        a_b_a_b_commodity = mixer.blend(
+        a_b_a_b_commodity = self.mixer.blend(
             Commodity, commodity_code="a_b_a_b", parent_subheading=a_b_a_sub_heading
         )
-        a_b_b_a_commodity = mixer.blend(
+        a_b_b_a_commodity = self.mixer.blend(
             Commodity, commodity_code="a_b_b_a", parent_subheading=a_b_b_sub_heading
         )
-        a_b_b_b_commodity = mixer.blend(
+        a_b_b_b_commodity = self.mixer.blend(
             Commodity, commodity_code="a_b_b_b", parent_subheading=a_b_b_sub_heading
         )
-        b_a_a_a_commodity = mixer.blend(
+        b_a_a_a_commodity = self.mixer.blend(
             Commodity, commodity_code="b_a_a_a", parent_subheading=b_a_a_sub_heading
         )
-        b_a_a_b_commodity = mixer.blend(
+        b_a_a_b_commodity = self.mixer.blend(
             Commodity, commodity_code="b_a_a_b", parent_subheading=b_a_a_sub_heading
         )
-        b_a_b_a_commodity = mixer.blend(
+        b_a_b_a_commodity = self.mixer.blend(
             Commodity, commodity_code="b_a_b_a", parent_subheading=b_a_b_sub_heading
         )
-        b_a_b_b_commodity = mixer.blend(
+        b_a_b_b_commodity = self.mixer.blend(
             Commodity, commodity_code="b_a_b_b", parent_subheading=b_a_b_sub_heading
         )
-        b_b_a_a_commodity = mixer.blend(
+        b_b_a_a_commodity = self.mixer.blend(
             Commodity, commodity_code="b_b_a_a", parent_subheading=b_b_a_sub_heading
         )
-        b_b_a_b_commodity = mixer.blend(
+        b_b_a_b_commodity = self.mixer.blend(
             Commodity, commodity_code="b_b_a_b", parent_subheading=b_b_a_sub_heading
         )
-        b_b_b_a_commodity = mixer.blend(
+        b_b_b_a_commodity = self.mixer.blend(
             Commodity, commodity_code="b_b_b_a", parent_subheading=b_b_b_sub_heading
         )
-        b_b_b_b_commodity = mixer.blend(
+        b_b_b_b_commodity = self.mixer.blend(
             Commodity, commodity_code="b_b_b_b", parent_subheading=b_b_b_sub_heading
         )
         commodities = [
@@ -421,31 +455,31 @@ class PromoteRegulationGroupsTestCase(TestCase):
         ]
 
         a_regulation_commodities = commodities
-        a_regulation = mixer.blend(
+        a_regulation = self.mixer.blend(
             RegulationGroup,
             title="a_regulation",
             commodities=[c.pk for c in a_regulation_commodities],
         )
         b_regulation_commodities = commodities[:8]
-        b_regulation = mixer.blend(
+        b_regulation = self.mixer.blend(
             RegulationGroup,
             title="b_regulation",
             commodities=[c.pk for c in b_regulation_commodities],
         )
         c_regulation_commodities = commodities[:4]
-        c_regulation = mixer.blend(
+        c_regulation = self.mixer.blend(
             RegulationGroup,
             title="c_regulation",
             commodities=[c.pk for c in c_regulation_commodities],
         )
         d_regulation_commodities = commodities[:2]
-        d_regulation = mixer.blend(
+        d_regulation = self.mixer.blend(
             RegulationGroup,
             title="d_regulation",
             commodities=[c.pk for c in d_regulation_commodities],
         )
         e_regulation_commodities = commodities[:1]
-        e_regulation = mixer.blend(
+        e_regulation = self.mixer.blend(
             RegulationGroup,
             title="e_regulation",
             commodities=[c.pk for c in e_regulation_commodities],
@@ -493,10 +527,10 @@ class PromoteRegulationGroupsTestCase(TestCase):
            |
         Commodity  - No regulation
         """
-        a_sub_heading = mixer.blend(SubHeading)
-        b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
-        commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
-        regulation = mixer.blend(RegulationGroup, commodities=commodity)
+        a_sub_heading = self.mixer.blend(SubHeading)
+        b_sub_heading = self.mixer.blend(SubHeading, parent_subheading=a_sub_heading)
+        commodity = self.mixer.blend(Commodity, parent_subheading=b_sub_heading)
+        regulation = self.mixer.blend(RegulationGroup, commodities=commodity)
 
         self.assertFalse(a_sub_heading.regulationgroup_set.exists())
         self.assertFalse(b_sub_heading.regulationgroup_set.exists())
@@ -531,11 +565,11 @@ class PromoteRegulationGroupsTestCase(TestCase):
            |
         Commodity  - No regulation
         """
-        heading = mixer.blend(Heading)
-        a_sub_heading = mixer.blend(SubHeading, heading=heading)
-        b_sub_heading = mixer.blend(SubHeading, parent_subheading=a_sub_heading)
-        commodity = mixer.blend(Commodity, parent_subheading=b_sub_heading)
-        regulation = mixer.blend(RegulationGroup, commodities=commodity)
+        heading = self.mixer.blend(Heading)
+        a_sub_heading = self.mixer.blend(SubHeading, heading=heading)
+        b_sub_heading = self.mixer.blend(SubHeading, parent_subheading=a_sub_heading)
+        commodity = self.mixer.blend(Commodity, parent_subheading=b_sub_heading)
+        regulation = self.mixer.blend(RegulationGroup, commodities=commodity)
 
         self.assertFalse(a_sub_heading.regulationgroup_set.exists())
         self.assertFalse(b_sub_heading.regulationgroup_set.exists())
