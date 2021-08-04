@@ -261,12 +261,18 @@ class BaseMeasureQuotaDetailView(GetCommodityObjectMixin, TemplateView):
         self.import_measure = self.commodity_object.tts_obj.get_import_measure_by_id(
             measure_id, country_code=country_code
         )
+        if not self.import_measure:
+            raise Http404
+
         order_number = kwargs["order_number"]
         self.quota_def = (
             self.import_measure.get_measure_quota_definition_by_order_number(
                 order_number
             )
         )
+        if not self.quota_def:
+            raise Http404
+
         self.geographical_area = self.import_measure.get_geographical_area()
 
         return super().get(request, **kwargs)
