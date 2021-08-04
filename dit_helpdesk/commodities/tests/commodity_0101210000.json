@@ -3932,7 +3932,25 @@
                 "description": "Veterinary control",
                 "id": "410"
             },
-            "order_number": null,
+            "order_number": {
+                "definition": {
+                  "initial_volume": "1000000.0",
+                  "validity_start_date": "2021-01-01T00:00:00.000Z",
+                  "validity_end_date": "2031-12-31T23:59:59.000Z",
+                  "status": "Open",
+                  "description": null,
+                  "measurement_unit": "Kilogram (kg)",
+                  "monetary_unit": null,
+                  "measurement_unit_qualifier": null,
+                  "balance": "50000.00",
+                  "last_allocation_date": "2031-07-23T13:22:00.000Z",
+                  "suspension_period_start_date": null,
+                  "suspension_period_end_date": null,
+                  "blocking_period_start_date": null,
+                  "blocking_period_end_date": null
+                },
+                "number": "12345"
+            },
             "origin": "eu",
             "vat": false
         },

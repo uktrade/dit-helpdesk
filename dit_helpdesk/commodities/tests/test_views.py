@@ -309,3 +309,103 @@ class MeasureConditionDetailTestCase(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, reverse("choose-country"))
+
+    def test_measure_condition_non_existent_measure_id(self):
+        resp = self.client.get(
+            reverse(
+                "commodity-measure-conditions",
+                kwargs={
+                    "commodity_code": settings.TEST_COMMODITY_CODE,
+                    "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
+                    "measure_id": 99,
+                },
+            )
+        )
+        self.assertEqual(resp.status_code, 404)
+
+
+class MeasureQuotaDetailTestCase(TestCase):
+
+    """
+    Test Measure Quota Detail View
+    """
+
+    def setUp(self):
+        self.tree = create_nomenclature_tree(region="UK")
+
+        self.commodity = mixer.blend(
+            Commodity,
+            commodity_code=settings.TEST_COMMODITY_CODE,
+            goods_nomenclature_sid=12345,
+            nomenclature_tree=self.tree,
+        )
+        self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_DATA))
+        self.commodity.save_cache()
+
+    def test_commodity_has_tts_json(self):
+        self.assertTrue(self.commodity.tts_obj)
+
+    def test_commodity_json_has_measure_conditions(self):
+        self.assertTrue("measure_conditions" in self.commodity.tts_json)
+
+    def test_measure_quota_detail_http_status_is_200(self):
+        resp = self.client.get(
+            reverse(
+                "commodity-measure-quota",
+                kwargs={
+                    "commodity_code": settings.TEST_COMMODITY_CODE,
+                    "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
+                    "measure_id": 1,
+                    "order_number": 12345,
+                },
+            )
+        )
+        self.assertEqual(resp.status_code, 200)
+
+    def test_measure_quota_detail_with_nonexisting_country_code(self):
+        resp = self.client.get(
+            reverse(
+                "commodity-measure-quota",
+                kwargs={
+                    "commodity_code": settings.TEST_COMMODITY_CODE,
+                    "country_code": "XY",
+                    "nomenclature_sid": 12345,
+                    "measure_id": 1,
+                    "order_number": 1,
+                },
+            )
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, reverse("choose-country"))
+
+    def test_measure_quota_non_existent_measure_id(self):
+        resp = self.client.get(
+            reverse(
+                "commodity-measure-quota",
+                kwargs={
+                    "commodity_code": settings.TEST_COMMODITY_CODE,
+                    "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
+                    "measure_id": 99,
+                    "order_number": 99999,
+                },
+            )
+        )
+        self.assertEqual(resp.status_code, 404)
+
+    def test_measure_quota_non_existent_order_number(self):
+        resp = self.client.get(
+            reverse(
+                "commodity-measure-quota",
+                kwargs={
+                    "commodity_code": settings.TEST_COMMODITY_CODE,
+                    "country_code": settings.TEST_COUNTRY_CODE,
+                    "nomenclature_sid": 12345,
+                    "measure_id": 1,
+                    "order_number": 99999,
+                },
+            )
+        )
+        self.assertEqual(resp.status_code, 404)
