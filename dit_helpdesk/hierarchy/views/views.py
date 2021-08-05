@@ -1,14 +1,8 @@
 import logging
 
 from django.conf import settings
-from django.contrib import messages
 from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404, redirect, render, reverse
 
-from countries.models import Country
-from regulations.models import RegulationGroup
-
-from ..helpers import TABLE_COLUMN_TITLES
 from ..models import Chapter, Heading, SubHeading
 
 from .base import (
@@ -17,11 +11,7 @@ from .base import (
     BaseMeasureQuotaDetailView,
     BaseSectionedCommodityObjectDetailView,
 )
-from .helpers import (
-    get_hierarchy_context,
-    hierarchy_section_header,
-    get_hierarchy_context_from_object,
-)
+from .helpers import get_hierarchy_context_from_object
 from ..helpers import get_code_argument_by_class
 from .mixins import EUCommodityObjectMixin
 from .sections import (
@@ -43,62 +33,6 @@ from .sections import (
 from commodities.models import Commodity
 
 logger = logging.getLogger(__name__)
-
-
-def section_detail(request, section_id, country_code):
-    """
-    View for the heading detail page template which takes two arguments; the 10 digit code for the heading to
-    display and the two character country code to provide the exporter geographical context which is
-    used to display the appropriate related supporting content
-
-    :param heading_code:
-    :param request: django http request object
-    :param country_code: string
-    :return:
-    """
-
-    country = Country.objects.filter(country_code=country_code.upper()).first()
-
-    if not country:
-        messages.error(request, "Invalid originCountry")
-        return redirect(reverse("choose-country"))
-
-    section = get_object_or_404(Heading, heading_code=section_id)
-
-    if section.should_update_tts_content():
-        section.update_tts_content()
-
-    import_measures = section.tts_obj.get_import_measures(country.country_code)
-
-    table_data = [measure_json.get_table_row() for measure_json in import_measures]
-
-    section_path = section.get_path()
-    accordion_title = hierarchy_section_header(section_path)
-    rules_of_origin = section.get_rules_of_origin(country_code=country.country_code)
-
-    modals_dict = {}
-    for measure_json in import_measures:
-        modals_dict.update(measure_json.measures_modals)
-
-    context = {
-        "selected_origin_country": country.country_code,
-        "section": section,
-        "selected_origin_country_name": country.name,
-        "rules_of_origin": rules_of_origin,
-        "roo_footnotes": rules_of_origin,
-        "table_data": table_data,
-        "column_titles": TABLE_COLUMN_TITLES,
-        "regulation_groups": RegulationGroup.objects.inherited(section).order_by(
-            "title"
-        ),
-        "accordion_title": accordion_title,
-        "section_hierarchy_context": get_hierarchy_context(
-            section_path, country.country_code, section_id
-        ),
-        "modals": modals_dict,
-    }
-
-    return render(request, "hierarchy/section_detail.html", context)
 
 
 class ChapterDetailView(BaseCommodityObjectDetailView):

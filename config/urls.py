@@ -55,11 +55,6 @@ urlpatterns = [
         "help/cookies/", cookie_views.CookieDetailsView.as_view(), name="cookie-details"
     ),
     re_path(
-        r"^country/(?P<country_code>\w+)/section/(?P<section_id>\d{1,2})$",
-        hierarchy_views.section_detail,
-        name="section-detail",
-    ),
-    re_path(
         r"^country/(?P<country_code>\w+)/chapter/(?P<commodity_code>\d{10})/(?P<nomenclature_sid>\d+)$",
         hierarchy_views.ChapterDetailView.as_view(),
         name="chapter-detail",

@@ -6,7 +6,6 @@ from unittest import mock
 
 from django.conf import settings
 from django.test import Client, TestCase
-from django.urls import reverse
 
 from commodities.models import Commodity
 from core.helpers import patch_tts_json
@@ -53,13 +52,6 @@ class HierarchyViewTestCase(TestCase):
 
         self.section = create_instance(
             get_data(settings.SECTION_STRUCTURE, self.tree), Section
-        )
-        self.section_url = reverse(
-            "section-detail",
-            kwargs={
-                "country_code": self.country.country_code.lower(),
-                "section_id": self.section.section_id,
-            },
         )
 
         self.chapter = create_instance(
@@ -126,7 +118,6 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         self.assertEqual(accordion_title, "Section I: Live animals; animal products")
 
         hierarchy_context = ctx["hierarchy_context"]
-        self.assertInHTML(self.section_url, hierarchy_context, count=0)
         self.assertInHTML("Live animals", hierarchy_context)
         self.assertNotIn(self.chapter_url, hierarchy_context)
         self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
