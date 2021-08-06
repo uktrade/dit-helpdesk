@@ -40,4 +40,4 @@ if CMS_ENABLED:
 ROO_S3_BUCKET_NAME = env.str("ROO_S3_BUCKET_NAME", "")
 ROO_S3_ACCESS_KEY_ID = env.str("ROO_S3_ACCESS_KEY_ID", "")
 ROO_S3_SECRET_ACCESS_KEY = env.str("ROO_S3_SECRET_ACCESS_KEY", "")
-S3_URL = "http://host.docker.internal:9000"
+S3_URL = env.str("S3_URL", "")

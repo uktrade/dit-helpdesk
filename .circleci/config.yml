@@ -1,30 +1,4 @@
 # ~/.circleci/config.yml
-#version: 2.1
-#jobs:
-#  unit_tests:
-#    machine:
-#      image: ubuntu-2004:202010-01
-#    steps:
-#      - checkout
-#      - run:
-#          name: "step 1"
-#          command: docker-compose up -d
-#      - run:
-#          name: "Testing"
-#          command: docker-compose exec helpdesk /bin/bash
-#
-## CircleCI workflows
-#workflows:
-#  version: 2
-#  helpdesk:
-#    jobs:
-#      - unit_tests
-
-
-
-
-
-
 version: 2
 aliases:
   - &redis_version redis:3.2.10
@@ -126,10 +100,6 @@ aliases:
       name: Wait for backend
       command: dockerize -wait http://localhost:8000/choose-country/ -timeout 300s
 
-variables:
- - name: env_list
-   value: "SENTRY_DSN=https://ed15553d18ef4fb289aca57e86c414c3@raven.ci.uktrade.io/168 SENTRY_SECURITY_ENDPOINT=https://sentry.ci.uktrade.digital/api/168/security/ SENTRY_KEY=ed15553d18ef4fb289aca57e86c414c3 SENTRY_ENVIRONMENT=docker-development"
-
 jobs:
   unit_tests:
     machine:
@@ -139,30 +109,18 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create env file
-          command: |
-            mv .env.template .env
-            printf \\nSENTRY_DSN=`printenv SENTRY_DSN` >> .env
-            printf \\nSENTRY_ENVIRONMENT=development >> .env
-            printf \\nAPM_SERVER_URL=`printenv APM_SERVER_URL` >> .env
-            printf \\nAPM_SECRET_TOKEN=`printenv APM_SECRET_TOKEN` >> .env
-            printf \\nROO_S3_ACCESS_KEY_ID=`printenv ROO_S3_ACCESS_KEY_ID` >> .env
-            printf \\nROO_S3_SECRET_ACCESS_KEY=`printenv ROO_S3_SECRET_ACCESS_KEY` >> .env
-            printf \\nROO_S3_BUCKET_NAME=`printenv ROO_S3_BUCKET_NAME` >> .env
-            printf \\nS3_URL=`printenv S3_URL` >> .env
-      - run:
           name: Create docker network
           command: docker network create directory-forms-api_outside-network
       - run:
           name: Start docker container
-          command: docker-compose up -d
+          command: docker-compose -f docker-compose-circleci.yml up -d
       - run:
-          name: Install Webpack dependencies
+          name: Install webpack dependencies
           command: |
-            docker exec app_helpdesk_1 bash -c "apt-get install -y graphviz libgraphviz-dev nodejs npm"
-            docker exec app_helpdesk_1 bash -c "npm install && npm run build"
+            docker exec app_helpdesk_1 bash -c "apt-get install -y graphviz libgraphviz-dev nodejs"
+            docker exec app_helpdesk_1 bash -c "apt-get install -y npm && npm run build"
       - run:
-          name: Run tests on Docker instance
+          name: Run tests on docker instance
           command: docker exec app_helpdesk_1 bash -c "pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test"
 
   format_checks:
