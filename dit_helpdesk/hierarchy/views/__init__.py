@@ -25,7 +25,6 @@ from .views import (
     MeasureSubHeadingQuotaDetailView,
     MeasureSubHeadingConditionDetailNorthernIrelandView,
     MeasureSubHeadingQuotaDetailNorthernIrelandView,
-    section_detail,
     SubHeadingDetailNorthernIrelandView,
     SubHeadingDetailView,
     HierarchyContextTreeView,

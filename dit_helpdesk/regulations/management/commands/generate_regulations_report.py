@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from commodities.models import Commodity
-from hierarchy.models import Section, Chapter, Heading, SubHeading
+from hierarchy.models import Chapter, Heading, SubHeading
 
 from ...models import RegulationGroup
 
@@ -14,12 +14,7 @@ ROOT_URL = "https://www.get-rules-tariffs-trade-with-uk.service.gov.uk"
 
 
 def get_url(object, country_code):
-    if isinstance(object, Section):
-        return reverse(
-            "section-detail",
-            kwargs={"country_code": country_code, "section_id": object.pk},
-        )
-    elif isinstance(object, Chapter):
+    if isinstance(object, Chapter):
         return reverse(
             "chapter-detail",
             kwargs={
@@ -91,10 +86,6 @@ class RegulationGroupProxy:
         num_desired_urls = 5
         urls = []
 
-        section_urls = get_urls(
-            self.regulation_group.sections.all(), num_desired_urls, self.country_code
-        )
-
         chapter_urls = get_urls(
             self.regulation_group.chapters.all(), num_desired_urls, self.country_code
         )
@@ -112,7 +103,6 @@ class RegulationGroupProxy:
         )
 
         url_groups = [
-            section_urls,
             chapter_urls,
             heading_urls,
             subheading_urls,

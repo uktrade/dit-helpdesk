@@ -16,7 +16,6 @@ from commodities.models import Commodity
 from hierarchy.models import Heading, Section, SubHeading, Chapter
 from hierarchy.views import _commodity_code_html
 
-from search.documents.section import INDEX as section_index
 from search.documents.chapter import INDEX as chapter_index
 from search.documents.heading import INDEX as heading_index
 from search.documents.subheading import INDEX as sub_heading_index
@@ -28,7 +27,6 @@ logger.setLevel(logging.INFO)
 
 
 indices = [
-    section_index,
     chapter_index,
     heading_index,
     sub_heading_index,
