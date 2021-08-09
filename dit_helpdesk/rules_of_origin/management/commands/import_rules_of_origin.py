@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def _import_local(self, path):
         if os.path.isdir(path):
             for root, _, files in os.walk(path):
-                if len(files) <= 1:
+                if files == [".gitkeep"]:
                     # If the only file is the .gitkeep file, we have no data files and need to error
                     raise Exception(
                         f"There are no Rule Of Origin XML files stored at the given filepath: {path}"
