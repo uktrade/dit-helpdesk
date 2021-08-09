@@ -31,7 +31,10 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
 
     start_date = dt.datetime.strptime(gb_start_date, "%Y-%m-%d")
 
-    countries = Country.objects.filter(country_code__in=country_codes)
+    countries = Country.objects.filter(
+        Q(country_code__in=country_codes)
+        | Q(alternative_non_trade_country_code__in=country_codes)
+    )
     if countries.count() != len(country_codes):
         found_codes = countries.values_list("country_code", flat=True)
         missing_codes = set(country_codes) - set(found_codes)

@@ -26,13 +26,15 @@ logger.setLevel(logging.INFO)
 
 
 apps_dir = settings.APPS_DIR
-test_data_path = os.path.join(apps_dir, "rules_of_origin", "data", "test_import")
+data_path = os.path.join(apps_dir, "rules_of_origin", "data")
+test_data_path = os.path.join(data_path, "test_import")
 test_data_path_missing = os.path.join(
-    apps_dir, "rules_of_origin", "data", "test_import", "SAMPLE_FTA_MISSING.xml"
+    data_path, "test_import", "SAMPLE_FTA_MISSING.xml"
 )
-test_data_path_empty = os.path.join(apps_dir, "rules_of_origin", "data", "test_empty")
-test_data_path_duplicate = os.path.join(
-    apps_dir, "rules_of_origin", "data", "test_duplicate"
+test_data_path_empty = os.path.join(data_path, "test_empty")
+test_data_path_duplicate = os.path.join(data_path, "test_duplicate")
+test_data_path_alternative_country_code = os.path.join(
+    data_path, "test_alternative_country_code"
 )
 
 
@@ -203,3 +205,34 @@ class ImporterTestCase(TestCase):
             exception_msg,
             f"There are no Rule Of Origin XML files stored at the given filepath: {test_data_path_empty}",
         )
+
+    @override_settings(
+        RULES_OF_ORIGIN_DATA_PATH=test_data_path_alternative_country_code
+    )
+    def test_alternative_country_code(self):
+        self.country.alternative_non_trade_country_code = "XA"
+        self.country.save()
+
+        call_command("import_rules_of_origin")
+
+        self.assertEqual(RulesDocument.objects.count(), 1)
+        self.assertEqual(Rule.objects.count(), 6)
+        self.assertEqual(SubRule.objects.count(), 5)
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
+
+        rules_document = RulesDocument.objects.first()
+        self.assertIn(self.country, rules_document.countries.all())
+
+        rule1 = self.chapter1.rules_of_origin.first()
+        self.assertEqual(rule1.description, "Live animals")
+        self.assertFalse(rule1.is_exclusion)
+        self.assertFalse(rule1.subrules.exists())
+
+        rule4 = self.chapter4.rules_of_origin.first()
+        self.assertTrue(rule4.is_exclusion)
+
+        rule0403 = self.heading0403.rules_of_origin.first()
+        self.assertFalse(rule0403.is_exclusion)
+
+        rule_multiple = Rule.objects.get(code="1507 to 1515")
+        self.assertEqual(rule_multiple.headings.count(), 9)
