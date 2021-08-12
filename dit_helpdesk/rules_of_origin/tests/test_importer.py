@@ -191,9 +191,7 @@ class ImporterTestCase(TestCase):
             "No Rules of Origin files in s3 Bucket",
         )
 
-    @override_settings(
-        RULES_OF_ORIGIN_DATA_PATH=test_data_path_alternative_country_code
-    )
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-alt-country-code")
     def test_alternative_country_code(self):
         self.country.alternative_non_trade_country_code = "XA"
         self.country.save()
