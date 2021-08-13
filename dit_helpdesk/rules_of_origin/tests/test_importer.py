@@ -26,7 +26,7 @@ def _just10(val):
 
 
 @override_settings(
-    ROO_S3_SECRET_ACCESS_KEY="minio_password",
+    ROO_S3_SECRET_ACCESS_KEY="minio_password",  # pragma: allowlist secret
     ROO_S3_ACCESS_KEY_ID="minio_username",
     ROO_S3_BUCKET_NAME="test-bucket-roo-import-success",
 )

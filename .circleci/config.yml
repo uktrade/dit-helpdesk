@@ -84,7 +84,7 @@ aliases:
     environment:
       S3_URL: https://s3:9000
       MINIO_ROOT_USER: minio_username
-      MINIO_ROOT_PASSWORD: minio_password
+      MINIO_ROOT_PASSWORD: minio_password # pragma: allowlist secret
 
   # Python container
   - &docker_python
@@ -137,7 +137,7 @@ jobs:
             - pre-commit-cache-{{ arch }}-{{ .Branch }}
       - run:
           name: Formatting checks
-          command: SKIP=detect-aws-credentials pre-commit run --from-ref origin/HEAD --to-ref HEAD
+          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
       - save_cache:
           key: pre-commit-cache-{{ arch }}-{{ .Branch }}
           paths:
