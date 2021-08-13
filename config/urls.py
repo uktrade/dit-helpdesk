@@ -26,6 +26,7 @@ from contact import views as contact_views
 from iee_contact import views as iee_contact_views
 from index import views as index
 from privacy_terms_and_conditions import views as privacy_terms_and_conditions_views
+from core import views as core_views
 
 
 handler404 = "core.views.error404handler"
@@ -34,6 +35,7 @@ handler500 = "core.views.error500handler"
 urlpatterns = [
     # redirects to start page
     path("", index.IndexRedirect.as_view(), name="index"),
+    path("robots.txt", core_views.robots, name="robots"),
     path("auth/", include("authbroker_client.urls", namespace="authbroker")),
     path(
         "choose-country/",
