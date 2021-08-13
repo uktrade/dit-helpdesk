@@ -430,3 +430,5 @@ SUPPORTED_TRADE_SCENARIOS = (
 )
 
 AGREEMENTS = [("JP", True), ("EU", True)]
+
+S3_URL = env.str("S3_URL", "")

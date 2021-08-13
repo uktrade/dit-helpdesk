@@ -1,16 +1,12 @@
 import logging
-import os
 import datetime as dt
 
 from unittest import mock
 
-from django.conf import settings
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 
 from mixer.backend.django import Mixer
-
-from freezegun import freeze_time
 
 from hierarchy.models import Chapter, Heading
 from hierarchy.helpers import create_nomenclature_tree
@@ -25,24 +21,15 @@ logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
 
 
-apps_dir = settings.APPS_DIR
-data_path = os.path.join(apps_dir, "rules_of_origin", "data")
-test_data_path = os.path.join(data_path, "test_import")
-test_data_path_missing = os.path.join(
-    data_path, "test_import", "SAMPLE_FTA_MISSING.xml"
-)
-test_data_path_empty = os.path.join(data_path, "test_empty")
-test_data_path_duplicate = os.path.join(data_path, "test_duplicate")
-test_data_path_alternative_country_code = os.path.join(
-    data_path, "test_alternative_country_code"
-)
-
-
 def _just10(val):
     return val.ljust(10, "0")
 
 
-@override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path)
+@override_settings(
+    ROO_S3_SECRET_ACCESS_KEY="minio_password",  # pragma: allowlist secret
+    ROO_S3_ACCESS_KEY_ID="minio_username",
+    ROO_S3_BUCKET_NAME="test-bucket-roo-import-success",
+)
 class ImporterTestCase(TestCase):
     """
     Test Rules of Origin Importer
@@ -118,7 +105,7 @@ class ImporterTestCase(TestCase):
         self.assertFalse(SubRule.objects.exists())
         self.assertFalse(RulesDocumentFootnote.objects.exists())
 
-    @freeze_time("2020-12-30")
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-future-start-date")
     def test_get_rules_pre_start_date(self):
         call_command("import_rules_of_origin")
 
@@ -135,7 +122,6 @@ class ImporterTestCase(TestCase):
 
         self.assertFalse(roo_data)
 
-    @freeze_time("2021-01-01")
     def test_get_rules_post_start_date(self):
         call_command("import_rules_of_origin")
 
@@ -149,7 +135,6 @@ class ImporterTestCase(TestCase):
 
         self.assertTrue(roo_data)
 
-    @freeze_time("2021-01-01")
     def test_ex_inheritance(self):
         call_command("import_rules_of_origin")
 
@@ -172,7 +157,7 @@ class ImporterTestCase(TestCase):
         self.assertFalse(rule.is_exclusion)
         self.assertFalse(rule.chapters.exists())
 
-    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_duplicate)
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates")
     def test_duplicate_country_found(self):
         with self.assertRaises(InvalidDocumentException) as duplicate_exception:
             call_command("import_rules_of_origin")
@@ -184,31 +169,29 @@ class ImporterTestCase(TestCase):
             "during this operation, check your source folder for duplicate XMLs or errors.",
         )
 
-    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_missing)
-    def test_no_specific_file_in_local_folder(self):
-        with self.assertRaises(FileNotFoundError) as missing_exception:
-            call_command("import_rules_of_origin")
-
-        exception_msg = str(missing_exception.exception)
-        self.assertEqual(
-            exception_msg,
-            f"[Errno 2] No such file or directory: '{test_data_path_missing}'",
-        )
-
-    @override_settings(RULES_OF_ORIGIN_DATA_PATH=test_data_path_empty)
-    def test_no_files_in_local_folder(self):
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
+    def test_no_files_in_s3_bucket(self):
         with self.assertRaises(Exception) as empty_exception:
             call_command("import_rules_of_origin")
 
         exception_msg = str(empty_exception.exception)
         self.assertEqual(
             exception_msg,
-            f"There are no Rule Of Origin XML files stored at the given filepath: {test_data_path_empty}",
+            "No Rules of Origin files in s3 Bucket",
         )
 
-    @override_settings(
-        RULES_OF_ORIGIN_DATA_PATH=test_data_path_alternative_country_code
-    )
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-missing-prefix")
+    def test_no_roo_prefix_in_s3_bucket(self):
+        with self.assertRaises(Exception) as empty_exception:
+            call_command("import_rules_of_origin")
+
+        exception_msg = str(empty_exception.exception)
+        self.assertEqual(
+            exception_msg,
+            "No Rules of Origin files in s3 Bucket",
+        )
+
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-alt-country-code")
     def test_alternative_country_code(self):
         self.country.alternative_non_trade_country_code = "XA"
         self.country.save()
