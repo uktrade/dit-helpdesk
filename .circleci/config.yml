@@ -10,14 +10,14 @@ aliases:
 
   - &unit_base_envs
     DEBUG: True
-    DJANGO_SECRET_KEY: DJANGO_SECRET_KEY
+    DJANGO_SECRET_KEY: DJANGO_SECRET_KEY  # pragma: allowlist secret
     DJANGO_SETTINGS_MODULE: config.settings.test
     DJANGO_BASE_DIR: /app
-    DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD
+    DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD  # pragma: allowlist secret
     DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
     DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
     DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
-    DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD
+    DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD  # pragma: allowlist secret
     DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
     ALLOWED_HOSTS: 127.0.0.1,localhost
     RESTRICT_ADMIN: True
@@ -123,7 +123,7 @@ jobs:
           name: Run tests on docker instance
           command: docker exec app_helpdesk_1 bash -c "pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test"
 
-  format_checks:
+  format_and_secrets_checks:
     docker:
       - <<: *docker_python
         environment: *unit_base_envs
@@ -137,7 +137,7 @@ jobs:
             - pre-commit-cache-{{ arch }}-{{ .Branch }}
       - run:
           name: Formatting checks
-          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
+          command: SKIP=detect-aws-credentials pre-commit run --from-ref origin/HEAD --to-ref HEAD
       - save_cache:
           key: pre-commit-cache-{{ arch }}-{{ .Branch }}
           paths:
@@ -149,4 +149,4 @@ workflows:
   helpdesk:
     jobs:
       - unit_tests
-      - format_checks
+      - format_and_secrets_checks
