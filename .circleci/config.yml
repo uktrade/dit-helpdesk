@@ -6,6 +6,7 @@ aliases:
   - &elasticsearch_version docker.elastic.co/elasticsearch/elasticsearch:7.9.3
   - &python_version circleci/python:3.7
   - &kibana_version docker.elastic.co/kibana/kibana:7.9.3
+  - &s3_version minio/minio:latest
 
   - &unit_base_envs
     DEBUG: True
@@ -74,6 +75,17 @@ aliases:
       ES_URL: http://es:9200
       discovery.type: single-node
 
+  # S3 container
+  - &docker_s3
+    image: *s3_version
+    name: s3
+    entrypoint: sh
+    command: -c '/usr/bin/minio server /export'
+    environment:
+      S3_URL: https://s3:9000
+      MINIO_ROOT_USER: minio_username
+      MINIO_ROOT_PASSWORD: minio_password # pragma: allowlist secret
+
   # Python container
   - &docker_python
     image: *python_version
@@ -90,46 +102,26 @@ aliases:
 
 jobs:
   unit_tests:
-    docker:
-      - <<: *docker_python
-        environment: *unit_base_envs
-      - *docker_postgres
-      - *docker_elasticsearch
-      - *docker_redis
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: medium
     working_directory: /tmp/app
     steps:
       - checkout
       - run:
-          name: Install system deps
-          command: sudo apt-get update && sudo apt-get install -y graphviz libgraphviz-dev nodejs npm
-      - restore_cache:
-          keys:
-            # when lock file changes, use increasingly general patterns to restore cache
-            - v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          name: Create docker network
+          command: docker network create directory-forms-api_outside-network
       - run:
-          command: pipenv install --system --dev
-      - save_cache:
-          key: v2-dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-          paths:
-            - ~/.local/share/virtualenvs/venv
+          name: Start docker container
+          command: docker-compose -f docker-compose-circleci.yml up -d
       - run:
-          name: Webpack build
-          command: npm install && npm run build
-      - run:
-          name: Running tests
-          command: coverage run manage.py test dit_helpdesk --settings=config.settings.test
-      - run:
-          name: Generate coverage
+          name: Install webpack dependencies
           command: |
-            coverage report
-            coverage html -d ./test-reports/coverage_html
+            docker exec app_helpdesk_1 bash -c "apt-get install -y graphviz libgraphviz-dev nodejs"
+            docker exec app_helpdesk_1 bash -c "apt-get install -y npm && npm run build"
       - run:
-          name: Lint migrations
-          command: ./lint_migrations.sh
-      - store_test_results:
-          path: ./test-reports/
-      - store_artifacts:
-          path: ./test-reports/coverage_html
+          name: Run tests on docker instance
+          command: docker exec app_helpdesk_1 bash -c "pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test"
 
   format_and_secrets_checks:
     docker:
@@ -145,7 +137,7 @@ jobs:
             - pre-commit-cache-{{ arch }}-{{ .Branch }}
       - run:
           name: Formatting checks
-          command: SKIP=detect-aws-credentials pre-commit run --from-ref origin/HEAD --to-ref HEAD
+          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
       - save_cache:
           key: pre-commit-cache-{{ arch }}-{{ .Branch }}
           paths:

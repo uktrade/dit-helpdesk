@@ -3,11 +3,11 @@
    <meta>
       <agreementPartner code="GB">
          <label>United Kingdom</label>
-         <country code="GB" validFrom="2021-01-01"/>
+         <country code="GB" validFrom="2500-01-01"/>
       </agreementPartner>
       <agreementPartner code="CL">
          <label>Test Country</label>
-         <country code="XT" validFrom="2021-01-01"/>
+         <country code="XT" validFrom="2500-01-01"/>
       </agreementPartner>
    </meta>
     <positions>
@@ -15,34 +15,34 @@
             <description><![CDATA[Live animals]]></description>
             <rule1>
                 <rule><![CDATA[All the animals of Chapter 1 shall be wholly obtained]]></rule>
-                
+
             </rule1>
             <positionCodeXml>
                 <inclusions hsFromType="CH" hsFrom="01"/>
             </positionCodeXml>
-            
+
         </position>
         <position positionCode="ex Chapter 04">
             <description><![CDATA[Dairy produce; birds' eggs; natural honey; edible products of animal origin, not elsewhere specified or included; except for:]]></description>
             <rule1>
                 <rule><![CDATA[Manufacture in which all the materials of Chapter 4 used are wholly obtained]]></rule>
-                
+
             </rule1>
             <positionCodeXml>
                 <inclusions ex="true" hsFromType="CH" hsFrom="04"/>
             </positionCodeXml>
-            
+
         </position>
         <position positionCode="0403">
             <description><![CDATA[Buttermilk, curdled milk and cream, yoghurt, kephir and other fermented or acidified milk and cream, whether or not concentrated or containing added sugar or other sweetening matter or flavoured or containing added fruit, nuts or cocoa]]></description>
             <rule1>
                 <rule><![CDATA[Manufacture in which:<br>- all the materials of Chapter 4 used are wholly obtained,<br>- all the fruit juice (except that of pineapple, lime or grapefruit) of heading 2009 used is originating, and<br>- the value of all the materials of Chapter 17 used does not exceed 30 % of the ex-works price of the product]]></rule>
-                
+
             </rule1>
             <positionCodeXml>
                 <inclusions hsFromType="PO" hsFrom="0403"/>
             </positionCodeXml>
-            
+
         </position>
 
         <position positionCode="1302">
@@ -50,19 +50,19 @@
             <positionCodeXml>
                 <inclusions hsFromType="PO" hsFrom="1302"/>
             </positionCodeXml>
-            
+
             <subPosition>
                 <description><![CDATA[- Mucilages and thickeners, modified, derived from vegetable products]]></description>
                 <rule1>
                     <rule><![CDATA[Manufacture from non-modified mucilages and thickeners]]></rule>
-                    
+
                 </rule1>
             </subPosition>
             <subPosition>
                 <description><![CDATA[- Other]]></description>
                 <rule1>
                     <rule><![CDATA[Manufacture in which the value of all the materials used does not exceed 50 % of the ex-works price of the product]]></rule>
-                    
+
                 </rule1>
             </subPosition>
         </position>
@@ -454,5 +454,5 @@ only those process by means of which at least three different products are obtai
 </p>
 ]]></note>
    </notes>
-    
+
 </roo:rooAgreement>

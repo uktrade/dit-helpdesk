@@ -23,6 +23,7 @@ services:
     command: ./start.sh
     stdin_open: true
     tty: true
+
   webpack:
     image: node:14
     command: bash -c "
@@ -35,6 +36,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app
+
   postgres:
     image: postgres:10
     env_file:
@@ -45,6 +47,7 @@ services:
       - "5432:5432"
     volumes:
       - db-volume:/var/lib/postgresql/data
+
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     networks:
@@ -53,12 +56,14 @@ services:
       - discovery.type=single-node
     ports:
       - "9200:9200"
+
   redis:
     image: redis:3.2
     networks:
       - inside-network
     ports:
       - "6379:6379"
+
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.3
     networks:
@@ -68,6 +73,22 @@ services:
       ELASTICSEARCH_HOSTS: http://es:9200
     ports:
       - "5601:5601"
+
+  s3:
+    image: minio/minio:latest
+    hostname: s3
+    volumes:
+      - ./minio_config:/root/.minio
+      - ./volumes/s3:/export/
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    entrypoint: sh
+    command: -c '/usr/bin/minio server /export'
+    environment:
+      - MINIO_ROOT_USER=minio_username
+      - MINIO_ROOT_PASSWORD=minio_password
 
 networks:
   inside-network:
