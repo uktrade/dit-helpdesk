@@ -2,8 +2,6 @@ version: "2"
 services:
   helpdesk:
     build: .
-    ports:
-      - "8000:8000"
     environment:
       - ADMIN_ENABLED=${ADMIN_ENABLED}
       - ALLOWED_HOSTS=localhost,
@@ -96,31 +94,21 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
-    ports:
-      - "5432:5432"
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - discovery.type=single-node
       - ES_URL=http://es:9200
-    ports:
-      - "9200:9200"
 
   redis:
     image: redis:3.2
-    ports:
-      - "6379:6379"
 
   s3:
     image: minio/minio:latest
     hostname: s3
     volumes:
       - ./volumes/s3:/export/
-    expose:
-      - "9000"
-    ports:
-      - "9000:9000"
     entrypoint: sh
     command: -c '/usr/bin/minio server /export'
     environment:
