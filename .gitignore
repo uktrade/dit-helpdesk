@@ -139,3 +139,5 @@ dit_helpdesk/trade_tarrif_service/import_data/downloaded/*
 dit_helpdesk/rules_of_origin/ingest/data/*.xml
 
 volumes/s3/.minio.sys
+
+.webpack-is-ready
