@@ -12,6 +12,8 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose -f docker-compose-circleci.yml up --exit-code-from helpdesk
+      - store_test_results:
+          path: /tmp/app/test-reports/
 
   format_and_secrets_checks:
     docker:
