@@ -116,7 +116,6 @@ services:
     image: minio/minio:latest
     hostname: s3
     volumes:
-      - ./minio_config:/root/.minio
       - ./volumes/s3:/export/
     expose:
       - "9000"
