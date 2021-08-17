@@ -1,49 +1,5 @@
 # ~/.circleci/config.yml
 version: 2
-aliases:
-  - &unit_base_envs
-    DEBUG: True
-    DJANGO_SECRET_KEY: DJANGO_SECRET_KEY  # pragma: allowlist secret
-    DJANGO_SETTINGS_MODULE: config.settings.test
-    DJANGO_BASE_DIR: /app
-    DIT_HELPDESK_ADMIN_PASSWORD: DIT_HELPDESK_ADMIN_PASSWORD  # pragma: allowlist secret
-    DJANGO_POSTGRES_HOST: DJANGO_POSTGRES_HOST
-    DJANGO_POSTGRES_DATABASE: DJANGO_POSTGRES_DATABASE
-    DJANGO_POSTGRES_USER: DJANGO_POSTGRES_USER
-    DJANGO_POSTGRES_PASSWORD: DJANGO_POSTGRES_PASSWORD  # pragma: allowlist secret
-    DJANGO_POSTGRES_PORT: DJANGO_POSTGRES_PORT
-    ALLOWED_HOSTS: 127.0.0.1,localhost
-    RESTRICT_ADMIN: True
-    ALLOWED_ADMIN_IPS: 127.0.0.1,
-    ALLOWED_ADMIN_IP_RANGES: 127.0.0.1/32,
-    LOGIN_URL: LOGIN_URL
-    LOGIN_REDIRECT_URL: LOGIN_REDIRECT_URL
-    IP_SAFELIST_XFF_INDEX: IP_SAFELIST_XFF_INDEX
-    APP_START_DOMAIN: /choose-country/
-    LOG_LEVEL: INFO
-    DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS: 0
-    DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS: 0
-    SENTRY_ENVIRONMENT: docker-development
-    SENTRY_DSN: SENTRY_DSN
-    FEEDBACK_EMAIL: FEEDBACK_EMAIL
-    FEEDBACK_CONTACT: FEEDBACK_CONTACT
-    DEFRA_EMAIL: DEFRA_EMAIL
-    DEFRA_CONTACT: DEFRA_CONTACT
-    BEIS_EMAIL: BEIS_EMAIL
-    BEIS_CONTACT: BEIS_CONTACT
-    DDAT_CONTACT: "DDAT Support Team"
-    DIT_CONTACT: "DIT EU Exit Team"
-    CONTACT_SUBJECT: "New UK Trade Helpdesk enquiry"
-    FEEDBACK_SUBJECT: "UK Trade Helpdesk feedback"
-    SERVICE_NAME: "twuk"
-    DIT_SUBDOMAIN: "dit"
-    DIT_SUBJECT_SUFFIX: " - DIT EU Exit Enquiries"
-    DDAT_SUBJECT_SUFFIX: " - DDAT Support Team"
-    HMRC_TAX_FORM_URL: HMRC_TAX_FORM_URL
-    HELPDESK_GA_GTM: HELPDESK_GA_GTM
-    QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
-    TEST_OUTPUT_DIR: "./test-reports/"
-    FEEDBACK_DESTINATION_EMAIL: going@to.com
 jobs:
   unit_tests:
     machine:
@@ -59,8 +15,7 @@ jobs:
 
   format_and_secrets_checks:
     docker:
-      - image: circleci/python:3.7
-        environment: *unit_base_envs
+      - image: circleci/python:3.6
     working_directory: ~/app
     steps:
       - checkout
