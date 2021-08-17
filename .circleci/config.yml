@@ -1,13 +1,6 @@
 # ~/.circleci/config.yml
 version: 2
 aliases:
-  - &redis_version redis:3.2.10
-  - &postgres_version circleci/postgres:10
-  - &elasticsearch_version docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-  - &python_version circleci/python:3.7
-  - &kibana_version docker.elastic.co/kibana/kibana:7.9.3
-  - &s3_version minio/minio:latest
-
   - &unit_base_envs
     DEBUG: True
     DJANGO_SECRET_KEY: DJANGO_SECRET_KEY  # pragma: allowlist secret
@@ -51,55 +44,6 @@ aliases:
     QUOTA_DEFAULT_MESSAGE: "You can check the availability of this quota by contacting the relevant department."
     TEST_OUTPUT_DIR: "./test-reports/"
     FEEDBACK_DESTINATION_EMAIL: going@to.com
-
-  # Redis container
-  - &docker_redis
-    image: *redis_version
-    environment:
-      REDIS_URL: "redis://localhost:6379/"
-
-  # Postgres container
-  - &docker_postgres
-    image: *postgres_version
-    name: postgres
-    #    password: test_db_psswd
-    environment:
-      POSTGRES_DB: helpdesk
-      POSTGRES_HOST_AUTH_METHOD: trust
-
-  # Elasticsearch container
-  - &docker_elasticsearch
-    image: *elasticsearch_version
-    name: es
-    environment:
-      ES_URL: http://es:9200
-      discovery.type: single-node
-
-  # S3 container
-  - &docker_s3
-    image: *s3_version
-    name: s3
-    entrypoint: sh
-    command: -c '/usr/bin/minio server /export'
-    environment:
-      S3_URL: https://s3:9000
-      MINIO_ROOT_USER: minio_username
-      MINIO_ROOT_PASSWORD: minio_password # pragma: allowlist secret
-
-  # Python container
-  - &docker_python
-    image: *python_version
-
-  # Helpdesk test container
-  - &docker_helpdesk_test
-    image: ukti/dit-helpdesk-test:latest
-
-  # Step for ui test* jobs
-  - &wait_for_backend
-    run:
-      name: Wait for backend
-      command: dockerize -wait http://localhost:8000/choose-country/ -timeout 300s
-
 jobs:
   unit_tests:
     machine:
@@ -125,7 +69,7 @@ jobs:
 
   format_and_secrets_checks:
     docker:
-      - <<: *docker_python
+      - image: circleci/python:3.7
         environment: *unit_base_envs
     working_directory: ~/app
     steps:
