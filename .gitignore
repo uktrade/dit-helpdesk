@@ -128,7 +128,6 @@ docker-compose.env
 
 .DS_Store
 
-# exclude everything
 test-reports/*
 !test-reports/.gitkeep
 
@@ -138,3 +137,5 @@ webpack-stats.json
 dit_helpdesk/trade_tarrif_service/import_data/prepared/*
 dit_helpdesk/trade_tarrif_service/import_data/downloaded/*
 dit_helpdesk/rules_of_origin/ingest/data/*.xml
+
+volumes/s3/.minio.sys
