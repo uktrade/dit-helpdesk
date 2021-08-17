@@ -53,16 +53,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Start docker container
-          command: docker-compose -f docker-compose-circleci.yml up -d
-      - run:
-          name: Install webpack dependencies
-          command: |
-            docker exec app_helpdesk_1 bash -c "apt-get install -y graphviz libgraphviz-dev nodejs"
-            docker exec app_helpdesk_1 bash -c "apt-get install -y npm && npm run build"
-      - run:
-          name: Run tests on docker instance
-          command: docker exec app_helpdesk_1 bash -c "pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test"
+          name: Run tests
+          command: docker-compose -f docker-compose-circleci.yml up --exit-code-from helpdesk
 
   format_and_secrets_checks:
     docker:

@@ -61,21 +61,22 @@ services:
       - TEST_OUTPUT_DIR=/app/test-reports
     volumes:
       - .:/app
-    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -wait file:///app/.webpack-is-ready -timeout 300s
     depends_on:
       - postgres
       - es
       - redis
-    command: ./start.sh
-    stdin_open: true
-    tty: true
+    command: pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test
 
   webpack:
     image: node:14
     command: bash -c "
-      npm set unsafe-perm true
+      rm -f .webpack-is-ready
+      && npm set unsafe-perm true
       && npm install
-      && npm run dev
+      && npm run build
+      && touch .webpack-is-ready
+      && sleep infinity
       "
     environment:
       - SENTRY_DSN=${SENTRY_DSN}
