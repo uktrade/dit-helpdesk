@@ -59,12 +59,8 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - SENTRY_ENVIRONMENT=docker-development
       - TEST_OUTPUT_DIR=/app/test-reports
-    networks:
-      - inside-network
-      - directory-forms-api_outside-network
     volumes:
       - .:/app
-      - bashhistory:/root/hist
     entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -timeout 120s
     depends_on:
       - postgres
@@ -98,17 +94,11 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
-    networks:
-      - inside-network
     ports:
       - "5432:5432"
-    volumes:
-      - db-volume:/var/lib/postgresql/data
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-    networks:
-      - inside-network
     environment:
       - discovery.type=single-node
       - ES_URL=http://es:9200
@@ -117,20 +107,8 @@ services:
 
   redis:
     image: redis:3.2
-    networks:
-      - inside-network
     ports:
       - "6379:6379"
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.9.3
-    networks:
-      - inside-network
-    environment:
-      ELASTICSEARCH_URL: http://es:9200
-      ELASTICSEARCH_HOSTS: http://es:9200
-    ports:
-      - "5601:5601"
 
   s3:
     image: minio/minio:latest
@@ -147,13 +125,3 @@ services:
     environment:
       - MINIO_ROOT_USER=minio_username
       - MINIO_ROOT_PASSWORD=minio_password
-
-networks:
-  inside-network:
-    driver: bridge
-  directory-forms-api_outside-network:
-    external: true
-
-volumes:
-  bashhistory:
-  db-volume:

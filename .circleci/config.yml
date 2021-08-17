@@ -53,9 +53,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create docker network
-          command: docker network create directory-forms-api_outside-network
-      - run:
           name: Start docker container
           command: docker-compose -f docker-compose-circleci.yml up -d
       - run:
