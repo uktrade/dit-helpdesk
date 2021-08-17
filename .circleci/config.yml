@@ -48,6 +48,7 @@ jobs:
   unit_tests:
     machine:
       image: ubuntu-2004:202010-01
+      docker_layer_caching: true
     resource_class: medium
     working_directory: /tmp/app
     steps:
