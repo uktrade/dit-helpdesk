@@ -61,12 +61,13 @@ services:
       - TEST_OUTPUT_DIR=/app/test-reports
     volumes:
       - .:/app
-    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -wait file:///app/.webpack-is-ready -timeout 300s
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -wait tcp://s3:9000 -wait file:///app/.webpack-is-ready -timeout 300s
     depends_on:
       - postgres
       - es
       - redis
-    command: pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test
+      - s3
+    command: pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test --noinput
 
   webpack:
     image: node:14
