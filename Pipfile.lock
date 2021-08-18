@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3a0a4fbf74f30f1ccc269d057d9a764fa416195699bdfe10ce5f3d138a09dbcc"
+            "sha256": "2d6bc02d8e0b1fc8ec1213ac1eaf3ca8ce2517df06ae6fbe4053d752245867de"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -48,19 +48,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:00748c760dc30be61c6db4b092718f6a9f8d27c767da0e232695a65adb75cde8",
-                "sha256:59b6e8e79b2114e21388288a06a004f2a9378b1e0fc58466a35da8fb74fe2dd8"
+                "sha256:1b08ace99e7b92965780e5ce759430ad62b7b7e037560bc772f9a8789f4f36d2",
+                "sha256:31cc69e665f773390c4c17ce340d2420e45fbac51d46d945cc4a58d483ec5da6"
             ],
             "index": "pypi",
-            "version": "==1.18.21"
+            "version": "==1.18.23"
         },
         "botocore": {
             "hashes": [
-                "sha256:12cfe74b0a5c44afb34bdd86c1f8ad74bc2ad9ec168eaed9040ef70cb3db944f",
-                "sha256:fa5ac13829d24fcdd385e82c3b6d78e22d93f427cca8dac38158cae84a8cc2f5"
+                "sha256:3877d69e0b718b786f1696cd04ddbdb3a57aef6adb0239a29aa88754489849a4",
+                "sha256:d0146d31dbc475942b578b47dd5bcf94d18fbce8c6d2ce5f12195e005de9b754"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.21.21"
+            "version": "==1.21.23"
         },
         "certifi": {
             "hashes": [
@@ -345,11 +345,11 @@
         },
         "elasticsearch": {
             "hashes": [
-                "sha256:084979d21cc2955903ecc215bb40b8180207b2bcb5e52ec0ec7dd6f60affd01e",
-                "sha256:f3ab1454e646170bbc6796b8707e4bff125234391d2acc022221e1c0313becb4"
+                "sha256:52dda85f76eeb85ec873bf9ffe0ba6849e544e591f66d4048a5e48016de268e0",
+                "sha256:5920df0ab2630778680376d86bea349dc99860977eec9b6d2bd0860f337313f2"
             ],
             "index": "pypi",
-            "version": "==7.14.0"
+            "version": "==7.13.4"
         },
         "elasticsearch-dsl": {
             "hashes": [
@@ -694,10 +694,10 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:885b7b4521bb9105b31a8597d3baa6da11155f819f1231434590db2f130a27cd",
-                "sha256:9a396a4d69ed4cf1f8513114869cbed4f12542644374a5d5f11bc7fd66a2098a"
+                "sha256:9ca65c36f437881a8f7dac979a5733ae8fb5a0a436aecd47bd2c06494bdf0a20",
+                "sha256:f059f0555f1e47591406729b9e516af417e6a61aa0a5458fd01b2548232715e0"
             ],
-            "version": "==8.12.29"
+            "version": "==8.12.30"
         },
         "plotly": {
             "hashes": [
