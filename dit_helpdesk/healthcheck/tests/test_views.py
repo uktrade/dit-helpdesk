@@ -1,7 +1,7 @@
 import datetime as dt
 import requests_mock
 
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -32,6 +32,17 @@ class TestViews(TestCase):
 
     def test_check_view_no_data_fail(self):
         HealthCheck.objects.all().delete()
+        response = self.anonymous_client.get(reverse("healthcheck:basic"))
+        tree = ET.fromstring(response.content)
+        pingdom_status = tree[0].text
+        pingdom_response_time = float(tree[1].text)
+        self.assertGreater(pingdom_response_time, 0)
+        self.assertLess(pingdom_response_time, 1)
+        self.assertEqual(pingdom_status, "FAIL")
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(ES_URL="")
+    def test_check_view_no_elasticsearch_connection(self):
         response = self.anonymous_client.get(reverse("healthcheck:basic"))
         tree = ET.fromstring(response.content)
         pingdom_status = tree[0].text
