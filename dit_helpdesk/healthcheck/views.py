@@ -19,17 +19,16 @@ class HealthCheckView(TemplateView):
     template_name = "healthcheck.html"
 
     def _do_check(self):
+        """
+        Performs a basic check on the database by performing a select query on a simple table then
+        performs a basic check on ElasticSearch by performing a search without exceptions occuring
+        :return: False according to results of check, True if successful False if there is a fail
+        """
         try:
-            """
-            Performs a basic check on the database by performing a select query on a simple table
-            :return: False according to unsuccessful retrieval, True if successful
-            """
+            # Perform database check
             HealthCheck.objects.get(health_check_field=True)
 
-            """
-            Performs a basic check on ElasticSearch by performing a search without exceptions occuring
-            :return: False according to unsuccessful connection, True if successful
-            """
+            # Perform Elaseticsearch check
             client = Elasticsearch(hosts=[settings.ES_URL])
             query_object = {
                 "multi_match": {
@@ -43,9 +42,7 @@ class HealthCheckView(TemplateView):
                 "sort_object"
             )
 
-            """
-            :return: True as we have sucessfully passed both checks
-            """
+            # Return success if we have reached this point
             return True
 
         except Exception as e:
