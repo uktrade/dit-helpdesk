@@ -5,6 +5,8 @@ from django.conf import settings
 from django.test import TestCase
 from pandas import DataFrame
 
+from unittest import mock
+
 from regulations.documents_scraper import (
     data_loader,
     DocumentScraper,
@@ -15,6 +17,14 @@ from regulations.documents_scraper import (
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
+
+
+def mocked_requests_get(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, html_doc):
+            self.text = html_doc
+
+    return MockResponse("<html><head><title>Response Placeholder</title></head></html>")
 
 
 class RegulationsDocumentScraperTestCase(TestCase):
@@ -31,7 +41,8 @@ class RegulationsDocumentScraperTestCase(TestCase):
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 
-    def test_appending_url_title(self):
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_appending_url_title(self, mock_request):
         scraper = DocumentScraper()
         scraper.source_file = "test_product_specific_regulations.csv"
         scraper.output_file = "test_out_product_specific_regulations.csv"
@@ -46,13 +57,12 @@ class RegulationsDocumentScraperTestCase(TestCase):
         self.assertTrue(os.path.exists(file_path))
         os.remove(file_path)
 
-    def test_extract_html(self):
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_extract_html(self, mock_request):
         title = extract_html_title(
             "http://www.legislation.gov.uk/eur/2010/640/contents"
         )
         self.assertEqual(
             title,
-            "Regulation (EU) No 640/2010 of the European Parliament and of the Council of 7 "
-            "July 2010 establishing a catch documentation programme for bluefin tuna Thunnus "
-            "thynnus and amending Council Regulation (EC) No 1984/2003",
+            "Response Placeholder",
         )
