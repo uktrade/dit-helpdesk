@@ -10,6 +10,7 @@ from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Chapter, Section
 from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.tts_api import CommodityJson
+from unittest import mock
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -20,6 +21,18 @@ def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
     return json_data
+
+
+def mocked_tts_content(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, content):
+            self.content = content
+            self.status_code = 200
+
+    with open(settings.TTS_DATA) as f:
+        tts_content = f.read()
+
+    return MockResponse(bytes(tts_content, "utf-8"))
 
 
 class CommodityTestCase(TestCase):
@@ -259,7 +272,8 @@ class CommodityTestCase(TestCase):
     def test_append_path_children(self):
         self.assertTrue(self.commodity._append_path_children)
 
-    def test_commodity_update_content(self):
+    @mock.patch("requests.get", side_effect=mocked_tts_content)
+    def test_commodity_update_content(self, mock):
         self.commodity.update_tts_content()
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
@@ -269,14 +283,15 @@ class CommodityTestCase(TestCase):
             False,
         )
 
-    def test_heading_leaf_update_content(self):
+    @mock.patch("requests.get", side_effect=mocked_tts_content)
+    def test_heading_leaf_update_content(self, mock):
         commodity = mixer.blend(
-            Commodity, commodity_code="0510000000", nomenclature_tree=self.tree
+            Commodity, commodity_code="0101210000", nomenclature_tree=self.tree
         )
 
         commodity.update_tts_content()
         content = json.loads(commodity.tts_json)
-        self.assertEqual(content["goods_nomenclature_item_id"], "0510000000")
+        self.assertEqual(content["goods_nomenclature_item_id"], "0101210000")
 
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time

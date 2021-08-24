@@ -126,6 +126,7 @@ COMMODITYHEADINGJSON_DATA = (
 IMPORTMEASUREJSON_DATA = (
     APPS_DIR + "/trade_tariff_service/import_data/ImportMeasureJson.json"
 )
+TTS_DATA = APPS_DIR + "/commodities/tests/commodity_0101210000.json"
 
 ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.section": "test_sections",
