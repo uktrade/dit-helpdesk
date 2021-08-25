@@ -1,6 +1,8 @@
 import datetime
 import logging
 import json
+import requests
+import requests_mock
 
 from django.conf import settings
 from django.test import TestCase
@@ -10,7 +12,6 @@ from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Chapter, Section
 from hierarchy.helpers import create_nomenclature_tree
 from trade_tariff_service.tts_api import CommodityJson
-from unittest import mock
 
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
@@ -21,18 +22,6 @@ def get_data(file_path):
     with open(file_path) as f:
         json_data = json.load(f)
     return json_data
-
-
-def mocked_tts_content(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, content):
-            self.content = content
-            self.status_code = 200
-
-    with open(settings.TTS_DATA) as f:
-        tts_content = f.read()
-
-    return MockResponse(bytes(tts_content, "utf-8"))
 
 
 class CommodityTestCase(TestCase):
@@ -74,6 +63,9 @@ class CommodityTestCase(TestCase):
         )
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_STRUCTURE))
         self.commodity.save_cache()
+
+        with open(settings.TTS_DATA) as f:
+            self.commodity.tts_response = f.read()
 
     def test_str(self):
         self.assertEquals(
@@ -272,8 +264,15 @@ class CommodityTestCase(TestCase):
     def test_append_path_children(self):
         self.assertTrue(self.commodity._append_path_children)
 
-    @mock.patch("requests.get", side_effect=mocked_tts_content)
+    @requests_mock.Mocker()
     def test_commodity_update_content(self, mock):
+
+        mock.get(
+            settings.REQUEST_MOCK_COMMODITY_TTS_URL,
+            text=self.commodity.tts_response,
+        )
+        requests.get(settings.REQUEST_MOCK_COMMODITY_TTS_URL).text
+
         self.commodity.update_tts_content()
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
@@ -283,8 +282,15 @@ class CommodityTestCase(TestCase):
             False,
         )
 
-    @mock.patch("requests.get", side_effect=mocked_tts_content)
+    @requests_mock.Mocker()
     def test_heading_leaf_update_content(self, mock):
+
+        mock.get(
+            settings.REQUEST_MOCK_COMMODITY_TTS_URL,
+            text=self.commodity.tts_response,
+        )
+        requests.get(settings.REQUEST_MOCK_COMMODITY_TTS_URL).text
+
         commodity = mixer.blend(
             Commodity, commodity_code="0101210000", nomenclature_tree=self.tree
         )
