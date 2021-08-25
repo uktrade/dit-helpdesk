@@ -1,11 +1,11 @@
 import logging
 import os
+import requests
+import requests_mock
 
 from django.conf import settings
 from django.test import TestCase
 from pandas import DataFrame
-
-from unittest import mock
 
 from regulations.documents_scraper import (
     data_loader,
@@ -17,14 +17,6 @@ from regulations.documents_scraper import (
 logger = logging.getLogger(__name__)
 logging.disable(logging.NOTSET)
 logger.setLevel(logging.INFO)
-
-
-def mocked_requests_get(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, html_doc):
-            self.text = html_doc
-
-    return MockResponse("<html><head><title>Response Placeholder</title></head></html>")
 
 
 class RegulationsDocumentScraperTestCase(TestCase):
@@ -41,8 +33,19 @@ class RegulationsDocumentScraperTestCase(TestCase):
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_appending_url_title(self, mock_request):
+    @requests_mock.Mocker()
+    def test_appending_url_title(self, mock):
+
+        legislation_url = "http://www.legislation.gov.uk/eur/2010/640/contents"
+        legislation_html = (
+            "<html><head><title>Response Placeholder</title></head></html>"
+        )
+        mock.get(
+            legislation_url,
+            text=legislation_html,
+        )
+        requests.get(legislation_url).text
+
         scraper = DocumentScraper()
         scraper.source_file = "test_product_specific_regulations.csv"
         scraper.output_file = "test_out_product_specific_regulations.csv"
@@ -57,11 +60,20 @@ class RegulationsDocumentScraperTestCase(TestCase):
         self.assertTrue(os.path.exists(file_path))
         os.remove(file_path)
 
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_extract_html(self, mock_request):
-        title = extract_html_title(
-            "http://www.legislation.gov.uk/eur/2010/640/contents"
+    @requests_mock.Mocker()
+    def test_extract_html(self, mock):
+
+        legislation_url = "http://www.legislation.gov.uk/eur/2010/640/contents"
+        legislation_html = (
+            "<html><head><title>Response Placeholder</title></head></html>"
         )
+        mock.get(
+            legislation_url,
+            text=legislation_html,
+        )
+        requests.get(legislation_url).text
+
+        title = extract_html_title(legislation_url)
         self.assertEqual(
             title,
             "Response Placeholder",
