@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import Client, TestCase
 
 from commodities.models import Commodity
-from core.helpers import patch_tts_json
+from core.helpers import patch_tts_json, patch_section_notes
 from countries.models import Country
 
 from ...helpers import create_nomenclature_tree
@@ -37,6 +37,42 @@ def create_instance(data, model_class):
     instance = model_class(**filtered_data)
     instance.save()
     return instance
+
+
+def mocked_request_content(*args, **kwargs):
+    tts_url = "https://www.trade-tariff.service.gov.uk/api/v1/headings/0101"
+    section_note_url = (
+        "https://www.trade-tariff.service.gov.uk/api/v2/sections/1/section_note"
+    )
+
+    section_note_placeholder = {
+        "id": 1,
+        "section_id": 1,
+        "content": "1. Any reference in this section to a particular genus or species of an \
+            animal, except where the context otherwise requires, includes a reference to the young \
+            of that genus or species.\r\n2. Except where the context otherwise requires, throughout \
+            the nomenclature any reference to 'dried' products also covers products which have \
+            been dehydrated, evaporated or freeze-dried.\r\n",
+    }
+
+    class MockResponse:
+        def __init__(self, content, status_code):
+            self.content = content
+            self.status_code = status_code
+
+        def json(self):
+            return self.content
+
+    with open(settings.TTS_DATA) as f:
+        tts_content = f.read()
+
+    if args[0] == tts_url:
+        return MockResponse(bytes(tts_content, "utf-8"), 200)
+
+    elif args[0] == section_note_url:
+        return MockResponse(section_note_placeholder, 200)
+
+    return MockResponse(None, 404)
 
 
 class HierarchyViewTestCase(TestCase):
@@ -103,14 +139,16 @@ class HierarchyViewTestCase(TestCase):
 
 
 class ChapterDetailViewTestCase(HierarchyViewTestCase):
-    def test_commodity_object(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object(self, mock):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.chapter)
         self.assertEqual(ctx["object"], self.chapter)
 
-    def test_commodity_object_path(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object_path(self, mock):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
@@ -123,7 +161,8 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
         self.assertIn(self.heading_url, hierarchy_context)
 
-    def test_notes_context_data(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_notes_context_data(self, mock):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
@@ -134,14 +173,16 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
 
 
 class HeadingDetailViewTestCase(HierarchyViewTestCase):
-    def test_commodity_object(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object(self, mock):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.heading)
         self.assertEqual(ctx["object"], self.heading)
 
-    def test_commodity_object_path(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object_path(self, mock):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
@@ -156,7 +197,8 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Horses", hierarchy_context)
         self.assertIn(self.subheading_url, hierarchy_context)
 
-    def test_notes_context_data(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_notes_context_data(self, mock):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
@@ -219,6 +261,10 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
                 Heading, "should_update_tts_content", return_value=should_update
             ), mock.patch.object(Heading, "update_tts_content"), patch_tts_json(
                 Heading, settings.HEADINGJSON_DATA
+            ), mock.patch.object(
+                Section, "section_notes"
+            ), patch_section_notes(
+                Section
             ):
                 yield
 
@@ -232,14 +278,16 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
 
 
 class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
-    def test_commodity_object(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object(self, mock):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.subheading)
         self.assertEqual(ctx["object"], self.subheading)
 
-    def test_commodity_object_path(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_commodity_object_path(self, mock):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
@@ -255,7 +303,8 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertNotIn(self.subheading_url, hierarchy_context)
         self.assertInHTML("Pure-bred breeding animals", hierarchy_context)
 
-    def test_notes_context_data(self):
+    @mock.patch("requests.get", side_effect=mocked_request_content)
+    def test_notes_context_data(self, mock):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
@@ -273,6 +322,10 @@ class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTe
                 SubHeading, "should_update_tts_content", return_value=should_update
             ), mock.patch.object(SubHeading, "update_tts_content"), patch_tts_json(
                 SubHeading, settings.SUBHEADINGJSON_DATA
+            ), mock.patch.object(
+                Section, "section_notes"
+            ), patch_section_notes(
+                Section
             ):
                 yield
 

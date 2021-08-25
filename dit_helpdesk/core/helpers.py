@@ -81,3 +81,23 @@ def patch_tts_json(model_class, tts_json_data_path):
         model_class, "tts_json", new_callable=mock.PropertyMock(return_value=test_data)
     ):
         yield
+
+
+@contextmanager
+def patch_section_notes(model_class):
+    test_data = {
+        "id": 1,
+        "section_id": 1,
+        "content": "1. Any reference in this section to a particular genus or species \
+            of an animal, except where the context otherwise requires, includes a reference \
+            to the young of that genus or species.\r\n2. Except where the context otherwise \
+            requires, throughout the nomenclature any reference to 'dried' products also covers \
+            products which have been dehydrated, evaporated or freeze-dried.\r\n",
+    }
+
+    with mock.patch.object(
+        model_class,
+        "section_notes",
+        new_callable=mock.PropertyMock(return_value=test_data),
+    ):
+        yield
