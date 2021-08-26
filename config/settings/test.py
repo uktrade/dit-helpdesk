@@ -137,6 +137,9 @@ REQUEST_MOCK_CHAPTER_TTS_URL = (
 REQUEST_MOCK_SECTION_URL = (
     "https://www.trade-tariff.service.gov.uk/api/v2/sections/1/section_note"
 )
+REQUEST_MOCK_HEADING_TTS_URL = (
+    "https://www.trade-tariff.service.gov.uk/api/v1/headings/0101"
+)
 
 ELASTICSEARCH_INDEX_NAMES = {
     "search.documents.section": "test_sections",

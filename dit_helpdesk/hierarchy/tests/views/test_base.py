@@ -300,6 +300,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         )
 
     def test_sections_init(self):
+
         MockSection = mock.MagicMock()
         AnotherMockSection = mock.MagicMock()
 
@@ -316,6 +317,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         AnotherMockSection.assert_called_once_with(self.country, self.chapter)
 
     def test_context_data(self):
+
         response = self.client.get(self.get_url())
         ctx = response.context
 
@@ -326,6 +328,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.assertNotIn("another_section_do_not_show_me", ctx)
 
     def test_sections_context_data(self):
+
         response = self.client.get(self.get_url())
         sections = response.context["sections"]
 
@@ -335,6 +338,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.assertIsInstance(section, DisplayedSection)
 
     def test_sections_menu_items_context_data(self):
+
         response = self.client.get(self.get_url())
         section_menu_items = response.context["section_menu_items"]
 
@@ -347,6 +351,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         )
 
     def test_modals_context_data(self):
+
         response = self.client.get(self.get_url())
         modals = response.context["modals"]
 
