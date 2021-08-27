@@ -4,11 +4,15 @@ import requests
 
 from django.views.generic import View, TemplateView
 from django.http import HttpResponse
+from django.conf import settings
 
 from sentry_sdk import capture_exception
 
 from healthcheck.models import HealthCheck
 from healthcheck.tree_refresh import check_tree_freshness
+
+from django_elasticsearch_dsl.search import Search
+from elasticsearch import Elasticsearch
 
 
 class HealthCheckView(TemplateView):
@@ -16,11 +20,29 @@ class HealthCheckView(TemplateView):
 
     def _do_check(self):
         """
-        Performs a basic check on the database by performing a select query on a simple table
-        :return: True or False according to successful retrieval
+        Performs a basic check on the database by performing a select query on a simple table then
+        performs a basic check on ElasticSearch by performing a search without exceptions occuring
+        :return: False according to results of check, True if successful False if there is a fail
         """
         try:
+            # Perform database check
             HealthCheck.objects.get(health_check_field=True)
+
+            # Perform Elaseticsearch check
+            client = Elasticsearch(hosts=[settings.ES_URL])
+            query_object = {
+                "multi_match": {
+                    "query": "a_commodity_or_code",
+                    "type": "most_fields",
+                    "fields": ["keywords", "description"],
+                    "operator": "and" if "," not in "a_commodity_or_code" else "or",
+                }
+            }
+            Search().index("indexes").using(client).query(query_object).sort(
+                "sort_object"
+            )
+
+            # Return success if we have reached this point
             return True
 
         except Exception as e:
