@@ -1,11 +1,8 @@
-import requests
-import requests_mock
-
 from unittest import mock
 
 from mixer.backend.django import mixer
 
-from django.conf import settings
+from core.helpers import mock_tts_and_section_responses
 from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
@@ -279,19 +276,6 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         mock_get_commodity_object_path.start()
         self.mock_get_commodity_object_path = mock_get_commodity_object_path
 
-        with open(settings.TTS_DATA) as f:
-            self.tts_response = f.read()
-
-        self.section_note_response = {
-            "id": 1,
-            "section_id": 1,
-            "content": "1. Any reference in this section to a particular genus or species of an \
-                animal, except where the context otherwise requires, includes a reference to the young \
-                of that genus or species.\r\n2. Except where the context otherwise requires, throughout \
-                the nomenclature any reference to 'dried' products also covers products which have \
-                been dehydrated, evaporated or freeze-dried.\r\n",
-        }
-
     def tearDown(self):
         super().tearDown()
 
@@ -316,20 +300,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
             },
         )
 
-    @requests_mock.Mocker()
-    def test_sections_init(self, request_mock):
-
-        request_mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        request_mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_sections_init(self):
         MockSection = mock.MagicMock()
         AnotherMockSection = mock.MagicMock()
 
@@ -345,20 +317,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         MockSection.assert_called_once_with(self.country, self.chapter)
         AnotherMockSection.assert_called_once_with(self.country, self.chapter)
 
-    @requests_mock.Mocker()
-    def test_context_data(self, request_mock):
-
-        request_mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        request_mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_context_data(self):
         response = self.client.get(self.get_url())
         ctx = response.context
 
@@ -368,20 +328,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.assertNotIn("section_do_not_show_me", ctx)
         self.assertNotIn("another_section_do_not_show_me", ctx)
 
-    @requests_mock.Mocker()
-    def test_sections_context_data(self, request_mock):
-
-        request_mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        request_mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_sections_context_data(self):
         response = self.client.get(self.get_url())
         sections = response.context["sections"]
 
@@ -390,20 +338,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         section = sections[0]
         self.assertIsInstance(section, DisplayedSection)
 
-    @requests_mock.Mocker()
-    def test_sections_menu_items_context_data(self, request_mock):
-
-        request_mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        request_mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_sections_menu_items_context_data(self):
         response = self.client.get(self.get_url())
         section_menu_items = response.context["section_menu_items"]
 
@@ -415,20 +351,8 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
             ],
         )
 
-    @requests_mock.Mocker()
-    def test_modals_context_data(self, request_mock):
-
-        request_mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        request_mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_modals_context_data(self):
         response = self.client.get(self.get_url())
         modals = response.context["modals"]
 

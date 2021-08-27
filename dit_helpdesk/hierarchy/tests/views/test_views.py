@@ -1,7 +1,5 @@
 import json
 import logging
-import requests
-import requests_mock
 
 from contextlib import contextmanager
 from unittest import mock
@@ -10,7 +8,10 @@ from django.conf import settings
 from django.test import Client, TestCase
 
 from commodities.models import Commodity
-from core.helpers import patch_tts_json, patch_section_notes
+from core.helpers import (
+    patch_tts_json,
+    mock_tts_and_section_responses,
+)
 from countries.models import Country
 
 from ...helpers import create_nomenclature_tree
@@ -88,19 +89,6 @@ class HierarchyViewTestCase(TestCase):
 
         self.client = Client()
 
-        with open(settings.TTS_DATA) as f:
-            self.tts_response = f.read()
-
-        self.section_note_response = {
-            "id": 1,
-            "section_id": 1,
-            "content": "1. Any reference in this section to a particular genus or species of an \
-                animal, except where the context otherwise requires, includes a reference to the young \
-                of that genus or species.\r\n2. Except where the context otherwise requires, throughout \
-                the nomenclature any reference to 'dried' products also covers products which have \
-                been dehydrated, evaporated or freeze-dried.\r\n",
-        }
-
     def test_section_data_exists(self):
         self.assertTrue(Section.objects.count() > 0)
 
@@ -118,38 +106,16 @@ class HierarchyViewTestCase(TestCase):
 
 
 class ChapterDetailViewTestCase(HierarchyViewTestCase):
-    @requests_mock.Mocker()
-    def test_commodity_object(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.chapter)
         self.assertEqual(ctx["object"], self.chapter)
 
-    @requests_mock.Mocker()
-    def test_commodity_object_path(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object_path(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
@@ -162,19 +128,8 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
         self.assertIn(self.heading_url, hierarchy_context)
 
-    @requests_mock.Mocker()
-    def test_notes_context_data(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_CHAPTER_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_notes_context_data(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
 
@@ -185,38 +140,16 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
 
 
 class HeadingDetailViewTestCase(HierarchyViewTestCase):
-    @requests_mock.Mocker()
-    def test_commodity_object(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.heading)
         self.assertEqual(ctx["object"], self.heading)
 
-    @requests_mock.Mocker()
-    def test_commodity_object_path(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object_path(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
@@ -231,19 +164,8 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Horses", hierarchy_context)
         self.assertIn(self.subheading_url, hierarchy_context)
 
-    @requests_mock.Mocker()
-    def test_notes_context_data(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_notes_context_data(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
 
@@ -299,6 +221,7 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
 
 
 class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
+    @mock_tts_and_section_responses
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):
@@ -306,10 +229,6 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
                 Heading, "should_update_tts_content", return_value=should_update
             ), mock.patch.object(Heading, "update_tts_content"), patch_tts_json(
                 Heading, settings.HEADINGJSON_DATA
-            ), mock.patch.object(
-                Section, "section_notes"
-            ), patch_section_notes(
-                Section
             ):
                 yield
 
@@ -323,38 +242,16 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
 
 
 class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
-    @requests_mock.Mocker()
-    def test_commodity_object(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
         self.assertEqual(ctx["commodity"], self.subheading)
         self.assertEqual(ctx["object"], self.subheading)
 
-    @requests_mock.Mocker()
-    def test_commodity_object_path(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_commodity_object_path(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
@@ -370,19 +267,8 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertNotIn(self.subheading_url, hierarchy_context)
         self.assertInHTML("Pure-bred breeding animals", hierarchy_context)
 
-    @requests_mock.Mocker()
-    def test_notes_context_data(self, mock):
-        mock.get(
-            settings.REQUEST_MOCK_HEADING_TTS_URL,
-            text=self.tts_response,
-        )
-        mock.get(
-            settings.REQUEST_MOCK_SECTION_URL,
-            json=self.section_note_response,
-        )
-        requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-        requests.get(settings.REQUEST_MOCK_SECTION_URL).json
-
+    @mock_tts_and_section_responses
+    def test_notes_context_data(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
 
@@ -393,6 +279,7 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
 
 
 class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
+    @mock_tts_and_section_responses
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):
@@ -400,10 +287,6 @@ class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTe
                 SubHeading, "should_update_tts_content", return_value=should_update
             ), mock.patch.object(SubHeading, "update_tts_content"), patch_tts_json(
                 SubHeading, settings.SUBHEADINGJSON_DATA
-            ), mock.patch.object(
-                Section, "section_notes"
-            ), patch_section_notes(
-                Section
             ):
                 yield
 

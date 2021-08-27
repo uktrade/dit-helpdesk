@@ -1,10 +1,9 @@
 import datetime
 import logging
 import json
-import requests
-import requests_mock
 
 from django.conf import settings
+from core.helpers import mock_tts_and_section_responses
 from django.test import TestCase
 from django.urls import NoReverseMatch
 from mixer.backend.django import mixer
@@ -264,15 +263,8 @@ class CommodityTestCase(TestCase):
     def test_append_path_children(self):
         self.assertTrue(self.commodity._append_path_children)
 
-    @requests_mock.Mocker()
-    def test_commodity_update_content(self, mock):
-
-        mock.get(
-            settings.REQUEST_MOCK_COMMODITY_TTS_URL,
-            text=self.commodity.tts_response,
-        )
-        requests.get(settings.REQUEST_MOCK_COMMODITY_TTS_URL).text
-
+    @mock_tts_and_section_responses
+    def test_commodity_update_content(self):
         self.commodity.update_tts_content()
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time
@@ -282,15 +274,8 @@ class CommodityTestCase(TestCase):
             False,
         )
 
-    @requests_mock.Mocker()
-    def test_heading_leaf_update_content(self, mock):
-
-        mock.get(
-            settings.REQUEST_MOCK_COMMODITY_TTS_URL,
-            text=self.commodity.tts_response,
-        )
-        requests.get(settings.REQUEST_MOCK_COMMODITY_TTS_URL).text
-
+    @mock_tts_and_section_responses
+    def test_heading_leaf_update_content(self):
         commodity = mixer.blend(
             Commodity, commodity_code="0101210000", nomenclature_tree=self.tree
         )
