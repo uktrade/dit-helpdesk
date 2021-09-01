@@ -63,9 +63,6 @@ class CommodityTestCase(TestCase):
         self.commodity.tts_json = json.dumps(get_data(settings.COMMODITY_STRUCTURE))
         self.commodity.save_cache()
 
-        with open(settings.TTS_DATA) as f:
-            self.commodity.tts_response = f.read()
-
     def test_str(self):
         self.assertEquals(
             str(self.commodity), "Commodity {0}".format(self.commodity.commodity_code)

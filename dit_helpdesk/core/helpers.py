@@ -2,6 +2,7 @@ import json
 import sys
 import requests
 import requests_mock
+import re
 
 from contextlib import contextmanager
 from importlib import import_module, reload
@@ -52,23 +53,12 @@ def mock_tts_and_section_responses(unit_test_function):
         }
 
         with requests_mock.mock() as mock_obj:
+            matcher = re.compile(settings.REQUEST_MOCK_TTS_URL)
             mock_obj.get(
-                settings.REQUEST_MOCK_CHAPTER_TTS_URL,
+                matcher,
                 text=tts_response,
             )
-            requests.get(settings.REQUEST_MOCK_CHAPTER_TTS_URL).text
-
-            mock_obj.get(
-                settings.REQUEST_MOCK_HEADING_TTS_URL,
-                text=tts_response,
-            )
-            requests.get(settings.REQUEST_MOCK_HEADING_TTS_URL).text
-
-            mock_obj.get(
-                settings.REQUEST_MOCK_COMMODITY_TTS_URL,
-                text=tts_response,
-            )
-            requests.get(settings.REQUEST_MOCK_COMMODITY_TTS_URL).text
+            requests.get(settings.REQUEST_MOCK_TTS_URL).text
 
             mock_obj.get(
                 settings.REQUEST_MOCK_SECTION_URL,

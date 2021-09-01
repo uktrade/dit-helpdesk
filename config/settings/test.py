@@ -128,17 +128,9 @@ IMPORTMEASUREJSON_DATA = (
 )
 
 TTS_DATA = APPS_DIR + "/commodities/tests/commodity_0101210000.json"
-REQUEST_MOCK_COMMODITY_TTS_URL = (
-    "https://www.trade-tariff.service.gov.uk/api/v1/commodities/0101210000"
-)
-REQUEST_MOCK_CHAPTER_TTS_URL = (
-    "https://www.trade-tariff.service.gov.uk/api/v1/chapters/01"
-)
+REQUEST_MOCK_TTS_URL = "https://www.trade-tariff.service.gov.uk/api/v1/"
 REQUEST_MOCK_SECTION_URL = (
     "https://www.trade-tariff.service.gov.uk/api/v2/sections/1/section_note"
-)
-REQUEST_MOCK_HEADING_TTS_URL = (
-    "https://www.trade-tariff.service.gov.uk/api/v1/headings/0101"
 )
 
 ELASTICSEARCH_INDEX_NAMES = {
