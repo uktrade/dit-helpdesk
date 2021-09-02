@@ -2,6 +2,7 @@ version: "2"
 services:
   helpdesk:
     build: ./.circleci
+    context: .
     environment:
       - ADMIN_ENABLED=${ADMIN_ENABLED}
       - ALLOWED_HOSTS=localhost,
