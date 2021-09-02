@@ -4,6 +4,7 @@ import logging
 from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
+from core.helpers import mock_tts_and_section_responses
 from django.test import TestCase, Client
 from django.urls import reverse, NoReverseMatch
 from mixer.backend.django import mixer
@@ -112,28 +113,33 @@ class CommodityViewTestCase(TestCase):
     def test_commodity_data_exists(self):
         self.assertTrue(Commodity.objects.count() > 0)
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_view(self):
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_template_has_the_correct_data(self):
         resp = self.client.get(self.url)
         self.assertInHTML(
             resp.context["commodity"].description, resp.content.decode("utf-8")
         )
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_receives_the_correct_country_code(self):
         resp = self.client.get(self.url)
         self.assertEqual(
             resp.context["selected_origin_country"], settings.TEST_COUNTRY_CODE
         )
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_has_the_correct_commodity_code(self):
         resp = self.client.get(self.url)
         self.assertEqual(
             resp.context["commodity"].commodity_code, settings.TEST_COMMODITY_CODE
         )
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_has_the_selected_country_origin_name(self):
         resp = self.client.get(self.url)
         self.assertEqual(
@@ -175,6 +181,7 @@ class CommodityViewTestCase(TestCase):
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, reverse("choose-country"))
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_update(self):
         commodity = Commodity.objects.get(commodity_code=settings.TEST_COMMODITY_CODE)
         commodity.save()
@@ -201,6 +208,7 @@ class CommodityViewTestCase(TestCase):
         mock_should_update_tts_content.assert_called_once()
         mock_update_tts_content.assert_called_once()
 
+    @mock_tts_and_section_responses
     def test_commodity_detail_with_rules_or_origin(self):
         country = Country.objects.get(country_code="AF")
         country.has_uk_trade_agreement = True

@@ -1,5 +1,7 @@
 import logging
 import os
+import requests
+import requests_mock
 
 from django.conf import settings
 from django.test import TestCase
@@ -31,7 +33,19 @@ class RegulationsDocumentScraperTestCase(TestCase):
         data = data_loader(file_path)
         self.assertTrue(isinstance(data, DataFrame))
 
-    def test_appending_url_title(self):
+    @requests_mock.Mocker()
+    def test_appending_url_title(self, mock):
+
+        legislation_url = "http://www.legislation.gov.uk/eur/2010/640/contents"
+        legislation_html = (
+            "<html><head><title>Response Placeholder</title></head></html>"
+        )
+        mock.get(
+            legislation_url,
+            text=legislation_html,
+        )
+        requests.get(legislation_url).text
+
         scraper = DocumentScraper()
         scraper.source_file = "test_product_specific_regulations.csv"
         scraper.output_file = "test_out_product_specific_regulations.csv"
@@ -46,13 +60,21 @@ class RegulationsDocumentScraperTestCase(TestCase):
         self.assertTrue(os.path.exists(file_path))
         os.remove(file_path)
 
-    def test_extract_html(self):
-        title = extract_html_title(
-            "http://www.legislation.gov.uk/eur/2010/640/contents"
+    @requests_mock.Mocker()
+    def test_extract_html(self, mock):
+
+        legislation_url = "http://www.legislation.gov.uk/eur/2010/640/contents"
+        legislation_html = (
+            "<html><head><title>Response Placeholder</title></head></html>"
         )
+        mock.get(
+            legislation_url,
+            text=legislation_html,
+        )
+        requests.get(legislation_url).text
+
+        title = extract_html_title(legislation_url)
         self.assertEqual(
             title,
-            "Regulation (EU) No 640/2010 of the European Parliament and of the Council of 7 "
-            "July 2010 establishing a catch documentation programme for bluefin tuna Thunnus "
-            "thynnus and amending Council Regulation (EC) No 1984/2003",
+            "Response Placeholder",
         )

@@ -8,7 +8,10 @@ from django.conf import settings
 from django.test import Client, TestCase
 
 from commodities.models import Commodity
-from core.helpers import patch_tts_json
+from core.helpers import (
+    patch_tts_json,
+    mock_tts_and_section_responses,
+)
 from countries.models import Country
 
 from ...helpers import create_nomenclature_tree
@@ -103,6 +106,7 @@ class HierarchyViewTestCase(TestCase):
 
 
 class ChapterDetailViewTestCase(HierarchyViewTestCase):
+    @mock_tts_and_section_responses
     def test_commodity_object(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
@@ -110,6 +114,7 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         self.assertEqual(ctx["commodity"], self.chapter)
         self.assertEqual(ctx["object"], self.chapter)
 
+    @mock_tts_and_section_responses
     def test_commodity_object_path(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
@@ -123,6 +128,7 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Live horses, asses, mules and hinnies", hierarchy_context)
         self.assertIn(self.heading_url, hierarchy_context)
 
+    @mock_tts_and_section_responses
     def test_notes_context_data(self):
         response = self.client.get(self.chapter_url)
         ctx = response.context
@@ -134,6 +140,7 @@ class ChapterDetailViewTestCase(HierarchyViewTestCase):
 
 
 class HeadingDetailViewTestCase(HierarchyViewTestCase):
+    @mock_tts_and_section_responses
     def test_commodity_object(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
@@ -141,6 +148,7 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertEqual(ctx["commodity"], self.heading)
         self.assertEqual(ctx["object"], self.heading)
 
+    @mock_tts_and_section_responses
     def test_commodity_object_path(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
@@ -156,6 +164,7 @@ class HeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertInHTML("Horses", hierarchy_context)
         self.assertIn(self.subheading_url, hierarchy_context)
 
+    @mock_tts_and_section_responses
     def test_notes_context_data(self):
         response = self.client.get(self.heading_url)
         ctx = response.context
@@ -212,6 +221,7 @@ class HierarchyNorthernIrelandViewTestCase(HierarchyViewTestCase):
 
 
 class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
+    @mock_tts_and_section_responses
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):
@@ -232,6 +242,7 @@ class HeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestC
 
 
 class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
+    @mock_tts_and_section_responses
     def test_commodity_object(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
@@ -239,6 +250,7 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertEqual(ctx["commodity"], self.subheading)
         self.assertEqual(ctx["object"], self.subheading)
 
+    @mock_tts_and_section_responses
     def test_commodity_object_path(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
@@ -255,6 +267,7 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
         self.assertNotIn(self.subheading_url, hierarchy_context)
         self.assertInHTML("Pure-bred breeding animals", hierarchy_context)
 
+    @mock_tts_and_section_responses
     def test_notes_context_data(self):
         response = self.client.get(self.subheading_url)
         ctx = response.context
@@ -266,6 +279,7 @@ class SubHeadingDetailViewTestCase(HierarchyViewTestCase):
 
 
 class SubHeadingDetailNorthernIrelandViewTestCase(HierarchyNorthernIrelandViewTestCase):
+    @mock_tts_and_section_responses
     def test_eu_commodity_object_update_tts_content(self):
         @contextmanager
         def tts_content_mock(should_update):

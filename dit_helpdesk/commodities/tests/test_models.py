@@ -3,6 +3,7 @@ import logging
 import json
 
 from django.conf import settings
+from core.helpers import mock_tts_and_section_responses
 from django.test import TestCase
 from django.urls import NoReverseMatch
 from mixer.backend.django import mixer
@@ -259,6 +260,7 @@ class CommodityTestCase(TestCase):
     def test_append_path_children(self):
         self.assertTrue(self.commodity._append_path_children)
 
+    @mock_tts_and_section_responses
     def test_commodity_update_content(self):
         self.commodity.update_tts_content()
         test_time = datetime.datetime.now(datetime.timezone.utc)
@@ -269,14 +271,15 @@ class CommodityTestCase(TestCase):
             False,
         )
 
+    @mock_tts_and_section_responses
     def test_heading_leaf_update_content(self):
         commodity = mixer.blend(
-            Commodity, commodity_code="0510000000", nomenclature_tree=self.tree
+            Commodity, commodity_code="0101210000", nomenclature_tree=self.tree
         )
 
         commodity.update_tts_content()
         content = json.loads(commodity.tts_json)
-        self.assertEqual(content["goods_nomenclature_item_id"], "0510000000")
+        self.assertEqual(content["goods_nomenclature_item_id"], "0101210000")
 
         test_time = datetime.datetime.now(datetime.timezone.utc)
         check = self.commodity.last_updated - test_time

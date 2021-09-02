@@ -1,8 +1,11 @@
 import json
 import sys
+import requests_mock
+import re
 
 from contextlib import contextmanager
 from importlib import import_module, reload
+from functools import wraps
 from time import time
 from unittest import mock
 
@@ -10,7 +13,6 @@ from django.conf import settings
 from django.test import override_settings
 from django.urls import clear_url_caches
 from django.db.models import Q
-
 
 always_true_Q = ~Q(pk__in=[])
 
@@ -31,6 +33,39 @@ class Timer:
             return 0.0
 
         return self.stop_time - self.start_time
+
+
+def mock_tts_and_section_responses(unit_test_function):
+    @wraps(unit_test_function)
+    def wrapper(*args, **kwargs):
+        with open(settings.TTS_DATA) as f:
+            tts_response = f.read()
+
+        section_note_response = {
+            "id": 1,
+            "section_id": 1,
+            "content": "1. Any reference in this section to a particular genus or species of an \
+                animal, except where the context otherwise requires, includes a reference to the young \
+                of that genus or species.\r\n2. Except where the context otherwise requires, throughout \
+                the nomenclature any reference to 'dried' products also covers products which have \
+                been dehydrated, evaporated or freeze-dried.\r\n",
+        }
+
+        with requests_mock.mock() as mock_obj:
+            matcher = re.compile(settings.REQUEST_MOCK_TTS_URL)
+            mock_obj.get(
+                matcher,
+                text=tts_response,
+            )
+
+            mock_obj.get(
+                settings.REQUEST_MOCK_SECTION_URL,
+                json=section_note_response,
+            )
+
+            unit_test_function(*args, **kwargs)
+
+    return wrapper
 
 
 def reload_urls(urlconf=None):

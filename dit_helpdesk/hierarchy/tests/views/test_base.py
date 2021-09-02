@@ -2,6 +2,7 @@ from unittest import mock
 
 from mixer.backend.django import mixer
 
+from core.helpers import mock_tts_and_section_responses
 from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
@@ -299,6 +300,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
             },
         )
 
+    @mock_tts_and_section_responses
     def test_sections_init(self):
         MockSection = mock.MagicMock()
         AnotherMockSection = mock.MagicMock()
@@ -315,6 +317,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         MockSection.assert_called_once_with(self.country, self.chapter)
         AnotherMockSection.assert_called_once_with(self.country, self.chapter)
 
+    @mock_tts_and_section_responses
     def test_context_data(self):
         response = self.client.get(self.get_url())
         ctx = response.context
@@ -325,6 +328,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         self.assertNotIn("section_do_not_show_me", ctx)
         self.assertNotIn("another_section_do_not_show_me", ctx)
 
+    @mock_tts_and_section_responses
     def test_sections_context_data(self):
         response = self.client.get(self.get_url())
         sections = response.context["sections"]
@@ -334,6 +338,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
         section = sections[0]
         self.assertIsInstance(section, DisplayedSection)
 
+    @mock_tts_and_section_responses
     def test_sections_menu_items_context_data(self):
         response = self.client.get(self.get_url())
         section_menu_items = response.context["section_menu_items"]
@@ -346,6 +351,7 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
             ],
         )
 
+    @mock_tts_and_section_responses
     def test_modals_context_data(self):
         response = self.client.get(self.get_url())
         modals = response.context["modals"]
