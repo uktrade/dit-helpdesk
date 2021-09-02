@@ -1,8 +1,9 @@
 version: "2"
 services:
   helpdesk:
-    context: ./
-    dockerfile: circleci.Dockerfile
+    build:
+      context: ./
+      dockerfile: circleci.Dockerfile
     environment:
       - ADMIN_ENABLED=${ADMIN_ENABLED}
       - ALLOWED_HOSTS=localhost,
