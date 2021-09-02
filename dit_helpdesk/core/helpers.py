@@ -1,6 +1,5 @@
 import json
 import sys
-import requests
 import requests_mock
 import re
 
@@ -58,13 +57,11 @@ def mock_tts_and_section_responses(unit_test_function):
                 matcher,
                 text=tts_response,
             )
-            requests.get(settings.REQUEST_MOCK_TTS_URL).text
 
             mock_obj.get(
                 settings.REQUEST_MOCK_SECTION_URL,
                 json=section_note_response,
             )
-            requests.get(settings.REQUEST_MOCK_SECTION_URL).json
 
             unit_test_function(*args, **kwargs)
 
