@@ -289,25 +289,33 @@ Imports the rules of origin into the database.
 
 The rules of origin files are stored in an S3 bucket and this command will download these files and produce rules of origin objects tied to the currently active nomenclature tree.
 For docker environments an instance of Minio is used in place of connecting to the S3 bucket. To set up the rules of origin in your local docker, you will need to follow these steps:
+
     1. Download & install CyberDuck
+
     2. Access Vault and from helpdesk/dev get the following secrets:
       ```
       ROO_S3_ACCESS_KEY
       ROO_S3_BUCKET_NAME
       ROO_SECRET_ACCESS_KEY
       ```
+
     3. Open CyberDuck and click the Plus symbol button on the main page to create a new connection
+
     4. In the popup window, fill in the following details:
 	      - Select “Amazon S3” from the first dropdown box
 	      - Type the ROO_S3_ACCESS_KEY into the Access Key Id box
 	      - Type the ROO_SECRET_ACCESS_KEY into the Secret Access Key box
 	      - Type the ROO_S3_BUCKET_NAME into the Path box
+
     5. With the connection created, double click on the connection to open the S3 bucket
+
     6. From this page copy the “rules_of_origin” folder to your local machine
+
     7. Move the rules_of_origin folder to the following path in the dit-helpdesk repo:
 	    ```
       volumes/s3/import-rules-of-origin-bucket
       ```
+
     8. Access Vault and from helpdesk/docker_development get the following secrets:
 	    ```
       S3_URL
@@ -315,11 +323,14 @@ For docker environments an instance of Minio is used in place of connecting to t
 	    ROO_S3_BUCKET_NAME
 	    ROO_SECRET_ACCESS_KEY
       ```
+
     9. Copy these secrets into your local .env file and restart the container
+
     10. Open the dit-helpdesk-helpdesk_1 container command line and shell in
       ```bash
       pipenv shell
       ```
+
     11. Run the command:
       ```bash
       ./manage.py import_rules_of_origin
