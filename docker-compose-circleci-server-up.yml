@@ -1,0 +1,124 @@
+version: "2"
+services:
+  helpdesk:
+    build:
+      context: .
+      dockerfile: ./circleci.Dockerfile
+    environment:
+      - ADMIN_ENABLED=${ADMIN_ENABLED}
+      - ALLOWED_HOSTS=localhost,
+      - ALLOWED_ADMIN_IPS=127.0.0.1,
+      - ALLOWED_ADMIN_IP_RANGES=127.0.0.1/32,
+      - APM_DEBUG=${APM_DEBUG}
+      - APM_ENVIRONMENT=${APM_ENVIRONMENT}
+      - APM_SECRET_TOKEN=${APM_SECRET_TOKEN}
+      - APM_SERVER_URL=${APM_SERVER_URL}
+      - APM_SERVICE_NAME=${APM_SERVICE_NAME}
+      - APM_TIMEOUT=${APM_TIMEOUT}
+      - APP_START_DOMAIN=http://localhost:8000/choose-country/
+      - AUTHBROKER_CLIENT_ID=${AUTHBROKER_CLIENT_ID}
+      - AUTHBROKER_CLIENT_SECRET=${AUTHBROKER_CLIENT_SECRET}
+      - AUTHBROKER_URL=${AUTHBROKER_URL}
+      - BEIS_CONTACT=${BEIS_CONTACT}
+      - BEIS_EMAIL=${BEIS_EMAIL}
+      - DEFRA_CONTACT=${DEFRA_CONTACT}
+      - DEFRA_EMAIL=${DEFRA_EMAIL}
+      - DIRECTORY_CLIENT_CORE_CACHE_EXPIRE_SECONDS=0
+      - DIRECTORY_CLIENT_CORE_CACHE_LOG_THROTTLING_SECONDS=0
+      - DIRECTORY_FORMS_API_API_KEY=${DIRECTORY_FORMS_API_API_KEY}
+      - DIRECTORY_FORMS_API_BASE_URL=${DIRECTORY_FORMS_API_BASE_URL}
+      - DIRECTORY_FORMS_API_SENDER_ID=${DIRECTORY_FORMS_API_SENDER_ID}
+      - DIT_HELPDESK_ADMIN_PASSWORD=${DIT_HELPDESK_ADMIN_PASSWORD}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_SETTINGS_MODULE=config.settings.check_server
+      - ELASTICSEARCH_HOSTS=http://es:9200
+      - ELASTICSEARCH_URL=http://es:9200
+      - ES_URL=http://es:9200
+      - FEEDBACK_CONTACT=${FEEDBACK_CONTACT}
+      - FEEDBACK_DESTINATION_EMAIL=${FEEDBACK_DESTINATION_EMAIL}
+      - FEEDBACK_EMAIL=${FEEDBACK_EMAIL}
+      - HELPDESK_GA_GTM=${HELPDESK_GA_GTM}
+      - HELPDESK_GA_UA=${HELPDESK_GA_UA}
+      - HISTFILE=root/hist/.bash_history
+      - HMRC_TAX_FORM_URL=${HMRC_TAX_FORM_URL}
+      - IP_SAFELIST_XFF_INDEX=${IP_SAFELIST_XFF_INDEX}
+      - LOG_LEVEL=INFO
+      - LOGIN_REDIRECT_URL=${LOGIN_REDIRECT_URL}
+      - LOGIN_URL=${LOGIN_URL}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - PYTHONUNBUFFERED=1
+      - RESTRICT_ADMIN=False
+      - ROO_S3_ACCESS_KEY_ID=minio_username
+      - ROO_S3_BUCKET_NAME=import-rules-of-origin-bucket
+      - ROO_S3_SECRET_ACCESS_KEY=minio_password
+      - S3_URL=http://s3:9000
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_ENVIRONMENT=docker-development
+      - TEST_OUTPUT_DIR=/app/test-reports
+    volumes:
+      - .:/app
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://es:9200 -wait tcp://redis:6379 -wait tcp://s3:9000 -wait file:///app/.webpack-is-ready -timeout 300s
+    depends_on:
+      - postgres
+      - es
+      - redis
+      - s3
+    command: ./manage.py runserver 0.0.0.0:8000
+
+  checkserver:
+    image: jwilder/dockerize
+    entrypoint: dockerize -wait tcp://helpdesk:8000 -timeout 300s
+    command: |
+      true
+
+  webpack:
+    image: node:14
+    command: bash -c "
+      rm -f .webpack-is-ready
+      && npm set unsafe-perm true
+      && npm install
+      && npm run build
+      && touch .webpack-is-ready
+      && sleep infinity
+      "
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_ENVIRONMENT=docker-development
+    volumes:
+      - .:/app
+    working_dir: /app
+
+  postgres:
+    image: postgres:10
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_ENVIRONMENT=docker-development
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+      - ES_URL=http://es:9200
+
+  redis:
+    image: redis:3.2
+
+  s3:
+    image: minio/minio:latest
+    hostname: s3
+    volumes:
+      - ./volumes/s3:/export/
+    entrypoint: sh
+    command: -c '/usr/bin/minio server /export'
+    environment:
+      - MINIO_ROOT_USER=minio_username
+      - MINIO_ROOT_PASSWORD=minio_password
