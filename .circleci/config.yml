@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Run tests
-          command: docker-compose -f docker-compose-circleci.yml up --exit-code-from helpdesk
+          command: docker-compose -f docker-compose-circleci-unit-tests.yml up --exit-code-from helpdesk
       - store_test_results:
           path: /tmp/app/test-reports/
 
@@ -33,6 +33,17 @@ jobs:
           paths:
             - ~/.cache/pre-commit
 
+  server_up:
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: medium
+    working_directory: /tmp/app
+    steps:
+      - checkout
+      - run:
+          name: Run server
+          command: docker-compose -f docker-compose-circleci-server-up.yml up --exit-code-from checkserver
+
 # CircleCI workflows
 workflows:
   version: 2
@@ -40,3 +51,4 @@ workflows:
     jobs:
       - unit_tests
       - format_and_secrets_checks
+      - server_up
