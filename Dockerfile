@@ -16,6 +16,6 @@ VOLUME /reports
 ADD . /app/
 
 RUN pip install pipenv
-RUN pipenv install --dev
+RUN pipenv install --dev --deploy
 
 CMD /app/start.sh
