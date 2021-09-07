@@ -194,6 +194,9 @@ class RulesOfOriginMixin:
             .filter(document_filter & date_filter & rule_filter)
         )
 
+        if len(rules) == 0 and country.has_uk_trade_agreement:
+            logger.error("Could not find expected Rules Of Origin for %s", country)
+
         chapter_rules = [r for r in rules if r.chapters.exists()]
         heading_rules = [r for r in rules if r.headings.exists()]
         subheading_rules = [r for r in rules if r.subheadings.exists()]

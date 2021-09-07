@@ -312,6 +312,34 @@ def import_roo(f, region=settings.PRIMARY_REGION):
     _create_notes(rules_document, roo_data["notes"])
 
 
+def check_countries_consistancy():
+    nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
+
+    # Get the list of countries we know have trade agreements
+    countries = Country.objects.filter(Q(has_uk_trade_agreement=True))
+
+    missing_countries_list = []
+
+    for country in countries:
+        # Check a rules document has been created for each of these countries
+        rules_document = RulesDocument.objects.filter(
+            countries=country, nomenclature_tree=nomenclature_tree
+        )
+        if not rules_document and country.country_code != "EU":
+            # If there is no rules document, we need to raise the warning that we were expecting one
+            missing_countries_list.append(country.country_code + " - " + country.name)
+
+    if len(missing_countries_list) > 0:
+        logger.error(
+            "Completed consistency check, the following countries have trade agreements "
+            + "but are missing in the RoO documents: "
+            + str(missing_countries_list)
+            + " Please check the data files, they may be out of date"
+        )
+
+    return
+
+
 if __name__ == "__main__":
     import_roo("PSRO_UK_EN-UK-CL-FTA.xml")
     import ipdb
