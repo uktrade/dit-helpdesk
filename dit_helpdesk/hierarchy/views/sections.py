@@ -2,6 +2,8 @@ import itertools
 import logging
 
 from django.conf import settings
+from django.template import engines
+from django.template.exceptions import TemplateDoesNotExist
 
 from commodities.helpers import get_tariff_content_context, has_trade_scenario
 from regulations.models import RegulationGroup
@@ -371,6 +373,17 @@ class RulesOfOriginSection(CommodityDetailSection):
 
         return any(m.is_gsp for m in measures)
 
+    def get_country_specific_rules_of_origin_template(self, country):
+        template_name = f"commodities/_rules_of_origin_{country.name.upper()}.html"
+
+        django_engine = engines["django"]
+        try:
+            django_engine.engine.find_template(template_name)
+        except TemplateDoesNotExist:
+            return None
+
+        return template_name
+
     def get_context_data(self):
         ctx = super().get_context_data()
 
@@ -379,6 +392,9 @@ class RulesOfOriginSection(CommodityDetailSection):
         ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
             self.country, self.commodity_object
         )
+        ctx[
+            "country_specific_rules_of_origin_template"
+        ] = self.get_country_specific_rules_of_origin_template(self.country)
 
         return ctx
 
