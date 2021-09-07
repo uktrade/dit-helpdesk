@@ -76,7 +76,8 @@ services:
 
   s3:
     image: minio/minio:latest
-    hostname: s3
+    networks:
+      - inside-network
     volumes:
       - ./minio_config:/root/.minio
       - ./volumes/s3:/export/
