@@ -6,7 +6,7 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - HISTFILE=root/hist/.bash_history
+      - HISTFILE=/root/hist/.bash_history
     networks:
       - inside-network
       - directory-forms-api_outside-network
