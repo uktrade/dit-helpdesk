@@ -692,56 +692,52 @@ class ProductRegulationsSectionTestCase(BaseSectionTestCase):
 class TradeStatusSectionTestCase(BaseSectionTestCase):
     section_class = TradeStatusSection
 
-    @contextmanager
-    def mock_has_trade_scenario(self, has_trade_scenario=True):
-        with mock.patch(
-            "hierarchy.views.sections.has_trade_scenario",
-            return_value=has_trade_scenario,
-        ) as mock_has_trade_scenario:
-            yield
-
-        mock_has_trade_scenario.assert_called_once_with(self.country)
-
     def test_template(self):
-        with self.mock_has_trade_scenario():
-            response = self.client.get(self.get_url())
+        response = self.client.get(self.get_url())
         self.assert_uses_template(response, "hierarchy/_trade_status.html")
+        self.assert_uses_template(
+            response, "commodities/_content_EU_NOAGR_FOR_EXIT.html"
+        )
 
     def test_menu_items(self):
-        with self.mock_has_trade_scenario():
-            response = self.client.get(self.get_url())
+        response = self.client.get(self.get_url())
         self.assert_has_menu_item(response, "Trade status", "trade_status")
 
     def test_should_be_displayed(self):
-        with self.mock_has_trade_scenario():
-            response = self.client.get(self.get_url())
+        response = self.client.get(self.get_url())
         self.assert_section_displayed(response, TradeStatusSection)
 
-        with self.mock_has_trade_scenario(False):
+        with override_settings(SUPPORTED_TRADE_SCENARIOS=[]):
+            response = self.client.get(self.get_url())
+            self.assert_section_not_displayed(response, TradeStatusSection)
+
+    @override_settings(SUPPORTED_TRADE_SCENARIOS=["NO_HTML_SCENARIO"])
+    def test_non_existent_content_template_fallback(self):
+        self.country.scenario = "NO_HTML_SCENARIO"
+        self.country.save()
+        with self.assertLogs("hierarchy.views.sections", level="ERROR") as error_log:
             response = self.client.get(self.get_url())
         self.assert_section_not_displayed(response, TradeStatusSection)
-
-    def test_context_data(self):
-        with self.mock_has_trade_scenario(), mock.patch(
-            "hierarchy.views.sections.get_tariff_content_context"
-        ) as mock_get_tariff_content_context:
-            mock_get_tariff_content_context.return_value = {
-                "tariff_content_key": "tariff_content_value"
-            }
-            response = self.client.get(self.get_url())
-
-        mock_get_tariff_content_context.assert_called_once_with(
-            self.country, self.heading
+        self.assertIn(
+            "ERROR:hierarchy.views.sections:Could not find expected template commodities/_content_NO_HTML_SCENARIO.html"
+            " for AD - Andorra - NO_HTML_SCENARIO",
+            error_log.output,
         )
-        self.assertEqual(response.context["tariff_content_key"], "tariff_content_value")
 
-    def test_context_data_no_trade_scenario(self):
-        with self.mock_has_trade_scenario(False), mock.patch(
-            "hierarchy.views.sections.get_tariff_content_context"
-        ) as mock_get_tariff_content_context:
-            mock_get_tariff_content_context.return_value = {
-                "tariff_content_key": "tariff_content_value"
-            }
-            response = self.client.get(self.get_url())
-        mock_get_tariff_content_context.assert_not_called()
-        self.assertNotIn("tariff_content_key", response.context)
+    def test_context(self):
+        response = self.client.get(self.get_url())
+        ctx = response.context
+
+        self.assertEqual(
+            ctx["tariff_content_template"],
+            "commodities/_content_EU_NOAGR_FOR_EXIT.html",
+        )
+        self.assertEqual(ctx["tariff_content_url"], self.country.content_url)
+        self.assertEqual(ctx["country_name"], self.country.name)
+        self.assertEqual(ctx["country_suffix"], "s")
+
+        self.country.name = "Names"
+        self.country.save()
+        response = self.client.get(self.get_url())
+        ctx = response.context
+        self.assertEqual(ctx["country_suffix"], "")
