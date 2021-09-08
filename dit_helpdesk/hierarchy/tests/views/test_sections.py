@@ -622,6 +622,29 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         )
         self.assertTrue(response.context["has_gsp_tariff_preference"])
 
+    def test_country_specific_rules_of_origin_template(self):
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(self.get_url())
+
+        country_specific_rules_of_origin_template = response.context[
+            "country_specific_rules_of_origin_template"
+        ]
+        self.assertEqual(
+            country_specific_rules_of_origin_template,
+            f"commodities/_rules_of_origin_{self.country.name.upper()}.html",
+        )
+
+        other_country = Country.objects.exclude(pk=self.country.pk).first()
+        with self.patch_get_nomenclature_group_measures([]):
+            response = self.client.get(
+                self.get_url(country_code=other_country.country_code)
+            )
+
+        country_specific_rules_of_origin_template = response.context[
+            "country_specific_rules_of_origin_template"
+        ]
+        self.assertIsNone(country_specific_rules_of_origin_template)
+
 
 class ProductRegulationsSectionTestCase(BaseSectionTestCase):
     section_class = ProductRegulationsSection
