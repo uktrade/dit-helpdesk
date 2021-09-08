@@ -312,7 +312,7 @@ def import_roo(f, region=settings.PRIMARY_REGION):
     _create_notes(rules_document, roo_data["notes"])
 
 
-def check_countries_consistancy():
+def check_countries_consistency():
     nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
 
     # Get the list of countries we know have trade agreements
@@ -336,8 +336,6 @@ def check_countries_consistancy():
             + str(missing_countries_list)
             + " Please check the data files, they may be out of date"
         )
-
-    return
 
 
 if __name__ == "__main__":

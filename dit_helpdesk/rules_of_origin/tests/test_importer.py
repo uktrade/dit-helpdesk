@@ -219,3 +219,33 @@ class ImporterTestCase(TestCase):
 
         rule_multiple = Rule.objects.get(code="1507 to 1515")
         self.assertEqual(rule_multiple.headings.count(), 9)
+
+    def test_check_countries_consistency_via_importer(self):
+        self.country.has_uk_trade_agreement = True
+        self.country.save()
+
+        with self.assertLogs(
+            "rules_of_origin.ingest.importer", level="ERROR"
+        ) as warning_log:
+            call_command("import_rules_of_origin")
+
+        # Assert 'XT - Test Country' is not in the error message to sentry
+        self.assertNotIn("XT - Test Country", str(warning_log.output))
+
+    def test_check_countries_consistency_via_command(self):
+        mixer = Mixer()
+        country_missing_roo = mixer.blend(
+            Country,
+            name="Test Country 2",
+            country_code="BX",
+            has_uk_trade_agreement=True,
+        )
+        country_missing_roo.save()
+
+        with self.assertLogs(
+            "rules_of_origin.ingest.importer", level="ERROR"
+        ) as warning_log:
+            call_command("check_rules_of_origin")
+
+        # Assert 'BX - Test Country 2' is in the error message to sentry
+        self.assertIn("BX - Test Country 2", str(warning_log.output))
