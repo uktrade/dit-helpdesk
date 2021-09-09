@@ -5,7 +5,6 @@ from django.conf import settings
 from django.template import engines
 from django.template.exceptions import TemplateDoesNotExist
 
-from commodities.helpers import get_tariff_content_context, has_trade_scenario
 from regulations.models import RegulationGroup
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
@@ -13,6 +12,16 @@ from ..models import Heading, SubHeading
 
 
 logger = logging.getLogger(__name__)
+
+
+def does_template_exist(template_name):
+    django_engine = engines["django"]
+    try:
+        django_engine.engine.find_template(template_name)
+    except TemplateDoesNotExist:
+        return False
+
+    return True
 
 
 class CommodityDetailSection:
@@ -376,10 +385,7 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_country_specific_rules_of_origin_template(self, country):
         template_name = f"commodities/_rules_of_origin_{country.name.upper()}.html"
 
-        django_engine = engines["django"]
-        try:
-            django_engine.engine.find_template(template_name)
-        except TemplateDoesNotExist:
+        if not does_template_exist(template_name):
             return None
 
         return template_name
@@ -460,12 +466,42 @@ class ProductRegulationsNorthernIrelandSection(CommodityDetailSection):
 class TradeStatusSection(CommodityDetailSection):
     template = "hierarchy/_trade_status.html"
 
+    def __init__(self, country, commodity_object):
+        super().__init__(country, commodity_object)
+
+        self.has_trade_scenario = (
+            country.scenario and country.scenario in settings.SUPPORTED_TRADE_SCENARIOS
+        )
+        self.tariff_content_template_name = self.get_tariff_content_template_name(
+            country
+        )
+
+    def get_tariff_content_template_name(self, country):
+        template_name = (
+            f"commodities/_content_{country.scenario.replace('-', '_')}.html"
+        )
+
+        if not does_template_exist(template_name):
+            logger.error(
+                "Could not find expected template %s for %s",
+                template_name,
+                country,
+            )
+            return None
+
+        return template_name
+
     @property
     def should_be_displayed(self):
-        return has_trade_scenario(self.country)
+        return self.has_trade_scenario and self.tariff_content_template_name
 
     def get_menu_items(self):
         return [("Trade status", "trade_status")]
 
     def get_context_data(self):
-        return get_tariff_content_context(self.country, self.commodity_object)
+        return {
+            "tariff_content_template": self.tariff_content_template_name,
+            "tariff_content_url": self.country.content_url,
+            "country_name": self.country.name,
+            "country_suffix": "" if self.country.name.endswith("s") else "s",
+        }
