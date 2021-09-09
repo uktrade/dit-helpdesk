@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
-from rules_of_origin.ingest.importer import import_roo
+from rules_of_origin.ingest.importer import import_roo, check_countries_consistency
 from rules_of_origin.ingest.s3 import _get_s3_bucket
 
 from hierarchy.models import NomenclatureTree
@@ -55,6 +55,8 @@ class Command(BaseCommand):
 
                 logger.info("Importing from S3 path %s", obj.key)
                 import_roo(temp_file)
+
+        check_countries_consistency()
 
     def _handle(self, *args, **options):
         s3_bucket = settings.ROO_S3_BUCKET_NAME
