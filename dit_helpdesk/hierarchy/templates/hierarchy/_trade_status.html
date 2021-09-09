@@ -1,11 +1,7 @@
-{% if tariff_content_label %}
-    <h3 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
-        <a name="trade_status"></a>
-        Trade status
-    </h3>
-    <div class="govuk-body govuk-!-margin-bottom-6">
-    {% with template_name=tariff_content_label|stringformat:"s"|add:".html" %}
-        {% include "commodities/"|add:template_name %}
-    {% endwith %}
-    </div>
-{% endif %}
+<h3 class="govuk-heading-l govuk-!-font-weight-bold govuk-!-margin-bottom-3">
+    <a name="trade_status"></a>
+    Trade status
+</h3>
+<div class="govuk-body govuk-!-margin-bottom-6">
+{% include tariff_content_template %}
+</div>
