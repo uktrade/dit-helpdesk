@@ -86,7 +86,7 @@ services:
     ports:
       - "9000:9000"
     entrypoint: sh
-    command: -c '/usr/bin/minio server /export'
+    command: -c 'minio server /export'
     environment:
       - MINIO_ROOT_USER=minio_username
       - MINIO_ROOT_PASSWORD=minio_password
