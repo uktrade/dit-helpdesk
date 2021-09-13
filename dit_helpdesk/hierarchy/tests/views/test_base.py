@@ -260,12 +260,14 @@ class BaseSectionedCommodityObjectDetailViewTestCase(TestCase):
             nomenclature_tree=tree,
             chapter_code="0100000000",
             goods_nomenclature_sid="1",
+            leaf=True,
         )
         self.heading = mixer.blend(
             Heading,
             nomenclature_tree=tree,
             heading_code="0101000000",
             goods_nomenclature_sid="2",
+            leaf=True,
         )
 
         mock_get_commodity_object_path = mock.patch.object(
