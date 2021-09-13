@@ -135,6 +135,11 @@ class BaseSectionedCommodityObjectDetailView(BaseCommodityObjectDetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
+        # If the object (commodity, section, heading or subheading) is not a leaf on the
+        # nomenclature tree, clear the list of sections so we avoid initialising them
+        if not self.commodity_object.leaf:
+            self.sections = []
+
         sections = []
         section_menu_items = []
         modals = {}

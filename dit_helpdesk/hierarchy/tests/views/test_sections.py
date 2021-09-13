@@ -61,6 +61,7 @@ class BaseSectionTestCase(TestCase):
             nomenclature_tree=tree,
             heading_code="0101000000",
             goods_nomenclature_sid="2",
+            leaf=True,
         )
         mock_get_commodity_object_path = mock.patch.object(
             TestSectionsView,
