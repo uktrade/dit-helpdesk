@@ -16,7 +16,7 @@ def update_countries_trade_scenarios(apps, schema_editor):
     with open(csv_file_path) as country_scenarios_file:
         reader = csv.DictReader(country_scenarios_file)
 
-        updated_country_codes = []
+        updated_country_names = []
         for row in reader:
             country_name = row["name"]
             try:
@@ -31,12 +31,14 @@ def update_countries_trade_scenarios(apps, schema_editor):
             country.new_trade_agreement_url = row["new_trade_agreement_url"]
             country.save()
 
-            updated_country_codes.append(country_name)
+            updated_country_names.append(country.name)
 
         not_updated_countries = Country.objects.exclude(
-            country_code__in=updated_country_codes
-        ).values_list("country_code", flat=True)
-        logging.warning("Did not update %s", list(not_updated_countries))
+            name__in=updated_country_names
+        ).values_list("name", flat=True)
+        logging.warning(
+            "Did not update the following countries: %s", list(not_updated_countries)
+        )
 
 
 class Migration(migrations.Migration):
