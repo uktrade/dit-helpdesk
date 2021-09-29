@@ -17,12 +17,17 @@ class Command(BaseCommand):
 
     def get_fieldnames(self):
         return [
-            "Country code",
-            "Country name",
-            "UK agreement status",
-            "EU agreement status",
-            "Scenario",
-            "GOVUK FTA URL",
+            "country_code",
+            "country_name",
+            "uk_agreement_status",
+            "eu_agreement_status",
+            "scenario",
+            "govuk_fta_url",
+            "trade_agreement_title",
+            "trade_agreement_type",
+            # Remove these when new_scenario becomes scenario TC-1036
+            "new_scenario",
+            "govuk_fta_url_new",
         ]
 
     @contextmanager
@@ -45,11 +50,16 @@ class Command(BaseCommand):
             for country in Country.objects.order_by("country_code"):
                 writer.writerow(
                     {
-                        "Country code": country.country_code,
-                        "Country name": country.name,
-                        "UK agreement status": country.has_uk_trade_agreement,
-                        "EU agreement status": country.has_eu_trade_agreement,
-                        "Scenario": country.scenario,
-                        "GOVUK FTA URL": country.content_url,
+                        "country_code": country.country_code,
+                        "country_name": country.name,
+                        "uk_agreement_status": country.has_uk_trade_agreement,
+                        "eu_agreement_status": country.has_eu_trade_agreement,
+                        "scenario": country.scenario,
+                        "govuk_fta_url": country.content_url,
+                        "trade_agreement_title": country.trade_agreement_title,
+                        "trade_agreement_type": country.trade_agreement_type,
+                        # Remove these when new_scenario becomes scenario TC-1036
+                        "new_scenario": country.new_scenario,
+                        "govuk_fta_url_new": country.new_trade_agreement_url,
                     }
                 )

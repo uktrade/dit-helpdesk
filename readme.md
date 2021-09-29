@@ -352,6 +352,23 @@ After the rules of origin are fully imported the rule text is post-processed for
 
 This will link regulations that are attached to the previous nomenclature tree to the new tree which is to be activated (which will have been generated in other commands).
 
+### export_scenarios
+
+```bash
+./manage.py export_scenarios -o YOUR_FILENAME_HERE.csv
+```
+
+Will create a csv file containing the details of all the countries trade agreement status currently in the DB.
+Contains the following information:
+"Country code" - 2 digit code used to represent country
+"Country name" - Name of the country
+"UK agreement status" - indicator to show if the country in question has a trade agreement with the UK
+"EU agreement status"  - indicator to show if the country in question has a trade agreement with the European Union
+"Scenario" - Code indicating what category of trade relationship this country has with the UK
+"GOVUK FTA URL" - URL address of the trade agreement details page on the .gov website
+"Trade Agreement Title" - The name of the trade agreement between this country and the UK (if applicable)
+"Trade Agreement Type" - The type of trade agreement between this country and the UK (if applicable)
+
 ### generate_search_keywords
 
 ```bash
