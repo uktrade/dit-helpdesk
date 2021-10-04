@@ -7,9 +7,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - HISTFILE=/root/hist/.bash_history
-    networks:
-      - inside-network
-      - directory-forms-api_outside-network
     volumes:
       - .:/app
       - bashhistory:/root/hist
@@ -41,8 +38,6 @@ services:
     image: postgres:10
     env_file:
       - .env
-    networks:
-      - inside-network
     ports:
       - "5432:5432"
     volumes:
@@ -50,8 +45,6 @@ services:
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-    networks:
-      - inside-network
     environment:
       - discovery.type=single-node
     ports:
@@ -59,15 +52,11 @@ services:
 
   redis:
     image: redis:3.2
-    networks:
-      - inside-network
     ports:
       - "6379:6379"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.3
-    networks:
-      - inside-network
     environment:
       ELASTICSEARCH_URL: http://es:9200
       ELASTICSEARCH_HOSTS: http://es:9200
@@ -76,8 +65,6 @@ services:
 
   s3:
     image: minio/minio:latest
-    networks:
-      - inside-network
     volumes:
       - ./minio_config:/root/.minio
       - ./volumes/s3:/export/
@@ -90,12 +77,6 @@ services:
     environment:
       - MINIO_ROOT_USER=minio_username
       - MINIO_ROOT_PASSWORD=minio_password
-
-networks:
-  inside-network:
-    driver: bridge
-  directory-forms-api_outside-network:
-    external: true
 
 volumes:
   bashhistory:
