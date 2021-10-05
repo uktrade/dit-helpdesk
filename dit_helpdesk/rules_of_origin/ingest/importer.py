@@ -26,6 +26,12 @@ class MultipleStartDatesException(InvalidDocumentException):
     pass
 
 
+class RulesDocumentAlreadyExistsException(InvalidDocumentException):
+    def __init__(self, message, country):
+        super().__init__(message)
+        self.country = country
+
+
 def _create_document(name, countries_with_dates, gb_start_date, region):
     country_codes = [d["code"] for d in countries_with_dates]
 
@@ -49,9 +55,10 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
             countries=country, nomenclature_tree=nomenclature_tree
         )
         if existing_rules_document:
-            raise InvalidDocumentException(
+            raise RulesDocumentAlreadyExistsException(
                 f"RulesDocument has already been created for country_code {country.country_code} \n"
-                "during this operation, check your source folder for duplicate XMLs or errors."
+                "during this operation, check your source folder for duplicate XMLs or errors.",
+                country=country,
             )
 
     logger.info("Creating document %s..", name)
@@ -310,6 +317,8 @@ def import_roo(f, region=settings.PRIMARY_REGION):
     _create_rules(rules_document, roo_data["positions"], region=region)
 
     _create_notes(rules_document, roo_data["notes"])
+
+    return rules_document
 
 
 def check_countries_consistency():

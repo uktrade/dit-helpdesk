@@ -8,7 +8,11 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
-from rules_of_origin.ingest.importer import import_roo, check_countries_consistency
+from rules_of_origin.ingest.importer import (
+    import_roo,
+    check_countries_consistency,
+    RulesDocumentAlreadyExistsException,
+)
 from rules_of_origin.ingest.s3 import _get_s3_bucket
 
 from hierarchy.models import NomenclatureTree
@@ -25,6 +29,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with process_swapped_tree():
             self._handle(*args, **options)
+
+    def _find_duplicate(self, country, mapping):
+        for obj_key, rule_document in mapping.items():
+            if rule_document.countries.filter(pk=country.pk).exists():
+                return obj_key
+
+        return None
 
     def _import_from_s3(self):
         bucket = _get_s3_bucket(
@@ -44,6 +55,7 @@ class Command(BaseCommand):
         if len(xml_objects) < 1:
             raise Exception("No Rules of Origin files in s3 Bucket")
 
+        rules_documents_mapping = {}
         for obj in xml_objects:
             with NamedTemporaryFile(mode="w+b") as temp_file:
                 self.stdout.write(f"Attempting to download object {obj.key} from S3")
@@ -54,7 +66,21 @@ class Command(BaseCommand):
                 temp_file.seek(0)
 
                 logger.info("Importing from S3 path %s", obj.key)
-                import_roo(temp_file)
+                try:
+                    rules_document = import_roo(temp_file)
+                except RulesDocumentAlreadyExistsException as e:
+                    duplicated_country = e.country
+                    duplicated_obj_key = self._find_duplicate(
+                        duplicated_country, rules_documents_mapping
+                    )
+                    logger.error(
+                        "Failed to import %s. Found duplicate country %s. Already created from %s",
+                        obj.key,
+                        duplicated_country,
+                        duplicated_obj_key,
+                    )
+                    raise e
+                rules_documents_mapping[obj.key] = rules_document
 
         check_countries_consistency()
 
