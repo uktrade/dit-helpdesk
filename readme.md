@@ -81,12 +81,6 @@ docker-compose up -d
 This intial set up will take about an hour (depending upon machine and internet speed) to set up and fully import
 all content, on subsequent runs it will on take a minute or so to be up and running for development.
 
-NOTE: On first setup if you don't have the [Directory Forms API](https://github.com/uktrade/directory-forms-api/blob/develop/README.md) docker environment running you may receive the error:
-
-    ERROR: Network directory-forms-api_outside-network declared as external, but could not be found. Please create the network manually using `docker network create directory-forms-api_outside-network` and try again.
-
-You can either run the docker environment for Directory Forms API, which will create this network for you or create it manually using the command it gives.
-
 Run the following command to activate a shell into the docker instance for the trade helpdesk app with the command.
 
 ```bash
@@ -158,41 +152,12 @@ clone the directory
 git clone https://github.com/uktrade/directory-forms-api.git .
 ```
 
-create a hosts file entry for
+Follow installation and setup instructions in https://github.com/uktrade/directory-forms-api/blob/develop/README.md to get the directory forms API running locally and to create a superuser.
 
-# `127.0.0.1 forms.trade.great`
-
-Follow installation and setup instructions in https://github.com/uktrade/directory-forms-api/blob/develop/README.md
-
-NB: add the following entries to the env file
-
-```
-HEALTH_CHECK_TOKEN=""
-DEFAULT_FROM_EMAIL=""
-REDIS_CELERY_URL="redis://localhost:6379"
-GOV_NOTIFY_LETTER_API_KEY=debug
-DJANGO_SECRET_KEY=debug
-FEATURE_ENFORCE_STAFF_SSO_ENABLED=False
-STAFF_SSO_AUTHBROKER_URL=
-AUTHBROKER_CLIENT_ID=
-AUTHBROKER_CLIENT_SECRET=
-```
-
-after running `make debug` in a terminal
-
-create a superuser by running the following in a terminal
-
-```
-export DATABASE_URL=postgres://debug:debug@localhost:5432/directory_forms_api_debug
-./manage.py createsuperuser
-```
-
-then run `make debug_webserver` to start the server
-
-access the application admin screens locally in you browser with the url http://forms.trade.great:8011/admin
+Access the application admin screens locally in you browser with the url http://localhost:8011/admin.
 
 Click the add button in the Client section and add `helpdesk` as the name of the client then click submit. This will
-generate the user identifier and accss key that you need to add to the .env file for the `dit_helpdesk` application
+generate the user identifier and access key that you need to add to the .env file `DIRECTORY_FORMS_API_*` variables for the `dit_helpdesk` application.
 
 ### Running tests with Docker
 
