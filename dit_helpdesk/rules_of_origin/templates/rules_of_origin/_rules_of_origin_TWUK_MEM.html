@@ -1,0 +1,19 @@
+<!--
+    Rules Of Origin (RoO) Text Template for trade scenario TWUK_MEM:
+    For countries with a UK memorandum of understanding, but no GSP (Generalised Scheme of Preferences) access.
+-->
+<p class="govuk-body">
+    The UK has a memorandum of understanding with {{ country_name }}.
+</p>
+<p class="govuk-body">
+    Goods must meet the rules of origin to benefit from preferential tariffs (where available).
+</p>
+<p class="govuk-body">
+    <a class="govuk-link" href="https://www.gov.uk/guidance/check-your-goods-meet-the-rules-of-origin]">Read guidance about rules of origin here.</a>
+</p>
+{% if rules_of_origin %}
+    {% block rules_of_origin %}
+        {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
+        {% include "hierarchy/_rules_of_origin_table_data.html" %}
+    {% endblock %}
+{% endif %}

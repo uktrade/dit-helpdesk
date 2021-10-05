@@ -383,7 +383,11 @@ class RulesOfOriginSection(CommodityDetailSection):
         return any(m.is_gsp for m in measures)
 
     def get_country_specific_rules_of_origin_template(self, country):
-        template_name = f"commodities/_rules_of_origin_{country.name.upper()}.html"
+        # Cleanup - TC-1036 - Change "new_scenario" to "scenario" after DB migration cleanup
+        template_name = (
+            "rules_of_origin/_rules_of_origin_"
+            f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.new_scenario]}.html"
+        )
 
         if not does_template_exist(template_name):
             return None
@@ -394,6 +398,8 @@ class RulesOfOriginSection(CommodityDetailSection):
         ctx = super().get_context_data()
 
         ctx["rules_of_origin"] = self.rules_of_origin
+        ctx["country_name"] = self.country.name
+        ctx["trade_agreement_name"] = self.country.trade_agreement_title
         ctx["has_uk_trade_agreement"] = self.country.has_uk_trade_agreement
         ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
             self.country, self.commodity_object
@@ -469,27 +475,30 @@ class TradeStatusSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         self.has_trade_scenario = (
-            country.scenario and country.scenario in settings.SUPPORTED_TRADE_SCENARIOS
+            country.new_scenario
+            and country.new_scenario in settings.SUPPORTED_TRADE_SCENARIOS
         )
         self.tariff_content_template_name = self.get_tariff_content_template_name(
             country
         )
 
     def get_tariff_content_template_name(self, country):
-        template_name = (
-            f"commodities/_content_{country.scenario.replace('-', '_')}.html"
-        )
-
-        if not does_template_exist(template_name):
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+        try:
+            template_name = (
+                "countries/trade_agreements/_trade_agreement_"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.new_scenario]}.html"
+            )
+            return template_name
+        except Exception:
             logger.error(
-                "Could not find expected template %s for %s",
-                template_name,
-                country,
+                "Could not find expected template for %s using scenario %s",
+                country.name,
+                country.new_scenario,
             )
             return None
-
-        return template_name
 
     @property
     def should_be_displayed(self):
@@ -499,9 +508,12 @@ class TradeStatusSection(CommodityDetailSection):
         return [("Trade status", "trade_status")]
 
     def get_context_data(self):
+        # Cleanup - TC-1036 - remove "tariff_content_url", change "new_trade_agreement_url" to content_url
         return {
             "tariff_content_template": self.tariff_content_template_name,
             "tariff_content_url": self.country.content_url,
+            "trade_agreement_name": self.country.trade_agreement_title,
+            "trade_agreement_url": self.country.new_trade_agreement_url,
             "country_name": self.country.name,
             "country_suffix": "" if self.country.name.endswith("s") else "s",
         }
