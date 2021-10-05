@@ -1,21 +1,13 @@
-var Details = require("govuk-frontend/govuk/components/details/details.js");
-var Button = require("govuk-frontend/govuk/components/button/button.js");
-var Accordion = require("govuk-frontend/govuk/components/accordion/accordion.js");
-var ErrorSummary = require("govuk-frontend/govuk/components/error-summary/error-summary.js");
-var common = require("govuk-frontend/govuk/common");
-var commodityTree = require("./modules/commodity-tree");
-// var showHideHeadings = require('./modules/showhide-headings')
-var Modal = require("./modules/modal");
-var CookiePolicy = require("./modules/cookie-policy");
-var nodeListForEach = common.nodeListForEach;
+import Details from "govuk-frontend/govuk/components/details/details";
+import Button from "govuk-frontend/govuk/components/button/button";
+import Accordion from "govuk-frontend/govuk/components/accordion/accordion";
+import ErrorSummary from "govuk-frontend/govuk/components/error-summary/error-summary";
+import common from "govuk-frontend/govuk/common";
+import commodityTree from "./modules/commodity-tree";
+import Modal from "./modules/modal";
+import CookiePolicy from "./modules/cookie-policy";
 
-var addListener = function (target, event, handler) {
-  if (target.attachEvent) {
-    target.attachEvent("on" + event, handler);
-  } else {
-    target.addEventListener(event, handler, false);
-  }
-};
+var nodeListForEach = common.nodeListForEach;
 
 var cookiePolicy = new CookiePolicy();
 cookiePolicy.initBanner(".app-cookie-banner", ".js-accept-cookie", "cookies");
@@ -78,7 +70,7 @@ if ($hierarchyModalLinks) {
 
   nodeListForEach($hierarchyModalLinks, function ($modalLink) {
     console.log("modal link: " + $modalLink);
-    addListener($modalLink, "click", function () {
+    $modalLink.addEventListener("click", function () {
       console.log("Inside onclick");
       modal.querySelector(".app-modal-dialogue__content").innerHTML = "";
 
@@ -113,21 +105,14 @@ var CommoditySearchForm = {
   addListener: function (target, event) {
     var theForm = this.searchForm;
     var self = this;
-    if (target.attachEvent) {
-      target.attachEvent("on" + event, function () {
+    target.addEventListener(
+      event,
+      function () {
         self.setChangedBy(target);
         theForm.submit();
-      });
-    } else {
-      target.addEventListener(
-        event,
-        function () {
-          self.setChangedBy(target);
-          theForm.submit();
-        },
-        false
-      );
-    }
+      },
+      false
+    );
   },
 };
 

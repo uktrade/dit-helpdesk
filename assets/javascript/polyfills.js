@@ -1,1 +1,1 @@
-require("nodelist-foreach-polyfill");
+import "nodelist-foreach-polyfill";

@@ -1,4 +1,4 @@
-var openregisterLocationPicker = require("govuk-country-and-territory-autocomplete");
+import openregisterLocationPicker from "govuk-country-and-territory-autocomplete";
 
 openregisterLocationPicker({
   selectElement: document.getElementById("country-picker"),
