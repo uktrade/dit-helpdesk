@@ -56,8 +56,9 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
         )
         if existing_rules_document:
             raise RulesDocumentAlreadyExistsException(
-                f"RulesDocument has already been created for country_code {country.country_code} \n"
-                "during this operation, check your source folder for duplicate XMLs or errors.",
+                "RulesDocument has already been created for country_code"
+                f" {country.country_code} \nduring this operation, check your source"
+                " folder for duplicate XMLs or errors.",
                 country=country,
             )
 
@@ -140,7 +141,8 @@ def _get_same_level_objects_for_range(hs_type, hs_from, hs_to, region):
     hs_from, hs_to = _normalise_code(hs_from), _normalise_code(hs_to)
     if hs_to and len(hs_from) != len(hs_to):
         raise InvalidDocumentException(
-            f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS codes"
+            f"hsFrom ({hs_from}) and hsTo ({hs_to}) have to apply to the same level HS"
+            " codes"
         )
 
     range_models = _determine_range_models(hs_type, hs_from)
@@ -340,10 +342,10 @@ def check_countries_consistency():
 
     if len(missing_countries_list) > 0:
         logger.error(
-            "Completed consistency check, the following countries have trade agreements "
-            + "but are missing in the RoO documents: "
-            + str(missing_countries_list)
-            + " Please check the data files, they may be out of date"
+            "Completed consistency check, the following countries have trade agreements"
+            " but are missing in the RoO documents: %s Please check the data files,"
+            " they may be out of date",
+            missing_countries_list,
         )
 
 
