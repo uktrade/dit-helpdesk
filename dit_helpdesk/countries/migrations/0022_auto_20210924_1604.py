@@ -36,9 +36,11 @@ def update_countries_trade_scenarios(apps, schema_editor):
         not_updated_countries = Country.objects.exclude(
             name__in=updated_country_names
         ).values_list("name", flat=True)
-        logging.warning(
-            "Did not update the following countries: %s", list(not_updated_countries)
-        )
+        if not_updated_countries:
+            logging.warning(
+                "Did not update the following countries: %s",
+                list(not_updated_countries),
+            )
 
 
 class Migration(migrations.Migration):
