@@ -137,6 +137,7 @@ webpack-stats.json
 dit_helpdesk/trade_tariff_service/import_data/*/downloaded/*
 dit_helpdesk/trade_tariff_service/import_data/*/prepared/*
 dit_helpdesk/rules_of_origin/ingest/data/*.xml
+dit_helpdesk/regulations/data/test_out_product_specific_regulations.csv
 
 volumes/s3/.minio.sys
 volumes/s3/import-rules-of-origin-bucket/rules_of_origin/*.xml
