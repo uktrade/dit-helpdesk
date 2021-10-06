@@ -585,45 +585,6 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
 
         self.assertEqual(rules_of_origin, expected_rules_of_origin)
 
-    def test_has_uk_trade_agreement(self):
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(self.get_url())
-
-        self.assertEqual(
-            response.context["has_uk_trade_agreement"],
-            self.country.has_uk_trade_agreement,
-        )
-
-    def test_has_gsp_tariff_preference(self):
-        with self.patch_get_nomenclature_group_measures(
-            []
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertFalse(response.context["has_gsp_tariff_preference"])
-
-        mock_measure_no_gsp = self.get_mock_measure(is_gsp=False)
-        with self.patch_get_nomenclature_group_measures(
-            [mock_measure_no_gsp]
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertFalse(response.context["has_gsp_tariff_preference"])
-
-        mock_measure_has_gsp = self.get_mock_measure(is_gsp=True)
-        with self.patch_get_nomenclature_group_measures(
-            [mock_measure_has_gsp]
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertTrue(response.context["has_gsp_tariff_preference"])
-
     def test_country_specific_rules_of_origin_template(self):
         with self.patch_get_nomenclature_group_measures([]):
             response = self.client.get(self.get_url())
