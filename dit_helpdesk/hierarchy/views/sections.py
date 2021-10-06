@@ -375,13 +375,6 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
 
-    def get_has_gsp_tariff_preference(self, country, commodity_object):
-        measures = get_nomenclature_group_measures(
-            commodity_object, "Tariffs and charges", country.country_code
-        )
-
-        return any(m.is_gsp for m in measures)
-
     def get_country_specific_rules_of_origin_template(self, country):
         # Cleanup - TC-1036 - Change "new_scenario" to "scenario" after DB migration cleanup
         template_name = (
@@ -400,10 +393,6 @@ class RulesOfOriginSection(CommodityDetailSection):
         ctx["rules_of_origin"] = self.rules_of_origin
         ctx["country_name"] = self.country.name
         ctx["trade_agreement_name"] = self.country.trade_agreement_title
-        ctx["has_uk_trade_agreement"] = self.country.has_uk_trade_agreement
-        ctx["has_gsp_tariff_preference"] = self.get_has_gsp_tariff_preference(
-            self.country, self.commodity_object
-        )
         ctx[
             "country_specific_rules_of_origin_template"
         ] = self.get_country_specific_rules_of_origin_template(self.country)
