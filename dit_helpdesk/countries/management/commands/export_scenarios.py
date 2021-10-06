@@ -25,9 +25,6 @@ class Command(BaseCommand):
             "govuk_fta_url",
             "trade_agreement_title",
             "trade_agreement_type",
-            # Remove these when new_scenario becomes scenario TC-1036
-            "new_scenario",
-            "govuk_fta_url_new",
         ]
 
     @contextmanager
@@ -58,8 +55,5 @@ class Command(BaseCommand):
                         "govuk_fta_url": country.content_url,
                         "trade_agreement_title": country.trade_agreement_title,
                         "trade_agreement_type": country.trade_agreement_type,
-                        # Remove these when new_scenario becomes scenario TC-1036
-                        "new_scenario": country.new_scenario,
-                        "govuk_fta_url_new": country.new_trade_agreement_url,
                     }
                 )
