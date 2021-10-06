@@ -1,13 +1,13 @@
-<!--
+{% comment %}
     Rules Of Origin Text Template for trade scenario TWUK_TA_NoRoO:
     For countries with a UK trade agreement, or EPA (Economic Partnership Agreement) -
     but without continuing GSP (Generalised Scheme of Preferences) access,
     and for which TWUK does not have the Rules of Origin data.
--->
-<!--
+{% endcomment %}
+{% comment %}
     Adding conditional for table data in case where RoO data is added, but we have not
     yet been able to update a countries trade-agreement scenario in the DB.
--->
+{% endcomment %}
 <p class="govuk-body">
     The UK has a trade agreement with {{ country_name }}.
 </p>
