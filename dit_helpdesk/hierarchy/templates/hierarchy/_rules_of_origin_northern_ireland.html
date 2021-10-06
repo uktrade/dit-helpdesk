@@ -33,14 +33,10 @@
             </div>
             <div id="accordion-uk-rules-of-origin-content" class="govuk-accordion__section-content" aria-labelledby="accordion-uk-rules-of-origin-heading">
                 <div class="govuk-!-margin-bottom-3">
-                    {% if has_uk_trade_agreement or has_gsp_tariff_preference %}
-                        {% if rules_of_origin %}
-                            {% include "commodities/_rules_of_origin.html" %}
-                        {% else %}
-                            {% include "commodities/_rules_of_origin_no_data.html" %}
-                        {% endif %}
+                    {% if country_specific_rules_of_origin_template %}
+                        {% include country_specific_rules_of_origin_template %}
                     {% else %}
-                        {% include "commodities/_rules_of_origin_no_tariff_preference.html" %}    
+                        {% include "rules_of_origin/_rules_of_origin_no_data.html" %}
                     {% endif %}
                 </div>
             </div>
