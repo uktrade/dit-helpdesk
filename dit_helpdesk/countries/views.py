@@ -116,9 +116,7 @@ class CountryInformationView(TemplateView):
         # "information" instead of "country_code" to access the correct sub-folder
         ctx["information_sharing_template_name"] = self._get_template_name(
             "information",
-            "information_sharing_"
-            + settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.new_scenario]
-            + "_IS",
+            f"information_sharing_{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.new_scenario]}_IS",
         )
         ctx["trade_agreements_template_name"] = self._get_template_name(
             self.country_code, "trade_agreements"
