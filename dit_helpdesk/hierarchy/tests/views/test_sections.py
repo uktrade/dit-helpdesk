@@ -6,6 +6,7 @@ from unittest import mock
 from faker import Faker
 from mixer.backend.django import mixer
 
+from django.conf import settings
 from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
@@ -584,45 +585,6 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
 
         self.assertEqual(rules_of_origin, expected_rules_of_origin)
 
-    def test_has_uk_trade_agreement(self):
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(self.get_url())
-
-        self.assertEqual(
-            response.context["has_uk_trade_agreement"],
-            self.country.has_uk_trade_agreement,
-        )
-
-    def test_has_gsp_tariff_preference(self):
-        with self.patch_get_nomenclature_group_measures(
-            []
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertFalse(response.context["has_gsp_tariff_preference"])
-
-        mock_measure_no_gsp = self.get_mock_measure(is_gsp=False)
-        with self.patch_get_nomenclature_group_measures(
-            [mock_measure_no_gsp]
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertFalse(response.context["has_gsp_tariff_preference"])
-
-        mock_measure_has_gsp = self.get_mock_measure(is_gsp=True)
-        with self.patch_get_nomenclature_group_measures(
-            [mock_measure_has_gsp]
-        ) as mock_nomenclature_group_measures:
-            response = self.client.get(self.get_url())
-        mock_nomenclature_group_measures.assert_called_with(
-            self.heading, "Tariffs and charges", self.country.country_code
-        )
-        self.assertTrue(response.context["has_gsp_tariff_preference"])
-
     def test_country_specific_rules_of_origin_template(self):
         with self.patch_get_nomenclature_group_measures([]):
             response = self.client.get(self.get_url())
@@ -630,9 +592,13 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         self.assertEqual(
             country_specific_rules_of_origin_template,
-            f"commodities/_rules_of_origin_{self.country.name.upper()}.html",
+            (
+                "rules_of_origin/_rules_of_origin_"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+            ),
         )
 
         other_country = Country.objects.exclude(pk=self.country.pk).first()
@@ -644,7 +610,14 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
-        self.assertIsNone(country_specific_rules_of_origin_template)
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+        self.assertEqual(
+            country_specific_rules_of_origin_template,
+            (
+                "rules_of_origin/_rules_of_origin_"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[other_country.new_scenario]}.html"
+            ),
+        )
 
 
 class ProductRegulationsSectionTestCase(BaseSectionTestCase):
@@ -696,8 +669,13 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
     def test_template(self):
         response = self.client.get(self.get_url())
         self.assert_uses_template(response, "hierarchy/_trade_status.html")
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         self.assert_uses_template(
-            response, "commodities/_content_EU_NOAGR_FOR_EXIT.html"
+            response,
+            (
+                "countries/trade_agreements/_trade_agreement_"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+            ),
         )
 
     def test_menu_items(self):
@@ -714,14 +692,17 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
 
     @override_settings(SUPPORTED_TRADE_SCENARIOS=["NO_HTML_SCENARIO"])
     def test_non_existent_content_template_fallback(self):
-        self.country.scenario = "NO_HTML_SCENARIO"
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+        self.country.new_scenario = "NO_HTML_SCENARIO"
         self.country.save()
         with self.assertLogs("hierarchy.views.sections", level="ERROR") as error_log:
             response = self.client.get(self.get_url())
         self.assert_section_not_displayed(response, TradeStatusSection)
         self.assertIn(
-            "ERROR:hierarchy.views.sections:Could not find expected template commodities/_content_NO_HTML_SCENARIO.html"
-            " for AD - Andorra - NO_HTML_SCENARIO",
+            (
+                "ERROR:hierarchy.views.sections:Could not find expected template for "
+                "Andorra using scenario NO_HTML_SCENARIO"
+            ),
             error_log.output,
         )
 
@@ -729,9 +710,13 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
         response = self.client.get(self.get_url())
         ctx = response.context
 
+        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         self.assertEqual(
             ctx["tariff_content_template"],
-            "commodities/_content_EU_NOAGR_FOR_EXIT.html",
+            (
+                "countries/trade_agreements/_trade_agreement_"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+            ),
         )
         self.assertEqual(ctx["tariff_content_url"], self.country.content_url)
         self.assertEqual(ctx["country_name"], self.country.name)

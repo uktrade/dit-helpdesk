@@ -20,8 +20,8 @@ class Country(models.Model):
 
     is_eu = models.BooleanField(default=False)
 
-    # These 2 fields are temporary and will replace scenario and content_url fields above
-    # scenario needs to be null for now or existing entries will break
+    # Cleanup - TC-1036 These 2 fields are temporary and will replace scenario and content_url fields above
+    # scenario needs to be nullable for now or existing entries will break
     new_scenario = models.CharField(max_length=255, null=True)
     new_trade_agreement_url = models.URLField(null=True, blank=True)
 

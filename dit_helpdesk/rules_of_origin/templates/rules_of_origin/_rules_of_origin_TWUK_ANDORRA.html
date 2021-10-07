@@ -1,0 +1,17 @@
+{% comment %}
+    Rules Of Origin (RoO) Text Template for trade scenario TWUK_ANDORRA:
+    For countries without a UK trade agreement, but that – subject to reciprocity –
+    can still get European Union preferential tariffs on non-agricultural goods.
+{% endcomment %}
+<p class="govuk-body">
+    Goods must meet the rules of origin to benefit from preferential tariffs (where available).
+</p>
+<p class="govuk-body">
+    <a class="govuk-link" href="https://www.gov.uk/guidance/check-your-goods-meet-the-rules-of-origin">Read guidance about rules of origin here.</a>
+</p>
+{% if rules_of_origin %}
+    {% block rules_of_origin %}
+        {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
+        {% include "hierarchy/_rules_of_origin_table_data.html" %}
+    {% endblock %}
+{% endif %}
