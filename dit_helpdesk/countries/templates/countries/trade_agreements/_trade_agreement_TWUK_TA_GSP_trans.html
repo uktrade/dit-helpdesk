@@ -1,0 +1,21 @@
+{% comment %}
+    Trade Agreement (TA) Text Template for trade scenario TWUK_TA_GSP_trans:
+    For countries with a UK trade agreement, or EPA (Economic Partnership Agreement) -
+    but with a 2 year transition on GSP (Generalised Scheme of Preferences) access
+    from the time that the trade agreement came into force.
+{% endcomment %}
+<p>
+    The UK has a trade agreement with {{ country_name }}.
+</p>
+<p>
+    Where applicable, tariff preferences are available. If the conditions for preferential access are not met, the Most Favoured Nation (MFN) rate applies.
+</p>
+<p>
+    {{ country_name }} is also part of the UK’s Generalised Scheme of Preferences for a transition period of up to 2 years after the entry into force of the {{ trade_agreement_name }}.
+</p>
+<p>
+    <a class="govuk-link" href="{{ trade_agreement_url }}">Find out more about the {{ trade_agreement_name }}.</a>
+</p>
+<p>
+    <a class="govuk-link" href="https://www.gov.uk/government/publications/trading-with-developing-nations">Find out more about the UK's Generalised Scheme of Preferences.</a>
+</p>

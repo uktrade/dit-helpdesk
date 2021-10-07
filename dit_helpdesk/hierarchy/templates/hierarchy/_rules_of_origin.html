@@ -1,19 +1,10 @@
 {% load dotted_format %}
 
 <div class="govuk-!-margin-bottom-9" id="rules-of-origin">
+    <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
     {% if country_specific_rules_of_origin_template %}
-        <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
         {% include country_specific_rules_of_origin_template %}
-    {% elif has_uk_trade_agreement or has_gsp_tariff_preference %}
-        {% if rules_of_origin %}
-            <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
-            {% include "commodities/_rules_of_origin.html" %}
-        {% else %}
-            <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
-            {% include "commodities/_rules_of_origin_no_data.html" %}
-        {% endif %}
     {% else %}
-        <h2 class="govuk-heading-l"><a name="rules_of_origin"></a>Rules of origin - {{ commodity.commodity_code|dotted_format }}</h2>
-        {% include "commodities/_rules_of_origin_no_tariff_preference.html" %}
+        {% include "rules_of_origin/_rules_of_origin_no_data.html" %}
     {% endif %}
 </div>
