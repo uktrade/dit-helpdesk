@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            update_san_marino_trade_agreement_details, migrations.RunPython.noop
+            update_san_marino_trade_agreement_details,
+            reset_san_marino_trade_agreement_details,
         ),
     ]
