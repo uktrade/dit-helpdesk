@@ -718,7 +718,9 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
                 f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
             ),
         )
-        self.assertEqual(ctx["tariff_content_url"], self.country.content_url)
+        self.assertEqual(
+            ctx["trade_agreement_url"], self.country.new_trade_agreement_url
+        )
         self.assertEqual(ctx["country_name"], self.country.name)
         self.assertEqual(ctx["country_suffix"], "s")
 

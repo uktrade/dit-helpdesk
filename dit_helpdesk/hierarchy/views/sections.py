@@ -500,7 +500,7 @@ class TradeStatusSection(CommodityDetailSection):
         # Cleanup - TC-1036 - remove "tariff_content_url", change "new_trade_agreement_url" to content_url
         return {
             "tariff_content_template": self.tariff_content_template_name,
-            "tariff_content_url": self.country.content_url,
+            "tariff_content_url": self.country.new_trade_agreement_url,
             "trade_agreement_name": self.country.trade_agreement_title,
             "trade_agreement_url": self.country.new_trade_agreement_url,
             "country_name": self.country.name,

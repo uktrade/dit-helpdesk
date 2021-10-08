@@ -33,8 +33,8 @@ class ExportScenariosTestCase(TestCase):
             country_code="XT",
             has_uk_trade_agreement=True,
             has_eu_trade_agreement=False,
-            scenario="STICKER_TRADES",
-            content_url="gotgotgotneed.com",
+            old_scenario="STICKER_TRADES",
+            old_content_url="gotgotgotneed.com",
             trade_agreement_title="The Very Agreeable Agreement",
             trade_agreement_type="Football Sticker Swap",
             # remove the next 2 arguments with TC-1036
@@ -67,7 +67,7 @@ class ExportScenariosTestCase(TestCase):
             "True",
             "False",
             "STICKER_TRADES",
-            "gotgotgotneed.com",
+            "givemebackmyzapdos.com",
             "The Very Agreeable Agreement",
             "Football Sticker Swap",
             "PKMN_CARD_TRADES",
@@ -89,7 +89,7 @@ class ExportScenariosTestCase(TestCase):
         expected_log = (
             "country_code,country_name,uk_agreement_status,eu_agreement_status,"
             "scenario,govuk_fta_url,trade_agreement_title,trade_agreement_type,new_scenario,govuk_fta_url_new\r\n"
-            "XT,Test Country,True,False,STICKER_TRADES,gotgotgotneed.com,"
+            "XT,Test Country,True,False,STICKER_TRADES,givemebackmyzapdos.com,"
             "The Very Agreeable Agreement,Football Sticker Swap,PKMN_CARD_TRADES,givemebackmyzapdos.com\r\n"
         )
 

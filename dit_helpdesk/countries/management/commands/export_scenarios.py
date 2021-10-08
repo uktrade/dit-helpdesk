@@ -54,8 +54,8 @@ class Command(BaseCommand):
                         "country_name": country.name,
                         "uk_agreement_status": country.has_uk_trade_agreement,
                         "eu_agreement_status": country.has_eu_trade_agreement,
-                        "scenario": country.scenario,
-                        "govuk_fta_url": country.content_url,
+                        "scenario": country.old_scenario,
+                        "govuk_fta_url": country.new_trade_agreement_url,
                         "trade_agreement_title": country.trade_agreement_title,
                         "trade_agreement_type": country.trade_agreement_type,
                         # Remove these when new_scenario becomes scenario TC-1036
