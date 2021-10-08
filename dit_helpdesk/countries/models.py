@@ -10,20 +10,14 @@ class Country(models.Model):
 
     name = models.CharField(max_length=250)
 
-    old_scenario = models.CharField(max_length=255, null=True)
-    old_content_url = models.URLField(null=True, blank=True)
-
-    has_uk_trade_agreement = models.BooleanField(default=False)
     has_eu_trade_agreement = models.BooleanField(default=False)
     trade_agreement_title = models.CharField(max_length=250, null=True)
     trade_agreement_type = models.CharField(max_length=250, null=True)
 
     is_eu = models.BooleanField(default=False)
 
-    # Cleanup - TC-1036 These 2 fields are temporary and will replace scenario and content_url fields above
-    # scenario needs to be nullable for now or existing entries will break
-    new_scenario = models.CharField(max_length=255, null=True)
-    new_trade_agreement_url = models.URLField(null=True, blank=True)
+    scenario = models.CharField(max_length=255, null=True)
+    content_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.country_code} - {self.name} - {self.new_scenario}"
+        return f"{self.country_code} - {self.name} - {self.scenario}"

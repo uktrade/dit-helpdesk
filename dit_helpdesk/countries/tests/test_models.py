@@ -13,7 +13,7 @@ class CountryModelTestCase(TestCase):
         self.country = Country.objects.create(
             country_code="UK",
             name="United Kingdom",
-            new_scenario="Example scenario",
+            scenario="Example scenario",
         )
 
     def test_country_model_str(self):

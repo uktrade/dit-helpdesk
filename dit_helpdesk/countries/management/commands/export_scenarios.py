@@ -2,6 +2,7 @@ import csv
 
 from contextlib import contextmanager
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from countries.models import Country
@@ -25,9 +26,6 @@ class Command(BaseCommand):
             "govuk_fta_url",
             "trade_agreement_title",
             "trade_agreement_type",
-            # Remove these when new_scenario becomes scenario TC-1036
-            "new_scenario",
-            "govuk_fta_url_new",
         ]
 
     @contextmanager
@@ -48,18 +46,19 @@ class Command(BaseCommand):
             writer.writeheader()
 
             for country in Country.objects.order_by("country_code"):
+
                 writer.writerow(
                     {
                         "country_code": country.country_code,
                         "country_name": country.name,
-                        "uk_agreement_status": country.has_uk_trade_agreement,
+                        "uk_agreement_status": (
+                            country.scenario
+                            in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT
+                        ),
                         "eu_agreement_status": country.has_eu_trade_agreement,
-                        "scenario": country.old_scenario,
-                        "govuk_fta_url": country.new_trade_agreement_url,
+                        "scenario": country.scenario,
+                        "govuk_fta_url": country.content_url,
                         "trade_agreement_title": country.trade_agreement_title,
                         "trade_agreement_type": country.trade_agreement_type,
-                        # Remove these when new_scenario becomes scenario TC-1036
-                        "new_scenario": country.new_scenario,
-                        "govuk_fta_url_new": country.new_trade_agreement_url,
                     }
                 )

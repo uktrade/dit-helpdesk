@@ -211,7 +211,7 @@ class CommodityViewTestCase(TestCase):
     @mock_tts_and_section_responses
     def test_commodity_detail_with_rules_or_origin(self):
         country = Country.objects.get(country_code="AF")
-        country.has_uk_trade_agreement = True
+        country.scenario = "TRADE_AGREEMENT"
         country.save()
 
         rules_document = mixer.blend(

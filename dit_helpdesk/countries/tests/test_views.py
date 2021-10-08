@@ -148,9 +148,8 @@ class CountryInformationViewTestCase(TestCase):
     def setUp(self):
         super().setUp()
 
-        # Cleanup - TC-1036 - change new_scenario to scenario after migration change
         self.country = Country.objects.create(
-            country_code="XX", name="Atlantis", new_scenario="TRADE_AGREEMENT"
+            country_code="XX", name="Atlantis", scenario="TRADE_AGREEMENT"
         )
         self.url = reverse(
             "country-information",

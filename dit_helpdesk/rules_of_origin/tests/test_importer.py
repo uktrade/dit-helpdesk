@@ -221,7 +221,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(rule_multiple.headings.count(), 9)
 
     def test_check_countries_consistency_via_importer(self):
-        self.country.has_uk_trade_agreement = True
+        self.country.scenario = "TRADE_AGREEMENT"
         self.country.save()
 
         with self.assertLogs(
@@ -238,7 +238,7 @@ class ImporterTestCase(TestCase):
             Country,
             name="Test Country 2",
             country_code="BX",
-            has_uk_trade_agreement=True,
+            scenario="TRADE_AGREEMENT",
         )
         country_missing_roo.save()
 
