@@ -592,12 +592,12 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+
         self.assertEqual(
             country_specific_rules_of_origin_template,
             (
                 "rules_of_origin/_rules_of_origin_"
-                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.scenario]}.html"
             ),
         )
 
@@ -610,12 +610,12 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+
         self.assertEqual(
             country_specific_rules_of_origin_template,
             (
                 "rules_of_origin/_rules_of_origin_"
-                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[other_country.new_scenario]}.html"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[other_country.scenario]}.html"
             ),
         )
 
@@ -669,12 +669,12 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
     def test_template(self):
         response = self.client.get(self.get_url())
         self.assert_uses_template(response, "hierarchy/_trade_status.html")
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
+
         self.assert_uses_template(
             response,
             (
                 "countries/trade_agreements/_trade_agreement_"
-                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.scenario]}.html"
             ),
         )
 
@@ -692,8 +692,8 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
 
     @override_settings(SUPPORTED_TRADE_SCENARIOS=["NO_HTML_SCENARIO"])
     def test_non_existent_content_template_fallback(self):
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
-        self.country.new_scenario = "NO_HTML_SCENARIO"
+
+        self.country.scenario = "NO_HTML_SCENARIO"
         self.country.save()
         with self.assertLogs("hierarchy.views.sections", level="ERROR") as error_log:
             response = self.client.get(self.get_url())
@@ -710,17 +710,14 @@ class TradeStatusSectionTestCase(BaseSectionTestCase):
         response = self.client.get(self.get_url())
         ctx = response.context
 
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         self.assertEqual(
             ctx["tariff_content_template"],
             (
                 "countries/trade_agreements/_trade_agreement_"
-                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.new_scenario]}.html"
+                f"{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[self.country.scenario]}.html"
             ),
         )
-        self.assertEqual(
-            ctx["trade_agreement_url"], self.country.new_trade_agreement_url
-        )
+        self.assertEqual(ctx["trade_agreement_url"], self.country.content_url)
         self.assertEqual(ctx["country_name"], self.country.name)
         self.assertEqual(ctx["country_suffix"], "s")
 

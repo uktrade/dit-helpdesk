@@ -111,12 +111,11 @@ class CountryInformationView(TemplateView):
             "the European Union" if country.country_code == "EU" else country.name
         )
 
-        # Cleanup - TC-1036 - change "new_scenario" to "scenario" once migration to cleanup DB is complete
         # Information Sharing section is one of 2 scenario templates, not country based, so pass
         # "information" instead of "country_code" to access the correct sub-folder
         ctx["information_sharing_template_name"] = self._get_template_name(
             "information",
-            f"information_sharing_{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.new_scenario]}_IS",
+            f"information_sharing_{settings.TRADE_AGREEMENT_TEMPLATE_MAPPING[country.scenario]}_IS",
         )
         ctx["trade_agreements_template_name"] = self._get_template_name(
             self.country_code, "trade_agreements"
