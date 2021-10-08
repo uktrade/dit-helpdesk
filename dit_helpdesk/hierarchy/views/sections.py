@@ -412,8 +412,12 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
             commodity_object, country
         )
         ctx["has_eu_trade_agreement"] = country.has_eu_trade_agreement
+
+        if country.scenario in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT:
+            has_uk_trade_agreement = True
+
         ctx["has_both_trade_agreements"] = (
-            country.has_uk_trade_agreement and country.has_eu_trade_agreement
+            has_uk_trade_agreement and country.has_eu_trade_agreement
         )
 
         return ctx

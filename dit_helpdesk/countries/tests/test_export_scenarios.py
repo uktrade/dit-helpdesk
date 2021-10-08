@@ -31,7 +31,6 @@ class ExportScenariosTestCase(TestCase):
             Country,
             name="Test Country",
             country_code="XT",
-            has_uk_trade_agreement=True,
             has_eu_trade_agreement=False,
             scenario="STICKER_TRADES",
             content_url="gotgotgotneed.com",

@@ -2,6 +2,7 @@ import csv
 
 from contextlib import contextmanager
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from countries.models import Country
@@ -45,11 +46,15 @@ class Command(BaseCommand):
             writer.writeheader()
 
             for country in Country.objects.order_by("country_code"):
+
+                if country.scenario in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT:
+                    has_uk_trade_agreement = True
+
                 writer.writerow(
                     {
                         "country_code": country.country_code,
                         "country_name": country.name,
-                        "uk_agreement_status": country.has_uk_trade_agreement,
+                        "uk_agreement_status": has_uk_trade_agreement,
                         "eu_agreement_status": country.has_eu_trade_agreement,
                         "scenario": country.scenario,
                         "govuk_fta_url": country.content_url,

@@ -70,4 +70,8 @@ class Migration(migrations.Migration):
             model_name="country",
             name="old_scenario",
         ),
+        migrations.RemoveField(
+            model_name="country",
+            name="has_uk_trade_agreement",
+        ),
     ]

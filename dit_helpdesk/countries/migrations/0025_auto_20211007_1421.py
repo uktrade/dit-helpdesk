@@ -22,6 +22,7 @@ def backup_old_scenarios(apps, schema_editor):
                     "country_code": country.country_code,
                     "scenario": country.scenario,
                     "content_url": country.content_url,
+                    "has_uk_trade_agreement": country.has_uk_trade_agreement,
                 }
             )
 
