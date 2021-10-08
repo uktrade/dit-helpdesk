@@ -13,6 +13,10 @@ class Country(models.Model):
     scenario = models.CharField(max_length=255, null=True)
     content_url = models.URLField(null=True, blank=True)
 
+    old_scenario = models.CharField(max_length=255, null=True)
+    old_content_url = models.URLField(null=True, blank=True)
+
+    has_uk_trade_agreement = models.BooleanField(default=False)
     has_eu_trade_agreement = models.BooleanField(default=False)
     trade_agreement_title = models.CharField(max_length=250, null=True)
     trade_agreement_type = models.CharField(max_length=250, null=True)

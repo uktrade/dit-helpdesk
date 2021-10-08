@@ -3,11 +3,12 @@
 import os, csv
 from countries.models import Country
 from django.db import migrations, models
+import logging
 from . import DATA_DIR
 
 
 def backup_old_scenarios(apps, schema_editor):
-    fieldnames = ["country_code", "scenario", "content_url"]
+    fieldnames = ["country_code", "scenario", "content_url", "has_uk_trade_agreement"]
 
     csv_file_path = os.path.join(DATA_DIR, "migration_0025_backup.csv")
 
@@ -25,6 +26,47 @@ def backup_old_scenarios(apps, schema_editor):
                     "has_uk_trade_agreement": country.has_uk_trade_agreement,
                 }
             )
+
+
+def verify_change(apps, schema_editor):
+    Country = apps.get_model("countries", "Country")
+    countries_table = Country.objects.all()
+
+    for country in countries_table:
+        logging.info(
+            "Name: "
+            + country.name
+            + " Scenario: "
+            + country.scenario
+            + " URL: "
+            + country.content_url
+        )
+        if country.scenario is None:
+            raise ValueError(
+                "Scenario data has not been copied for " + country.country_name
+            )
+        if country.content_url is None:
+            raise ValueError("URL data has not been copied for " + country.country_name)
+
+
+def fix_countries_trade_names(apps, schema_editor):
+    # Fixing the two data errors in the last migration:
+    # Kosovo,"UK-Kosovo?partnership, trade and cooperation?agreement",
+    # North Macedonia,"UK-North Macedonia Partnership, Trade and?Cooperation?agreement"
+    # Need to remove the "?" and replace with a regular space.
+    Country = apps.get_model("countries", "Country")
+
+    country_fix_list = ["Kosovo", "North Macedonia"]
+
+    for country_name in country_fix_list:
+        try:
+            country = Country.objects.get(name=country_name)
+            country.trade_agreement_title = country.trade_agreement_title.replace(
+                "?", " "
+            )
+            country.save()
+        except Exception:
+            logging.warning("Did not update trade agreement title for " + country_name)
 
 
 class Migration(migrations.Migration):
@@ -54,4 +96,16 @@ class Migration(migrations.Migration):
             old_name="scenario",
             new_name="old_scenario",
         ),
+        migrations.RenameField(
+            model_name="country",
+            old_name="new_trade_agreement_url",
+            new_name="content_url",
+        ),
+        migrations.RenameField(
+            model_name="country",
+            old_name="new_scenario",
+            new_name="scenario",
+        ),
+        migrations.RunPython(verify_change, migrations.RunPython.noop),
+        migrations.RunPython(fix_countries_trade_names, migrations.RunPython.noop),
     ]
