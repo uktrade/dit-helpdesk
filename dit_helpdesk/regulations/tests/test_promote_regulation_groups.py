@@ -81,6 +81,35 @@ class PromoteRegulationGroupsTestCase(TestCase):
         self.assertEqual(heading.regulationgroup_set.first(), regulation)
         self.assertFalse(commodity.regulationgroup_set.exists())
 
+    def test_models_duplicated_in_one_level_hierarchy_gets_merged(self):
+        """
+        Test simple hierarchy
+
+        Before:
+        Heading    - <RegulationGroup: A>
+           |
+        Commodity  - <RegulationGroup: A>
+
+        After:
+        Heading    - <RegulationGroup: A>
+           |
+        Commodity  - No regulation
+        """
+        heading = self.mixer.blend(Heading)
+        commodity = self.mixer.blend(Commodity, heading=heading)
+        regulation = self.mixer.blend(
+            RegulationGroup, headings=heading, commodities=commodity
+        )
+
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(commodity.regulationgroup_set.count(), 1)
+
+        promote_regulation_groups(heading)
+
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(commodity.regulationgroup_set.exists())
+
     def test_models_multi_children_in_one_level_hierarchy_gets_promoted(self):
         """
         Test simple hierarchy with multiple children
@@ -107,6 +136,42 @@ class PromoteRegulationGroupsTestCase(TestCase):
         )
 
         self.assertFalse(heading.regulationgroup_set.exists())
+        self.assertEqual(a_commodity.regulationgroup_set.count(), 1)
+        self.assertEqual(b_commodity.regulationgroup_set.count(), 1)
+
+        promote_regulation_groups(heading)
+
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
+        self.assertEqual(heading.regulationgroup_set.first(), regulation)
+        self.assertFalse(a_commodity.regulationgroup_set.exists())
+        self.assertFalse(b_commodity.regulationgroup_set.exists())
+
+    def test_models_duplicated_multi_children_in_one_level_hierarchy_gets_merged(self):
+        """
+        Test simple hierarchy with multiple children
+
+        Before:
+                       Heading - <RegulationGroup: A>
+                                 |
+                   ______________________________
+                  |                              |
+        Commodity - <RegulationGroup: A>    Commodity - <RegulationGroup: A>
+
+        After:
+                       Heading - <RegulationGroup: A>
+                                 |
+                   ______________________________
+                  |                              |
+        Commodity - No regulation    Commodity - No regulation
+        """
+        heading = self.mixer.blend(Heading)
+        a_commodity = self.mixer.blend(Commodity, heading=heading)
+        b_commodity = self.mixer.blend(Commodity, heading=heading)
+        regulation = self.mixer.blend(
+            RegulationGroup, headings=heading, commodities=[a_commodity, b_commodity]
+        )
+
+        self.assertEqual(heading.regulationgroup_set.count(), 1)
         self.assertEqual(a_commodity.regulationgroup_set.count(), 1)
         self.assertEqual(b_commodity.regulationgroup_set.count(), 1)
 
