@@ -106,4 +106,5 @@ Modal.prototype.handleKeyDown = function (event) {
       break;
   }
 };
-module.exports = Modal;
+
+export default Modal;

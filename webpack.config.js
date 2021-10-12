@@ -38,6 +38,14 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+        },
+      },
+
       // Use file-loader to handle image assets
       {
         test: /\.(png|jpe?g|gif|woff2?|svg|ico|eot)$/i,
@@ -74,6 +82,8 @@ module.exports = {
     modules: ["node_modules"],
     extensions: [".js", ".scss"],
   },
+
+  target: "es5",
 
   devtool:
     process.env.NODE_ENV == "development" ? "eval-source-map" : "source-map",

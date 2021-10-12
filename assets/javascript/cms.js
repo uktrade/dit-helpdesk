@@ -1,8 +1,8 @@
-var common = require("govuk-frontend/govuk/common");
-var Button = require("govuk-frontend/govuk/components/button/button");
-var Header = require("govuk-frontend/govuk/components/header/header");
+import common from "govuk-frontend/govuk/common";
+import Button from "govuk-frontend/govuk/components/button/button";
+import Header from "govuk-frontend/govuk/components/header/header";
 
-var CopyButton = require("./modules/copy-button");
+import CopyButton from "./modules/copy-button";
 
 var nodeListForEach = common.nodeListForEach;
 

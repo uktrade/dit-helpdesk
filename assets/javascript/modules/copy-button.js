@@ -16,4 +16,4 @@ CopyButton.prototype.handleClick = function () {
   document.execCommand("copy");
 };
 
-module.exports = CopyButton;
+export default CopyButton;
