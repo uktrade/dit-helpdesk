@@ -68,4 +68,5 @@ var commodityTree = {
     }
   },
 };
-module.exports = commodityTree;
+
+export default commodityTree;

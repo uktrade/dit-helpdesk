@@ -1,4 +1,4 @@
-var CookiePolicy = require("./modules/cookie-policy");
+import CookiePolicy from "./modules/cookie-policy";
 
 var cookiePolicy = new CookiePolicy();
 cookiePolicy.bindForm(
