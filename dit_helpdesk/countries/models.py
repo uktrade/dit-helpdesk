@@ -1,7 +1,12 @@
+from django.conf import settings
 from django.db import models
 
 
 class Country(models.Model):
+    @property
+    def has_uk_trade_agreement(self):
+        return self.scenario in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT
+
     # We have two country codes, one which represents the trading country code
     # and the other an optional alternative original country code.
     # e.g. https://www.gov.uk/guidance/change-to-the-eu-country-code-for-serbia-tariff-stop-press-notice-30

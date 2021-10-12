@@ -414,8 +414,7 @@ class RulesOfOriginNorthernIrelandSection(RulesOfOriginSection):
         ctx["has_eu_trade_agreement"] = country.has_eu_trade_agreement
 
         ctx["has_both_trade_agreements"] = (
-            country.scenario in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT
-            and country.has_eu_trade_agreement
+            country.has_uk_trade_agreement and country.has_eu_trade_agreement
         )
 
         return ctx

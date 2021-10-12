@@ -144,12 +144,16 @@ class CountriesViewsTestCase(TestCase):
 
 
 @modify_settings(INSTALLED_APPS={"append": ["countries.tests"]})
+@override_settings(
+    SCENARIOS_WITH_UK_TRADE_AGREEMENT=["TEST_TA"],
+    TRADE_AGREEMENT_TEMPLATE_MAPPING={"TEST_TA": "TWUK_TA"},
+)
 class CountryInformationViewTestCase(TestCase):
     def setUp(self):
         super().setUp()
 
         self.country = Country.objects.create(
-            country_code="XX", name="Atlantis", scenario="TRADE_AGREEMENT"
+            country_code="XX", name="Atlantis", scenario="TEST_TA"
         )
         self.url = reverse(
             "country-information",
