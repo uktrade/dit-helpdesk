@@ -13,7 +13,10 @@ from hierarchy.helpers import create_nomenclature_tree
 from countries.models import Country
 from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFootnote
 
-from rules_of_origin.ingest.importer import InvalidDocumentException
+from rules_of_origin.ingest.importer import (
+    InvalidDocumentException,
+    RulesDocumentAlreadyExistsException,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -159,7 +162,11 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates")
     def test_duplicate_country_found(self):
-        with self.assertRaises(InvalidDocumentException) as duplicate_exception:
+        with self.assertRaises(
+            RulesDocumentAlreadyExistsException
+        ) as duplicate_exception, self.assertLogs(
+            "rules_of_origin.management.commands.import_rules_of_origin", level="ERROR"
+        ) as error_log:
             call_command("import_rules_of_origin")
 
         exception_msg = str(duplicate_exception.exception)
@@ -167,6 +174,15 @@ class ImporterTestCase(TestCase):
             exception_msg,
             "RulesDocument has already been created for country_code XT \n"
             "during this operation, check your source folder for duplicate XMLs or errors.",
+        )
+        self.assertEqual(
+            duplicate_exception.exception.country,
+            self.country,
+        )
+        self.assertEqual(
+            error_log[0][0].getMessage(),
+            f"Failed to import rules_of_origin/SAMPLE_FTA_DUPLICATE.xml. Found duplicate country {self.country}. "
+            "Already created from rules_of_origin/SAMPLE_FTA.xml",
         )
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
