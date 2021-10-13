@@ -51,16 +51,19 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
     nomenclature_tree = NomenclatureTree.get_active_tree(region)
 
     for country in countries:
-        existing_rules_document = RulesDocument.objects.filter(
-            countries=country, nomenclature_tree=nomenclature_tree
-        )
-        if existing_rules_document:
-            raise RulesDocumentAlreadyExistsException(
-                "RulesDocument has already been created for country_code"
-                f" {country.country_code} \nduring this operation, check your source"
-                " folder for duplicate XMLs or errors.",
-                country=country,
+        # Certain country TA scenarios have multiple rule documents, must check others
+        # to prevent duplicates in source data
+        if country.scenario not in settings.MULTIPLE_ROO_SCENARIOS:
+            existing_rules_document = RulesDocument.objects.filter(
+                countries=country, nomenclature_tree=nomenclature_tree
             )
+            if existing_rules_document:
+                raise RulesDocumentAlreadyExistsException(
+                    "RulesDocument has already been created for country_code"
+                    f" {country.country_code} \nduring this operation, check your source"
+                    " folder for duplicate XMLs or errors.",
+                    country=country,
+                )
 
     logger.info("Creating document %s..", name)
 

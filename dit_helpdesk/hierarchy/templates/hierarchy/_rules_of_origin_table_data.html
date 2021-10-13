@@ -2,7 +2,7 @@
 
 <div class="govuk-!-margin-bottom-4">
     {% for data_dict in rules_of_origin.values %}
-        <h3 class="govuk-heading-s govuk-!-margin-top-4">Rules of origin under the {{ trade_agreement_name }}</h3>
+        <h3 class="govuk-heading-s govuk-!-margin-top-4">Rules of origin under the {{ data_dict.rule_doc_name }}</h3>
         <table class="govuk-table govuk-table__rules_of_origin app-flexible-table">
             <caption class="govuk-table__caption govuk-visually-hidden">Rules of origin for tariff preference</caption>
             <thead class="govuk-table__head app-flexible-table__head">
@@ -58,9 +58,11 @@
                         Introductory notes
                     </span>
                 </summary>
-                <div class="govuk-details__text govuk-!-padding-bottom-0 govuk-!-font-size-16">
-                    {{ data_dict.introductory_notes.note|safe }}
-                </div>
+                {% for introductory_note in data_dict.introductory_notes %}
+                    <div class="govuk-details__text govuk-!-padding-bottom-0 govuk-!-font-size-16">
+                        {{ introductory_note.note|safe }}
+                    </div>
+                {% endfor %}
             </details>
         {% endif %}
     {% endfor %}

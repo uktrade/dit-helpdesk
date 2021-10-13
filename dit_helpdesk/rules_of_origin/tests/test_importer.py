@@ -41,7 +41,12 @@ class ImporterTestCase(TestCase):
     def setUp(self):
         mixer = Mixer()
 
-        self.country = mixer.blend(Country, name="Test Country", country_code="XT")
+        self.country = mixer.blend(
+            Country,
+            name="Test Country",
+            country_code="XT",
+            trade_agreement_title="The White-Gold Concordat",
+        )
 
         self.tree = create_nomenclature_tree()
 
@@ -149,7 +154,7 @@ class ImporterTestCase(TestCase):
             mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
             roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
 
-        roo_data = roo_data["FTA Test Country"]
+        roo_data = roo_data["The White-Gold Concordat"]
 
         rules = roo_data["rules"]
         # confirm that an 'ex Chapter' is not returned as a rule
