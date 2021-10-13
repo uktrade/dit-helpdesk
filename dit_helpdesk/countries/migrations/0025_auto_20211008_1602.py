@@ -15,14 +15,9 @@ def fix_countries_trade_names(apps, schema_editor):
 
     country_fix_list = ["Kosovo", "North Macedonia"]
     for country_name in country_fix_list:
-        try:
-            country = Country.objects.get(name=country_name)
-            country.trade_agreement_title = country.trade_agreement_title.replace(
-                "?", " "
-            )
-            country.save()
-        except Exception:
-            logging.warning("Did not update trade agreement title for " + country_name)
+        country = Country.objects.get(name=country_name)
+        country.trade_agreement_title = country.trade_agreement_title.replace("?", " ")
+        country.save()
 
 
 class Migration(migrations.Migration):
