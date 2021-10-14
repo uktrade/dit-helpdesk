@@ -5,7 +5,7 @@ from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
 from core.helpers import mock_tts_and_section_responses
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse, NoReverseMatch
 from mixer.backend.django import mixer
 
@@ -209,9 +209,13 @@ class CommodityViewTestCase(TestCase):
         mock_update_tts_content.assert_called_once()
 
     @mock_tts_and_section_responses
+    @override_settings(
+        SCENARIOS_WITH_UK_TRADE_AGREEMENT=["TEST_TA"],
+        TRADE_AGREEMENT_TEMPLATE_MAPPING={"TEST_TA": "TWUK_TA"},
+    )
     def test_commodity_detail_with_rules_or_origin(self):
         country = Country.objects.get(country_code="AF")
-        country.has_uk_trade_agreement = True
+        country.scenario = "TEST_TA"
         country.save()
 
         rules_document = mixer.blend(

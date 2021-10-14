@@ -327,7 +327,9 @@ def check_countries_consistency():
     nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
 
     # Get the list of countries we know have trade agreements
-    countries = Country.objects.filter(Q(has_uk_trade_agreement=True))
+    countries = [
+        country for country in Country.objects.all() if country.has_uk_trade_agreement
+    ]
 
     missing_countries_list = []
 
