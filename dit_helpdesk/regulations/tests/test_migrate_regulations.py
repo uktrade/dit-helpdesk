@@ -1,37 +1,15 @@
 import sys
-import logging
 
 from mixer.backend.django import mixer
 
 from django.core.management import call_command
-from django.test import override_settings, TestCase
+from django.test import TestCase
 from django.utils import timezone
 
-from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
 from commodities.models import Commodity
-from regulations.models import RegulationGroup
-
 from hierarchy.helpers import create_nomenclature_tree
-
-
-logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
-
-
-test_hierarchy_model_map = {
-    "Commodity": {
-        "file_name": "test_subsets/commodities.json",
-        "app_name": "commodities",
-    },
-    "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
-    "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {
-        "file_name": "test_subsets/sub_headings.json",
-        "app_name": "hierarchy",
-    },
-    "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
-}
+from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
+from regulations.models import RegulationGroup
 
 
 class MigrateRegulationsTest(TestCase):
@@ -60,7 +38,6 @@ class MigrateRegulationsTest(TestCase):
             nomenclature_tree=self.new_tree,
         )
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
     def test_migrate_regulation_groups(self):
         regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
         regulation_group.nomenclature_trees.add(self.tree)
@@ -71,7 +48,6 @@ class MigrateRegulationsTest(TestCase):
         self.assertIn(self.new_tree, regulation_group.nomenclature_trees.all())
         self.assertEqual(self.new_tree.regulationgroup_set.count(), 1)
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
     def test_migrate_nomenclature_objects(self):
         regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
         regulation_group.nomenclature_trees.add(self.tree)
@@ -82,7 +58,6 @@ class MigrateRegulationsTest(TestCase):
         self.assertIn(regulation_group, self.new_commodity.regulationgroup_set.all())
         self.assertEqual(self.new_commodity.regulationgroup_set.count(), 1)
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
     def test_migrate_nomenclature_objects__unbind_commodity(self):
         regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
         regulation_group.nomenclature_trees.add(self.tree)
