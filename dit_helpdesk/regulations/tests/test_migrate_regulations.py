@@ -1,3 +1,4 @@
+import itertools
 import sys
 
 from mixer.backend.django import mixer
@@ -18,6 +19,18 @@ class MigrateRegulationsTest(TestCase):
         self.new_tree = NomenclatureTree.objects.create(
             region="UK", start_date=timezone.now(), end_date=timezone.now()
         )
+        self.model_classes = [
+            Chapter,
+            Heading,
+            SubHeading,
+            Commodity,
+        ]
+        self.m2m_map = {
+            Chapter: "chapters",
+            Heading: "headings",
+            SubHeading: "subheadings",
+            Commodity: "commodities",
+        }
 
     def test_migrate_regulation_groups(self):
         regulation_group = mixer.blend(RegulationGroup)
@@ -53,226 +66,51 @@ class MigrateRegulationsTest(TestCase):
         self.assertIn(self.new_tree, regulation.nomenclature_trees.all())
         self.assertEqual(self.new_tree.regulation_set.count(), 1)
 
-    def test_migrate_commodity_regulation_groups(self):
-        commodity = mixer.blend(Commodity, nomenclature_tree=self.tree)
+    def test_migrate_regulation_groups_between_commodity_objects(self):
+        objects_to_assert = []
 
-        regulation_group = mixer.blend(RegulationGroup, commodities=commodity)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
+        for from_obj_class, to_obj_class in itertools.permutations(
+            self.model_classes, 2
+        ):
+            from_obj = mixer.blend(from_obj_class, nomenclature_tree=self.tree)
 
-        another_regulation_group = mixer.blend(RegulationGroup, commodities=commodity)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
+            m2m_kwargs = {self.m2m_map[from_obj_class]: from_obj}
+            regulation_group = mixer.blend(RegulationGroup, **m2m_kwargs)
+            regulation_group.nomenclature_trees.add(self.tree)
+            regulation_group.save()
 
-        new_commodity = mixer.blend(
-            Commodity,
-            goods_nomenclature_sid=commodity.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
+            another_regulation_group = mixer.blend(RegulationGroup, **m2m_kwargs)
+            another_regulation_group.nomenclature_trees.add(self.tree)
+            another_regulation_group.save()
 
-        call_command("migrate_regulations", stdout=sys.stdout)
+            to_obj = mixer.blend(
+                to_obj_class,
+                goods_nomenclature_sid=from_obj.goods_nomenclature_sid,
+                nomenclature_tree=self.new_tree,
+            )
 
-        self.assertIn(regulation_group, new_commodity.regulationgroup_set.all())
-        self.assertIn(another_regulation_group, new_commodity.regulationgroup_set.all())
-        self.assertEqual(new_commodity.regulationgroup_set.count(), 2)
-
-    def test_migrate_regulation_groups_commodity_contracts_to_subheading(self):
-        commodity = mixer.blend(Commodity, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, commodities=commodity)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, commodities=commodity)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_subheading = mixer.blend(
-            SubHeading,
-            goods_nomenclature_sid=commodity.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
+            objects_to_assert.append(
+                (
+                    from_obj_class,
+                    to_obj_class,
+                    regulation_group,
+                    another_regulation_group,
+                    to_obj,
+                )
+            )
 
         call_command("migrate_regulations", stdout=sys.stdout)
 
-        self.assertIn(regulation_group, new_subheading.regulationgroup_set.all())
-        self.assertIn(
-            another_regulation_group, new_subheading.regulationgroup_set.all()
-        )
-        self.assertEqual(new_subheading.regulationgroup_set.count(), 2)
-
-    def test_migrate_subheading_regulation_groups(self):
-        subheading = mixer.blend(SubHeading, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_subheading = mixer.blend(
-            SubHeading,
-            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_subheading.regulationgroup_set.all())
-        self.assertIn(
-            another_regulation_group, new_subheading.regulationgroup_set.all()
-        )
-        self.assertEqual(new_subheading.regulationgroup_set.count(), 2)
-
-    def test_migrate_regulation_groups_subheading_expands_to_commodity(self):
-        subheading = mixer.blend(SubHeading, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_commodity = mixer.blend(
-            Commodity,
-            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_commodity.regulationgroup_set.all())
-        self.assertIn(another_regulation_group, new_commodity.regulationgroup_set.all())
-        self.assertEqual(new_commodity.regulationgroup_set.count(), 2)
-
-    def test_migrate_regulation_groups_subheading_contracts_to_chapter(self):
-        subheading = mixer.blend(SubHeading, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, subheadings=subheading)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_chapter = mixer.blend(
-            Chapter,
-            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_chapter.regulationgroup_set.all())
-        self.assertIn(another_regulation_group, new_chapter.regulationgroup_set.all())
-        self.assertEqual(new_chapter.regulationgroup_set.count(), 2)
-
-    def test_migrate_heading_regulation_groups(self):
-        heading = mixer.blend(Heading, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, headings=heading)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, headings=heading)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_heading = mixer.blend(
-            Heading,
-            goods_nomenclature_sid=heading.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_heading.regulationgroup_set.all())
-        self.assertIn(another_regulation_group, new_heading.regulationgroup_set.all())
-        self.assertEqual(new_heading.regulationgroup_set.count(), 2)
-
-    def test_migrate_regulation_groups_heading_expands_to_subheading(self):
-        heading = mixer.blend(Heading, nomenclature_tree=self.tree)
-
-        regulation_group = mixer.blend(RegulationGroup, headings=heading)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, headings=heading)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_subheading = mixer.blend(
-            SubHeading,
-            goods_nomenclature_sid=heading.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_subheading.regulationgroup_set.all())
-        self.assertIn(
-            another_regulation_group, new_subheading.regulationgroup_set.all()
-        )
-        self.assertEqual(new_subheading.regulationgroup_set.count(), 2)
-
-    def test_migrate_chapters_regulation_groups(self):
-        chapter = mixer.blend(
-            Chapter,
-            nomenclature_tree=self.tree,
-        )
-
-        regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_chapter = mixer.blend(
-            Chapter,
-            goods_nomenclature_sid=chapter.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_chapter.regulationgroup_set.all())
-        self.assertIn(another_regulation_group, new_chapter.regulationgroup_set.all())
-        self.assertEqual(new_chapter.regulationgroup_set.count(), 2)
-
-    def test_migrate_regulation_groups_chapter_expands_to_subheading(self):
-        chapter = mixer.blend(
-            Chapter,
-            nomenclature_tree=self.tree,
-        )
-
-        regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
-
-        another_regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
-        another_regulation_group.nomenclature_trees.add(self.tree)
-        another_regulation_group.save()
-
-        new_subheading = mixer.blend(
-            SubHeading,
-            goods_nomenclature_sid=chapter.goods_nomenclature_sid,
-            nomenclature_tree=self.new_tree,
-        )
-
-        call_command("migrate_regulations", stdout=sys.stdout)
-
-        self.assertIn(regulation_group, new_subheading.regulationgroup_set.all())
-        self.assertIn(
-            another_regulation_group, new_subheading.regulationgroup_set.all()
-        )
-        self.assertEqual(new_subheading.regulationgroup_set.count(), 2)
+        for (
+            from_obj_class,
+            to_obj_class,
+            regulation_group,
+            another_regulation_group,
+            to_obj,
+        ) in objects_to_assert:
+            self.assertIn(regulation_group, to_obj.regulationgroup_set.all())
+            self.assertIn(another_regulation_group, to_obj.regulationgroup_set.all())
+            self.assertEqual(to_obj.regulationgroup_set.count(), 2)
 
     def test_migrate_sections_regulation_groups(self):
         section = mixer.blend(Section, nomenclature_tree=self.tree)
