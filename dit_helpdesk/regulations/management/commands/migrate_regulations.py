@@ -16,6 +16,29 @@ def _get_codes(m2m, prev_tree, attr_name="goods_nomenclature_sid"):
     )
 
 
+MODEL_CLASSES = [
+    (Chapter, "chapters"),
+    (Heading, "headings"),
+    (SubHeading, "subheadings"),
+    (Commodity, "commodities"),
+]
+
+
+def _get_sids(regulation_group, prev_tree):
+    sids = None
+
+    for _, m2m_attr in MODEL_CLASSES:
+        m2m = getattr(regulation_group, m2m_attr)
+
+        new_sids = _get_codes(m2m, prev_tree)
+        if sids is None:
+            sids = new_sids
+        else:
+            sids = sids.union(new_sids)
+
+    return sids
+
+
 class Command(BaseCommand):
     help = """Command to migrate regulations from a previous NomenclatureTree to the current one"""
 
@@ -55,62 +78,13 @@ class Command(BaseCommand):
             for regulation_group in regulation_groups:
                 self.stdout.write(f"Migrating regulation group {regulation_group}..")
 
-                # assign commodities
-                com_codes = _get_codes(regulation_group.commodities, prev_tree)
-                new_commodities = Commodity.objects.filter(
-                    goods_nomenclature_sid__in=com_codes
-                )
-
-                # special case - if there had been a contraction and commodity became a subheading
-                new_subheadings = SubHeading.objects.filter(
-                    goods_nomenclature_sid__in=com_codes
-                )
-
-                regulation_group.commodities.add(*new_commodities)
-                regulation_group.subheadings.add(*new_subheadings)
-
-                # assign subheadings
-                subheading_codes = _get_codes(regulation_group.subheadings, prev_tree)
-                new_subheadings = SubHeading.objects.filter(
-                    goods_nomenclature_sid__in=subheading_codes
-                )
-
-                # special case - expansion, subheading became a commodity
-                new_commodities = Commodity.objects.filter(
-                    goods_nomenclature_sid__in=subheading_codes
-                )
-
-                # special case - contraction - not sure if it ever happens though
-                new_chapters = Chapter.objects.filter(
-                    goods_nomenclature_sid__in=subheading_codes
-                )
-
-                regulation_group.subheadings.add(*new_subheadings)
-                regulation_group.commodities.add(*new_commodities)
-                regulation_group.chapters.add(*new_chapters)
-
-                # assign headings
-                heading_codes = _get_codes(regulation_group.headings, prev_tree)
-                new_headings = Heading.objects.filter(
-                    goods_nomenclature_sid__in=heading_codes
-                )
-                new_subheadings = SubHeading.objects.filter(
-                    goods_nomenclature_sid__in=heading_codes
-                )
-                regulation_group.headings.add(*new_headings)
-                regulation_group.subheadings.add(*new_subheadings)
-
-                # assign chapters
-                chapter_codes = _get_codes(regulation_group.chapters, prev_tree)
-                new_chapters = Chapter.objects.filter(
-                    goods_nomenclature_sid__in=chapter_codes
-                )
-                new_subheadings = SubHeading.objects.filter(
-                    goods_nomenclature_sid__in=chapter_codes
-                )
-
-                regulation_group.chapters.add(*new_chapters)
-                regulation_group.subheadings.add(*new_subheadings)
+                goods_nomenclature_sids = _get_sids(regulation_group, prev_tree)
+                for model_class, m2m_attr in MODEL_CLASSES:
+                    objects = model_class.objects.filter(
+                        goods_nomenclature_sid__in=goods_nomenclature_sids
+                    )
+                    m2m = getattr(regulation_group, m2m_attr)
+                    m2m.add(*objects)
 
                 # assign sections
                 section_codes = _get_codes(
