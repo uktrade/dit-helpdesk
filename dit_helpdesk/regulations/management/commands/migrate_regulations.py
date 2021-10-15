@@ -8,7 +8,7 @@ from regulations.models import RegulationGroup, Regulation
 from hierarchy.helpers import process_swapped_tree
 
 
-def _get_codes(m2m, attr_name, prev_tree):
+def _get_codes(m2m, prev_tree, attr_name="goods_nomenclature_sid"):
     return (
         m2m(manager="all_objects")
         .filter(nomenclature_tree=prev_tree)
@@ -56,57 +56,57 @@ class Command(BaseCommand):
                 self.stdout.write(f"Migrating regulation group {regulation_group}..")
 
                 # assign commodities
-                com_codes = _get_codes(
-                    regulation_group.commodities, "commodity_code", prev_tree
+                com_codes = _get_codes(regulation_group.commodities, prev_tree)
+                new_commodities = Commodity.objects.filter(
+                    goods_nomenclature_sid__in=com_codes
                 )
-                new_commodities = Commodity.objects.filter(commodity_code__in=com_codes)
 
                 # special case - if there had been a contraction and commodity became a subheading
                 new_subheadings = SubHeading.objects.filter(
-                    commodity_code__in=com_codes
+                    goods_nomenclature_sid__in=com_codes
                 )
 
                 regulation_group.commodities.add(*new_commodities)
                 regulation_group.subheadings.add(*new_subheadings)
 
                 # assign subheadings
-                subheading_codes = _get_codes(
-                    regulation_group.subheadings, "commodity_code", prev_tree
-                )
+                subheading_codes = _get_codes(regulation_group.subheadings, prev_tree)
                 new_subheadings = SubHeading.objects.filter(
-                    commodity_code__in=subheading_codes
+                    goods_nomenclature_sid__in=subheading_codes
                 )
 
                 # special case - expansion, subheading became a commodity
                 new_commodities = Commodity.objects.filter(
-                    commodity_code__in=subheading_codes
+                    goods_nomenclature_sid__in=subheading_codes
                 )
 
                 # special case - contraction - not sure if it ever happens though
-                new_chapters = Chapter.objects.filter(chapter_code__in=subheading_codes)
+                new_chapters = Chapter.objects.filter(
+                    goods_nomenclature_sid__in=subheading_codes
+                )
 
                 regulation_group.subheadings.add(*new_subheadings)
                 regulation_group.commodities.add(*new_commodities)
                 regulation_group.chapters.add(*new_chapters)
 
                 # assign headings
-                heading_codes = _get_codes(
-                    regulation_group.headings, "heading_code", prev_tree
+                heading_codes = _get_codes(regulation_group.headings, prev_tree)
+                new_headings = Heading.objects.filter(
+                    goods_nomenclature_sid__in=heading_codes
                 )
-                new_headings = Heading.objects.filter(heading_code__in=heading_codes)
                 new_subheadings = SubHeading.objects.filter(
-                    commodity_code__in=heading_codes
+                    goods_nomenclature_sid__in=heading_codes
                 )
                 regulation_group.headings.add(*new_headings)
                 regulation_group.subheadings.add(*new_subheadings)
 
                 # assign chapters
-                chapter_codes = _get_codes(
-                    regulation_group.chapters, "chapter_code", prev_tree
+                chapter_codes = _get_codes(regulation_group.chapters, prev_tree)
+                new_chapters = Chapter.objects.filter(
+                    goods_nomenclature_sid__in=chapter_codes
                 )
-                new_chapters = Chapter.objects.filter(chapter_code__in=chapter_codes)
                 new_subheadings = SubHeading.objects.filter(
-                    commodity_code__in=chapter_codes
+                    goods_nomenclature_sid__in=chapter_codes
                 )
 
                 regulation_group.chapters.add(*new_chapters)
@@ -114,7 +114,7 @@ class Command(BaseCommand):
 
                 # assign sections
                 section_codes = _get_codes(
-                    regulation_group.sections, "roman_numeral", prev_tree
+                    regulation_group.sections, prev_tree, "roman_numeral"
                 )
                 new_sections = Section.objects.filter(roman_numeral__in=section_codes)
                 regulation_group.sections.add(*new_sections)

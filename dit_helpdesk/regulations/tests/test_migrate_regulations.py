@@ -66,7 +66,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_commodity = mixer.blend(
             Commodity,
-            commodity_code=commodity.commodity_code,
+            goods_nomenclature_sid=commodity.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -89,7 +89,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_subheading = mixer.blend(
             SubHeading,
-            commodity_code=commodity.commodity_code,
+            goods_nomenclature_sid=commodity.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -114,7 +114,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_subheading = mixer.blend(
             SubHeading,
-            commodity_code=subheading.commodity_code,
+            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -139,7 +139,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_commodity = mixer.blend(
             Commodity,
-            commodity_code=subheading.commodity_code,
+            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -162,7 +162,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_chapter = mixer.blend(
             Chapter,
-            chapter_code=subheading.commodity_code,
+            goods_nomenclature_sid=subheading.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -185,7 +185,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_heading = mixer.blend(
             Heading,
-            heading_code=heading.heading_code,
+            goods_nomenclature_sid=heading.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -208,7 +208,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_subheading = mixer.blend(
             SubHeading,
-            commodity_code=heading.heading_code,
+            goods_nomenclature_sid=heading.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -222,7 +222,8 @@ class MigrateRegulationsTest(TestCase):
 
     def test_migrate_chapters_regulation_groups(self):
         chapter = mixer.blend(
-            Chapter, chapter_code="0100000000", nomenclature_tree=self.tree
+            Chapter,
+            nomenclature_tree=self.tree,
         )
 
         regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
@@ -235,7 +236,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_chapter = mixer.blend(
             Chapter,
-            chapter_code=chapter.chapter_code,
+            goods_nomenclature_sid=chapter.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
@@ -247,7 +248,8 @@ class MigrateRegulationsTest(TestCase):
 
     def test_migrate_regulation_groups_chapter_expands_to_subheading(self):
         chapter = mixer.blend(
-            Chapter, chapter_code="0100000000", nomenclature_tree=self.tree
+            Chapter,
+            nomenclature_tree=self.tree,
         )
 
         regulation_group = mixer.blend(RegulationGroup, chapters=chapter)
@@ -260,7 +262,7 @@ class MigrateRegulationsTest(TestCase):
 
         new_subheading = mixer.blend(
             SubHeading,
-            commodity_code=chapter.chapter_code,
+            goods_nomenclature_sid=chapter.goods_nomenclature_sid,
             nomenclature_tree=self.new_tree,
         )
 
