@@ -61,7 +61,7 @@ class Command(BaseCommand):
                 )
                 new_commodities = Commodity.objects.filter(commodity_code__in=com_codes)
 
-                # special case - if there had been an expansion and commodity became a subheading
+                # special case - if there had been a contraction and commodity became a subheading
                 new_subheadings = SubHeading.objects.filter(
                     commodity_code__in=com_codes
                 )
@@ -77,12 +77,12 @@ class Command(BaseCommand):
                     commodity_code__in=subheading_codes
                 )
 
-                # special case - contraction, subheading became a commodity
+                # special case - expansion, subheading became a commodity
                 new_commodities = Commodity.objects.filter(
                     commodity_code__in=subheading_codes
                 )
 
-                # special case - expansion - not sure if it ever happens though
+                # special case - contraction - not sure if it ever happens though
                 new_chapters = Chapter.objects.filter(chapter_code__in=subheading_codes)
 
                 regulation_group.subheadings.add(*new_subheadings)
