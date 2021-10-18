@@ -240,7 +240,7 @@ class RulesOfOriginMixin:
             relevant_footnotes = self.process_footnotes(rules, footnotes)
 
             try:
-                introductory_notes = RulesDocumentFootnote.objects.filter(
+                introductory_notes = RulesDocumentFootnote.objects.get(
                     rules_document__countries=country,
                     rules_document__nomenclature_tree=tree,
                     rules_document__description=rule_document_ta,
@@ -257,7 +257,7 @@ class RulesOfOriginMixin:
             rules_of_origin = {
                 "rules": rules,
                 "footnotes": relevant_footnotes,
-                "introductory_notes": list(introductory_notes),
+                "introductory_notes": introductory_notes,
                 "rule_doc_name": docs.description,
             }
 

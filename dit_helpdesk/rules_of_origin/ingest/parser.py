@@ -3,6 +3,8 @@ from typing import List, Dict, Optional
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
+from django.db.models import Q
+
 from countries.models import Country
 
 
@@ -94,10 +96,10 @@ def _process_agreement_name(countries, data_label):
         # Get the country via country code or alt-country code in case
         # source data and db codes dont match directly. There will only be one result.
         country_with_agreement = Country.objects.filter(
-            country_code=countries[0]["code"]
-        ) | Country.objects.filter(
-            alternative_non_trade_country_code=countries[0]["code"]
+            Q(country_code=countries[0]["code"])
+            | Q(alternative_non_trade_country_code=countries[0]["code"])
         )
+
         for country in country_with_agreement:
             agreement_name = country.trade_agreement_title
 

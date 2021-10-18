@@ -87,6 +87,7 @@ class ImporterTestCase(TestCase):
 
         rules_document = RulesDocument.objects.first()
         self.assertIn(self.country, rules_document.countries.all())
+        self.assertEqual(rules_document.description, self.country.trade_agreement_title)
 
         rule1 = self.chapter1.rules_of_origin.first()
         self.assertEqual(rule1.description, "Live animals")
@@ -190,6 +191,27 @@ class ImporterTestCase(TestCase):
             "Already created from rules_of_origin/SAMPLE_FTA.xml",
         )
 
+    @override_settings(
+        SUPPORTED_TRADE_SCENARIOS=["TEST_TA"],
+        SCENARIOS_WITH_UK_TRADE_AGREEMENT=["TEST_TA"],
+        MULTIPLE_ROO_SCENARIOS=["TEST_TA"],
+        ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates",
+    )
+    def test_import_multiple_roo(self):
+        self.country.scenario = "TEST_TA"
+        self.country.save()
+
+        call_command("import_rules_of_origin")
+
+        self.assertEqual(RulesDocument.objects.count(), 2)
+        self.assertEqual(Rule.objects.count(), 12)
+        self.assertEqual(SubRule.objects.count(), 10)
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 24)
+
+        rules_documents = RulesDocument.objects.all()
+        for doc in rules_documents:
+            self.assertIn(self.country, doc.countries.all())
+
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
     def test_no_files_in_s3_bucket(self):
         with self.assertRaises(Exception) as empty_exception:
@@ -275,3 +297,26 @@ class ImporterTestCase(TestCase):
 
         # Assert 'BX - Test Country 2' is in the error message to sentry
         self.assertIn("BX - Test Country 2", str(warning_log.output))
+
+    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-gsp")
+    def test_import_roo_gsp_country(self):
+        mixer = Mixer()
+        country_ldc = mixer.blend(
+            Country,
+            name="Test Country 2",
+            country_code="BX",
+            scenario="TEST_TA",
+        )
+        country_ldc.save()
+
+        call_command("import_rules_of_origin")
+
+        ldc_rules_document = RulesDocument.objects.get(countries=country_ldc)
+        self.assertEqual(
+            ldc_rules_document.description, "Generalised Scheme of Preferences"
+        )
+
+        obc_rules_document = RulesDocument.objects.get(countries=self.country)
+        self.assertEqual(
+            obc_rules_document.description, "Generalised Scheme of Preferences"
+        )
