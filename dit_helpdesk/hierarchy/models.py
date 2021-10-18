@@ -4,6 +4,7 @@ import re
 import datetime as dt
 
 import requests
+from collections import OrderedDict
 
 from django.conf import settings
 from django.db import models
@@ -162,87 +163,111 @@ class RulesOfOriginMixin:
         tree = NomenclatureTree.get_active_tree()
         country = Country.objects.get(country_code=country_code)
 
-        (
-            chapter_id,
-            heading_id,
-            subheading_id,
-            commodity_id,
-        ) = self.get_hierarchy_context_ids()
+        roo_data = OrderedDict()
 
-        document_filter = Q(
-            rules_document__countries=country, rules_document__nomenclature_tree=tree
-        )
-        date_filter = (
-            Q(rules_document__start_date__lte=starting_before)
-            if starting_before
-            else always_true_Q
+        # Get a list of rules documents for the country in question.
+        # Occasional countries will have multiples and need processing for both sets
+        rule_docs_to_apply = RulesDocument.objects.filter(
+            countries=country, nomenclature_tree=tree
         )
 
-        rule_filter = Q(chapters__id=chapter_id)
-        if heading_id:
-            rule_filter = rule_filter | Q(headings__id=heading_id)
-        if subheading_id:
-            rule_filter = rule_filter | Q(subheadings__id=subheading_id)
-        if commodity_id:
-            rule_filter = rule_filter | Q(commodities__id=commodity_id)
+        # Loop through the Rules Document list, process data and append to roo_data
+        for docs in rule_docs_to_apply:
 
-        rules = (
-            Rule.objects.prefetch_related(
-                "subrules", "chapters", "headings", "subheadings", "commodities"
-            )
-            .select_related("rules_document")
-            .filter(document_filter & date_filter & rule_filter)
-        )
+            # description column of Rules Document table indicates the Trade Agreement the rules
+            # therin apply to.
+            rule_document_ta = docs.description
 
-        if len(rules) == 0 and country.has_uk_trade_agreement:
-            logger.error("Could not find expected Rules Of Origin for %s", country)
+            # Build query to obtain rules based on country, tree and trade agreement
+            (
+                chapter_id,
+                heading_id,
+                subheading_id,
+                commodity_id,
+            ) = self.get_hierarchy_context_ids()
 
-        chapter_rules = [r for r in rules if r.chapters.exists()]
-        heading_rules = [r for r in rules if r.headings.exists()]
-        subheading_rules = [r for r in rules if r.subheadings.exists()]
-        commodity_rules = [r for r in rules if r.commodities.exists()]
-
-        # reorder so that they are in hierarchy descending order
-        rules = chapter_rules + heading_rules + subheading_rules + commodity_rules
-        rules = unique_maintain_order(rules)
-
-        lower_level_rules = heading_rules + subheading_rules + commodity_rules
-        any_non_ex_lower_level = any(not r.is_exclusion for r in lower_level_rules)
-
-        if any_non_ex_lower_level:
-            # if any lower level rule is non-ex, then ignore the higher level ex rules
-            rules = [r for r in rules if not r.is_exclusion]
-
-        footnotes = RulesDocumentFootnote.objects.filter(
-            rules_document__countries=country, rules_document__nomenclature_tree=tree
-        ).order_by("id")
-        relevant_footnotes = self.process_footnotes(rules, footnotes)
-
-        try:
-            introductory_notes = RulesDocumentFootnote.objects.get(
+            document_filter = Q(
                 rules_document__countries=country,
                 rules_document__nomenclature_tree=tree,
-                identifier="COMM",
+                rules_document__description=rule_document_ta,
             )
-        except RulesDocumentFootnote.DoesNotExist:
-            introductory_notes = None
+            date_filter = (
+                Q(rules_document__start_date__lte=starting_before)
+                if starting_before
+                else always_true_Q
+            )
 
-            roo_exist = RulesDocument.objects.filter(countries=country).exists()
+            rule_filter = Q(chapters__id=chapter_id)
+            if heading_id:
+                rule_filter = rule_filter | Q(headings__id=heading_id)
+            if subheading_id:
+                rule_filter = rule_filter | Q(subheadings__id=subheading_id)
+            if commodity_id:
+                rule_filter = rule_filter | Q(commodities__id=commodity_id)
 
-            if roo_exist:
-                logger.error("Could not find introductory notes for %s", country)
+            rules = (
+                Rule.objects.prefetch_related(
+                    "subrules", "chapters", "headings", "subheadings", "commodities"
+                )
+                .select_related("rules_document")
+                .filter(document_filter & date_filter & rule_filter)
+            )
 
-        rules_of_origin = {
-            "rules": rules,
-            "footnotes": relevant_footnotes,
-            "introductory_notes": introductory_notes,
-        }
+            if len(rules) == 0 and country.has_uk_trade_agreement:
+                logger.error("Could not find expected Rules Of Origin for %s", country)
 
-        roo_data = {}
+            chapter_rules = [r for r in rules if r.chapters.exists()]
+            heading_rules = [r for r in rules if r.headings.exists()]
+            subheading_rules = [r for r in rules if r.subheadings.exists()]
+            commodity_rules = [r for r in rules if r.commodities.exists()]
 
-        if rules:
-            fta_name = rules[0].rules_document.description
-            roo_data[fta_name] = rules_of_origin
+            # reorder so that they are in hierarchy descending order
+            rules = chapter_rules + heading_rules + subheading_rules + commodity_rules
+            rules = unique_maintain_order(rules)
+
+            lower_level_rules = heading_rules + subheading_rules + commodity_rules
+            any_non_ex_lower_level = any(not r.is_exclusion for r in lower_level_rules)
+
+            if any_non_ex_lower_level:
+                # if any lower level rule is non-ex, then ignore the higher level ex rules
+                rules = [r for r in rules if not r.is_exclusion]
+
+            footnotes = RulesDocumentFootnote.objects.filter(
+                rules_document__countries=country,
+                rules_document__nomenclature_tree=tree,
+                rules_document__description=rule_document_ta,
+            ).order_by("id")
+            relevant_footnotes = self.process_footnotes(rules, footnotes)
+
+            try:
+                introductory_notes = RulesDocumentFootnote.objects.get(
+                    rules_document__countries=country,
+                    rules_document__nomenclature_tree=tree,
+                    rules_document__description=rule_document_ta,
+                    identifier="COMM",
+                )
+            except RulesDocumentFootnote.DoesNotExist:
+                introductory_notes = None
+
+                roo_exist = RulesDocument.objects.filter(countries=country).exists()
+
+                if roo_exist:
+                    logger.error("Could not find introductory notes for %s", country)
+
+            rules_of_origin = {
+                "rules": rules,
+                "footnotes": relevant_footnotes,
+                "introductory_notes": introductory_notes,
+                "rule_doc_name": docs.description,
+            }
+
+            if rules:
+                roo_data[rule_document_ta] = rules_of_origin
+
+        if len(roo_data) > 1:
+            # If we have both a GSP and TA set of rules, we need to move the GSP ones
+            # to be listed after the TA rules
+            roo_data.move_to_end("Generalised Scheme of Preferences")
 
         return roo_data
 

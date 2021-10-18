@@ -3,6 +3,10 @@ from typing import List, Dict, Optional
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
+from django.db.models import Q
+
+from countries.models import Country
+
 
 def _get_text_from_rule(rule: Optional[Element]) -> str:
     if rule:
@@ -73,6 +77,35 @@ def _process_notes(notes: Element) -> List[Dict]:
     return notes_list
 
 
+def _process_agreement_name(countries, data_label):
+    # Function to decide what will be used as the name for the rules document
+    # will refelect the relationship between covered countries with the UK
+
+    agreement_name = None
+
+    # All countries within a source file are subject to the same relationship
+    # scenario as each other, so we can take the scenario from the first country
+    # as the source for the rules document name.
+
+    # If we are currently processing files with either of these labels, we are
+    # creating a rules document for a GSP relationship
+    gsp_rule_categories = ["Other Beneficiary Countries", "Least Developed Countries"]
+    if data_label[0] in gsp_rule_categories:
+        agreement_name = "Generalised Scheme of Preferences"
+    else:
+        # Get the country via country code or alt-country code in case
+        # source data and db codes dont match directly. There will only be one result.
+        country_with_agreement = Country.objects.filter(
+            Q(country_code=countries[0]["code"])
+            | Q(alternative_non_trade_country_code=countries[0]["code"])
+        )
+
+        for country in country_with_agreement:
+            agreement_name = country.trade_agreement_title
+
+    return agreement_name
+
+
 def parse_file(f):
 
     tree = ET.parse(f)
@@ -93,19 +126,22 @@ def parse_file(f):
     gb_country = gb_partner.find("country")
     gb_start_date = gb_country.attrib["validFrom"]
 
-    fta_name = f"FTA {', '.join(non_gb_partners_labels)}"
     countries_with_dates = [
         country_element.attrib
         for ap in non_gb_partners
         for country_element in ap.findall("country")
     ]
 
+    agreement_name = _process_agreement_name(
+        countries_with_dates, non_gb_partners_labels
+    )
+
     positions_list = _process_positions(positions)
 
     notes_list = _process_notes(notes)
 
     output = {
-        "name": fta_name,
+        "name": agreement_name,
         "gb_start_date": gb_start_date,
         "countries_with_dates": countries_with_dates,
         "positions": positions_list,
