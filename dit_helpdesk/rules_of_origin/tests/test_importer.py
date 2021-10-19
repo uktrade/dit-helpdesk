@@ -155,7 +155,10 @@ class ImporterTestCase(TestCase):
             mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
             roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
 
-        roo_data = roo_data["The White-Gold Concordat"]
+        roo_data = roo_data[self.country.trade_agreement_title]
+
+        # confirm that the name to display on the frontend matches the trade agreement name
+        self.assertEquals(roo_data["rule_doc_name"], self.country.trade_agreement_title)
 
         rules = roo_data["rules"]
         # confirm that an 'ex Chapter' is not returned as a rule
@@ -211,6 +214,29 @@ class ImporterTestCase(TestCase):
         rules_documents = RulesDocument.objects.all()
         for doc in rules_documents:
             self.assertIn(self.country, doc.countries.all())
+
+        # Next section ensures the RoO section on the frontend will replace the
+        # trade agreement name with the GSP title
+        h1509 = Heading.objects.get(heading_code_4="1509")
+
+        with mock.patch(
+            "hierarchy.models.Heading.get_hierarchy_context_ids"
+        ) as mock_context_ids:
+            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
+            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
+
+        # Ensure that when there is a TA and a GSP rule doc, the TA one is first in the ordereddict
+        for count, value in enumerate(roo_data):
+            if count == 0:
+                self.assertEquals(
+                    roo_data[value]["rule_doc_name"], self.country.trade_agreement_title
+                )
+            elif count == 1:
+                self.assertEquals(
+                    roo_data[value]["rule_doc_name"],
+                    "Generalised Scheme of Preferences",
+                )
+            print(count, value)
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
     def test_no_files_in_s3_bucket(self):
@@ -319,4 +345,29 @@ class ImporterTestCase(TestCase):
         obc_rules_document = RulesDocument.objects.get(countries=self.country)
         self.assertEqual(
             obc_rules_document.description, "Generalised Scheme of Preferences"
+        )
+
+        # Next section ensures the RoO section on the frontend will replace a non-existent
+        # trade agreement name with the GSP title
+        h1509 = Heading.objects.get(heading_code_4="1509")
+
+        with mock.patch(
+            "hierarchy.models.Heading.get_hierarchy_context_ids"
+        ) as mock_context_ids:
+            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
+            roo_data_ldc = h1509.get_rules_of_origin(
+                country_code=country_ldc.country_code
+            )
+            roo_data_obc = h1509.get_rules_of_origin(
+                country_code=self.country.country_code
+            )
+
+        roo_data_ldc = roo_data_ldc["Generalised Scheme of Preferences"]
+        self.assertEquals(
+            roo_data_ldc["rule_doc_name"], "Generalised Scheme of Preferences"
+        )
+
+        roo_data_obc = roo_data_obc["Generalised Scheme of Preferences"]
+        self.assertEquals(
+            roo_data_obc["rule_doc_name"], "Generalised Scheme of Preferences"
         )
