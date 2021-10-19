@@ -1,9 +1,8 @@
 from django.core.management.base import BaseCommand
 
-from django.conf import settings
 from django.db import transaction
 
-from hierarchy.models import NomenclatureTree, Section, Chapter, Heading, SubHeading
+from hierarchy.models import Section, Chapter, Heading, SubHeading
 from commodities.models import Commodity
 from regulations.models import RegulationGroup, Regulation
 from regulations.hierarchy import promote_regulation_groups, replicate_regulation_groups
@@ -55,12 +54,7 @@ class Command(BaseCommand):
                 # copied.
                 replicate_regulation_groups(section)
 
-            with process_swapped_tree():
-                new_tree = NomenclatureTree.get_active_tree()
-                prev_tree = NomenclatureTree.objects.filter(
-                    region=settings.PRIMARY_REGION, start_date__lt=new_tree.start_date
-                ).latest("start_date")
-
+            with process_swapped_tree() as (prev_tree, new_tree):
                 self.stdout.write(f"New tree: {new_tree}")
                 self.stdout.write(f"Previous tree: {prev_tree}")
 
