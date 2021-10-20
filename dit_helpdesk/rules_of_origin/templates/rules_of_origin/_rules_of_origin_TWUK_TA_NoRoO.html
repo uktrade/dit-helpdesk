@@ -4,10 +4,6 @@
     but without continuing GSP (Generalised Scheme of Preferences) access,
     and for which TWUK does not have the Rules of Origin data.
 {% endcomment %}
-{% comment %}
-    Adding conditional for table data in case where RoO data is added, but we have not
-    yet been able to update a countries trade-agreement scenario in the DB.
-{% endcomment %}
 <p class="govuk-body">
     The UK has a trade agreement with {{ country_name }}.
 </p>
@@ -17,13 +13,6 @@
 <p class="govuk-body">
     <a class="govuk-link" href="https://www.gov.uk/guidance/check-your-goods-meet-the-rules-of-origin">Read guidance about rules of origin here.</a>
 </p>
-{% if rules_of_origin %}
-    {% block rules_of_origin %}
-        {% include "hierarchy/_rules_of_origin_table_explainer.html" %}
-        {% include "hierarchy/_rules_of_origin_table_data.html" %}
-    {% endblock %}
-{% else %}
-    <p class="govuk-body">
-        Rules of Origin data for this trade agreement is not yet available within this service. Please check <a class="govuk-link" href="{{ trade_agreement_url }}">the full trade agreement</a> for information in the short term.
-    </p>
-{% endif %}
+<p class="govuk-body">
+    Rules of Origin data for this trade agreement is not yet available within this service. Please check <a class="govuk-link" href="{{ trade_agreement_url }}">the full trade agreement</a> for information in the short term.
+</p>
