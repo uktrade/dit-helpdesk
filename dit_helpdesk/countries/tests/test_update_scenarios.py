@@ -1,7 +1,11 @@
 import requests_mock
 
+from io import StringIO
+from unittest import mock
+
 from mixer.backend.django import mixer
 
+from django.core.management import call_command
 from django.test import TestCase
 
 from rules_of_origin.models import RulesDocument
@@ -196,3 +200,57 @@ class UpdateScenarioTestCase(TestCase):
             )
             update_scenario(country)
             self.assertEqual(country.scenario, "NON_PREF")
+
+
+class UpdateScenarioManagementCommandTestCase(TestCase):
+    @mock.patch("countries.management.commands.update_scenarios.update_scenario")
+    def test_dry_run(self, mock_update_scenario):
+        Country.objects.all().delete()
+
+        country = mixer.blend(Country, scenario="BEFORE")
+
+        def _update_scenario(country):
+            country.scenario = "AFTER"
+            country.save()
+
+        mock_update_scenario.side_effect = _update_scenario
+
+        out = StringIO()
+        call_command("update_scenarios", "--dry-run", stdout=out)
+        country.refresh_from_db()
+
+        out.seek(0)
+        self.assertEqual(
+            out.readlines(),
+            [
+                "Would update:\n",
+                f"{country.country_code}: BEFORE -> AFTER\n",
+            ],
+        )
+        self.assertEqual(country.scenario, "BEFORE")
+
+    @mock.patch("countries.management.commands.update_scenarios.update_scenario")
+    def test_update(self, mock_update_scenario):
+        Country.objects.all().delete()
+
+        country = mixer.blend(Country, scenario="BEFORE")
+
+        def _update_scenario(country):
+            country.scenario = "AFTER"
+            country.save()
+
+        mock_update_scenario.side_effect = _update_scenario
+
+        out = StringIO()
+        call_command("update_scenarios", stdout=out)
+        country.refresh_from_db()
+
+        out.seek(0)
+        self.assertEqual(
+            out.readlines(),
+            [
+                "Updated:\n",
+                f"{country.country_code}: BEFORE -> AFTER\n",
+            ],
+        )
+        self.assertEqual(country.scenario, "AFTER")
