@@ -1,3 +1,5 @@
+import requests_mock
+
 from mixer.backend.django import mixer
 
 from django.test import TestCase
@@ -25,3 +27,60 @@ class UpdateScenarioTestCase(TestCase):
         mixer.blend(RulesDocument, countries=country)
         update_scenario(country)
         self.assertEqual(country.scenario, "TRADE_AGREEMENT")
+
+    @requests_mock.Mocker()
+    def test_dom_leg_gsp_with_exclusions_to_gsp(self, mocked_requests):
+        country = mixer.blend(Country, scenario="DOM_LEG_GSP_WITH_EXCLUSIONS")
+
+        mocked_requests.get(
+            "https://www.trade-tariff.service.gov.uk/api/v2/geographical_areas",
+            json={
+                "data": [
+                    {
+                        "id": "1111",
+                        "relationships": {
+                            "children_geographical_areas": {
+                                "data": [{"id": "1"}, {"id": "2"}],
+                            },
+                        },
+                    },
+                    {
+                        "id": "2027",
+                        "relationships": {
+                            "children_geographical_areas": {
+                                "data": [{"id": "1"}],
+                            },
+                        },
+                    },
+                ]
+            },
+        )
+
+        update_scenario(country)
+        self.assertEqual(country.scenario, "DOM_LEG_GSP_WITH_EXCLUSIONS")
+
+        mocked_requests.get(
+            "https://www.trade-tariff.service.gov.uk/api/v2/geographical_areas",
+            json={
+                "data": [
+                    {
+                        "id": "1111",
+                        "relationships": {
+                            "children_geographical_areas": {
+                                "data": [{"id": "1"}, {"id": "2"}],
+                            },
+                        },
+                    },
+                    {
+                        "id": "2027",
+                        "relationships": {
+                            "children_geographical_areas": {
+                                "data": [{"id": country.country_code}],
+                            },
+                        },
+                    },
+                ]
+            },
+        )
+        update_scenario(country)
+        self.assertEqual(country.scenario, "GSP")
