@@ -6,7 +6,7 @@
          <country code="GB" validFrom="2021-01-01"/>
       </agreementPartner>
       <agreementPartner code="CL">
-         <label>Test Country</label>
+         <label>Other Beneficiary Countries</label>
          <country code="XT" validFrom="2021-01-01"/>
       </agreementPartner>
    </meta>
