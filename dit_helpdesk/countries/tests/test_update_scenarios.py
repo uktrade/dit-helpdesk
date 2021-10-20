@@ -7,7 +7,7 @@ from django.test import TestCase
 from rules_of_origin.models import RulesDocument
 
 from ..models import Country
-from ..scenarios import update_scenario
+from ..scenarios import ALL_GSP_IDS, GSP_GENERAL_ID, GSP_ENHANCED_ID, update_scenario
 
 
 class UpdateScenarioTestCase(TestCase):
@@ -45,7 +45,7 @@ class UpdateScenarioTestCase(TestCase):
                         },
                     },
                     {
-                        "id": "2027",
+                        "id": GSP_ENHANCED_ID,
                         "relationships": {
                             "children_geographical_areas": {
                                 "data": [{"id": "1"}],
@@ -55,7 +55,6 @@ class UpdateScenarioTestCase(TestCase):
                 ]
             },
         )
-
         update_scenario(country)
         self.assertEqual(country.scenario, "DOM_LEG_GSP_WITH_EXCLUSIONS")
 
@@ -72,7 +71,7 @@ class UpdateScenarioTestCase(TestCase):
                         },
                     },
                     {
-                        "id": "2027",
+                        "id": GSP_ENHANCED_ID,
                         "relationships": {
                             "children_geographical_areas": {
                                 "data": [{"id": country.country_code}],
@@ -102,7 +101,7 @@ class UpdateScenarioTestCase(TestCase):
                         },
                     },
                     {
-                        "id": "2020",
+                        "id": GSP_GENERAL_ID,
                         "relationships": {
                             "children_geographical_areas": {
                                 "data": [{"id": country.country_code}],
@@ -128,7 +127,7 @@ class UpdateScenarioTestCase(TestCase):
                         },
                     },
                     {
-                        "id": "2020",
+                        "id": GSP_GENERAL_ID,
                         "relationships": {
                             "children_geographical_areas": {
                                 "data": [],
@@ -140,3 +139,60 @@ class UpdateScenarioTestCase(TestCase):
         )
         update_scenario(country)
         self.assertEqual(country.scenario, "TRADE_AGREEMENT")
+
+    @requests_mock.Mocker()
+    def test_gsp_to_non_pref(self, mocked_requests):
+        for gsp_id in ALL_GSP_IDS:
+            country = mixer.blend(Country, scenario="GSP")
+
+            mocked_requests.get(
+                "https://www.trade-tariff.service.gov.uk/api/v2/geographical_areas",
+                json={
+                    "data": [
+                        {
+                            "id": "1111",
+                            "relationships": {
+                                "children_geographical_areas": {
+                                    "data": [{"id": "1"}, {"id": "2"}],
+                                },
+                            },
+                        },
+                        {
+                            "id": gsp_id,
+                            "relationships": {
+                                "children_geographical_areas": {
+                                    "data": [{"id": country.country_code}],
+                                },
+                            },
+                        },
+                    ]
+                },
+            )
+            update_scenario(country)
+            self.assertEqual(country.scenario, "GSP")
+
+            mocked_requests.get(
+                "https://www.trade-tariff.service.gov.uk/api/v2/geographical_areas",
+                json={
+                    "data": [
+                        {
+                            "id": "1111",
+                            "relationships": {
+                                "children_geographical_areas": {
+                                    "data": [{"id": "1"}, {"id": "2"}],
+                                },
+                            },
+                        },
+                        {
+                            "id": gsp_id,
+                            "relationships": {
+                                "children_geographical_areas": {
+                                    "data": [{"id": "1"}],
+                                },
+                            },
+                        },
+                    ]
+                },
+            )
+            update_scenario(country)
+            self.assertEqual(country.scenario, "NON_PREF")
