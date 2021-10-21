@@ -279,7 +279,7 @@ def process_swapped_tree(region=settings.PRIMARY_REGION):
         new_tree.end_date = None
         new_tree.save()
 
-        yield
+        yield prev_tree, new_tree
 
         new_tree.end_date = timezone.now()
         new_tree.save()
