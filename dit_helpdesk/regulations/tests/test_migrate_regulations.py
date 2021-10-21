@@ -1,68 +1,39 @@
+import itertools
 import sys
-import logging
 
 from mixer.backend.django import mixer
 
 from django.core.management import call_command
-from django.test import override_settings, TestCase
+from django.test import TestCase
 from django.utils import timezone
 
-from hierarchy.models import Section, Chapter, Heading, SubHeading, NomenclatureTree
 from commodities.models import Commodity
-from regulations.models import RegulationGroup
-
 from hierarchy.helpers import create_nomenclature_tree
-
-
-logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
-
-
-test_hierarchy_model_map = {
-    "Commodity": {
-        "file_name": "test_subsets/commodities.json",
-        "app_name": "commodities",
-    },
-    "Chapter": {"file_name": "test_subsets/chapters.json", "app_name": "hierarchy"},
-    "Heading": {"file_name": "test_subsets/headings.json", "app_name": "hierarchy"},
-    "SubHeading": {
-        "file_name": "test_subsets/sub_headings.json",
-        "app_name": "hierarchy",
-    },
-    "Section": {"file_name": "test_subsets/sections.json", "app_name": "hierarchy"},
-}
+from hierarchy.models import Chapter, Heading, NomenclatureTree, Section, SubHeading
+from regulations.models import Regulation, RegulationGroup
 
 
 class MigrateRegulationsTest(TestCase):
     def setUp(self) -> None:
         self.tree = create_nomenclature_tree()
-        self.section = mixer.blend(Section, nomenclature_tree=self.tree)
-        self.chapter = mixer.blend(
-            Chapter, section=self.section, nomenclature_tree=self.tree
-        )
-        self.heading = mixer.blend(
-            Heading, chapter=self.chapter, nomenclature_tree=self.tree
-        )
-        self.subheading = mixer.blend(
-            SubHeading, heading=self.heading, nomenclature_tree=self.tree
-        )
-        self.commodity = mixer.blend(
-            Commodity, parent_subheading=self.subheading, nomenclature_tree=self.tree
-        )
-
         self.new_tree = NomenclatureTree.objects.create(
             region="UK", start_date=timezone.now(), end_date=timezone.now()
         )
-        self.new_commodity = mixer.blend(
+        self.model_classes = [
+            Chapter,
+            Heading,
+            SubHeading,
             Commodity,
-            commodity_code=self.commodity.commodity_code,
-            nomenclature_tree=self.new_tree,
-        )
+        ]
+        self.m2m_map = {
+            Chapter: "chapters",
+            Heading: "headings",
+            SubHeading: "subheadings",
+            Commodity: "commodities",
+        }
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
     def test_migrate_regulation_groups(self):
-        regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
+        regulation_group = mixer.blend(RegulationGroup)
         regulation_group.nomenclature_trees.add(self.tree)
         regulation_group.save()
 
@@ -71,27 +42,161 @@ class MigrateRegulationsTest(TestCase):
         self.assertIn(self.new_tree, regulation_group.nomenclature_trees.all())
         self.assertEqual(self.new_tree.regulationgroup_set.count(), 1)
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
-    def test_migrate_nomenclature_objects(self):
-        regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
+    def test_previous_tree_has_no_regulation_groups(self):
+        regulation_group = mixer.blend(RegulationGroup)
+
+        self.assertEqual(self.tree.regulationgroup_set.count(), 0)
+        self.assertEqual(RegulationGroup.objects.count(), 1)
 
         call_command("migrate_regulations", stdout=sys.stdout)
 
-        self.assertIn(regulation_group, self.new_commodity.regulationgroup_set.all())
-        self.assertEqual(self.new_commodity.regulationgroup_set.count(), 1)
+        self.assertEqual(self.tree.regulationgroup_set.count(), 0)
+        self.assertIn(self.new_tree, regulation_group.nomenclature_trees.all())
+        self.assertEqual(self.new_tree.regulationgroup_set.count(), 1)
 
-    @override_settings(HIERARCHY_MODEL_MAP=test_hierarchy_model_map)
-    def test_migrate_nomenclature_objects__unbind_commodity(self):
-        regulation_group = mixer.blend(RegulationGroup, commodities=self.commodity)
-        regulation_group.nomenclature_trees.add(self.tree)
-        regulation_group.save()
+    def test_previous_tree_has_no_regulations(self):
+        regulation = mixer.blend(Regulation)
 
-        self.commodity.regulationgroup_set.clear()
-        self.commodity.save()
+        self.assertEqual(self.tree.regulation_set.count(), 0)
+        self.assertEqual(Regulation.objects.count(), 1)
 
         call_command("migrate_regulations", stdout=sys.stdout)
 
-        self.assertNotIn(regulation_group, self.new_commodity.regulationgroup_set.all())
-        self.assertEqual(self.new_commodity.regulationgroup_set.count(), 0)
+        self.assertEqual(self.tree.regulation_set.count(), 0)
+        self.assertIn(self.new_tree, regulation.nomenclature_trees.all())
+        self.assertEqual(self.new_tree.regulation_set.count(), 1)
+
+    def test_migrate_regulation_groups_between_commodity_objects(self):
+        objects_to_assert = []
+
+        for from_obj_class, to_obj_class in itertools.permutations(
+            self.model_classes, 2
+        ):
+            from_obj = mixer.blend(from_obj_class, nomenclature_tree=self.tree)
+
+            m2m_kwargs = {self.m2m_map[from_obj_class]: from_obj}
+            regulation_group = mixer.blend(RegulationGroup, **m2m_kwargs)
+            regulation_group.nomenclature_trees.add(self.tree)
+            regulation_group.save()
+
+            another_regulation_group = mixer.blend(RegulationGroup, **m2m_kwargs)
+            another_regulation_group.nomenclature_trees.add(self.tree)
+            another_regulation_group.save()
+
+            to_obj = mixer.blend(
+                to_obj_class,
+                goods_nomenclature_sid=from_obj.goods_nomenclature_sid,
+                nomenclature_tree=self.new_tree,
+            )
+
+            objects_to_assert.append(
+                (
+                    from_obj_class,
+                    to_obj_class,
+                    regulation_group,
+                    another_regulation_group,
+                    to_obj,
+                )
+            )
+
+        call_command("migrate_regulations", stdout=sys.stdout)
+
+        for (
+            from_obj_class,
+            to_obj_class,
+            regulation_group,
+            another_regulation_group,
+            to_obj,
+        ) in objects_to_assert:
+            self.assertIn(regulation_group, to_obj.regulationgroup_set.all())
+            self.assertIn(another_regulation_group, to_obj.regulationgroup_set.all())
+            self.assertEqual(to_obj.regulationgroup_set.count(), 2)
+
+    def test_migrate_sections_regulation_groups(self):
+        section = mixer.blend(Section, nomenclature_tree=self.tree)
+
+        regulation_group = mixer.blend(RegulationGroup, sections=section)
+        regulation_group.nomenclature_trees.add(self.tree)
+        regulation_group.save()
+
+        another_regulation_group = mixer.blend(RegulationGroup, sections=section)
+        another_regulation_group.nomenclature_trees.add(self.tree)
+        another_regulation_group.save()
+
+        new_section = mixer.blend(
+            Section,
+            roman_numeral=section.roman_numeral,
+            nomenclature_tree=self.new_tree,
+        )
+
+        call_command("migrate_regulations", stdout=sys.stdout)
+
+        self.assertIn(regulation_group, new_section.regulationgroup_set.all())
+        self.assertIn(another_regulation_group, new_section.regulationgroup_set.all())
+        self.assertEqual(new_section.regulationgroup_set.count(), 2)
+
+    def test_moving_commodity_objects_migrates_inherited_regulation_groups(self):
+        section = mixer.blend(Section, nomenclature_tree=self.tree)
+        chapter = mixer.blend(Chapter, section=section, nomenclature_tree=self.tree)
+        heading = mixer.blend(Heading, chapter=chapter, nomenclature_tree=self.tree)
+
+        regulation_group = mixer.blend(
+            RegulationGroup,
+            chapters=chapter,
+            nomenclature_trees=self.tree,
+        )
+
+        new_chapter_from_chapter = mixer.blend(
+            Chapter,
+            goods_nomenclature_sid=chapter.goods_nomenclature_sid,
+            nomenclature_tree=self.new_tree,
+        )
+        new_chapter_from_heading = mixer.blend(
+            Chapter,
+            goods_nomenclature_sid=heading.goods_nomenclature_sid,
+            nomenclature_tree=self.new_tree,
+        )
+
+        call_command("migrate_regulations", stdout=sys.stdout)
+
+        self.assertIn(
+            regulation_group, new_chapter_from_chapter.regulationgroup_set.all()
+        )
+        self.assertEqual(new_chapter_from_chapter.regulationgroup_set.count(), 1)
+        self.assertIn(
+            regulation_group, new_chapter_from_heading.regulationgroup_set.all()
+        )
+        self.assertEqual(new_chapter_from_heading.regulationgroup_set.count(), 1)
+
+    def test_moving_commodity_objects_migrates_and_promotes_inherited_regulation_groups(
+        self,
+    ):
+        section = mixer.blend(Section, nomenclature_tree=self.tree)
+        chapter = mixer.blend(Chapter, section=section, nomenclature_tree=self.tree)
+        heading = mixer.blend(Heading, chapter=chapter, nomenclature_tree=self.tree)
+
+        regulation_group = mixer.blend(
+            RegulationGroup,
+            chapters=chapter,
+            nomenclature_trees=self.tree,
+        )
+
+        new_section = mixer.blend(Section, nomenclature_tree=self.new_tree)
+        new_chapter = mixer.blend(
+            Chapter, section=new_section, nomenclature_tree=self.new_tree
+        )
+        new_heading = mixer.blend(
+            Heading,
+            chapter=new_chapter,
+            goods_nomenclature_sid=heading.goods_nomenclature_sid,
+            nomenclature_tree=self.new_tree,
+        )
+
+        call_command("migrate_regulations", stdout=sys.stdout)
+
+        self.assertIn(regulation_group, new_section.regulationgroup_set.all())
+        self.assertEqual(new_section.regulationgroup_set.count(), 1)
+        self.assertNotIn(regulation_group, new_chapter.regulationgroup_set.all())
+        self.assertEqual(new_chapter.regulationgroup_set.count(), 0)
+        self.assertNotIn(regulation_group, new_heading.regulationgroup_set.all())
+        self.assertEqual(new_heading.regulationgroup_set.count(), 0)
