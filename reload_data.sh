@@ -1,5 +1,6 @@
 set -e
 
+python manage.py progress_track --start_reload_data
 python manage.py collectstatic --noinput
 python manage.py migrate
 python manage.py pull_api_update
@@ -13,3 +14,4 @@ python manage.py generate_search_keywords -f search/data
 python manage.py import_search_keywords -f output/keywords_and_synonyms_merged.csv
 python manage.py swap_rebuild_index --keep-old-trees
 python manage.py update_scenarios
+python manage.py progress_track --end_reload_data
