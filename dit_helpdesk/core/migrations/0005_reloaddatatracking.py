@@ -24,9 +24,9 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("start_time", models.DateTimeField(null=True)),
+                ("start_time", models.DateTimeField(null=False)),
                 ("end_time", models.DateTimeField(null=True)),
-                ("run_time", models.CharField(max_length=25, null=True)),
+                ("run_time", models.DurationField(null=True)),
             ],
         ),
     ]
