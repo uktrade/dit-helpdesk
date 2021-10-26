@@ -6,6 +6,7 @@ from django.template import engines
 from django.template.exceptions import TemplateDoesNotExist
 
 from regulations.models import RegulationGroup
+from rules_of_origin.hierarchy import get_rules_of_origin
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
 from ..models import Heading, SubHeading
@@ -367,6 +368,11 @@ class RulesOfOriginSection(CommodityDetailSection):
         self.rules_of_origin = commodity_object.get_rules_of_origin(
             country_code=country.country_code
         )
+        real_time_rules_of_origin = get_rules_of_origin(
+            commodity_object.commodity_code,
+            country.country_code,
+        )
+        list(real_time_rules_of_origin)
 
     @property
     def should_be_displayed(self):

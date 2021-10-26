@@ -44,6 +44,8 @@ class Rule(models.Model):
     alt_rule_text = models.TextField(null=True, blank=True)
     rule_text_processed = models.TextField(null=True, blank=True)
     alt_rule_text_processed = models.TextField(null=True, blank=True)
+    hs_from = models.CharField(null=True, max_length=12)
+    hs_to = models.CharField(null=True, max_length=12)
 
     chapters = models.ManyToManyField(
         "hierarchy.Chapter", related_name="rules_of_origin"
