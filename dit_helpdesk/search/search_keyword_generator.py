@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 class SearchKeywordGenerator:
     def __init__(
-        self, headings_file, ga_search_terms_file, green_pages_file, output_file
+        self, headings_file, ga_search_terms_file, trade_tariff_synonyms, output_file
     ):
 
         self.stop_words = set(stopwords.words("english"))
@@ -32,7 +32,7 @@ class SearchKeywordGenerator:
         self.google_analytics_searched_words = pd.read_excel(
             ga_search_terms_file, sheetname="Dataset1"
         )
-        self.green_page = pd.read_excel(green_pages_file, sheetname="Green_Page")
+        self.trade_tariff_synonyms = trade_tariff_synonyms
         self.output_file = output_file
 
         self.searched_words = self.get_searched_words()
@@ -268,13 +268,15 @@ class SearchKeywordGenerator:
         # get first 4 digits of the Code
         self.subhead["Code_First4Digits"] = self.get_four_digit_code()
 
-        logger.info("Processing green page columns..")
-        green_page = self.process_green_page_columns()
-
-        # merge subhead dataframe and green page
-        self.subhead = self.subhead.merge(
-            green_page, on="Code_First4Digits", how="left"
+        logger.info("Processing synonyms from the Trade Tariff API")
+        synonym_data_frame = pd.DataFrame(
+            self.trade_tariff_synonyms, columns=["Code_First4Digits", "Contents"]
         )
+
+        self.subhead = self.subhead.merge(
+            synonym_data_frame, on="Code_First4Digits", how="left"
+        )
+
         self.subhead.Contents = self.subhead.Contents.replace(np.nan, "", regex=True)
         self.subhead["final_category"] = self.subhead[
             ["final_category", "Contents"]
@@ -287,18 +289,6 @@ class SearchKeywordGenerator:
         logger.info("Saving output to CSV..")
         self.subhead.to_csv(self.output_file, index=False)
         logger.info("Done!")
-
-    def process_green_page_columns(self):
-        """
-        import green_page and stack contents with same 'Location (first 4 digits of the code)'
-        :return: list of green page terms
-        """
-
-        green_page = self.green_page.groupby("Code_First4Digits", as_index=False).agg(
-            lambda x: ", ".join(x.tolist())
-        )
-        green_page.columns = ["".join(col).strip() for col in green_page.columns.values]
-        return green_page
 
     def get_four_digit_code(self):
         """
