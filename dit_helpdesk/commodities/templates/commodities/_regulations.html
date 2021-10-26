@@ -9,13 +9,13 @@
   </p>
   <div class="govuk-accordion"
       data-module="accordion"
-      id="accordion-default">
+      id="regulations-accordion">
     {% for regulation_group in regulation_groups %}
       <div class="govuk-accordion__section ">
         <div class="govuk-accordion__section-header">
           <h4 class="govuk-accordion__section-heading govuk-heading-s">
             <span class="govuk-accordion__section-button"
-                  id="accordion-default-heading-{{ forloop.counter }}">
+                  id="regulations-accordion-heading-{{ forloop.counter }}">
               <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3">
                 <a href="#" class="app-accordion__heading-title">
                   {{ regulation_group.title }}
@@ -24,9 +24,9 @@
             </span>
           </h4>
         </div>
-        <div id="accordion-default-content-{{ forloop.counter }}"
+        <div id="regulations-accordion-content-{{ forloop.counter }}"
             class="govuk-accordion__section-content"
-            aria-labelledby="accordion-default-heading-{{ forloop.counter }}">
+            aria-labelledby="regulations-accordion-heading-{{ forloop.counter }}">
           <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-3">
             {% for regulation in regulation_group.regulation_set.all %}
               <li class="govuk-body-s govuk-!-margin-bottom-2"><a href="{{ regulation.url }}"
