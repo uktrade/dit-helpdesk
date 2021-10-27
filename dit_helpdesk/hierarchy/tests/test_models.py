@@ -1,7 +1,6 @@
 import logging
 from django.test import TestCase
 from django.urls import NoReverseMatch
-from model_mommy.recipe import seq
 from mixer.backend.django import mixer
 from commodities.models import Commodity
 from hierarchy.models import SubHeading, Heading, Section, Chapter
@@ -51,7 +50,7 @@ class SectionTestCase(TestCase):
         self.chapters = mixer.cycle(5).blend(
             Chapter,
             section=self.section,
-            chapter_code=seq(0),
+            chapter_code=mixer.sequence(1, 2, 3, 4, 5),
             nomenclature_tree=self.tree,
         )
 
@@ -84,10 +83,10 @@ class SectionTestCase(TestCase):
         self.assertEquals(self.section.chapter_range_str, "None")
 
     def test_chapter_range_str_with_one_child_chapter_with_chapter_id_1(self):
-        self.chapters = mixer.cycle(1).blend(
+        self.chapters = mixer.blend(
             Chapter,
             section=self.section,
-            chapter_code=seq(0),
+            chapter_code="0100000000",
             nomenclature_tree=self.tree,
         )
         self.assertEquals(self.section.chapter_range_str, "1")
@@ -96,7 +95,7 @@ class SectionTestCase(TestCase):
         self.chapters = mixer.cycle(5).blend(
             Chapter,
             section=self.section,
-            chapter_code=seq(0),
+            chapter_code=mixer.sequence(1, 2, 3, 4, 5),
             nomenclature_tree=self.tree,
         )
         self.assertEquals(self.section.chapter_range_str, "1 to 5")
@@ -177,7 +176,7 @@ class ChapterTestCase(TestCase):
             Chapter,
             tts_json="{}",
             section=section,
-            chapter_code=seq(46),
+            chapter_code=mixer.sequence("47{0}0000000"),
             nomenclature_tree=self.tree,
         )
         """create 11 headings starting at 4901 and attached to chapter 49"""

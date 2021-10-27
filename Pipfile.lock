@@ -1352,14 +1352,6 @@
             "index": "pypi",
             "version": "==7.0.6"
         },
-        "model-mommy": {
-            "hashes": [
-                "sha256:0e42c8f4a37c874dd81675ef8a385d3a25877082565e0d213022898c637f6f25",
-                "sha256:8313c253617255060de474cdfcc0f7517e42deafc5619fec832a6c04b292b5d7"
-            ],
-            "index": "pypi",
-            "version": "==1.6.0"
-        },
         "more-itertools": {
             "hashes": [
                 "sha256:1debcabeb1df793814859d64a81ad7cb10504c24349368ccf214c664c474f41f",
