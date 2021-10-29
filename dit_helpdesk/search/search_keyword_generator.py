@@ -61,6 +61,8 @@ class SearchKeywordGenerator:
         :param stop_words: the stop words
         :return: list converted to string
         """
+        # This is the line giving problems.
+        logger.critical(content)
         content = re.sub(r"[^\w\s]", "", content)
         content = re.sub(r"[0-9]+", "", content)
         new_sent = [
@@ -211,6 +213,8 @@ class SearchKeywordGenerator:
         searched_unique_single_word_synonym = []
 
         for i in range(self.subhead.shape[0]):
+            # What, in column 7 is causing the problem, and why not locally???
+            logger.critical("List of stop words: " + self.stop_words)
             clean_content.append(
                 self.filter_stop_words(self.subhead.Col7[i], self.stop_words)
             )

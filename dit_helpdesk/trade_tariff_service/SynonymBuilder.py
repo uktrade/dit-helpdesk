@@ -19,7 +19,7 @@ class SynonymBuilder:
 
     def get_synonyms_list(self):
         # Function to call that will create and return the synonyms csv
-        logger.info("Building the synonyms CSV through the Trade Tariff API")
+        logger.info("Building the synonyms list through the Trade Tariff API")
 
         # Get the correct URL for the Trade Tariff Service
         trade_tariff_urls = settings.TRADE_TARIFF_CONFIG()
@@ -59,7 +59,7 @@ class SynonymBuilder:
                     commodity_synonym_count += 1
 
         logger.info(
-            f"""Completed building the synonyms CSV. There are {heading_synonym_count}
+            f"""Completed building the synonyms list. There are {heading_synonym_count}
             synonyms to be converted to search keywords. There were {chapter_synonym_count} synonyms
             ignored as they had Chapter level reference codes (2 digits). There were {commodity_synonym_count}
             synonyms ignored as they had Commodity level reference codes (more than 4 digits)."""
