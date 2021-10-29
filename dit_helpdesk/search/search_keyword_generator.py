@@ -212,9 +212,10 @@ class SearchKeywordGenerator:
         searched_pair_word = []
         searched_unique_single_word_synonym = []
 
+        logger.critical("List of stop words: " + str(self.stop_words))
+
         for i in range(self.subhead.shape[0]):
             # What, in column 7 is causing the problem, and why not locally???
-            logger.critical("List of stop words: " + self.stop_words)
             clean_content.append(
                 self.filter_stop_words(self.subhead.Col7[i], self.stop_words)
             )
