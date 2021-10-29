@@ -793,6 +793,18 @@ class HierarchyBuilder:
             "commodities/hierarchy_subheading_all.csv"
         )
         csv_data = csv.writer(open(csv_file_path, "a", newline=""))
+
+        # this is where column 7 comes from - the description is assigned to it.
+        # Checking the log, we see
+        # "Containing, by weight, more than 7% but less than 45% of alumina (Al<sub>2</sub>O<sub>3</sub>)"
+        # being processed, then 3 "Other" entries.
+        # An entry with the description "nan" is what causes the failure -
+        # but this is not found in the csv file, the line that is being checked is:
+        # "Other refractory ceramic goods (for example, retorts, crucibles, muffles, nozzles, plugs,
+        # supports, cupels, tubes, pipes, sheaths and rods), other than those of siliceous
+        # fossil meals or of similar siliceous earths"
+        # Is something wrong with this row? How is the file hierarchy_subheading_all.csv created?
+
         col_headings = [
             "Code",
             "Col1",
@@ -807,6 +819,8 @@ class HierarchyBuilder:
         csv_data.writerow(col_headings)
 
         for item in data:
+            if item["description"] == "nan":
+                logger.critical(item)
             csv_data.writerow(
                 [
                     item["goods_nomenclature_item_id"],

@@ -62,7 +62,7 @@ class SearchKeywordGenerator:
         :return: list converted to string
         """
         # This is the line giving problems.
-        logger.critical(content)
+        # logger.info(content)
         content = re.sub(r"[^\w\s]", "", content)
         content = re.sub(r"[0-9]+", "", content)
         new_sent = [
@@ -212,7 +212,7 @@ class SearchKeywordGenerator:
         searched_pair_word = []
         searched_unique_single_word_synonym = []
 
-        logger.critical("List of stop words: " + str(self.stop_words))
+        logger.info("List of stop words: " + str(self.stop_words))
 
         for i in range(self.subhead.shape[0]):
             # What, in column 7 is causing the problem, and why not locally???
