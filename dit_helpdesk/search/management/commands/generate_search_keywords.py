@@ -13,7 +13,6 @@ GA_SEARCH_TERMS = settings.SEARCH_DATA_PATH.format(
 OUTPUT_FILE = settings.SEARCH_DATA_PATH.format(
     "output/keywords_and_synonyms_merged.csv"
 )
-GREEN_PAGES_LIST = settings.SEARCH_DATA_PATH.format("synonyms/green_page_list.xlsx")
 
 
 class Command(BaseCommand):
