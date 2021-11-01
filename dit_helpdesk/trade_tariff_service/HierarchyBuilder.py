@@ -807,12 +807,11 @@ class HierarchyBuilder:
         csv_data.writerow(col_headings)
 
         for item in data:
-            if item["description"] == "":
+            if not item["description"]:
                 # Description should never be empty from the Trade Tariff Service
-                raise TypeError(
-                    "Description/Content for nomenclature item id "
-                    + item["goods_nomenclature_item_id"]
-                    + " is empty, please raise with the Trade Tariff Service team."
+                raise ValueError(
+                    f"Description/Content for nomenclature item id {item['goods_nomenclature_item_id']} is empty,"
+                    " please raise with the Trade Tariff Service team.",
                 )
             csv_data.writerow(
                 [

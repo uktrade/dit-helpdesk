@@ -55,14 +55,12 @@ class SynonymBuilder:
                     commodity_synonym_count += 1
 
         logger.info(
-            "Completed building the synonyms list. There are "
-            + str(heading_synonym_count)
-            + " synonyms to be converted to search keywords. There were "
-            + str(chapter_synonym_count)
-            + " synonyms ignored as they had Chapter level reference codes (2 digits). There were "
-            + str(commodity_synonym_count)
-            + " synonyms ignored as they had Commodity level "
-            + "reference codes (more than 4 digits)."
+            "Completed building the synonyms list. There are %s synonyms to be converted to search keywords. There were"
+            " %s synonyms ignored as they had Chapter level reference codes (2 digits). There were %s synonyms ignored "
+            "as they had Commodity level reference codes (more than 4 digits).",
+            heading_synonym_count,
+            chapter_synonym_count,
+            commodity_synonym_count,
         )
 
         if heading_synonym_count == 0:
