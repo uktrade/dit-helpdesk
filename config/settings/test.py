@@ -151,16 +151,23 @@ INSTALLED_APPS += [
     "hierarchy.tests.apps.HierarchyTestsConfig",
 ]
 
-TRADE_TARIFF_CONFIG = {
-    "UK": {
-        "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
-        "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
-    },
-    "EU": {
-        "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
-        "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
-    },
-}
+
+def get_trade_tariff_config():
+    return {
+        "UK": {
+            "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v2/"},
+            "JSON_OBJ": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/api/v1/"},
+        },
+        "EU": {
+            "TREE": {"BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v2/"},
+            "JSON_OBJ": {
+                "BASE_URL": "https://www.trade-tariff.service.gov.uk/xi/api/v1/"
+            },
+        },
+    }
+
+
+TRADE_TARIFF_CONFIG = get_trade_tariff_config
 
 TRACK_GA_EVENTS = False
 
