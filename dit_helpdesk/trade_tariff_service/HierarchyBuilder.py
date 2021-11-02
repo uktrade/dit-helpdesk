@@ -806,13 +806,13 @@ class HierarchyBuilder:
         ]
         csv_data.writerow(col_headings)
 
+        # Description should never be empty from the Trade Tariff Service
+        empty_description_items = []
+
         for item in data:
             if not item["description"]:
-                # Description should never be empty from the Trade Tariff Service
-                raise ValueError(
-                    f"Description/Content for nomenclature item id {item['goods_nomenclature_item_id']} is empty,"
-                    " please raise with the Trade Tariff Service team.",
-                )
+                empty_description_items.append(item["goods_nomenclature_item_id"])
+
             csv_data.writerow(
                 [
                     item["goods_nomenclature_item_id"],
@@ -825,6 +825,12 @@ class HierarchyBuilder:
                     item["description"],
                     item["number_indents"],
                 ]
+            )
+
+        if empty_description_items:
+            raise ValueError(
+                f"Description/Content for nomenclature item id(s) {empty_description_items} is/are"
+                " empty, please raise with the Trade Tariff Service team.",
             )
 
     def load_json_file(self, file_path):
