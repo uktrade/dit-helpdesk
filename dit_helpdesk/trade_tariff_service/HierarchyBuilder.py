@@ -25,6 +25,18 @@ logger.setLevel(logging.INFO)
 DEFAULT_REGION = settings.PRIMARY_REGION
 
 
+PATCHED_DESCRIPTIONS = {
+    "6903000000": "Other refractory ceramic goods (for example, retorts, crucibles, muffles, nozzles, plugs, supports, "
+    "cupels, tubes, pipes, sheaths and rods), other than those of siliceous fossil meals or of similar "
+    "siliceous earths",
+}
+
+
+class MissingDescriptionsError(Exception):
+    def __init__(self, missing_descriptions):
+        self.missing_descriptions = missing_descriptions
+
+
 class HierarchyBuilder:
     def __init__(self, region=None, new_tree=None):
         """Provide `new_tree` parameter if there is already a NomenclatureTree created which
@@ -646,6 +658,44 @@ class HierarchyBuilder:
             dict(t) for t in {tuple(d.items()) for d in commodities_data}
         ]
 
+        missing_descriptions = []
+        for hierarchy_data, hierarchy_type in [
+            (chapters_data, "chapter"),
+            (headings_data, "heading"),
+            (sub_headings_data, "sub heading"),
+            (commodities_data, "commodity"),
+        ]:
+            for hierarchy_item in hierarchy_data:
+                description = hierarchy_item["description"]
+                if description:
+                    continue
+
+                commodity_code = hierarchy_item["goods_nomenclature_item_id"]
+                try:
+                    patched_description = PATCHED_DESCRIPTIONS[commodity_code]
+                except KeyError:
+                    pass
+                else:
+                    logger.warning(
+                        "Patched description on %s for %s",
+                        hierarchy_type.title(),
+                        commodity_code,
+                    )
+                    hierarchy_item["description"] = patched_description
+                    continue
+
+                logger.error(
+                    "%s found with no description: %s",
+                    hierarchy_type.title(),
+                    commodity_code,
+                )
+                missing_descriptions.append(
+                    (commodity_code, hierarchy_type),
+                )
+
+        if missing_descriptions:
+            raise MissingDescriptionsError(missing_descriptions)
+
         # serialize to filesystem
         self.write_data_to_file(
             sections_data, self.get_data_path("prepared/sections.json")
@@ -807,12 +857,6 @@ class HierarchyBuilder:
         csv_data.writerow(col_headings)
 
         for item in data:
-            if not item["description"]:
-                # Description should never be empty from the Trade Tariff Service
-                raise ValueError(
-                    f"Description/Content for nomenclature item id {item['goods_nomenclature_item_id']} is empty,"
-                    " please raise with the Trade Tariff Service team.",
-                )
             csv_data.writerow(
                 [
                     item["goods_nomenclature_item_id"],
