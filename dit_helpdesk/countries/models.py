@@ -1,7 +1,10 @@
+import reversion
+
 from django.conf import settings
 from django.db import models
 
 
+@reversion.register()
 class Country(models.Model):
     @property
     def has_uk_trade_agreement(self):

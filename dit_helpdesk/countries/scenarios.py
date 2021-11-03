@@ -1,4 +1,5 @@
 import requests
+import reversion
 
 
 class ScenarioTransitioner:
@@ -23,8 +24,13 @@ class ScenarioTransitioner:
             return
 
         if condition(country):
-            country.scenario = to_scenario
-            country.save()
+            with reversion.create_revision():
+                reversion.set_comment(
+                    f"Updated {country.name} ({country.country_code}) from {country.scenario} to {to_scenario} based on"
+                    f" {condition.__name__}",
+                )
+                country.scenario = to_scenario
+                country.save()
 
 
 transition_scenario = ScenarioTransitioner()
