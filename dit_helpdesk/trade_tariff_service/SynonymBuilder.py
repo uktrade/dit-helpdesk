@@ -9,14 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class MissingSynonymsException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
+    pass
 
 
 class SynonymBuilder:
-    def __init__(self):
-        pass
-
     def get_synonyms_list(self):
         # Function to call that will create and return the synonyms csv
         logger.info("Building the synonyms CSV through the Trade Tariff API")
@@ -59,10 +55,12 @@ class SynonymBuilder:
                     commodity_synonym_count += 1
 
         logger.info(
-            f"""Completed building the synonyms CSV. There are {heading_synonym_count}
-            synonyms to be converted to search keywords. There were {chapter_synonym_count} synonyms
-            ignored as they had Chapter level reference codes (2 digits). There were {commodity_synonym_count}
-            synonyms ignored as they had Commodity level reference codes (more than 4 digits)."""
+            "Completed building the synonyms list. There are %s synonyms to be converted to search keywords. There were"
+            " %s synonyms ignored as they had Chapter level reference codes (2 digits). There were %s synonyms ignored "
+            "as they had Commodity level reference codes (more than 4 digits).",
+            heading_synonym_count,
+            chapter_synonym_count,
+            commodity_synonym_count,
         )
 
         if heading_synonym_count == 0:
