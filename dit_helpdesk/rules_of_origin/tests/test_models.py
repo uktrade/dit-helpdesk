@@ -1,7 +1,7 @@
 import logging
 
 from django.test import TestCase
-from model_mommy import mommy
+from mixer.backend.django import mixer
 
 from rules_of_origin.models import RulesDocument, RulesDocumentFootnote, Rule
 
@@ -16,7 +16,7 @@ class RulesDocumentCase(TestCase):
     """
 
     def setUp(self):
-        self.rulesdocument = mommy.make(RulesDocument)
+        self.rulesdocument = mixer.blend(RulesDocument)
 
     def test_str(self):
         self.assertEquals(str(self.rulesdocument), self.rulesdocument.description)
@@ -28,7 +28,7 @@ class RuleTestCase(TestCase):
     """
 
     def setUp(self):
-        self.rule = mommy.make(Rule, description="test description")
+        self.rule = mixer.blend(Rule, description="test description")
 
     def test_str(self):
         self.assertEquals(str(self.rule), self.rule.description)
@@ -40,7 +40,7 @@ class RulesDocumentFootnoteTestCase(TestCase):
     """
 
     def setUp(self):
-        self.rulesdocumentfootnote = mommy.make(RulesDocumentFootnote)
+        self.rulesdocumentfootnote = mixer.blend(RulesDocumentFootnote)
 
     def test_str(self):
         self.assertEquals(
