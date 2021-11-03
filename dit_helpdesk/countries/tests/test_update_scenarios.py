@@ -4,6 +4,7 @@ from io import StringIO
 from unittest import mock
 
 from mixer.backend.django import mixer
+from reversion.models import Version
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -11,7 +12,13 @@ from django.test import TestCase
 from rules_of_origin.models import RulesDocument
 
 from ..models import Country
-from ..scenarios import ALL_GSP_IDS, GSP_GENERAL_ID, GSP_ENHANCED_ID, update_scenario
+from ..scenarios import (
+    ALL_GSP_IDS,
+    GSP_GENERAL_ID,
+    GSP_ENHANCED_ID,
+    transition_scenario,
+    update_scenario,
+)
 
 
 class UpdateScenarioTestCase(TestCase):
@@ -200,6 +207,34 @@ class UpdateScenarioTestCase(TestCase):
             )
             update_scenario(country)
             self.assertEqual(country.scenario, "NON_PREF")
+
+    def test_changes_tracked_in_reversion(self):
+        @transition_scenario("TEST_FROM_TRANSITION", "TEST_TO_TRANSITION")
+        def _transition_condition(country):
+            return True
+
+        country = mixer.blend(
+            Country,
+            country_code="XT",
+            name="Test country",
+            scenario="TEST_FROM_TRANSITION",
+        )
+
+        versions = Version.objects.get_for_object(country)
+        self.assertEqual(versions.count(), 0)
+
+        update_scenario(country)
+
+        country.refresh_from_db()
+        self.assertEqual(country.scenario, "TEST_TO_TRANSITION")
+
+        versions = Version.objects.get_for_object(country)
+        self.assertEqual(versions.count(), 1)
+        version = versions.first()
+        self.assertEqual(
+            version.revision.comment,
+            "Updated Test country (XT) from TEST_FROM_TRANSITION to TEST_TO_TRANSITION based on _transition_condition",
+        )
 
 
 class UpdateScenarioManagementCommandTestCase(TestCase):
