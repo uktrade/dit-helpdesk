@@ -62,7 +62,8 @@ class SearchKeywordsImporter:
             else:
                 commodity_code = str(item["Code"])
 
-            instance_data[commodity_code] = {}
+            if commodity_code not in instance_data:
+                instance_data[commodity_code] = {}
 
             if "keywords" in instance_data[commodity_code].keys() and isinstance(
                 instance_data[commodity_code]["keywords"], list
@@ -77,7 +78,6 @@ class SearchKeywordsImporter:
 
             instance = {commodity_code: instance_data[commodity_code]}
             if commodity_code in self.chapter_codes:
-
                 if "Chapter" in self.data.keys() and isinstance(
                     self.data["Chapter"], list
                 ):
