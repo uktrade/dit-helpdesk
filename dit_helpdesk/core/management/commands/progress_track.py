@@ -4,7 +4,7 @@ from core.models import ReloadDataTracking
 
 from datetime import datetime
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,12 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            "--reason",
+            type=str,
+            help="""Used with end_reload_data, string to detail reason for ending script progress.""",
+        )
+
+        parser.add_argument(
             "--check_reload_data",
             action="store_true",
             help="Will print the current running status of reload_data scripts.",
@@ -37,7 +43,7 @@ class Command(BaseCommand):
             help="Shows the list of runtimes for all reload_data runs recorded in the DB.",
         )
 
-    def handle(self, **options):
+    def handle(self, *args, **options):
 
         if options["start_reload_data"]:
             logger.info("Tracking the start of the reload_data script.")
@@ -45,7 +51,10 @@ class Command(BaseCommand):
 
         elif options["end_reload_data"]:
             logger.info("Tracking the completion of the reload_data script.")
-            self.end_reload_data()
+            try:
+                self.end_reload_data(options["reason"])
+            except ValueError:
+                raise CommandError("Provide a reason for ending the reload_data script")
 
         elif options["check_reload_data"]:
             logger.info("Checking if reload_data is in progress")
@@ -67,7 +76,7 @@ class Command(BaseCommand):
             logger.info("Registering the current reload_data process")
             ReloadDataTracking.objects.create(start_time=datetime.now())
 
-    def end_reload_data(self):
+    def end_reload_data(self, reason):
         running_processes = ReloadDataTracking.objects.filter(end_time__isnull=True)
 
         if running_processes.count() > 1:
@@ -80,6 +89,7 @@ class Command(BaseCommand):
             logger.info("Registering the current reload_data process as complete")
             for completed_process in running_processes:
                 completed_process.end_time = datetime.now()
+                completed_process.reason = reason
                 completed_process.save()
 
     def check_reload_data(self):
