@@ -372,7 +372,11 @@ class RulesOfOriginSection(CommodityDetailSection):
             commodity_object.commodity_code,
             country.country_code,
         )
-        list(real_time_rules_of_origin)
+        real_time_rules_of_origin = real_time_rules_of_origin.order_by("rules_document")
+        for doc, rules in itertools.groupby(
+            real_time_rules_of_origin, lambda x: x.rules_document
+        ):
+            self.rules_of_origin[doc.description]["rules"] = list(rules)
 
     @property
     def should_be_displayed(self):
