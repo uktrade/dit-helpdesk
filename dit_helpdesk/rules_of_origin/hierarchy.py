@@ -58,8 +58,7 @@ def get_rules_of_origin(commodity_code, country_code):
     for hierarchy_code in _get_hierarchy_codes(commodity_code):
         hierarchy_rules = potential_rules.filter(
             hs_to__isnull=True,
-            hs_from=hierarchy_code,
-            is_exclusion=False,
+            normalised_hs_from=int(_normalised_code(hierarchy_code)),
         )
         applied_rules = applied_rules.union(hierarchy_rules)
 
@@ -68,8 +67,14 @@ def get_rules_of_origin(commodity_code, country_code):
             hs_to__isnull=False,
             normalised_hs_from__lte=int(_normalised_code(commodity_code)),
             normalised_hs_to__gte=int(_normalised_code(commodity_code)),
-            is_exclusion=False,
         )
     )
+
+    for hierarchy_code in _get_hierarchy_codes(commodity_code):
+        hierarchy_rules = potential_rules.filter(
+            hs_to__isnull=False,
+            normalised_hs_to=int(_normalised_code(hierarchy_code)),
+        )
+        applied_rules = applied_rules.union(hierarchy_rules)
 
     return applied_rules
