@@ -7,6 +7,25 @@ from django.core.management.base import BaseCommand
 logger = logging.getLogger(__name__)
 
 
+class ReloadDataException(Exception):
+    def __init__(self, step, error):
+
+        reload_data_fail_arg = "FAILURE in " + step + " - " + error
+        # Send failure to complete signal
+        call_command(
+            "progress_track",
+            "--end_reload_data",
+            f"--reason='{reload_data_fail_arg}'",
+        )
+
+        self.step = step
+        self.error = error
+        super().__init__(self.error)
+
+    def __str__(self):
+        return f'"reload_data script has failed during the {self.step} step with the following error: {self.error}'
+
+
 class Command(BaseCommand):
     def handle(self, **options):
         try:
@@ -93,17 +112,4 @@ class Command(BaseCommand):
             call_command("progress_track", "--end_reload_data", "--reason=SUCCESS")
 
         except Exception as e:
-            logger.info(
-                "The reload_data script has failed while running the "
-                + current_step
-                + " step with the following error: "
-                + str(e)
-            )
-
-            reload_data_fail_arg = "FAILURE in " + current_step + " - " + str(e)
-            # Send failure to complete signal
-            call_command(
-                "progress_track",
-                "--end_reload_data",
-                f"--reason='{reload_data_fail_arg}'",
-            )
+            raise ReloadDataException(current_step, str(e))
