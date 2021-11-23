@@ -32,7 +32,7 @@ class RulesDocumentAlreadyExistsException(InvalidDocumentException):
         self.country = country
 
 
-def _create_document(name, countries_with_dates, gb_start_date, region):
+def _create_document(name, countries_with_dates, gb_start_date):
     country_codes = [d["code"] for d in countries_with_dates]
 
     start_date = dt.datetime.strptime(gb_start_date, "%Y-%m-%d")
@@ -306,7 +306,6 @@ def import_roo(f, region=settings.PRIMARY_REGION):
         name=roo_data["name"],
         countries_with_dates=roo_data["countries_with_dates"],
         gb_start_date=roo_data["gb_start_date"],
-        region=region,
     )
 
     _create_rules(rules_document, roo_data["positions"], region=region)

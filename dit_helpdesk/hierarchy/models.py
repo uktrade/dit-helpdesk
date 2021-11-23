@@ -160,7 +160,6 @@ class RulesOfOriginMixin:
                 "FR"  # pick one of the EU countries, the RoO are the same for all
             )
 
-        tree = NomenclatureTree.get_active_tree()
         country = Country.objects.get(country_code=country_code)
 
         roo_data = OrderedDict()
@@ -231,7 +230,6 @@ class RulesOfOriginMixin:
 
             footnotes = RulesDocumentFootnote.objects.filter(
                 rules_document__countries=country,
-                rules_document__nomenclature_tree=tree,
                 rules_document__description=rule_document_ta,
             ).order_by("id")
             relevant_footnotes = self.process_footnotes(rules, footnotes)
@@ -239,7 +237,6 @@ class RulesOfOriginMixin:
             try:
                 introductory_notes = RulesDocumentFootnote.objects.get(
                     rules_document__countries=country,
-                    rules_document__nomenclature_tree=tree,
                     rules_document__description=rule_document_ta,
                     identifier="COMM",
                 )
