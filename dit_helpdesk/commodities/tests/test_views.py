@@ -213,7 +213,7 @@ class CommodityViewTestCase(TestCase):
         SCENARIOS_WITH_UK_TRADE_AGREEMENT=["TEST_TA"],
         TRADE_AGREEMENT_TEMPLATE_MAPPING={"TEST_TA": "TWUK_TA"},
     )
-    def test_commodity_detail_with_rules_or_origin(self):
+    def test_commodity_detail_with_rules_of_origin(self):
         country = Country.objects.get(country_code="AF")
         country.scenario = "TEST_TA"
         country.save()
@@ -226,8 +226,13 @@ class CommodityViewTestCase(TestCase):
         rules_document.countries.add(country)
         rules_document.save()
 
-        rule = mixer.blend(Rule, rules_document=rules_document)
-        rule.chapters.add(self.chapter)
+        mixer.blend(
+            Rule,
+            rules_document=rules_document,
+            description=mixer.RANDOM,
+            hs_from="0100",
+            hs_to="0105",
+        )
 
         with patch(
             "commodities.models.Commodity.get_hierarchy_context_ids"

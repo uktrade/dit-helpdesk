@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
         if s3_bucket:
             logger.info("Deleting rules documents…")
-            RulesDocument.objects.filter(nomenclature_tree=active_tree).all().delete()
+            RulesDocument.objects.all().delete()
 
             if options["reset_all"]:
                 logger.info("Resetting all…")

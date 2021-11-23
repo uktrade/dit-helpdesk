@@ -10,10 +10,6 @@ class RulesDocument(models.Model):
     Rules Of Origin Document optionally related to a Country Group
     """
 
-    nomenclature_tree = models.ForeignKey(
-        "hierarchy.NomenclatureTree", on_delete=models.CASCADE, null=True
-    )
-
     description = models.TextField()
     countries = models.ManyToManyField(Country, related_name="rules_documents")
     source_url = models.URLField(null=True, blank=True)
@@ -36,7 +32,7 @@ class Rule(models.Model):
     code = models.CharField(null=True, blank=True, max_length=255)
     description = models.TextField(null=True, blank=True)
     description_processed = models.TextField(null=True, blank=True)
-    is_exclusion = models.BooleanField(default=False)
+    is_extract = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
     )
@@ -46,19 +42,7 @@ class Rule(models.Model):
     alt_rule_text_processed = models.TextField(null=True, blank=True)
     hs_from = models.CharField(null=True, max_length=12)
     hs_to = models.CharField(null=True, max_length=12)
-
-    chapters = models.ManyToManyField(
-        "hierarchy.Chapter", related_name="rules_of_origin"
-    )
-    headings = models.ManyToManyField(
-        "hierarchy.Heading", related_name="rules_of_origin"
-    )
-    subheadings = models.ManyToManyField(
-        "hierarchy.SubHeading", related_name="rules_of_origin"
-    )
-    commodities = models.ManyToManyField(
-        "commodities.Commodity", related_name="rules_of_origin"
-    )
+    hs_type = models.CharField(null=True, max_length=2)
 
     class Meta:
         verbose_name_plural = "rules of origin"

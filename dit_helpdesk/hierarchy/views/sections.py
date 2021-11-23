@@ -365,18 +365,12 @@ class RulesOfOriginSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        self.rules_of_origin = commodity_object.get_rules_of_origin(
-            country_code=country.country_code
-        )
         real_time_rules_of_origin = get_rules_of_origin(
             commodity_object.commodity_code,
             country.country_code,
         )
-        real_time_rules_of_origin = real_time_rules_of_origin.order_by("rules_document")
-        for doc, rules in itertools.groupby(
-            real_time_rules_of_origin, lambda x: x.rules_document
-        ):
-            self.rules_of_origin[doc.description]["rules"] = list(rules)
+
+        self.rules_of_origin = real_time_rules_of_origin
 
     @property
     def should_be_displayed(self):

@@ -4,7 +4,7 @@ import logging
 from django.urls import reverse
 
 from rules_of_origin.models import RulesDocument
-from hierarchy.models import Chapter, Heading, SubHeading, NomenclatureTree
+from hierarchy.models import Chapter, Heading, SubHeading
 from commodities.models import Commodity
 
 
@@ -33,8 +33,7 @@ HS_LEN_MAPPING = {2: [Chapter], 4: [Heading, SubHeading], 6: [SubHeading, Commod
 
 def postprocess_rules_of_origin():
 
-    active_tree = NomenclatureTree.get_active_tree()
-    active_documents = RulesDocument.objects.filter(nomenclature_tree=active_tree)
+    active_documents = RulesDocument.objects.all()
 
     doc_count = active_documents.count()
 

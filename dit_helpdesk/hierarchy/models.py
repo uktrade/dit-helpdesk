@@ -167,9 +167,7 @@ class RulesOfOriginMixin:
 
         # Get a list of rules documents for the country in question.
         # Occasional countries will have multiples and need processing for both sets
-        rule_docs_to_apply = RulesDocument.objects.filter(
-            countries=country, nomenclature_tree=tree
-        )
+        rule_docs_to_apply = RulesDocument.objects.filter(countries=country)
 
         # Loop through the Rules Document list, process data and append to roo_data
         for docs in rule_docs_to_apply:
@@ -188,7 +186,6 @@ class RulesOfOriginMixin:
 
             document_filter = Q(
                 rules_document__countries=country,
-                rules_document__nomenclature_tree=tree,
                 rules_document__description=rule_document_ta,
             )
             date_filter = (
@@ -226,11 +223,11 @@ class RulesOfOriginMixin:
             rules = unique_maintain_order(rules)
 
             lower_level_rules = heading_rules + subheading_rules + commodity_rules
-            any_non_ex_lower_level = any(not r.is_exclusion for r in lower_level_rules)
+            any_non_ex_lower_level = any(not r.is_extract for r in lower_level_rules)
 
             if any_non_ex_lower_level:
                 # if any lower level rule is non-ex, then ignore the higher level ex rules
-                rules = [r for r in rules if not r.is_exclusion]
+                rules = [r for r in rules if not r.is_extract]
 
             footnotes = RulesDocumentFootnote.objects.filter(
                 rules_document__countries=country,

@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.conf import settings
 
 from rules_of_origin.models import RulesDocument, RulesDocumentFootnote, Rule, SubRule
-from hierarchy.models import NomenclatureTree, Chapter, Heading, SubHeading
+from hierarchy.models import Chapter, Heading, SubHeading
 from commodities.models import Commodity
 from countries.models import Country
 
@@ -48,15 +48,11 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
             f"Couldn't find countries with country codes: {missing_codes}"
         )
 
-    nomenclature_tree = NomenclatureTree.get_active_tree(region)
-
     for country in countries:
         # Certain country TA scenarios have multiple rule documents, must check others
         # to prevent duplicates in source data
         if country.scenario not in settings.MULTIPLE_ROO_SCENARIOS:
-            existing_rules_document = RulesDocument.objects.filter(
-                countries=country, nomenclature_tree=nomenclature_tree
-            )
+            existing_rules_document = RulesDocument.objects.filter(countries=country)
             if existing_rules_document:
                 raise RulesDocumentAlreadyExistsException(
                     "RulesDocument has already been created for country_code"
@@ -67,8 +63,12 @@ def _create_document(name, countries_with_dates, gb_start_date, region):
 
     logger.info("Creating document %s..", name)
 
+    # Note: The rules documents have been seperated from the Nomenclature tree.
+    # there were previously multiple trees we attached rules to - one was for the ni/eu tree
+    # however these rules were not displayed anywhere. Other trees seem to be for backup purposes
+
     rules_document = RulesDocument.objects.create(
-        nomenclature_tree=nomenclature_tree, description=name, start_date=start_date
+        description=name, start_date=start_date
     )
     rules_document.countries.set(countries)
     rules_document.save()
@@ -233,34 +233,23 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
 
 
 def _process_inclusion(rule, inclusion, region):
-    rule.is_exclusion = inclusion.get("ex") == "true"
+    rule.is_extract = inclusion.get("ex") == "true"
     rule.hs_from = inclusion["hsFrom"]
     rule.hs_to = inclusion.get("hsTo")
 
-    hs_type = inclusion["hsFromType"]
-    hs_to_type = inclusion.get("hsToType")
-    if hs_to_type and hs_type != hs_to_type:
+    rule.hs_type = inclusion["hsFromType"]
+    rule.hs_to_type = inclusion.get("hsToType")
+    if rule.hs_to_type and rule.hs_type != rule.hs_to_type:
         raise InvalidDocumentException(
             f"RoO HS range has to be defined in consistent units: {inclusion}"
         )
 
     ranges_objects = _get_objects_for_range(
-        hs_type=hs_type,
+        hs_type=inclusion["hsFromType"],
         hs_from=inclusion["hsFrom"],
         hs_to=inclusion.get("hsTo"),
         region=region,
     )
-
-    rule_m2m_mapping = {
-        Chapter: rule.chapters,
-        Heading: rule.headings,
-        SubHeading: rule.subheadings,
-        Commodity: rule.commodities,
-    }
-
-    for range_model, objects_to_bind in ranges_objects.items():
-        m2m_set = rule_m2m_mapping[range_model]
-        m2m_set.set(objects_to_bind)
 
     rule.save()
 
@@ -328,8 +317,6 @@ def import_roo(f, region=settings.PRIMARY_REGION):
 
 
 def check_countries_consistency():
-    nomenclature_tree = NomenclatureTree.get_active_tree(settings.PRIMARY_REGION)
-
     # Get the list of countries we know have trade agreements
     countries = [
         country for country in Country.objects.all() if country.has_uk_trade_agreement
@@ -339,9 +326,7 @@ def check_countries_consistency():
 
     for country in countries:
         # Check a rules document has been created for each of these countries
-        rules_document = RulesDocument.objects.filter(
-            countries=country, nomenclature_tree=nomenclature_tree
-        )
+        rules_document = RulesDocument.objects.filter(countries=country)
         if not rules_document and country.country_code != "EU":
             # If there is no rules document, we need to raise the warning that we were expecting one
             missing_countries_list.append(country.country_code + " - " + country.name)
