@@ -148,21 +148,21 @@ def get_rules_of_origin(commodity_code, country_code):
             )
             applied_rules = applied_rules.union(hierarchy_rules)
 
-        po_level_ex_rule = False
-        ch_level_ex_rule = False
+        ch_level_ex_rule_exists = False
+        po_level_ex_rule_exists = False
         for rule in applied_rules:
-            if rule.hs_type == "PO" and rule.is_extract:
-                po_level_ex_rule = True
             if rule.hs_type == "CH" and rule.is_extract:
-                ch_level_ex_rule = True
+                ch_level_ex_rule_exists = True
+            if rule.hs_type == "PO" and rule.is_extract:
+                po_level_ex_rule_exists = True
 
         # If we have an ex chapter rule, but no lower level rules, we need to skip this filter to display the rule
         # If we have lower level ex rules and an ex chapter rule, we need to skip the filter so it is displayed
         # If we have lower level non-ex rules and an ex chapter rule, we need to add the filter to not display the rule
         if (
             len(applied_rules) > 1
-            and ch_level_ex_rule is True
-            and po_level_ex_rule is False
+            and ch_level_ex_rule_exists
+            and not po_level_ex_rule_exists
         ):
             exclusion_rules = potential_rules.filter(
                 hs_from=hierarchy_code[:2],
