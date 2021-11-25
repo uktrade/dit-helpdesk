@@ -21,15 +21,24 @@ def chunks(lst, n):
         yield lst[i : i + n]  # noqa: E203
 
 
+def _normalised_code(commodity_code):
+    return commodity_code.ljust(12, "0")
+
+
+def skip_seen(iter):
+    seen = set()
+    for i in iter:
+        if i in seen:
+            continue
+        seen.add(i)
+        yield i
+
+
 def _get_hierarchy_codes(commodity_code):
     current_code = ""
     for chunk in chunks(commodity_code, 2):
         current_code += chunk
-        yield current_code
-
-
-def _normalised_code(commodity_code):
-    return commodity_code.ljust(12, "0")
+        yield _normalised_code(current_code)
 
 
 def _normalise_commodity_code_field(field_name):
@@ -126,10 +135,10 @@ def get_rules_of_origin(commodity_code, country_code):
         )
         applied_rules = rule_doc.rule_set.none()
 
-        for hierarchy_code in _get_hierarchy_codes(commodity_code):
+        for hierarchy_code in skip_seen(_get_hierarchy_codes(commodity_code)):
             hierarchy_rules = potential_rules.filter(
                 hs_to__isnull=True,
-                normalised_hs_from=int(_normalised_code(hierarchy_code)),
+                normalised_hs_from=int(hierarchy_code),
             )
             applied_rules = applied_rules.union(hierarchy_rules)
 
@@ -141,10 +150,10 @@ def get_rules_of_origin(commodity_code, country_code):
             )
         )
 
-        for hierarchy_code in _get_hierarchy_codes(commodity_code):
+        for hierarchy_code in skip_seen(_get_hierarchy_codes(commodity_code)):
             hierarchy_rules = potential_rules.filter(
                 hs_to__isnull=False,
-                normalised_hs_to=int(_normalised_code(hierarchy_code)),
+                normalised_hs_to=int(hierarchy_code),
             )
             applied_rules = applied_rules.union(hierarchy_rules)
 
