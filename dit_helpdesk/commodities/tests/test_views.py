@@ -229,7 +229,6 @@ class CommodityViewTestCase(TestCase):
         mixer.blend(
             Rule,
             rules_document=rules_document,
-            description=mixer.RANDOM,
             hs_from="0100",
             hs_to="0105",
         )

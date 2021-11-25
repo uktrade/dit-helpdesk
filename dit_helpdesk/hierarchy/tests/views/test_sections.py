@@ -545,14 +545,12 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         self.rules_document = mixer.blend(
             RulesDocument,
             countries=[self.country],
-            description=mixer.RANDOM,
         )
 
         self.rule = mixer.blend(
             Rule,
             code="01",
             is_extract=False,
-            description=mixer.RANDOM,
             rules_document=self.rules_document,
             hs_from="0100",
             hs_to="0105",
@@ -561,13 +559,11 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
 
         self.rule = mixer.blend(
             SubRule,
-            description=mixer.RANDOM,
             rule=self.rule,
         )
 
         self.rule = mixer.blend(
             RulesDocumentFootnote,
-            note=mixer.RANDOM,
             rules_document=self.rules_document,
         )
 

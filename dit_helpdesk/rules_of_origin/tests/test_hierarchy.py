@@ -38,7 +38,6 @@ class GetRulesOfOriginTestCase(TestCase):
         self.rulesdocument = mixer.blend(
             RulesDocument,
             countries=[self.country],
-            description=mixer.RANDOM,
         )
 
         self.footnote = mixer.blend(
@@ -46,7 +45,6 @@ class GetRulesOfOriginTestCase(TestCase):
             number=1,
             identifier="001",
             link_html="",
-            note=mixer.RANDOM,
             rules_document=self.rulesdocument,
         )
 
@@ -55,7 +53,6 @@ class GetRulesOfOriginTestCase(TestCase):
             number=2,
             identifier="COMM",
             link_html="",
-            note=mixer.RANDOM,
             rules_document=self.rulesdocument,
         )
 
@@ -101,10 +98,8 @@ class GetRulesOfOriginTestCase(TestCase):
                 mixer.blend(
                     Rule,
                     code=code_input,
-                    description=mixer.RANDOM,
                     is_extract=extract_indicator,
                     rules_document=self.rulesdocument,
-                    rule_text=mixer.RANDOM,
                     rule_text_processed=self.rule_text_footnote,
                     hs_from=hs_from_input,
                     hs_to=None,
@@ -1046,14 +1041,12 @@ class GetRulesOfOriginTestCase(TestCase):
         self.rulesdocument_2 = mixer.blend(
             RulesDocument,
             countries=[self.country],
-            description=mixer.RANDOM,
         )
         self.footnote_2 = mixer.blend(
             RulesDocumentFootnote,
             number=1,
             identifier="001",
             link_html="",
-            note=mixer.RANDOM,
             rules_document=self.rulesdocument_2,
         )
         self.intro_note_2 = mixer.blend(
@@ -1061,7 +1054,6 @@ class GetRulesOfOriginTestCase(TestCase):
             number=2,
             identifier="COMM",
             link_html="",
-            note=mixer.RANDOM,
             rules_document=self.rulesdocument_2,
         )
 
@@ -1247,12 +1239,7 @@ class GetRulesOfOriginTestCase(TestCase):
             SubRule,
             rule=self.test_rules["Heading"][0],
             order="001",
-            description=mixer.RANDOM,
-            description_processed=mixer.RANDOM,
-            rule_text=mixer.RANDOM,
-            alt_rule_text=mixer.RANDOM,
             rule_text_processed=self.rule_text_footnote,
-            alt_rule_text_processed=mixer.RANDOM,
         )
 
         # Test to ensure Subrule is included if present in rules document
