@@ -9,15 +9,6 @@ logger = logging.getLogger(__name__)
 
 class ReloadDataException(Exception):
     def __init__(self, step, error):
-
-        reload_data_fail_arg = "FAILURE in " + step + " - " + error
-        # Send failure to complete signal
-        call_command(
-            "progress_track",
-            "--end_reload_data",
-            f"--reason='{reload_data_fail_arg}'",
-        )
-
         self.step = step
         self.error = error
         super().__init__(self.error)
@@ -112,4 +103,13 @@ class Command(BaseCommand):
             call_command("progress_track", "--end_reload_data", "--reason=SUCCESS")
 
         except Exception as e:
+
+            reload_data_fail_arg = f"FAILURE in {current_step} - {e}"
+            # Send failure to complete signal
+            call_command(
+                "progress_track",
+                end_reload_data=True,
+                reason=reload_data_fail_arg,
+            )
+
             raise ReloadDataException(current_step, str(e))
