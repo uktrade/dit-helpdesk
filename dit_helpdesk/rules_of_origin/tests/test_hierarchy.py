@@ -25,14 +25,11 @@ class GetRulesOfOriginTestCase(TestCase):
         self.country = mixer.blend(
             Country,
             country_code="KA",
-            # alternative_non_trade_country_code="",
             name="The Hyborian Kingdom Of Aquilonia",
-            # has_eu_trade_agreement="",
             trade_agreement_title="Fealty Demands Of King Conan",
             trade_agreement_type="Trade and cooperation agreement",
             is_eu=False,
             scenario="TRADE_AGREEMENT",
-            # content_url="",
         )
 
         self.rulesdocument = mixer.blend(
@@ -1008,8 +1005,6 @@ class GetRulesOfOriginTestCase(TestCase):
 
         # Ensure a code outside the range returns no rules
         self.check_roo_list(self.alt_heading_code, [], 0)
-
-        # Note: This case can be removed when this is confirmed to be a data error
 
     def test_scenario_mutliple_rule_docs(self):
         """
