@@ -365,12 +365,10 @@ class RulesOfOriginSection(CommodityDetailSection):
     def __init__(self, country, commodity_object):
         super().__init__(country, commodity_object)
 
-        real_time_rules_of_origin = get_rules_of_origin(
+        self.rules_of_origin = get_rules_of_origin(
             commodity_object.commodity_code,
             country.country_code,
         )
-
-        self.rules_of_origin = real_time_rules_of_origin
 
     @property
     def should_be_displayed(self):
