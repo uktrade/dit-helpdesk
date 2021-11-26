@@ -87,16 +87,18 @@ def flatten(list_of_lists):
     return [item for inner_list in list_of_lists for item in inner_list]
 
 
-def unique_maintain_order(iterable):
-    out = []
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]  # noqa: E203
+
+
+def unique(iterable):
     seen = set()
-
-    for val in iterable:
-        if val not in seen:
-            out.append(val)
-            seen.add(val)
-
-    return out
+    for i in iterable:
+        if i in seen:
+            continue
+        seen.add(i)
+        yield i
 
 
 def _get_test_data(file_path):

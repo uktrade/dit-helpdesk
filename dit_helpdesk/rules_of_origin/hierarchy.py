@@ -5,7 +5,7 @@ from django.db.models.functions import Cast, Replace, RPad
 
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
 
-from core.helpers import unique_maintain_order
+from core.helpers import chunks, unique
 
 from countries.models import Country
 
@@ -16,22 +16,8 @@ from datetime import date
 logger = logging.getLogger(__name__)
 
 
-def chunks(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i : i + n]  # noqa: E203
-
-
 def _normalised_code(commodity_code):
     return commodity_code.ljust(12, "0")
-
-
-def skip_seen(iter):
-    seen = set()
-    for i in iter:
-        if i in seen:
-            continue
-        seen.add(i)
-        yield i
 
 
 def _get_hierarchy_codes(commodity_code):
@@ -53,7 +39,6 @@ def _normalise_commodity_code_field(field_name):
 
 
 def _process_rule_references(rule, footnote_processor):
-
     """Rule text may contain references to footnotes. Extract them from rule text.
     The Rule object is not saved - the changes are only persisted in memory because the same
     rule may be reused for different commodity objects and the order of notes (and their
@@ -88,7 +73,7 @@ def _process_footnotes(rules, notes):
     for rule in rules:
         _process_rule_references(rule, footnote_processor)
 
-    found_note_ids = unique_maintain_order(footnote_processor.found_note_ids)
+    found_note_ids = list(unique(footnote_processor.found_note_ids))
     notes_by_id = {}
 
     # Check that we are not missing footnotes that we expect to exist
@@ -113,7 +98,6 @@ def _process_footnotes(rules, notes):
 
 
 def get_rules_of_origin(commodity_code, country_code):
-
     if country_code == "EU":
         country_code = (
             "FR"  # pick one of the EU countries, the RoO are the same for all
@@ -135,7 +119,7 @@ def get_rules_of_origin(commodity_code, country_code):
         )
         applied_rules = rule_doc.rule_set.none()
 
-        for hierarchy_code in skip_seen(_get_hierarchy_codes(commodity_code)):
+        for hierarchy_code in unique(_get_hierarchy_codes(commodity_code)):
             hierarchy_rules = potential_rules.filter(
                 hs_to__isnull=True,
                 normalised_hs_from=int(hierarchy_code),
@@ -150,7 +134,7 @@ def get_rules_of_origin(commodity_code, country_code):
             )
         )
 
-        for hierarchy_code in skip_seen(_get_hierarchy_codes(commodity_code)):
+        for hierarchy_code in unique(_get_hierarchy_codes(commodity_code)):
             hierarchy_rules = potential_rules.filter(
                 hs_to__isnull=False,
                 normalised_hs_to=int(hierarchy_code),

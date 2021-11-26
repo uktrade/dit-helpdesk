@@ -16,7 +16,7 @@ from backports.datetime_fromisoformat import MonkeyPatch
 from hierarchy.clients import get_json_obj_client
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
 from trade_tariff_service.tts_api import ChapterJson, HeadingJson, SubHeadingJson
-from core.helpers import flatten, unique_maintain_order
+from core.helpers import flatten, unique
 
 
 MonkeyPatch.patch_fromisoformat()
@@ -123,7 +123,7 @@ class RulesOfOriginMixin:
         for rule in rules:
             self._process_rule_references(rule, footnote_processor)
 
-        found_note_ids = unique_maintain_order(footnote_processor.found_note_ids)
+        found_note_ids = list(unique(footnote_processor.found_note_ids))
 
         notes_by_id = {}
         for alpha_ord, note in enumerate(notes, ord("a")):
