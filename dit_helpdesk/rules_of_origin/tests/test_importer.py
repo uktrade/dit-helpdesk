@@ -7,7 +7,6 @@ from mixer.backend.django import Mixer
 
 from commodities.models import Commodity
 from countries.models import Country
-from rules_of_origin.hierarchy import get_rules_of_origin
 from rules_of_origin.ingest.importer import (
     InvalidDocumentException,
     RulesDocumentAlreadyExistsException,
@@ -16,8 +15,6 @@ from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFo
 
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
 
 
 @override_settings(
@@ -96,21 +93,6 @@ class ImporterTestCase(TestCase):
         self.assertFalse(SubRule.objects.exists())
         self.assertFalse(RulesDocumentFootnote.objects.exists())
 
-    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-future-start-date")
-    def test_get_rules_pre_start_date(self):
-        # Test to ensure any SAMPLE_FTA.xml indicating a start date in the future
-        # results in those rules not being returned when calling the get_rules_of_origin function
-        call_command("import_rules_of_origin")
-
-        roo_data = get_rules_of_origin(
-            country_code=self.country.country_code,
-            commodity_code=self.commodity.commodity_code,
-        )
-
-        self.assertFalse(roo_data)
-        # Due to the date in the sample file, this test will fail in the year 2500
-        # Happy New Year, future developer person.
-
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates")
     def test_duplicate_country_found(self):
         with self.assertRaises(
@@ -158,24 +140,6 @@ class ImporterTestCase(TestCase):
         rules_documents = RulesDocument.objects.all()
         for doc in rules_documents:
             self.assertIn(self.country, doc.countries.all())
-
-        roo_data = get_rules_of_origin(
-            country_code=self.country.country_code,
-            commodity_code=self.commodity.commodity_code,
-        )
-
-        # Ensure that when there is a TA and a GSP rule doc, the TA one is first in the ordereddict
-        for count, value in enumerate(roo_data):
-            if count == 0:
-                self.assertEquals(
-                    roo_data[value]["rule_doc_name"], self.country.trade_agreement_title
-                )
-            elif count == 1:
-                self.assertEquals(
-                    roo_data[value]["rule_doc_name"],
-                    "Generalised Scheme of Preferences",
-                )
-            print(count, value)
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
     def test_no_files_in_s3_bucket(self):
@@ -286,24 +250,4 @@ class ImporterTestCase(TestCase):
         obc_rules_document = RulesDocument.objects.get(countries=self.country)
         self.assertEqual(
             obc_rules_document.description, "Generalised Scheme of Preferences"
-        )
-
-        roo_data_ldc = get_rules_of_origin(
-            country_code=self.gsp_country.country_code,
-            commodity_code=self.commodity.commodity_code,
-        )
-
-        roo_data_obc = get_rules_of_origin(
-            country_code=self.country.country_code,
-            commodity_code=self.commodity.commodity_code,
-        )
-
-        roo_data_ldc = roo_data_ldc["Generalised Scheme of Preferences"]
-        self.assertEquals(
-            roo_data_ldc["rule_doc_name"], "Generalised Scheme of Preferences"
-        )
-
-        roo_data_obc = roo_data_obc["Generalised Scheme of Preferences"]
-        self.assertEquals(
-            roo_data_obc["rule_doc_name"], "Generalised Scheme of Preferences"
         )
