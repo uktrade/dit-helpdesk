@@ -29,7 +29,7 @@ class Rule(models.Model):
     Rule of Origin belonging to a Rules Of Origin Document and related to a commodity object
     """
 
-    code = models.CharField(null=True, blank=True, max_length=255)
+    code = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     description_processed = models.TextField(null=True, blank=True)
     is_extract = models.BooleanField(default=False)
@@ -48,7 +48,7 @@ class Rule(models.Model):
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
-        return self.description
+        return f"{self.rules_document} - {self.code}"
 
     @property
     def num_rules(self):
