@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import BigIntegerField, Value
+from django.db.models import BigIntegerField, Case, IntegerField, Value, When
 from django.db.models.functions import Cast, Replace, RPad
 
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
@@ -128,9 +128,15 @@ def get_rules_of_origin(rules_document, commodity_code):
     ).annotate(
         normalised_hs_from=_normalise_commodity_code_field("hs_from"),
         normalised_hs_to=_normalise_commodity_code_field("hs_to"),
+        is_leading_rule=Case(
+            When(rule_text__isnull=True, then=Value(1, output_field=IntegerField())),
+            default=Value(0, output_field=IntegerField()),
+        ),
     )
     most_specific_non_extract_rule = (
-        applied_rules.filter(is_extract=False).order_by("-normalised_hs_from").first()
+        applied_rules.filter(is_extract=False)
+        .order_by("-is_leading_rule", "-normalised_hs_from")
+        .first()
     )
     if most_specific_non_extract_rule:
         applied_rules = applied_rules.filter(
