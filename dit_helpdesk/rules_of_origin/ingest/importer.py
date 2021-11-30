@@ -234,8 +234,8 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
 
 def _process_inclusion(rule, inclusion, region):
     rule.is_extract = inclusion.get("ex") == "true"
-    rule.hs_from = inclusion["hsFrom"]
-    rule.hs_to = inclusion.get("hsTo")
+    rule.hs_from = _normalise_code(inclusion["hsFrom"])
+    rule.hs_to = _normalise_code(inclusion.get("hsTo"))
 
     rule.hs_type = inclusion["hsFromType"]
     rule.hs_to_type = inclusion.get("hsToType")
