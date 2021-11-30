@@ -13,8 +13,11 @@ from .models import RulesDocumentFootnote
 logger = logging.getLogger(__name__)
 
 
+MAX_COMMODITY_CODE_DIGITS = 12
+
+
 def _normalised_code(commodity_code):
-    return commodity_code.replace(".", "").ljust(12, "0")
+    return commodity_code.replace(".", "").ljust(MAX_COMMODITY_CODE_DIGITS, "0")
 
 
 def _get_hierarchy_codes(commodity_code):
@@ -28,7 +31,7 @@ def _normalise_commodity_code_field(field_name):
     return Cast(
         RPad(
             field_name,
-            12,
+            MAX_COMMODITY_CODE_DIGITS,
             Value("0"),
         ),
         output_field=BigIntegerField(),
