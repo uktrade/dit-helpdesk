@@ -24,31 +24,39 @@ class GetRulesOfOriginTestCase(TestCase):
 
         self.assertCountEqual(rules_of_origin, [])
 
-    def test_rules_directly_applied_to_commodity_code(self):
+    def test_non_ex_rules_directly_applied_to_commodity_code(self):
         rules_document = mixer.blend(RulesDocument)
         rule_01 = mixer.blend(
             Rule,
             hs_from="01",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         rule_02 = mixer.blend(
             Rule,
             hs_from="02",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         rule_03 = mixer.blend(
             Rule,
             hs_from="03",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         another_rule_03 = mixer.blend(
             Rule,
             hs_from="03",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
 
         rules_of_origin = get_rules_of_origin(rules_document, "01")
@@ -63,14 +71,16 @@ class GetRulesOfOriginTestCase(TestCase):
         rules_of_origin = get_rules_of_origin(rules_document, "04")
         self.assertCountEqual(rules_of_origin, [])
 
-    def test_rules_in_hierarchy_for_commodity_code(self):
+    def test_non_ex_rules_in_hierarchy_for_commodity_code(self):
         rules_document = mixer.blend(RulesDocument)
 
         rule = mixer.blend(
             Rule,
             hs_from="01",
             hs_to=None,
+            is_exlusion=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         rules_of_origin = get_rules_of_origin(rules_document, "01")
         self.assertCountEqual(rules_of_origin, [rule])
@@ -111,14 +121,16 @@ class GetRulesOfOriginTestCase(TestCase):
         rules_of_origin = get_rules_of_origin(rules_document, "0102030405")
         self.assertCountEqual(rules_of_origin, [rule])
 
-    def test_ranged_rules_for_commodity_code(self):
+    def test_non_ex_ranged_rules_for_commodity_code(self):
         rules_document = mixer.blend(RulesDocument)
 
         rule = mixer.blend(
             Rule,
             hs_from="01",
             hs_to="02",
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         rules_of_origin = get_rules_of_origin(rules_document, "01")
         self.assertCountEqual(rules_of_origin, [rule])
@@ -230,19 +242,25 @@ class GetRulesOfOriginTestCase(TestCase):
             Rule,
             hs_from="01",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         heading_rule = mixer.blend(
             Rule,
             hs_from="0101",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         subheading_rule = mixer.blend(
             Rule,
             hs_from="010101",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
 
         rules_of_origin = get_rules_of_origin(rules_document, "01")
@@ -269,27 +287,30 @@ class GetRulesOfOriginTestCase(TestCase):
 
         chapter_rule = mixer.blend(
             Rule,
-            rule_text=mixer.RANDOM,
             code="chapter_rule",
             hs_from="01",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
         heading_leading_rule = mixer.blend(
             Rule,
-            rule_text=None,
             code="heading_leading_rule",
             hs_from="0101",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=None,
         )
         subheading_rule = mixer.blend(
             Rule,
-            rule_text=mixer.RANDOM,
             code="subheading_rule",
             hs_from="010101",
             hs_to=None,
+            is_extract=False,
             rules_document=rules_document,
+            rule_text=mixer.RANDOM,
         )
 
         rules_of_origin = get_rules_of_origin(rules_document, "01")
@@ -309,3 +330,159 @@ class GetRulesOfOriginTestCase(TestCase):
 
         rules_of_origin = get_rules_of_origin(rules_document, "010101010101")
         self.assertCountEqual(rules_of_origin, [heading_leading_rule, subheading_rule])
+
+    def test_ex_rules_directly_applied_overlap(self):
+        rules_document = mixer.blend(RulesDocument)
+
+        chapter_rule = mixer.blend(
+            Rule,
+            code="chapter_rule",
+            hs_from="01",
+            hs_to=None,
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+        heading_rule = mixer.blend(
+            Rule,
+            code="heading_rule",
+            hs_from="0101",
+            hs_to=None,
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+        subheading_rule = mixer.blend(
+            Rule,
+            code="subheading_rule",
+            hs_from="010101",
+            hs_to=None,
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "01")
+        self.assertCountEqual(rules_of_origin, [chapter_rule])
+
+        rules_of_origin = get_rules_of_origin(rules_document, "0101")
+        self.assertCountEqual(rules_of_origin, [chapter_rule, heading_rule])
+
+        rules_of_origin = get_rules_of_origin(rules_document, "010101")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "01010101")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "0101010101")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "010101010101")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        other_chapter_rule = mixer.blend(
+            Rule,
+            code="other_chapter_rule",
+            hs_from="01",
+            hs_to=None,
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "01")
+        self.assertCountEqual(rules_of_origin, [chapter_rule, other_chapter_rule])
+
+        rules_of_origin = get_rules_of_origin(rules_document, "0101")
+        self.assertCountEqual(
+            rules_of_origin, [other_chapter_rule, chapter_rule, heading_rule]
+        )
+
+    def test_ex_rules_ranged_overlap(self):
+        rules_document = mixer.blend(RulesDocument)
+
+        chapter_rule = mixer.blend(
+            Rule,
+            code="chapter_rule",
+            hs_from="01",
+            hs_to="02",
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+        heading_rule = mixer.blend(
+            Rule,
+            code="heading_rule",
+            hs_from="0105",
+            hs_to="0205",
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+        subheading_rule = mixer.blend(
+            Rule,
+            code="subheading_rule",
+            hs_from="010505",
+            hs_to="020505",
+            is_extract=True,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "01")
+        self.assertCountEqual(rules_of_origin, [chapter_rule])
+
+        rules_of_origin = get_rules_of_origin(rules_document, "02")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "0110")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "0205")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "020505")
+        self.assertCountEqual(
+            rules_of_origin, [chapter_rule, heading_rule, subheading_rule]
+        )
+
+    def test_multiple_rules_documents(self):
+        rules_document = mixer.blend(RulesDocument)
+        rules_document_chapter_rule = mixer.blend(
+            Rule,
+            hs_from="01",
+            hs_to=None,
+            is_extract=False,
+            rules_document=rules_document,
+            rule_text=mixer.RANDOM,
+        )
+
+        other_rules_document = mixer.blend(RulesDocument)
+        other_rules_document_chapter_rule = mixer.blend(
+            Rule,
+            hs_from="01",
+            hs_to=None,
+            is_extract=False,
+            rules_document=other_rules_document,
+            rule_text=mixer.RANDOM,
+        )
+
+        rules_of_origin = get_rules_of_origin(rules_document, "01")
+        self.assertCountEqual(rules_of_origin, [rules_document_chapter_rule])
+
+        rules_of_origin = get_rules_of_origin(other_rules_document, "01")
+        self.assertCountEqual(rules_of_origin, [other_rules_document_chapter_rule])
