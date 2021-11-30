@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def _normalised_code(commodity_code):
-    return commodity_code.ljust(12, "0")
+    return commodity_code.replace(".", "").ljust(12, "0")
 
 
 def _get_hierarchy_codes(commodity_code):
@@ -123,32 +123,22 @@ def get_rules_of_origin(rules_document, commodity_code):
         )
         applied_rules = applied_rules.union(hierarchy_rules)
 
-    return applied_rules
-
-    ch_level_ex_rule_exists = False
-    po_level_ex_rule_exists = False
-    for rule in applied_rules:
-        if rule.hs_type == "CH" and rule.is_extract:
-            ch_level_ex_rule_exists = True
-        if rule.hs_type == "PO" and rule.is_extract:
-            po_level_ex_rule_exists = True
-
-    # If we have an ex chapter rule, but no lower level rules, we need to skip this filter to display the rule
-    # If we have lower level ex rules and an ex chapter rule, we need to skip the filter so it is displayed
-    # If we have lower level non-ex rules and an ex chapter rule, we need to add the filter to not display the rule
-    if (
-        len(applied_rules) > 1
-        and ch_level_ex_rule_exists
-        and not po_level_ex_rule_exists
-    ):
-        exclusion_rules = potential_rules.filter(
-            hs_from=hierarchy_code[:2],
-            is_extract=True,
+    applied_rules = rules_document.rule_set.filter(
+        pk__in=applied_rules.values_list("pk")
+    ).annotate(
+        normalised_hs_from=_normalise_commodity_code_field("hs_from"),
+        normalised_hs_to=_normalise_commodity_code_field("hs_to"),
+    )
+    most_specific_non_extract_rule = (
+        applied_rules.filter(is_extract=False).order_by("-normalised_hs_from").first()
+    )
+    if most_specific_non_extract_rule:
+        applied_rules = applied_rules.filter(
+            normalised_hs_from__gte=int(
+                _normalised_code(most_specific_non_extract_rule.hs_from)
+            )
         )
 
-        applied_rules = applied_rules.difference(exclusion_rules)
-
-    # Order rules by their code - this will also arrange them in level order
     applied_rules = applied_rules.order_by("hs_from")
 
     return applied_rules
