@@ -64,7 +64,7 @@ def _process_rule_references(rule, footnote_processor):
         )
 
 
-def _process_footnotes(rules, notes):
+def process_footnotes(rules, notes):
     footnote_processor = FootnoteReferenceProcessor()
 
     for rule in rules:
@@ -148,26 +148,3 @@ def get_rules_of_origin(rules_document, commodity_code):
     applied_rules = applied_rules.order_by("hs_from")
 
     return applied_rules
-
-
-def get_rules_footnotes(rules_document, rules):
-    footnotes = RulesDocumentFootnote.objects.filter(
-        rules_document=rules_document
-    ).order_by("id")
-
-    relevant_footnotes = _process_footnotes(list(rules), footnotes)
-
-    return footnotes, relevant_footnotes
-
-
-def get_rules_introductory_notes(rules_document, footnotes):
-    # get introductory notes
-    try:
-        introductory_notes = footnotes.get(
-            identifier="COMM",
-        )
-    except RulesDocumentFootnote.DoesNotExist:
-        introductory_notes = None
-        logger.error("Could not find introductory notes for %s", rules_document)
-
-    return introductory_notes

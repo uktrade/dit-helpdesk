@@ -562,6 +562,12 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         self.footnote = mixer.blend(
             RulesDocumentFootnote,
             rules_document=self.rules_document,
+            identifier="001",
+        )
+        self.introductory_note = mixer.blend(
+            RulesDocumentFootnote,
+            rules_document=self.rules_document,
+            identifier="COMM",
         )
 
         self.commodity = mixer.blend(Commodity, commodity_code="0100000000")
@@ -580,25 +586,20 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
 
     def test_rules_of_origin(self):
         rules = self.rules_document.rule_set.all()
-        footnotes = self.rules_document.footnotes.all()
         relevant_footnotes = [self.footnote]
-        introductory_notes = footnotes
         with mock.patch(
             "hierarchy.views.sections.get_rules_of_origin"
         ) as mock_get_rules_of_origin, mock.patch(
-            "hierarchy.views.sections.get_rules_footnotes"
-        ) as mock_get_rules_footnotes, mock.patch(
-            "hierarchy.views.sections.get_rules_introductory_notes"
-        ) as mock_get_rules_introductory_notes:
+            "hierarchy.views.sections.process_footnotes"
+        ) as mock_process_footnotes:
             mock_get_rules_of_origin.return_value = rules
-            mock_get_rules_footnotes.return_value = footnotes, relevant_footnotes
-            mock_get_rules_introductory_notes.return_value = introductory_notes
+            mock_process_footnotes.return_value = relevant_footnotes
             response = self.client.get(self.get_url())
 
         rules_of_origin = response.context["rules_of_origin"]
         self.assertEqual(
             rules_of_origin,
-            [(self.rules_document, rules, relevant_footnotes, introductory_notes)],
+            [(self.rules_document, rules, relevant_footnotes, self.introductory_note)],
         )
 
     def test_country_specific_rules_of_origin_template(self):

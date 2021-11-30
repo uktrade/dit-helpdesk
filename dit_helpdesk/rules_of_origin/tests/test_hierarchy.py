@@ -3,9 +3,9 @@ import logging
 from django.test import TestCase
 from mixer.backend.django import mixer
 
-from rules_of_origin.models import RulesDocument, Rule
+from rules_of_origin.models import Rule, RulesDocument, RulesDocumentFootnote
 
-from rules_of_origin.hierarchy import get_rules_of_origin
+from rules_of_origin.hierarchy import get_rules_of_origin, process_footnotes
 
 
 logger = logging.getLogger(__name__)
@@ -486,3 +486,66 @@ class GetRulesOfOriginTestCase(TestCase):
 
         rules_of_origin = get_rules_of_origin(other_rules_document, "01")
         self.assertCountEqual(rules_of_origin, [other_rules_document_chapter_rule])
+
+
+class GetRulesFootnotes(TestCase):
+    def test_process_footnotes_no_footnotes(self):
+        rules = Rule.objects.none()
+        notes = RulesDocumentFootnote.objects.none()
+
+        processed_footnotes = process_footnotes(rules, notes)
+
+        self.assertEqual(processed_footnotes, [])
+
+    def test_process_footnotes_with_footnote(self):
+        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [001].")
+        note = mixer.blend(RulesDocumentFootnote, identifier="001")
+
+        processed_footnotes = process_footnotes([rule], [note])
+
+        self.assertEqual(processed_footnotes, [note])
+        self.assertEqual(
+            rule.rule_text_processed,
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
+        )
+
+    def test_process_footnotes_with_filtering(self):
+
+        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [002].")
+        note_001 = mixer.blend(RulesDocumentFootnote, identifier="001")
+        note_002 = mixer.blend(RulesDocumentFootnote, identifier="002")
+        note_003 = mixer.blend(RulesDocumentFootnote, identifier="003")
+
+        processed_footnotes = process_footnotes([rule], [note_001, note_002, note_003])
+
+        self.assertEqual(processed_footnotes, [note_002])
+        self.assertEqual(
+            rule.rule_text_processed,
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
+        )
+
+    def test_process_footnotes_alphabetical_notes(self):
+        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [a].")
+        note = mixer.blend(RulesDocumentFootnote, identifier="001")
+
+        processed_footnotes = process_footnotes([rule], [note])
+
+        self.assertEqual(processed_footnotes, [note])
+        self.assertEqual(
+            rule.rule_text_processed,
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
+        )
+
+    def test_process_footnotes_alphabetical_notes_filtered(self):
+        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [b].")
+        note_001 = mixer.blend(RulesDocumentFootnote, identifier="001")
+        note_002 = mixer.blend(RulesDocumentFootnote, identifier="002")
+        note_003 = mixer.blend(RulesDocumentFootnote, identifier="003")
+
+        processed_footnotes = process_footnotes([rule], [note_001, note_002, note_003])
+
+        self.assertEqual(processed_footnotes, [note_002])
+        self.assertEqual(
+            rule.rule_text_processed,
+            'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
+        )

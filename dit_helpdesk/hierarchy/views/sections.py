@@ -9,11 +9,10 @@ from django.template.exceptions import TemplateDoesNotExist
 
 from regulations.models import RegulationGroup
 from rules_of_origin.hierarchy import (
-    get_rules_introductory_notes,
-    get_rules_footnotes,
     get_rules_of_origin,
+    process_footnotes,
 )
-from rules_of_origin.models import RulesDocument
+from rules_of_origin.models import RulesDocument, RulesDocumentFootnote
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
 from ..models import Heading, SubHeading
@@ -376,6 +375,25 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
 
+    def get_rules_footnotes(self, rules_document, rules):
+        footnotes = rules_document.footnotes.order_by("id")
+
+        relevant_footnotes = process_footnotes(rules, footnotes)
+
+        return footnotes, relevant_footnotes
+
+    def get_rules_introductory_notes(self, rules_document, footnotes):
+        # get introductory notes
+        try:
+            introductory_notes = footnotes.get(
+                identifier="COMM",
+            )
+        except RulesDocumentFootnote.DoesNotExist:
+            introductory_notes = None
+            logger.error("Could not find introductory notes for %s", rules_document)
+
+        return introductory_notes
+
     def get_rules_of_origin(self, country_code, commodity_code):
         if country_code == "EU":
             country_code = (
@@ -390,8 +408,12 @@ class RulesOfOriginSection(CommodityDetailSection):
         rules_of_origin = []
         for rules_document in rules_documents:
             rules = get_rules_of_origin(rules_document, commodity_code)
-            footnotes, relevant_footnotes = get_rules_footnotes(rules_document, rules)
-            introductory_notes = get_rules_introductory_notes(rules_document, footnotes)
+            footnotes, relevant_footnotes = self.get_rules_footnotes(
+                rules_document, rules
+            )
+            introductory_notes = self.get_rules_introductory_notes(
+                rules_document, footnotes
+            )
             rules_of_origin.append(
                 (rules_document, rules, relevant_footnotes, introductory_notes)
             )
