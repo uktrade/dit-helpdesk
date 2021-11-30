@@ -1,7 +1,7 @@
 import logging
 
 from django.db.models import BigIntegerField, Case, IntegerField, Value, When
-from django.db.models.functions import Cast, Replace, RPad
+from django.db.models.functions import Cast, RPad
 
 from rules_of_origin.footnote_processor import FootnoteReferenceProcessor
 
@@ -27,7 +27,7 @@ def _get_hierarchy_codes(commodity_code):
 def _normalise_commodity_code_field(field_name):
     return Cast(
         RPad(
-            Replace(field_name, Value(".")),
+            field_name,
             12,
             Value("0"),
         ),
