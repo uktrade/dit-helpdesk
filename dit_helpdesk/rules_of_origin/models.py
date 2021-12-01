@@ -28,12 +28,15 @@ class RulesDocument(models.Model):
         return self.description
 
 
+MAX_RULES_CODE_DIGITS = 6
+
+
 class Rule(models.Model):
     """
     Rule of Origin belonging to a Rules Of Origin Document and related to a commodity object
     """
 
-    code = models.CharField(null=True, blank=True, max_length=255)
+    code = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     description_processed = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
@@ -44,6 +47,10 @@ class Rule(models.Model):
     alt_rule_text = models.TextField(null=True, blank=True)
     rule_text_processed = models.TextField(null=True, blank=True)
     alt_rule_text_processed = models.TextField(null=True, blank=True)
+    hs_from = models.CharField(null=True, max_length=MAX_RULES_CODE_DIGITS)
+    hs_from_type = models.CharField(null=True, max_length=2)
+    hs_to = models.CharField(null=True, max_length=MAX_RULES_CODE_DIGITS)
+    hs_to_type = models.CharField(null=True, max_length=2)
 
     chapters = models.ManyToManyField(
         "hierarchy.Chapter", related_name="rules_of_origin"

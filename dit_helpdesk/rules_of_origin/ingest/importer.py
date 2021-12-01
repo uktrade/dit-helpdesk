@@ -233,20 +233,21 @@ def _get_objects_for_range(hs_type, hs_from, hs_to, region):
 
 
 def _process_inclusion(rule, inclusion, region):
-
     rule.is_exclusion = inclusion.get("ex") == "true"
+    rule.hs_from = _normalise_code(inclusion["hsFrom"])
+    rule.hs_from_type = inclusion["hsFromType"]
+    rule.hs_to = _normalise_code(inclusion.get("hsTo"))
+    rule.hs_to_type = inclusion.get("hsToType")
 
-    hs_type = inclusion["hsFromType"]
-    hs_to_type = inclusion.get("hsToType")
-    if hs_to_type and hs_type != hs_to_type:
+    if rule.hs_to_type and rule.hs_to_type != rule.hs_from_type:
         raise InvalidDocumentException(
             f"RoO HS range has to be defined in consistent units: {inclusion}"
         )
 
     ranges_objects = _get_objects_for_range(
-        hs_type=hs_type,
-        hs_from=inclusion["hsFrom"],
-        hs_to=inclusion.get("hsTo"),
+        hs_type=rule.hs_from_type,
+        hs_from=rule.hs_from,
+        hs_to=rule.hs_to,
         region=region,
     )
 
