@@ -18,10 +18,10 @@ SUBTEXT_REGEX = re.compile(
 
 CODES_REGEX = re.compile(
     r"\bchapter (\d)[^.\d][\b,)]?(?!\s?%)|"
-    r"\b(\d\d)(?!.\d)[\b,)]?(?!\s?%)|"
-    r"\b(\d\d\d\d)(?!.\d)[\b,)]?(?!\s?%)|"
-    r"\b(\d\d\.\d\d)[\b,)]?(?!\s?%)|"
-    r"\b(\d\d\d\d\.\d\d)[\b,)]?(?!\s?%)",
+    r"\b(?<!\[)(\d\d)(?!.\d)[\b,)]?(?!\s?%| per cent| percent)|"
+    r"\b(?<!\[)(\d\d\d\d)(?!.\d)[\b,)]?(?!\s?%| per cent| percent)|"
+    r"\b(?<!\[)(\d\d\.\d\d)(?!.\d)[\b,)]?(?!\s?%| per cent| percent)|"
+    r"\b(?<!\[)(\d\d\d\d\.\d\d)(?!.\d)[\b,)]?(?!\s?%| per cent| percent)",
     re.IGNORECASE,
 )
 
@@ -139,7 +139,6 @@ def _process_hs_codes_in_subtext(subtext_match):
 
 
 def process_hs_codes_in_text(text):
-
     processed_text = SUBTEXT_REGEX.sub(_process_hs_codes_in_subtext, text)
 
     return processed_text
