@@ -69,7 +69,7 @@ class Rule(models.Model):
         verbose_name_plural = "rules of origin"
 
     def __str__(self):
-        return self.description
+        return f"{self.rules_document} - {self.code}"
 
     @property
     def num_rules(self):

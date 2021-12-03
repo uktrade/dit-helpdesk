@@ -6,8 +6,6 @@ from mixer.backend.django import mixer
 from rules_of_origin.models import RulesDocument, RulesDocumentFootnote, Rule
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
 
 
 class RulesDocumentCase(TestCase):
@@ -15,11 +13,16 @@ class RulesDocumentCase(TestCase):
     Test Rules Document model
     """
 
-    def setUp(self):
-        self.rulesdocument = mixer.blend(RulesDocument)
-
     def test_str(self):
-        self.assertEquals(str(self.rulesdocument), self.rulesdocument.description)
+        rules_document = mixer.blend(
+            RulesDocument,
+            description="DESCRIPTION",
+        )
+
+        self.assertEquals(
+            str(rules_document),
+            "DESCRIPTION",
+        )
 
 
 class RuleTestCase(TestCase):
@@ -27,11 +30,20 @@ class RuleTestCase(TestCase):
     Test Rule model
     """
 
-    def setUp(self):
-        self.rule = mixer.blend(Rule, description="test description")
-
     def test_str(self):
-        self.assertEquals(str(self.rule), self.rule.description)
+        rules_document = mixer.blend(
+            RulesDocument, description="RULES DOCUMENT DESCRIPTION"
+        )
+        rule = mixer.blend(
+            Rule,
+            code="RULE CODE",
+            rules_document=rules_document,
+        )
+
+        self.assertEquals(
+            str(rule),
+            "RULES DOCUMENT DESCRIPTION - RULE CODE",
+        )
 
 
 class RulesDocumentFootnoteTestCase(TestCase):
@@ -39,11 +51,10 @@ class RulesDocumentFootnoteTestCase(TestCase):
     Test Rules Document Footnote model
     """
 
-    def setUp(self):
-        self.rulesdocumentfootnote = mixer.blend(RulesDocumentFootnote)
-
     def test_str(self):
-        self.assertEquals(
-            str(self.rulesdocumentfootnote),
-            "Footnote {0}".format(self.rulesdocumentfootnote.number),
+        rulesdocumentfootnote = mixer.blend(
+            RulesDocumentFootnote,
+            number=1,
         )
+
+        self.assertEquals(str(rulesdocumentfootnote), "Footnote 1")

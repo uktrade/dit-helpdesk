@@ -10,9 +10,10 @@ from django.conf import settings
 from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 
+from commodities.models import Commodity
 from countries.models import Country
 from regulations.models import RegulationGroup
-from rules_of_origin.models import Rule, RulesDocument
+from rules_of_origin.models import Rule, RulesDocument, SubRule, RulesDocumentFootnote
 from trade_tariff_service.tts_api import ImportMeasureJson
 
 from ...helpers import create_nomenclature_tree
@@ -29,6 +30,7 @@ from ...views.sections import (
 
 logger = logging.getLogger(__name__)
 faker = Faker()
+# coverage run manage.py test dit_helpdesk/hierarchy/tests/views/test_sections.py --settings=config.settings.test
 
 
 class TestSectionsView(BaseSectionedCommodityObjectDetailView):
@@ -539,60 +541,72 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
     def setUp(self):
         super().setUp()
 
-        rules_document = mixer.blend(
-            RulesDocument, countries=[self.country], nomenclature_tree=self.tree
+        self.rules_document = mixer.blend(
+            RulesDocument,
+            countries=[self.country],
         )
-        self.rules_document = rules_document
-
         self.rule = mixer.blend(
             Rule,
-            description=mixer.RANDOM,
-            headings=[self.heading],
-            rules_document=rules_document,
+            code="01",
+            is_exclusion=False,
+            rules_document=self.rules_document,
+            hs_from="0100",
+            hs_to="0105",
+            hs_type="PO",
+        )
+        self.sub_rule = mixer.blend(
+            SubRule,
+            rule=self.rule,
         )
 
+        self.footnote = mixer.blend(
+            RulesDocumentFootnote,
+            rules_document=self.rules_document,
+            identifier="001",
+        )
+        self.introductory_note = mixer.blend(
+            RulesDocumentFootnote,
+            rules_document=self.rules_document,
+            identifier="COMM",
+        )
+
+        self.commodity = mixer.blend(Commodity, commodity_code="0100000000")
+
     def test_template(self):
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(self.get_url())
+        response = self.client.get(self.get_url())
         self.assert_uses_template(response, "hierarchy/_rules_of_origin.html")
 
     def test_menu_items(self):
-        mock_measure = self.get_mock_measure()
-        with self.patch_get_nomenclature_group_measures([mock_measure]):
-            response = self.client.get(self.get_url())
-            self.assert_has_menu_item(response, "Rules of origin", "rules_of_origin")
+        response = self.client.get(self.get_url())
+        self.assert_has_menu_item(response, "Rules of origin", "rules_of_origin")
 
     def test_should_be_displayed(self):
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(self.get_url())
+        response = self.client.get(self.get_url())
         self.assert_section_displayed(response, RulesOfOriginSection)
 
     def test_rules_of_origin(self):
-        expected_rules_of_origin = self.heading.get_rules_of_origin(
-            self.country.country_code
-        )
-
-        with self.patch_get_nomenclature_group_measures([]), mock.patch.object(
-            Heading, "get_rules_of_origin"
-        ) as mock_rules_of_origin:
-            mock_rules_of_origin.return_value = expected_rules_of_origin
+        rules = self.rules_document.rule_set.all()
+        relevant_footnotes = [self.footnote]
+        with mock.patch(
+            "hierarchy.views.sections.get_rules_of_origin"
+        ) as mock_get_rules_of_origin, mock.patch(
+            "hierarchy.views.sections.process_footnotes"
+        ) as mock_process_footnotes:
+            mock_get_rules_of_origin.return_value = rules
+            mock_process_footnotes.return_value = relevant_footnotes
             response = self.client.get(self.get_url())
 
-        mock_rules_of_origin.assert_called_once_with(
-            country_code=self.country.country_code
-        )
         rules_of_origin = response.context["rules_of_origin"]
-
-        self.assertEqual(rules_of_origin, expected_rules_of_origin)
+        self.assertEqual(
+            rules_of_origin,
+            [(self.rules_document, rules, relevant_footnotes, self.introductory_note)],
+        )
 
     def test_country_specific_rules_of_origin_template(self):
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(self.get_url())
-
+        response = self.client.get(self.get_url())
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
-
         self.assertEqual(
             country_specific_rules_of_origin_template,
             (
@@ -602,15 +616,12 @@ class RulesOfOriginSectionTestCase(BaseSectionTestCase):
         )
 
         other_country = Country.objects.exclude(pk=self.country.pk).first()
-        with self.patch_get_nomenclature_group_measures([]):
-            response = self.client.get(
-                self.get_url(country_code=other_country.country_code)
-            )
-
+        response = self.client.get(
+            self.get_url(country_code=other_country.country_code)
+        )
         country_specific_rules_of_origin_template = response.context[
             "country_specific_rules_of_origin_template"
         ]
-
         self.assertEqual(
             country_specific_rules_of_origin_template,
             (
