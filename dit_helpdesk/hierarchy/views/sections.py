@@ -15,7 +15,7 @@ from rules_of_origin.hierarchy import (
 from rules_of_origin.models import RulesDocument, RulesDocumentFootnote
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
-from ..models import Heading, NomenclatureTree, SubHeading
+from ..models import Heading, SubHeading
 
 
 logger = logging.getLogger(__name__)
@@ -400,17 +400,10 @@ class RulesOfOriginSection(CommodityDetailSection):
                 "FR"  # pick one of the EU countries, the RoO are the same for all
             )
 
-        nomenclature_tree = NomenclatureTree.get_active_tree()
         rules_documents = RulesDocument.objects.filter(
             countries__country_code=country_code,
             start_date__lte=date.today(),
-            nomenclature_tree=nomenclature_tree,
         )
-        if not rules_documents.exists():
-            rules_documents = RulesDocument.objects.filter(
-                countries__country_code=country_code,
-                start_date__lte=date.today(),
-            )
 
         rules_of_origin = []
         for rules_document in rules_documents:
