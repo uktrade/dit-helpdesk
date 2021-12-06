@@ -250,7 +250,7 @@ This doesn't activate the newly created tree but generates it ready for it to be
 ./manage.py import_rules_of_origin
 ```
 
-Imports the rules of origin into the database.
+Imports the rules of origin into the database. After the rules of origin are fully imported the rule text is post-processed for display purposes e.g. to display hyperlinks to the commodities a rule pertains to.
 
 The rules of origin files are stored in an S3 bucket and this command will download these files and produce rules of origin objects tied to the currently active nomenclature tree.
 For docker environments an instance of Minio is used in place of connecting to the S3 bucket. To set up the rules of origin in your local docker, you will need to follow these steps:
@@ -300,14 +300,6 @@ For docker environments an instance of Minio is used in place of connecting to t
       ```bash
       ./manage.py import_rules_of_origin
       ```
-
-### postprocess_rules_of_origin
-
-```bash
-./manage.py postprocess_rules_of_origin
-```
-
-After the rules of origin are fully imported the rule text is post-processed for display purposes e.g. to display hyperlinks to the commodities a rule pertains to.
 
 ### migrate_regulations
 
