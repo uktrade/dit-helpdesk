@@ -137,7 +137,7 @@ def get_rules_of_origin(rules_document, commodity_code):
         ),
     )
     most_specific_non_extract_rule = (
-        applied_rules.filter(is_extract=False)
+        applied_rules.filter(is_exclusion=False)
         .order_by("-is_leading_rule", "-normalised_hs_from")
         .first()
     )

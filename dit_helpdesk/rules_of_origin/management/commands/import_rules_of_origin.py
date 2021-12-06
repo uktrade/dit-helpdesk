@@ -22,9 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument("--reset-all", action="store_true")
-
     def handle(self, *args, **options):
         with transaction.atomic():
             self._handle(*args, **options)
@@ -95,7 +92,6 @@ class Command(BaseCommand):
                 for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
                     logger.info("Deleting %s objects", cls)
                     cls.objects.all().delete()
-
             self._import_from_s3()
             postprocess_rules_of_origin()
         else:
