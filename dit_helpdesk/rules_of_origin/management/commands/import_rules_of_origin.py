@@ -6,9 +6,9 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db import transaction
 
-from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
 from rules_of_origin.ingest.importer import (
     import_roo,
     check_countries_consistency,
@@ -22,9 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument("--reset-all", action="store_true")
-
     def handle(self, *args, **options):
         with transaction.atomic():
             self._handle(*args, **options)
@@ -88,14 +85,16 @@ class Command(BaseCommand):
 
         if s3_bucket:
             logger.info("Deleting rules documents…")
-            RulesDocument.objects.all().delete()
-
-            if options["reset_all"]:
-                logger.info("Resetting all…")
-                for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
-                    logger.info("Deleting %s objects", cls)
-                    cls.objects.all().delete()
-
+            with connection.cursor() as c:
+                c.execute("DELETE FROM rules_of_origin_rule_chapters")
+                c.execute("DELETE FROM rules_of_origin_rule_headings")
+                c.execute("DELETE FROM rules_of_origin_rule_subheadings")
+                c.execute("DELETE FROM rules_of_origin_rule_commodities")
+                c.execute("DELETE FROM rules_of_origin_subrule")
+                c.execute("DELETE FROM rules_of_origin_rule")
+                c.execute("DELETE FROM rules_of_origin_rulesdocumentfootnote")
+                c.execute("DELETE FROM rules_of_origin_rulesdocument_countries")
+                c.execute("DELETE FROM rules_of_origin_rulesdocument")
             self._import_from_s3()
             postprocess_rules_of_origin()
         else:
