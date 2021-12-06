@@ -6,7 +6,6 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import connection
 from django.db import transaction
 
 from rules_of_origin.ingest.importer import (
@@ -16,6 +15,7 @@ from rules_of_origin.ingest.importer import (
 )
 from rules_of_origin.ingest.postprocess import postprocess_rules_of_origin
 from rules_of_origin.ingest.s3 import _get_s3_bucket
+from rules_of_origin.models import RulesDocument
 
 
 logger = logging.getLogger(__name__)
@@ -85,16 +85,7 @@ class Command(BaseCommand):
 
         if s3_bucket:
             logger.info("Deleting rules documents…")
-            with connection.cursor() as c:
-                c.execute("DELETE FROM rules_of_origin_rule_chapters")
-                c.execute("DELETE FROM rules_of_origin_rule_headings")
-                c.execute("DELETE FROM rules_of_origin_rule_subheadings")
-                c.execute("DELETE FROM rules_of_origin_rule_commodities")
-                c.execute("DELETE FROM rules_of_origin_subrule")
-                c.execute("DELETE FROM rules_of_origin_rule")
-                c.execute("DELETE FROM rules_of_origin_rulesdocumentfootnote")
-                c.execute("DELETE FROM rules_of_origin_rulesdocument_countries")
-                c.execute("DELETE FROM rules_of_origin_rulesdocument")
+            RulesDocument.objects.all().delete()
             self._import_from_s3()
             postprocess_rules_of_origin()
         else:
