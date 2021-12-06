@@ -10,10 +10,6 @@ class RulesDocument(models.Model):
     Rules Of Origin Document optionally related to a Country Group
     """
 
-    nomenclature_tree = models.ForeignKey(
-        "hierarchy.NomenclatureTree", on_delete=models.CASCADE, null=True
-    )
-
     description = models.TextField()
     countries = models.ManyToManyField(Country, related_name="rules_documents")
     source_url = models.URLField(null=True, blank=True)
@@ -33,7 +29,7 @@ MAX_RULES_CODE_DIGITS = 6
 
 class Rule(models.Model):
     """
-    Rule of Origin belonging to a Rules Of Origin Document and related to a commodity object
+    Rule of Origin belonging to a Rules Of Origin Document
     """
 
     code = models.CharField(max_length=255)
@@ -51,19 +47,6 @@ class Rule(models.Model):
     hs_from_type = models.CharField(null=True, max_length=2)
     hs_to = models.CharField(null=True, max_length=MAX_RULES_CODE_DIGITS)
     hs_to_type = models.CharField(null=True, max_length=2)
-
-    chapters = models.ManyToManyField(
-        "hierarchy.Chapter", related_name="rules_of_origin"
-    )
-    headings = models.ManyToManyField(
-        "hierarchy.Heading", related_name="rules_of_origin"
-    )
-    subheadings = models.ManyToManyField(
-        "hierarchy.SubHeading", related_name="rules_of_origin"
-    )
-    commodities = models.ManyToManyField(
-        "commodities.Commodity", related_name="rules_of_origin"
-    )
 
     class Meta:
         verbose_name_plural = "rules of origin"
