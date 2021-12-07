@@ -12,7 +12,6 @@ from django.urls import reverse
 from hierarchy.models import (
     BaseHierarchyModel,
     Heading,
-    RulesOfOriginMixin,
     TreeSelectorMixin,
 )
 from trade_tariff_service.tts_api import CommodityJson
@@ -21,7 +20,7 @@ from core.helpers import flatten
 logger = logging.getLogger(__name__)
 
 
-class Commodity(BaseHierarchyModel, TreeSelectorMixin, RulesOfOriginMixin):
+class Commodity(BaseHierarchyModel, TreeSelectorMixin):
     """
     Commodity model
     """
