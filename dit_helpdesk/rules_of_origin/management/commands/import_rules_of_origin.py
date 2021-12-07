@@ -8,7 +8,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
 from rules_of_origin.ingest.importer import (
     import_roo,
     check_countries_consistency,
@@ -16,6 +15,7 @@ from rules_of_origin.ingest.importer import (
 )
 from rules_of_origin.ingest.postprocess import postprocess_rules_of_origin
 from rules_of_origin.ingest.s3 import _get_s3_bucket
+from rules_of_origin.models import RulesDocument
 
 
 logger = logging.getLogger(__name__)
@@ -86,12 +86,6 @@ class Command(BaseCommand):
         if s3_bucket:
             logger.info("Deleting rules documents…")
             RulesDocument.objects.all().delete()
-
-            if options["reset_all"]:
-                logger.info("Resetting all…")
-                for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
-                    logger.info("Deleting %s objects", cls)
-                    cls.objects.all().delete()
             self._import_from_s3()
             postprocess_rules_of_origin()
         else:

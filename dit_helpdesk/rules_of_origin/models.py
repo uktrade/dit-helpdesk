@@ -32,7 +32,7 @@ MAX_RULES_CODE_DIGITS = 6
 
 class Rule(models.Model):
     """
-    Rule of Origin belonging to a Rules Of Origin Document and related to a commodity object
+    Rule of Origin belonging to a Rules Of Origin Document
     """
 
     code = models.CharField(max_length=255)
