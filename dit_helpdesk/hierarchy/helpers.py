@@ -248,6 +248,20 @@ def delete_all_inactive_trees(region):
     inactive_trees.delete()
 
 
+def delete_outdated_trees():
+    # Delete all but the currently active and last active trees, this will ensure we have a rollback set of trees.
+
+    # The last active trees will be the 2 with the most recent end_date values
+    last_active_trees = NomenclatureTree.objects.filter(
+        end_date__isnull=False
+    ).order_by("-end_date")[:2]
+
+    # Delete any tree with an end_date that is not in the group obtained above
+    NomenclatureTree.objects.filter(end_date__isnull=False).exclude(
+        pk__in=last_active_trees
+    ).delete()
+
+
 def fill_tree_in_json_data(json_data, tree):
     for data in json_data:
         data["nomenclature_tree_id"] = tree.pk

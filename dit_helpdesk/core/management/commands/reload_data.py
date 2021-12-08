@@ -3,6 +3,8 @@ import logging
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
+from hierarchy.helpers import delete_outdated_trees
+
 
 logger = logging.getLogger(__name__)
 
@@ -92,12 +94,17 @@ class Command(BaseCommand):
             # Creates a new search index for the most recent nomenclature tree and swaps
             # it out at the end.
             current_step = "swap_rebuild_index"
+            # call_command("swap_rebuild_index")
             call_command("swap_rebuild_index", "--keep-old-trees")
 
             # Checks for any change to a countrys Trade Agreement Scenario and will update
             # this in the DB to reflect the new scenario.
             current_step = "update_scenarios"
             call_command("update_scenarios")
+
+            # Will delete data that is no longer needed now we have imported a new set.
+            current_step = "clear_old_data"
+            delete_outdated_trees()
 
             # Send successful completion signal
             call_command("progress_track", "--end_reload_data", "--reason=SUCCESS")

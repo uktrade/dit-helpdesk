@@ -4,8 +4,14 @@ from django.test import TestCase
 
 from commodities.models import Commodity
 
-from ..helpers import create_nomenclature_tree, permute_code_hierarchy
-from ..models import Section, Chapter, Heading, SubHeading
+from datetime import datetime, timedelta
+
+from ..helpers import (
+    create_nomenclature_tree,
+    permute_code_hierarchy,
+    delete_outdated_trees,
+)
+from ..models import NomenclatureTree, Section, Chapter, Heading, SubHeading
 
 
 class PermuteCodeHierarchyTestCase(TestCase):
@@ -42,3 +48,40 @@ class PermuteCodeHierarchyTestCase(TestCase):
         self.assertEqual(next(generator), "12")
         with self.assertRaises(StopIteration):
             next(generator)
+
+
+class DeleteOutdatedTreesTestCase(TestCase):
+    def setUp(self):
+
+        last_active_end_date = datetime.now()
+        outdated_end_date = datetime.now() - timedelta(days=1)
+
+        self.active_uk_tree = mixer.blend(NomenclatureTree, region="UK", end_date=None)
+        self.active_eu_tree = mixer.blend(NomenclatureTree, region="EU", end_date=None)
+        self.last_active_uk_tree = mixer.blend(
+            NomenclatureTree, region="UK", end_date=last_active_end_date
+        )
+        self.last_active_eu_tree = mixer.blend(
+            NomenclatureTree, region="EU", end_date=last_active_end_date
+        )
+        self.outdated_uk_tree = mixer.blend(
+            NomenclatureTree, region="UK", end_date=outdated_end_date
+        )
+        self.outdated_eu_tree = mixer.blend(
+            NomenclatureTree, region="EU", end_date=outdated_end_date
+        )
+
+    def test_delete_outdated_trees(self):
+
+        delete_outdated_trees()
+
+        trees_table_contents = NomenclatureTree.objects.all()
+        # Check the tree table contains the self.active trees
+        self.assertIn(self.active_uk_tree, trees_table_contents)
+        self.assertIn(self.active_eu_tree, trees_table_contents)
+        # Check the tree table contains the self.last_active trees
+        self.assertIn(self.last_active_uk_tree, trees_table_contents)
+        self.assertIn(self.last_active_eu_tree, trees_table_contents)
+        # Check the tree table is missing the self.outdated trees
+        self.assertNotIn(self.outdated_uk_tree, trees_table_contents)
+        self.assertNotIn(self.outdated_eu_tree, trees_table_contents)
