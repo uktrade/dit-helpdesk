@@ -94,7 +94,6 @@ class Command(BaseCommand):
             # Creates a new search index for the most recent nomenclature tree and swaps
             # it out at the end.
             current_step = "swap_rebuild_index"
-            # call_command("swap_rebuild_index")
             call_command("swap_rebuild_index", "--keep-old-trees")
 
             # Checks for any change to a countrys Trade Agreement Scenario and will update
