@@ -1,31 +1,20 @@
 import logging
-import datetime as dt
-
-from unittest import mock
 
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 
 from mixer.backend.django import Mixer
 
-from hierarchy.models import Chapter, Heading
-from hierarchy.helpers import create_nomenclature_tree
+from commodities.models import Commodity
 from countries.models import Country
-from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFootnote
-
 from rules_of_origin.ingest.importer import (
     InvalidDocumentException,
     RulesDocumentAlreadyExistsException,
 )
+from rules_of_origin.models import RulesDocument, Rule, SubRule, RulesDocumentFootnote
 
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.INFO)
-
-
-def _just10(val):
-    return val.ljust(10, "0")
 
 
 @override_settings(
@@ -48,62 +37,52 @@ class ImporterTestCase(TestCase):
             trade_agreement_title="The White-Gold Concordat",
         )
 
-        self.tree = create_nomenclature_tree()
-
-        for model_class in (Chapter, Heading):
-            mixer.register(model_class, nomenclature_tree=self.tree)
-
-        self.chapter1 = mixer.blend(Chapter, chapter_code=_just10("01"))
-
-        self.chapter4 = mixer.blend(Chapter, chapter_code=_just10("04"))
-        self.heading0403 = mixer.blend(
-            Heading,
-            heading_code=_just10("0403"),
-            heading_code_4="0403",
-            chapter=self.chapter4,
+        self.gsp_country = mixer.blend(
+            Country,
+            name="Test Country 2",
+            country_code="BX",
+            scenario="TEST_TA",
         )
 
-        self.chapter13 = mixer.blend(Chapter, chapter_code=_just10("13"))
-        self.heading1302 = mixer.blend(
-            Heading, heading_code=_just10("1302"), heading_code_4="1302"
-        )
-
-        start_code_int = 1507
-        self.chapter15 = mixer.blend(Chapter, chapter_code=_just10("15"))
-        mixer.cycle(9).blend(
-            Heading,
-            heading_code=(_just10(str(start_code_int + inc)) for inc in range(9)),
-            heading_code_4=(str(start_code_int + inc) for inc in range(9)),
-            chapter=self.chapter15,
-        )
+        self.commodity = mixer.blend(Commodity, commodity_code="0100000000")
 
     def test_import_roo(self):
+        # Test that running import_rules_of_origin from SAMPLE_FTA.xml will populate
+        # the Rule and RuleDocument DB tables, and that they relate to each other correctly
         call_command("import_rules_of_origin")
 
+        # Should be one rule document, with the correct trade agreement name and country
         self.assertEqual(RulesDocument.objects.count(), 1)
-        self.assertEqual(Rule.objects.count(), 6)
-        self.assertEqual(SubRule.objects.count(), 5)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
-
         rules_document = RulesDocument.objects.first()
         self.assertIn(self.country, rules_document.countries.all())
         self.assertEqual(rules_document.description, self.country.trade_agreement_title)
 
-        rule1 = self.chapter1.rules_of_origin.first()
-        self.assertEqual(rule1.description, "Live animals")
-        self.assertFalse(rule1.is_exclusion)
-        self.assertFalse(rule1.subrules.exists())
+        # Should be 6 rules all linked to the rule document object
+        self.assertEqual(Rule.objects.count(), 6)
+        rules = Rule.objects.filter(rules_document=rules_document)
+        self.assertEqual(rules.count(), 6)
 
-        rule4 = self.chapter4.rules_of_origin.first()
-        self.assertTrue(rule4.is_exclusion)
+        # Should be 5 subrules linked to the rules - rule 1302 contains 2 and 1507 to 1515 contains 3
+        self.assertEqual(SubRule.objects.count(), 5)
+        subrule_counts = {}
+        for rule in rules:
+            subrules = SubRule.objects.filter(rule=rule)
+            subrule_counts[rule.code] = subrules.count()
+        self.assertEqual(subrule_counts["ex Chapter 15"], 0)
+        self.assertEqual(subrule_counts["0403"], 0)
+        self.assertEqual(subrule_counts["Chapter 01"], 0)
+        self.assertEqual(subrule_counts["ex Chapter 04"], 0)
+        self.assertEqual(subrule_counts["1302"], 2)
+        self.assertEqual(subrule_counts["1507 to 1515"], 3)
 
-        rule0403 = self.heading0403.rules_of_origin.first()
-        self.assertFalse(rule0403.is_exclusion)
-
-        rule_multiple = Rule.objects.get(code="1507 to 1515")
-        self.assertEqual(rule_multiple.headings.count(), 9)
+        # Should be 12 footnotes all linked to the rules document
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
+        footnotes = RulesDocumentFootnote.objects.filter(rules_document=rules_document)
+        self.assertEqual(footnotes.count(), 12)
 
     def test_import_roo_invalid_country(self):
+        # Test outcome when SAMPLE_FTA.xml is for a country that doesn't exist
+        # We expect an error to be thrown and no rules to be added to the DB
         Country.objects.all().delete()
 
         with self.assertRaises(InvalidDocumentException):
@@ -113,61 +92,6 @@ class ImporterTestCase(TestCase):
         self.assertFalse(Rule.objects.exists())
         self.assertFalse(SubRule.objects.exists())
         self.assertFalse(RulesDocumentFootnote.objects.exists())
-
-    @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-future-start-date")
-    def test_get_rules_pre_start_date(self):
-        call_command("import_rules_of_origin")
-
-        h1509 = Heading.objects.get(heading_code_4="1509")
-
-        with mock.patch(
-            "hierarchy.models.Heading.get_hierarchy_context_ids"
-        ) as mock_context_ids:
-            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(
-                country_code=self.country.country_code,
-                starting_before=dt.datetime.now(),
-            )
-
-        self.assertFalse(roo_data)
-
-    def test_get_rules_post_start_date(self):
-        call_command("import_rules_of_origin")
-
-        h1509 = Heading.objects.get(heading_code_4="1509")
-
-        with mock.patch(
-            "hierarchy.models.Heading.get_hierarchy_context_ids"
-        ) as mock_context_ids:
-            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
-
-        self.assertTrue(roo_data)
-
-    def test_ex_inheritance(self):
-        call_command("import_rules_of_origin")
-
-        h1509 = Heading.objects.get(heading_code_4="1509")
-
-        with mock.patch(
-            "hierarchy.models.Heading.get_hierarchy_context_ids"
-        ) as mock_context_ids:
-            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
-
-        roo_data = roo_data[self.country.trade_agreement_title]
-
-        # confirm that the name to display on the frontend matches the trade agreement name
-        self.assertEquals(roo_data["rule_doc_name"], self.country.trade_agreement_title)
-
-        rules = roo_data["rules"]
-        # confirm that an 'ex Chapter' is not returned as a rule
-        self.assertEquals(len(rules), 1)
-
-        rule = rules[0]
-        self.assertTrue(rule.headings.exists())
-        self.assertFalse(rule.is_exclusion)
-        self.assertFalse(rule.chapters.exists())
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates")
     def test_duplicate_country_found(self):
@@ -201,6 +125,8 @@ class ImporterTestCase(TestCase):
         ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates",
     )
     def test_import_multiple_roo(self):
+        # Test to ensure that GSP countries will have rules added to the DB for both their
+        # trade agreement and according to the GSP
         self.country.scenario = "TEST_TA"
         self.country.save()
 
@@ -214,29 +140,6 @@ class ImporterTestCase(TestCase):
         rules_documents = RulesDocument.objects.all()
         for doc in rules_documents:
             self.assertIn(self.country, doc.countries.all())
-
-        # Next section ensures the RoO section on the frontend will replace the
-        # trade agreement name with the GSP title
-        h1509 = Heading.objects.get(heading_code_4="1509")
-
-        with mock.patch(
-            "hierarchy.models.Heading.get_hierarchy_context_ids"
-        ) as mock_context_ids:
-            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
-            roo_data = h1509.get_rules_of_origin(country_code=self.country.country_code)
-
-        # Ensure that when there is a TA and a GSP rule doc, the TA one is first in the ordereddict
-        for count, value in enumerate(roo_data):
-            if count == 0:
-                self.assertEquals(
-                    roo_data[value]["rule_doc_name"], self.country.trade_agreement_title
-                )
-            elif count == 1:
-                self.assertEquals(
-                    roo_data[value]["rule_doc_name"],
-                    "Generalised Scheme of Preferences",
-                )
-            print(count, value)
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-empty")
     def test_no_files_in_s3_bucket(self):
@@ -262,32 +165,41 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-alt-country-code")
     def test_alternative_country_code(self):
+        # Test to ensure a country code in SAMPLE_FTA.xml which is a countrys alternative
+        # code is still processed and its rules added to the DB
         self.country.alternative_non_trade_country_code = "XA"
         self.country.save()
 
         call_command("import_rules_of_origin")
 
+        # Should be one rule document, with the correct trade agreement name and country
         self.assertEqual(RulesDocument.objects.count(), 1)
-        self.assertEqual(Rule.objects.count(), 6)
-        self.assertEqual(SubRule.objects.count(), 5)
-        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
-
         rules_document = RulesDocument.objects.first()
         self.assertIn(self.country, rules_document.countries.all())
+        self.assertEqual(rules_document.description, self.country.trade_agreement_title)
 
-        rule1 = self.chapter1.rules_of_origin.first()
-        self.assertEqual(rule1.description, "Live animals")
-        self.assertFalse(rule1.is_exclusion)
-        self.assertFalse(rule1.subrules.exists())
+        # Should be 6 rules all linked to the rule document object
+        self.assertEqual(Rule.objects.count(), 6)
+        rules = Rule.objects.filter(rules_document=rules_document)
+        self.assertEqual(rules.count(), 6)
 
-        rule4 = self.chapter4.rules_of_origin.first()
-        self.assertTrue(rule4.is_exclusion)
+        # Should be 5 subrules linked to the rules - rule 1302 contains 2 and 1507 to 1515 contains 3
+        self.assertEqual(SubRule.objects.count(), 5)
+        subrule_counts = {}
+        for rule in rules:
+            subrules = SubRule.objects.filter(rule=rule)
+            subrule_counts[rule.code] = subrules.count()
+        self.assertEqual(subrule_counts["ex Chapter 15"], 0)
+        self.assertEqual(subrule_counts["0403"], 0)
+        self.assertEqual(subrule_counts["Chapter 01"], 0)
+        self.assertEqual(subrule_counts["ex Chapter 04"], 0)
+        self.assertEqual(subrule_counts["1302"], 2)
+        self.assertEqual(subrule_counts["1507 to 1515"], 3)
 
-        rule0403 = self.heading0403.rules_of_origin.first()
-        self.assertFalse(rule0403.is_exclusion)
-
-        rule_multiple = Rule.objects.get(code="1507 to 1515")
-        self.assertEqual(rule_multiple.headings.count(), 9)
+        # Should be 12 footnotes all linked to the rules document
+        self.assertEqual(RulesDocumentFootnote.objects.count(), 12)
+        footnotes = RulesDocumentFootnote.objects.filter(rules_document=rules_document)
+        self.assertEqual(footnotes.count(), 12)
 
     @override_settings(
         SUPPORTED_TRADE_SCENARIOS=["TEST_TA"],
@@ -326,18 +238,11 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-gsp")
     def test_import_roo_gsp_country(self):
-        mixer = Mixer()
-        country_ldc = mixer.blend(
-            Country,
-            name="Test Country 2",
-            country_code="BX",
-            scenario="TEST_TA",
-        )
-        country_ldc.save()
-
+        # Test to ensure rules are added for countries in GSP status from files marked LDC and OBC
+        # (Least Developed Countries and Other Beneficiary Countries)
         call_command("import_rules_of_origin")
 
-        ldc_rules_document = RulesDocument.objects.get(countries=country_ldc)
+        ldc_rules_document = RulesDocument.objects.get(countries=self.gsp_country)
         self.assertEqual(
             ldc_rules_document.description, "Generalised Scheme of Preferences"
         )
@@ -345,29 +250,4 @@ class ImporterTestCase(TestCase):
         obc_rules_document = RulesDocument.objects.get(countries=self.country)
         self.assertEqual(
             obc_rules_document.description, "Generalised Scheme of Preferences"
-        )
-
-        # Next section ensures the RoO section on the frontend will replace a non-existent
-        # trade agreement name with the GSP title
-        h1509 = Heading.objects.get(heading_code_4="1509")
-
-        with mock.patch(
-            "hierarchy.models.Heading.get_hierarchy_context_ids"
-        ) as mock_context_ids:
-            mock_context_ids.return_value = (self.chapter15.id, h1509.id, None, None)
-            roo_data_ldc = h1509.get_rules_of_origin(
-                country_code=country_ldc.country_code
-            )
-            roo_data_obc = h1509.get_rules_of_origin(
-                country_code=self.country.country_code
-            )
-
-        roo_data_ldc = roo_data_ldc["Generalised Scheme of Preferences"]
-        self.assertEquals(
-            roo_data_ldc["rule_doc_name"], "Generalised Scheme of Preferences"
-        )
-
-        roo_data_obc = roo_data_obc["Generalised Scheme of Preferences"]
-        self.assertEquals(
-            roo_data_obc["rule_doc_name"], "Generalised Scheme of Preferences"
         )

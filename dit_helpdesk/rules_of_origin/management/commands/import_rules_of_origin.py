@@ -6,28 +6,24 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
-from rules_of_origin.models import Rule, SubRule, RulesDocument, RulesDocumentFootnote
 from rules_of_origin.ingest.importer import (
     import_roo,
     check_countries_consistency,
     RulesDocumentAlreadyExistsException,
 )
+from rules_of_origin.ingest.postprocess import postprocess_rules_of_origin
 from rules_of_origin.ingest.s3 import _get_s3_bucket
-
-from hierarchy.models import NomenclatureTree
-from hierarchy.helpers import process_swapped_tree
+from rules_of_origin.models import RulesDocument
 
 
 logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument("--reset-all", action="store_true")
-
     def handle(self, *args, **options):
-        with process_swapped_tree():
+        with transaction.atomic():
             self._handle(*args, **options)
 
     def _find_duplicate(self, country, mapping):
@@ -87,19 +83,10 @@ class Command(BaseCommand):
     def _handle(self, *args, **options):
         s3_bucket = settings.ROO_S3_BUCKET_NAME
 
-        active_tree = NomenclatureTree.get_active_tree()
-        logger.info("Importing rules of origin for %s", active_tree)
-
         if s3_bucket:
             logger.info("Deleting rules documents…")
-            RulesDocument.objects.filter(nomenclature_tree=active_tree).all().delete()
-
-            if options["reset_all"]:
-                logger.info("Resetting all…")
-                for cls in Rule, SubRule, RulesDocument, RulesDocumentFootnote:
-                    logger.info("Deleting %s objects", cls)
-                    cls.objects.all().delete()
-
+            RulesDocument.objects.all().delete()
             self._import_from_s3()
+            postprocess_rules_of_origin()
         else:
             self.stdout.write("S3 bucket for RoO files not provided, skipping.")

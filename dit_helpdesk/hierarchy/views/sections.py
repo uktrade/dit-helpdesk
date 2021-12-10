@@ -1,11 +1,18 @@
 import itertools
 import logging
 
+from datetime import date
+
 from django.conf import settings
 from django.template import engines
 from django.template.exceptions import TemplateDoesNotExist
 
 from regulations.models import RegulationGroup
+from rules_of_origin.hierarchy import (
+    get_rules_of_origin,
+    process_footnotes,
+)
+from rules_of_origin.models import RulesDocument, RulesDocumentFootnote
 
 from ..helpers import get_eu_commodity_link, get_nomenclature_group_measures
 from ..models import Heading, SubHeading
@@ -361,19 +368,57 @@ class SubHeadingOtherMeasuresNorthernIrelandSection(
 class RulesOfOriginSection(CommodityDetailSection):
     template = "hierarchy/_rules_of_origin.html"
 
-    def __init__(self, country, commodity_object):
-        super().__init__(country, commodity_object)
-
-        self.rules_of_origin = commodity_object.get_rules_of_origin(
-            country_code=country.country_code
-        )
-
     @property
     def should_be_displayed(self):
         return True
 
     def get_menu_items(self):
         return [("Rules of origin", "rules_of_origin")]
+
+    def get_rules_footnotes(self, rules_document, rules):
+        footnotes = rules_document.footnotes.order_by("id")
+
+        relevant_footnotes = process_footnotes(rules, footnotes)
+
+        return footnotes, relevant_footnotes
+
+    def get_rules_introductory_notes(self, rules_document, footnotes):
+        # get introductory notes
+        try:
+            introductory_notes = footnotes.get(
+                identifier="COMM",
+            )
+        except RulesDocumentFootnote.DoesNotExist:
+            introductory_notes = None
+            logger.error("Could not find introductory notes for %s", rules_document)
+
+        return introductory_notes
+
+    def get_rules_of_origin(self, country_code, commodity_code):
+        if country_code == "EU":
+            country_code = (
+                "FR"  # pick one of the EU countries, the RoO are the same for all
+            )
+
+        rules_documents = RulesDocument.objects.filter(
+            countries__country_code=country_code,
+            start_date__lte=date.today(),
+        )
+
+        rules_of_origin = []
+        for rules_document in rules_documents:
+            rules = get_rules_of_origin(rules_document, commodity_code)
+            footnotes, relevant_footnotes = self.get_rules_footnotes(
+                rules_document, rules
+            )
+            introductory_notes = self.get_rules_introductory_notes(
+                rules_document, footnotes
+            )
+            rules_of_origin.append(
+                (rules_document, rules, relevant_footnotes, introductory_notes)
+            )
+
+        return rules_of_origin
 
     def get_country_specific_rules_of_origin_template(self, country):
         template_name = (
@@ -389,7 +434,9 @@ class RulesOfOriginSection(CommodityDetailSection):
     def get_context_data(self):
         ctx = super().get_context_data()
 
-        ctx["rules_of_origin"] = self.rules_of_origin
+        ctx["rules_of_origin"] = self.get_rules_of_origin(
+            self.country.country_code, self.commodity_object.commodity_code
+        )
         ctx["country_name"] = self.country.name
         ctx["trade_agreement_name"] = self.country.trade_agreement_title
         ctx[

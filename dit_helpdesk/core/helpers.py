@@ -12,9 +12,6 @@ from unittest import mock
 from django.conf import settings
 from django.test import override_settings
 from django.urls import clear_url_caches
-from django.db.models import Q
-
-always_true_Q = ~Q(pk__in=[])
 
 
 class Timer:
@@ -90,16 +87,18 @@ def flatten(list_of_lists):
     return [item for inner_list in list_of_lists for item in inner_list]
 
 
-def unique_maintain_order(iterable):
-    out = []
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]  # noqa: E203
+
+
+def unique(iterable):
     seen = set()
-
-    for val in iterable:
-        if val not in seen:
-            out.append(val)
-            seen.add(val)
-
-    return out
+    for i in iterable:
+        if i in seen:
+            continue
+        seen.add(i)
+        yield i
 
 
 def _get_test_data(file_path):

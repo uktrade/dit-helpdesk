@@ -66,12 +66,6 @@ class Command(BaseCommand):
             current_step = "import_rules_of_origin"
             call_command("import_rules_of_origin")
 
-            # After the rules of origin are fully imported the rule text is post-processed
-            # for display purposes e.g. to display hyperlinks to the commodities a rule
-            # pertains to.
-            current_step = "postprocess_rules_of_origin"
-            call_command("postprocess_rules_of_origin")
-
             # This will link regulations that are attached to the previous nomenclature
             # tree to the new tree which is to be activated (which will have been generated
             # in other commands).
