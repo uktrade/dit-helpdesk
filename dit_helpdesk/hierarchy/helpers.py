@@ -3,13 +3,15 @@ import re
 
 from typing import Iterator
 
-from django.utils import timezone
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Q
+from django.utils import timezone
 
 from .models import NomenclatureTree
 
 from trade_tariff_service.tts_api import COMMODITY_DETAIL_TABLE_KEYS
+
 
 TABLE_COLUMN_TITLES = [tup[1] for tup in COMMODITY_DETAIL_TABLE_KEYS]
 
@@ -246,6 +248,25 @@ def delete_all_inactive_trees(region):
     ).all()
 
     inactive_trees.delete()
+
+
+def delete_outdated_trees():
+    # Delete all but the currently active and last active trees, this will ensure we have a rollback set of trees.
+
+    # Get the latest active UK tree
+    last_active_uk_tree = NomenclatureTree.objects.filter(
+        end_date__isnull=False, region="UK"
+    ).order_by("-end_date")[:1]
+
+    # Get the latest active EU tree
+    last_active_eu_tree = NomenclatureTree.objects.filter(
+        end_date__isnull=False, region="EU"
+    ).order_by("-end_date")[:1]
+
+    # Delete any tree with an end_date that does not match either of the above
+    NomenclatureTree.objects.filter(end_date__isnull=False).exclude(
+        (Q(pk__in=last_active_uk_tree) | Q(pk__in=last_active_eu_tree))
+    ).delete()
 
 
 def fill_tree_in_json_data(json_data, tree):
