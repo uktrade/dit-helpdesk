@@ -439,6 +439,7 @@ class RulesOfOriginSection(CommodityDetailSection):
         )
         ctx["country_name"] = self.country.name
         ctx["is_eu"] = self.country.is_eu
+        ctx["roo_guidance_url"] = self.country.roo_guidance_url
         ctx["trade_agreement_name"] = self.country.trade_agreement_title
         ctx[
             "country_specific_rules_of_origin_template"
