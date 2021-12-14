@@ -263,10 +263,14 @@ def delete_outdated_trees():
         end_date__isnull=False, region="EU"
     ).order_by("-end_date")[:1]
 
-    # Delete any tree with an end_date that does not match either of the above
-    NomenclatureTree.objects.filter(end_date__isnull=False).exclude(
+    # Get any tree with an end_date that does not match either of the above
+    trees_to_chop = NomenclatureTree.objects.filter(end_date__isnull=False).exclude(
         (Q(pk__in=last_active_uk_tree) | Q(pk__in=last_active_eu_tree))
-    ).delete()
+    )
+
+    # Delete the outdated trees - needs to be done individually as lots of trees at once cause memory errors.
+    for tree in trees_to_chop:
+        tree.delete()
 
 
 def fill_tree_in_json_data(json_data, tree):
