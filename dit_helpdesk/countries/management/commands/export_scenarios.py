@@ -8,6 +8,7 @@ from countries.models import Country
 
 
 class Command(BaseCommand):
+    # Called by running ./manage.py export_scenarios -o FILENAME.csv
     help = "Outputs a CSV of countries and scenarios"
 
     def add_arguments(self, parser):
@@ -25,6 +26,8 @@ class Command(BaseCommand):
             "govuk_fta_url",
             "trade_agreement_title",
             "trade_agreement_type",
+            "roo_guidance_url",
+            "hs_nomenclature_version",
         ]
 
     @contextmanager
@@ -56,5 +59,7 @@ class Command(BaseCommand):
                         "govuk_fta_url": country.content_url,
                         "trade_agreement_title": country.trade_agreement_title,
                         "trade_agreement_type": country.trade_agreement_type,
+                        "roo_guidance_url": country.roo_guidance_url,
+                        "hs_nomenclature_version": country.hs_nomenclature_version,
                     }
                 )
