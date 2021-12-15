@@ -26,6 +26,7 @@ def update_countries_guidance_urls(apps, schema_editor):
                 continue
 
             country.roo_guidance_url = row["roo_guidance_url"]
+            country.hs_nomenclature_version = row["hs_nomenclature_version"]
             country.save()
 
 
@@ -40,6 +41,11 @@ class Migration(migrations.Migration):
             model_name="country",
             name="roo_guidance_url",
             field=models.URLField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="country",
+            name="hs_nomenclature_version",
+            field=models.CharField(max_length=4, null=True),
         ),
         migrations.RunPython(update_countries_guidance_urls, migrations.RunPython.noop),
     ]

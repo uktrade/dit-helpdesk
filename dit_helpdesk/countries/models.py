@@ -29,5 +29,7 @@ class Country(models.Model):
 
     roo_guidance_url = models.URLField(null=True, blank=True)
 
+    hs_nomenclature_version = models.CharField(max_length=4, null=True)
+
     def __str__(self):
         return f"{self.country_code} - {self.name} - {self.scenario}"
