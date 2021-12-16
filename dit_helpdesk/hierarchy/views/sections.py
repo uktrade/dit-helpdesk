@@ -438,6 +438,8 @@ class RulesOfOriginSection(CommodityDetailSection):
             self.country.country_code, self.commodity_object.commodity_code
         )
         ctx["country_name"] = self.country.name
+        if self.country.scenario in settings.SCENARIOS_WITH_UK_TRADE_AGREEMENT:
+            ctx["display_roo_update_notes"] = True
         ctx["is_eu"] = self.country.is_eu
         ctx["roo_guidance_url"] = self.country.roo_guidance_url
         ctx["trade_agreement_name"] = self.country.trade_agreement_title
