@@ -27,7 +27,6 @@ class Command(BaseCommand):
             "trade_agreement_title",
             "trade_agreement_type",
             "roo_guidance_url",
-            "hs_nomenclature_version",
         ]
 
     @contextmanager
@@ -60,6 +59,5 @@ class Command(BaseCommand):
                         "trade_agreement_title": country.trade_agreement_title,
                         "trade_agreement_type": country.trade_agreement_type,
                         "roo_guidance_url": country.roo_guidance_url,
-                        "hs_nomenclature_version": country.hs_nomenclature_version,
                     }
                 )
