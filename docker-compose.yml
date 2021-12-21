@@ -17,6 +17,7 @@ services:
       - postgres
       - es
       - redis
+      - s3
     command: ./start.sh
     stdin_open: true
     tty: true
