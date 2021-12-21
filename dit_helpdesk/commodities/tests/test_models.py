@@ -3,7 +3,7 @@ import logging
 import json
 
 from django.conf import settings
-from core.helpers import mock_tts_and_section_responses
+from core.testutils import mock_tts_and_section_responses
 from django.test import TestCase
 from django.urls import NoReverseMatch
 from mixer.backend.django import mixer

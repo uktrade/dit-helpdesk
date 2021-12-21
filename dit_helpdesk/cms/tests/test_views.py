@@ -7,7 +7,7 @@ from django.test import RequestFactory
 from django.contrib.auth import get_user_model
 
 from commodities.models import Commodity
-from core.helpers import reset_urls_for_settings
+from core.testutils import reset_urls_for_settings
 from countries.models import Country
 from hierarchy.helpers import create_nomenclature_tree
 from hierarchy.models import Section, Chapter, Heading, SubHeading
