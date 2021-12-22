@@ -3,8 +3,6 @@ import sys
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-import dj_database_url
-
 from core.logging import UserLogFormatter
 
 from .env import env
@@ -108,8 +106,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-DATABASES = {"default": dj_database_url.config()}
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
