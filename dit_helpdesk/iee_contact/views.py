@@ -4,7 +4,7 @@ from directory_forms_api_client import helpers
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template.loader import get_template
 from formtools.wizard.views import SessionWizardView
 
@@ -52,7 +52,7 @@ class IEEContactFormWizardView(SessionWizardView):
         else:
             IEEContactFormWizardView.send_mail(context)
 
-        return render_to_response("iee_contact/done.html", {"context": context})
+        return render("iee_contact/done.html", {"context": context})
 
     def render_next_step(self, form, **kwargs):
         """

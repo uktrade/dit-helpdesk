@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from core.helpers import reset_urls_for_settings
+from core.testutils import reset_urls_for_settings
 
 from .base import CMSTestCase
 
