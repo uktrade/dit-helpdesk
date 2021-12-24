@@ -88,7 +88,6 @@ def _replace_hs_code(code_match):
     url = None
 
     for model in models:
-
         arg = {
             Chapter: "chapter_code",
             Heading: "heading_code",

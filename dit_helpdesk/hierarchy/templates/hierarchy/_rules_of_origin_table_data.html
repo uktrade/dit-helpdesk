@@ -1,4 +1,4 @@
-{% load replace %}
+{% load rules_of_origin %}
 
 <div class="govuk-!-margin-bottom-4">
     {% for rule_doc, rules, footnotes, introductory_notes in rules_of_origin %}
@@ -20,13 +20,13 @@
                                 <p>{{ rule.code }}</p>
                             </td>
                             <td class="govuk-table__cell app-flexible-table__cell{% if rule.subrules.exists %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="Description of product">
-                                <p>{{ rule.description_processed|set_country:country_code|safe }}</p>
+                                <p>{{ rule.description|linkify_hs_codes:country_code|default:"" }}</p>
                             </td>
                             <td class="govuk-table__cell app-flexible-table__cell{% if rule.subrules.exists %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                                <p>{{ rule.rule_text_processed|set_country:country_code|blank_none|safe }}</p>
-                                {% if rule.alt_rule_text_processed %}
+                                <p>{{ rule.rule_text|linkify_hs_codes:country_code|default:""}}</p>
+                                {% if rule.alt_rule_text %}
                                     or
-                                    <p>{{ rule.alt_rule_text_processed|set_country:country_code|safe }}</p>
+                                    <p>{{ rule.alt_rule_text|linkify_hs_codes:country_code|default:"" }}</p>
                                 {% endif %}
                             </td>
                         </tr>
@@ -36,7 +36,7 @@
                                     <p>{{ subrule.description|safe }}</p>
                                 </td>
                                 <td class="govuk-table__cell app-flexible-table__cell{% if not forloop.last %} helpdesk-rules-of-origin-cell--sub-rule-item{% endif %}" data-column-heading="How non-originating materials must be worked or processed to get country of origin status">
-                                    <p>{{ subrule.rule_text_processed|set_country:country_code|safe }}</p>
+                                    <p>{{ subrule.rule_text|linkify_hs_codes:country_code|default:"" }}</p>
                                 </td>
                             </tr>
                         {% endfor %}
