@@ -69,9 +69,8 @@ if ($hierarchyModalLinks) {
   var modal = document.querySelector("#hierarchy-modal");
 
   nodeListForEach($hierarchyModalLinks, function ($modalLink) {
-    console.log("modal link: " + $modalLink);
-    $modalLink.addEventListener("click", function () {
-      console.log("Inside onclick");
+    $modalLink.addEventListener("click", function (evt) {
+      evt.preventDefault();
       modal.querySelector(".app-modal-dialogue__content").innerHTML = "";
 
       var url = $modalLink.getAttribute("data-href");

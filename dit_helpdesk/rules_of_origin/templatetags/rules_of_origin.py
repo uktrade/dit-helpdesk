@@ -4,6 +4,7 @@ import re
 from functools import partial
 
 from django import template
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from hierarchy.models import Chapter, Heading, SubHeading
@@ -78,8 +79,20 @@ def _replace_hs_code(country_code, code_match):
     except HierarchyModelNotFound:
         return full_code
 
-    url = obj.get_detail_url(country_code)
-    url_element = f'<a class="govuk-link" href="{url}">{code}</a>'
+    detail_url = obj.get_detail_url(country_code)
+    hierarchy_context_url = reverse(
+        "hierarchy-context-tree",
+        kwargs={
+            "commodity_type": obj.__class__.__name__.lower(),
+            "commodity_code": obj.commodity_code,
+            "nomenclature_sid": obj.goods_nomenclature_sid,
+            "country_code": country_code.lower(),
+        },
+    )
+    url_element = (
+        f'<a class="govuk-link hierarchy-modal" data-toggle="modal" data-target="hierarchy-modal" '
+        f'data-href="{hierarchy_context_url}" href="{detail_url}">{code}</a>'
+    )
 
     return full_code.replace(code, url_element)
 

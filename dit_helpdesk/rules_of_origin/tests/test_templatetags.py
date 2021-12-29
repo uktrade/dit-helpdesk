@@ -1,3 +1,4 @@
+from django.template import Context, Template
 from django.test import TestCase
 from django.urls import reverse
 
@@ -9,32 +10,62 @@ from hierarchy.helpers import create_nomenclature_tree
 from hierarchy.models import Chapter, Heading, SubHeading
 
 
-from ..templatetags.rules_of_origin import linkify_hs_codes
-
-
 class TemplateTagsTestCase(TestCase):
+    def render_linkify_hs_codes(self, value, country_code):
+        template_string = f'{{% load rules_of_origin %}}{{{{value|linkify_hs_codes:"{country_code}"}}}}'
+        template = Template(template_string)
+
+        return template.render(Context({"value": value}))
+
+    def get_link_element(self, text, detail_url, hierarchy_url):
+        return (
+            f'<a class="govuk-link hierarchy-modal" data-toggle="modal" data-target="hierarchy-modal" '
+            f'data-href="{hierarchy_url}" href="{detail_url}">{text}</a>'
+        )
+
+    def get_object_urls(self, model_type, object, country):
+        detail_url = reverse(
+            f"{model_type}-detail",
+            kwargs={
+                "country_code": country.country_code.lower(),
+                "commodity_code": object.commodity_code,
+                "nomenclature_sid": object.goods_nomenclature_sid,
+            },
+        )
+        hierarchy_url = reverse(
+            "hierarchy-context-tree",
+            kwargs={
+                "commodity_type": model_type,
+                "commodity_code": object.commodity_code,
+                "nomenclature_sid": object.goods_nomenclature_sid,
+                "country_code": country.country_code.lower(),
+            },
+        )
+
+        return detail_url, hierarchy_url
+
     def test_linkify_no_matching_models(self):
         country = mixer.blend(Country, country_code="XX")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Chapter 1",
             country.country_code,
         )
         self.assertEqual(result, "Chapter 1")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Heading 0101",
             country.country_code,
         )
         self.assertEqual(result, "Heading 0101")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheading 0101",
             country.country_code,
         )
         self.assertEqual(result, "Subheading 0101")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheading 0101.01",
             country.country_code,
         )
@@ -56,57 +87,50 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        chapter_01_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": chapter_01.chapter_code,
-                "nomenclature_sid": chapter_01.goods_nomenclature_sid,
-            },
+        chapter_01_detail_url, chapter_01_hierarchy_url = self.get_object_urls(
+            "chapter", chapter_01, country
         )
-        chapter_10_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": chapter_10.chapter_code,
-                "nomenclature_sid": chapter_10.goods_nomenclature_sid,
-            },
+        chapter_01_link_element = self.get_link_element(
+            "1", chapter_01_detail_url, chapter_01_hierarchy_url
         )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Chapter 1 more text",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Chapter <a class="govuk-link" href="{chapter_01_url}">1</a> more text',
+            f"Chapter {chapter_01_link_element} more text",
         )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "chapter 1 more text",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'chapter <a class="govuk-link" href="{chapter_01_url}">1</a> more text',
+            f"chapter {chapter_01_link_element} more text",
         )
 
-        result = linkify_hs_codes(
+        chapter_10_detail_url, chapter_10_hierarchy_url = self.get_object_urls(
+            "chapter", chapter_10, country
+        )
+        chapter_10_link_element = self.get_link_element(
+            "10", chapter_10_detail_url, chapter_10_hierarchy_url
+        )
+        result = self.render_linkify_hs_codes(
             "Chapter 10",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Chapter <a class="govuk-link" href="{chapter_10_url}">10</a>',
+            f"Chapter {chapter_10_link_element}",
         )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "chapter 10",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'chapter <a class="govuk-link" href="{chapter_10_url}">10</a>',
+            f"chapter {chapter_10_link_element}",
         )
 
     def test_linkify_multiple_chapters_hs_codes(self):
@@ -131,71 +155,59 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        chapter_10_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": chapter_10.chapter_code,
-                "nomenclature_sid": chapter_10.goods_nomenclature_sid,
-            },
+        chapter_10_detail_url, chapter_10_hierarchy_url = self.get_object_urls(
+            "chapter", chapter_10, country
         )
-        chapter_20_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": chapter_20.chapter_code,
-                "nomenclature_sid": chapter_20.goods_nomenclature_sid,
-            },
+        chapter_10_link_element = self.get_link_element(
+            "10", chapter_10_detail_url, chapter_10_hierarchy_url
         )
-        chapter_30_url = reverse(
-            "chapter-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": chapter_30.chapter_code,
-                "nomenclature_sid": chapter_30.goods_nomenclature_sid,
-            },
+        chapter_20_detail_url, chapter_20_hierarchy_url = self.get_object_urls(
+            "chapter", chapter_20, country
+        )
+        chapter_20_link_element = self.get_link_element(
+            "20", chapter_20_detail_url, chapter_20_hierarchy_url
+        )
+        chapter_30_detail_url, chapter_30_hierarchy_url = self.get_object_urls(
+            "chapter", chapter_30, country
+        )
+        chapter_30_link_element = self.get_link_element(
+            "30", chapter_30_detail_url, chapter_30_hierarchy_url
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Chapters 10 and 20",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Chapters <a class="govuk-link" href="{chapter_10_url}">10</a> and '
-            f'<a class="govuk-link" href="{chapter_20_url}">20</a>',
+            f"Chapters {chapter_10_link_element} and {chapter_20_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "chapters 10 and 20",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'chapters <a class="govuk-link" href="{chapter_10_url}">10</a> and '
-            f'<a class="govuk-link" href="{chapter_20_url}">20</a>',
+            f"chapters {chapter_10_link_element} and {chapter_20_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Chapters 10, 20 and 30",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Chapters <a class="govuk-link" href="{chapter_10_url}">10</a>, '
-            f'<a class="govuk-link" href="{chapter_20_url}">20</a> and '
-            f'<a class="govuk-link" href="{chapter_30_url}">30</a>',
+            f"Chapters {chapter_10_link_element}, {chapter_20_link_element} and {chapter_30_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "chapters 10, 20 and 30",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'chapters <a class="govuk-link" href="{chapter_10_url}">10</a>, '
-            f'<a class="govuk-link" href="{chapter_20_url}">20</a> and '
-            f'<a class="govuk-link" href="{chapter_30_url}">30</a>',
+            f"chapters {chapter_10_link_element}, {chapter_20_link_element} and {chapter_30_link_element}",
         )
 
     def test_linkify_heading_hs_codes(self):
@@ -208,50 +220,39 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        heading_url = reverse(
-            "heading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": heading.heading_code,
-                "nomenclature_sid": heading.goods_nomenclature_sid,
-            },
+        heading_detail_url, heading_hierarchy_url = self.get_object_urls(
+            "heading", heading, country
         )
 
-        result = linkify_hs_codes(
+        heading_link_element = self.get_link_element(
+            "0101", heading_detail_url, heading_hierarchy_url
+        )
+        result = self.render_linkify_hs_codes(
             "Heading 0101",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Heading <a class="govuk-link" href="{heading_url}">0101</a>',
-        )
+        self.assertEqual(result, f"Heading {heading_link_element}")
 
-        result = linkify_hs_codes(
-            "Heading 01.01",
-            country.country_code,
-        )
-        self.assertEqual(
-            result,
-            f'Heading <a class="govuk-link" href="{heading_url}">01.01</a>',
-        )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "heading 0101",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'heading <a class="govuk-link" href="{heading_url}">0101</a>',
-        )
+        self.assertEqual(result, f"heading {heading_link_element}")
 
-        result = linkify_hs_codes(
+        heading_link_element = self.get_link_element(
+            "01.01", heading_detail_url, heading_hierarchy_url
+        )
+        result = self.render_linkify_hs_codes(
+            "Heading 01.01",
+            country.country_code,
+        )
+        self.assertEqual(result, f"Heading {heading_link_element}")
+
+        result = self.render_linkify_hs_codes(
             "heading 01.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'heading <a class="govuk-link" href="{heading_url}">01.01</a>',
-        )
+        self.assertEqual(result, f"heading {heading_link_element}")
 
     def test_linkify_multiple_headings_hs_codes(self):
         tree = create_nomenclature_tree("UK")
@@ -275,71 +276,59 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        heading_0101_url = reverse(
-            "heading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": heading_0101.heading_code,
-                "nomenclature_sid": heading_0101.goods_nomenclature_sid,
-            },
+        heading_0101_detail_url, heading_0101_hierarchy_url = self.get_object_urls(
+            "heading", heading_0101, country
         )
-        heading_0202_url = reverse(
-            "heading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": heading_0202.heading_code,
-                "nomenclature_sid": heading_0202.goods_nomenclature_sid,
-            },
+        heading_0101_link_element = self.get_link_element(
+            "0101", heading_0101_detail_url, heading_0101_hierarchy_url
         )
-        heading_0303_url = reverse(
-            "heading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": heading_0303.heading_code,
-                "nomenclature_sid": heading_0303.goods_nomenclature_sid,
-            },
+        heading_0202_detail_url, heading_0202_hierarchy_url = self.get_object_urls(
+            "heading", heading_0202, country
+        )
+        heading_0202_link_element = self.get_link_element(
+            "0202", heading_0202_detail_url, heading_0202_hierarchy_url
+        )
+        heading_0303_detail_url, heading_0303_hierarchy_url = self.get_object_urls(
+            "heading", heading_0303, country
+        )
+        heading_0303_link_element = self.get_link_element(
+            "0303", heading_0303_detail_url, heading_0303_hierarchy_url
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Headings 0101 and 0202",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Headings <a class="govuk-link" href="{heading_0101_url}">0101</a> and '
-            f'<a class="govuk-link" href="{heading_0202_url}">0202</a>',
+            f"Headings {heading_0101_link_element} and {heading_0202_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "headings 0101 and 0202",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'headings <a class="govuk-link" href="{heading_0101_url}">0101</a> and '
-            f'<a class="govuk-link" href="{heading_0202_url}">0202</a>',
+            f"headings {heading_0101_link_element} and {heading_0202_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Headings 0101, 0202 and 0303",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Headings <a class="govuk-link" href="{heading_0101_url}">0101</a>, '
-            f'<a class="govuk-link" href="{heading_0202_url}">0202</a> and '
-            f'<a class="govuk-link" href="{heading_0303_url}">0303</a>',
+            f"Headings {heading_0101_link_element}, {heading_0202_link_element} and {heading_0303_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "headings 0101, 0202 and 0303",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'headings <a class="govuk-link" href="{heading_0101_url}">0101</a>, '
-            f'<a class="govuk-link" href="{heading_0202_url}">0202</a> and '
-            f'<a class="govuk-link" href="{heading_0303_url}">0303</a>',
+            f"headings {heading_0101_link_element}, {heading_0202_link_element} and {heading_0303_link_element}",
         )
 
     def test_linkify_subheading_hs_codes(self):
@@ -358,77 +347,73 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        subheading_0101_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_0101.commodity_code,
-                "nomenclature_sid": subheading_0101.goods_nomenclature_sid,
-            },
+        (
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_0101,
+            country,
+        )
+        (
+            subheading_010101_detail_url,
+            subheading_010101_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_010101,
+            country,
         )
 
-        subheading_010101_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_010101.commodity_code,
-                "nomenclature_sid": subheading_010101.goods_nomenclature_sid,
-            },
+        subheading_0101_link_element = self.get_link_element(
+            "0101",
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
         )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheading 0101",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Subheading <a class="govuk-link" href="{subheading_0101_url}">0101</a>',
-        )
+        self.assertEqual(result, f"Subheading {subheading_0101_link_element}")
 
-        result = linkify_hs_codes(
-            "Subheading 01.01",
-            country.country_code,
-        )
-        self.assertEqual(
-            result,
-            f'Subheading <a class="govuk-link" href="{subheading_0101_url}">01.01</a>',
-        )
-
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "subheading 0101",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'subheading <a class="govuk-link" href="{subheading_0101_url}">0101</a>',
-        )
+        self.assertEqual(result, f"subheading {subheading_0101_link_element}")
 
-        result = linkify_hs_codes(
+        subheading_0101_link_element = self.get_link_element(
+            "01.01",
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
+        )
+        result = self.render_linkify_hs_codes(
+            "Subheading 01.01",
+            country.country_code,
+        )
+        self.assertEqual(result, f"Subheading {subheading_0101_link_element}")
+
+        result = self.render_linkify_hs_codes(
             "subheading 01.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'subheading <a class="govuk-link" href="{subheading_0101_url}">01.01</a>',
-        )
+        self.assertEqual(result, f"subheading {subheading_0101_link_element}")
 
-        result = linkify_hs_codes(
+        subheading_010101_link_element = self.get_link_element(
+            "0101.01",
+            subheading_010101_detail_url,
+            subheading_010101_hierarchy_url,
+        )
+        result = self.render_linkify_hs_codes(
             "Subheading 0101.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Subheading <a class="govuk-link" href="{subheading_010101_url}">0101.01</a>',
-        )
+        self.assertEqual(result, f"Subheading {subheading_010101_link_element}")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "subheading 0101.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'subheading <a class="govuk-link" href="{subheading_010101_url}">0101.01</a>',
-        )
+        self.assertEqual(result, f"subheading {subheading_010101_link_element}")
 
     def test_linkify_multiple_subheadings_hs_codes(self):
         tree = create_nomenclature_tree("UK")
@@ -452,71 +437,84 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        subheading_0101_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_0101.commodity_code,
-                "nomenclature_sid": subheading_0101.goods_nomenclature_sid,
-            },
+        (
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_0101,
+            country,
         )
-        subheading_0202_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_0202.commodity_code,
-                "nomenclature_sid": subheading_0202.goods_nomenclature_sid,
-            },
-        )
-        subheading_010101_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_010101.commodity_code,
-                "nomenclature_sid": subheading_010101.goods_nomenclature_sid,
-            },
+        subheading_0101_link_element = self.get_link_element(
+            "0101",
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
         )
 
-        result = linkify_hs_codes(
+        (
+            subheading_0202_detail_url,
+            subheading_0202_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_0202,
+            country,
+        )
+        subheading_0202_link_element = self.get_link_element(
+            "02.02",
+            subheading_0202_detail_url,
+            subheading_0202_hierarchy_url,
+        )
+
+        (
+            subheading_010101_detail_url,
+            subheading_010101_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_010101,
+            country,
+        )
+        subheading_010101_link_element = self.get_link_element(
+            "0101.01",
+            subheading_010101_detail_url,
+            subheading_010101_hierarchy_url,
+        )
+
+        result = self.render_linkify_hs_codes(
             "Subheadings 0101 and 02.02",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Subheadings <a class="govuk-link" href="{subheading_0101_url}">0101</a> and '
-            f'<a class="govuk-link" href="{subheading_0202_url}">02.02</a>',
+            f"Subheadings {subheading_0101_link_element} and {subheading_0202_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "subheadings 0101 and 02.02",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'subheadings <a class="govuk-link" href="{subheading_0101_url}">0101</a> and '
-            f'<a class="govuk-link" href="{subheading_0202_url}">02.02</a>',
+            f"subheadings {subheading_0101_link_element} and {subheading_0202_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheadings 0101, 02.02 and 0101.01",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'Subheadings <a class="govuk-link" href="{subheading_0101_url}">0101</a>, '
-            f'<a class="govuk-link" href="{subheading_0202_url}">02.02</a> and '
-            f'<a class="govuk-link" href="{subheading_010101_url}">0101.01</a>',
+            f"Subheadings {subheading_0101_link_element}, {subheading_0202_link_element} "
+            f"and {subheading_010101_link_element}",
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "subheadings 0101, 02.02 and 0101.01",
             country.country_code,
         )
         self.assertEqual(
             result,
-            f'subheadings <a class="govuk-link" href="{subheading_0101_url}">0101</a>, '
-            f'<a class="govuk-link" href="{subheading_0202_url}">02.02</a> and '
-            f'<a class="govuk-link" href="{subheading_010101_url}">0101.01</a>',
+            f"subheadings {subheading_0101_link_element}, {subheading_0202_link_element} "
+            f"and {subheading_010101_link_element}",
         )
 
     def test_linkify_commodity_hs_codes(self):
@@ -529,32 +527,31 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        commodity_010101_url = reverse(
-            "commodity-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": commodity_010101.commodity_code,
-                "nomenclature_sid": commodity_010101.goods_nomenclature_sid,
-            },
+        (
+            commodity_010101_detail_url,
+            commodity_010101_hierarchy_url,
+        ) = self.get_object_urls(
+            "commodity",
+            commodity_010101,
+            country,
+        )
+        commodity_010101_link_element = self.get_link_element(
+            "0101.01",
+            commodity_010101_detail_url,
+            commodity_010101_hierarchy_url,
         )
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheading 0101.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Subheading <a class="govuk-link" href="{commodity_010101_url}">0101.01</a>',
-        )
+        self.assertEqual(result, f"Subheading {commodity_010101_link_element}")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "subheading 0101.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'subheading <a class="govuk-link" href="{commodity_010101_url}">0101.01</a>',
-        )
+        self.assertEqual(result, f"subheading {commodity_010101_link_element}")
 
     def test_matches_spanning_multiple_models_matches_lowest(self):
         tree = create_nomenclature_tree("UK")
@@ -584,37 +581,42 @@ class TemplateTagsTestCase(TestCase):
             nomenclature_tree=tree,
         )
 
-        subheading_0101_url = reverse(
-            "subheading-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": subheading_0101.commodity_code,
-                "nomenclature_sid": subheading_0101.goods_nomenclature_sid,
-            },
+        (
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
+        ) = self.get_object_urls(
+            "subheading",
+            subheading_0101,
+            country,
         )
-        commodity_010101_url = reverse(
-            "commodity-detail",
-            kwargs={
-                "country_code": country.country_code.lower(),
-                "commodity_code": commodity_010101.commodity_code,
-                "nomenclature_sid": commodity_010101.goods_nomenclature_sid,
-            },
+        subheading_0101_link_element = self.get_link_element(
+            "0101",
+            subheading_0101_detail_url,
+            subheading_0101_hierarchy_url,
         )
 
-        result = linkify_hs_codes(
+        (
+            commodity_010101_detail_url,
+            commodity_010101_hierarchy_url,
+        ) = self.get_object_urls(
+            "commodity",
+            commodity_010101,
+            country,
+        )
+        commodity_010101_link_element = self.get_link_element(
+            "0101.01",
+            commodity_010101_detail_url,
+            commodity_010101_hierarchy_url,
+        )
+
+        result = self.render_linkify_hs_codes(
             "Heading 0101",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Heading <a class="govuk-link" href="{subheading_0101_url}">0101</a>',
-        )
+        self.assertEqual(result, f"Heading {subheading_0101_link_element}")
 
-        result = linkify_hs_codes(
+        result = self.render_linkify_hs_codes(
             "Subheading 0101.01",
             country.country_code,
         )
-        self.assertEqual(
-            result,
-            f'Subheading <a class="govuk-link" href="{commodity_010101_url}">0101.01</a>',
-        )
+        self.assertEqual(result, f"Subheading {commodity_010101_link_element}")
