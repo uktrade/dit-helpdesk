@@ -47,9 +47,7 @@ def _find_hierarchy_model(code):
 
     for model_class in models:
         try:
-            return model_class.objects.get(
-                **{model_class.COMMODITY_CODE_FIELD: code_norm}
-            )
+            return model_class.objects.get_by_commodity_code(code_norm)
         except model_class.DoesNotExist:
             logger.warning(
                 "Couldn't find %s object for HS code %s", model_class, code_norm
@@ -58,9 +56,9 @@ def _find_hierarchy_model(code):
         except model_class.MultipleObjectsReturned:
             # if multiple objects with the same HS code (usually differing by productline suffix)
             # choose the one lowest in hierarchy
-            objs = model_class.objects.filter(
-                **{model_class.COMMODITY_CODE_FIELD: code_norm}
-            ).order_by("-number_indents")
+            objs = model_class.objects.filter_by_commodity_code(code_norm).order_by(
+                "-number_indents"
+            )
             return objs.first()
 
     raise HierarchyModelNotFound()
