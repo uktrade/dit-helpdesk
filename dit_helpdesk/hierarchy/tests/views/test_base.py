@@ -2,7 +2,7 @@ from unittest import mock
 
 from mixer.backend.django import mixer
 
-from core.helpers import mock_tts_and_section_responses
+from core.testutils import mock_tts_and_section_responses
 from django.test import modify_settings, override_settings, TestCase
 from django.urls import reverse
 

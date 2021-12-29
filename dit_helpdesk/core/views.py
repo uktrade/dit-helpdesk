@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 
 def error404handler(request, exception):
@@ -7,7 +7,7 @@ def error404handler(request, exception):
     :param request: django http request
     :return: http response
     """
-    return render_to_response("core/404.html", status=404)
+    return render(request, "core/404.html", status=404)
 
 
 def error500handler(request):
@@ -16,7 +16,7 @@ def error500handler(request):
     :param request: django request object
     :return: http response object
     """
-    return render_to_response("core/500.html", status=500)
+    return render(request, "core/500.html", status=500)
 
 
 def robots(request):
@@ -24,7 +24,8 @@ def robots(request):
     :param request: django http request
     :return: http response
     """
-    return render_to_response(
+    return render(
+        request,
         "core/robots.txt",
         content_type="text/plain",
     )

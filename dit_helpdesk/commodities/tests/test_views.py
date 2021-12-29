@@ -4,7 +4,7 @@ import logging
 from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
-from core.helpers import mock_tts_and_section_responses
+from core.testutils import mock_tts_and_section_responses
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse, NoReverseMatch
 from mixer.backend.django import mixer
