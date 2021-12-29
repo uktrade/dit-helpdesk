@@ -51,14 +51,11 @@ DATABASES = {
 INSTALLED_APPS.append("django_nose")
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
-TEST_OUTPUT_DIR = env.str("TEST_OUTPUT_DIR")
 NOSE_ARGS = [
     "--verbosity=3",
     "--nologcapture",
     "--with-spec",
     "--spec-color",
-    "--with-xunit",
-    "--xunit-file=%s/unit_tests/report.xml" % TEST_OUTPUT_DIR,
 ]
 
 # Disable Django's logging setup
