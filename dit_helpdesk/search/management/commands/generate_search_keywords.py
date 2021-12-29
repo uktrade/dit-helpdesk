@@ -24,7 +24,6 @@ class Command(BaseCommand):
         parser.add_argument("-f", "--data_path", type=str, nargs="?", required=False)
 
     def handle(self, *args, **options):
-
         synonym_builder = SynonymBuilder()
         synonym_list = synonym_builder.get_synonyms_list()
 

@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import Client, TestCase
 
 from commodities.models import Commodity
-from core.helpers import (
+from core.testutils import (
     patch_tts_json,
     mock_tts_and_section_responses,
 )
