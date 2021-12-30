@@ -648,5 +648,7 @@ class AnnotateAbbreviations(TestCase):
         )
         self.assertEqual(
             result,
-            f'The abbreviation <abbr title="{definition}">{abbr}</abbr> is an abbreviation',
+            "The abbreviation "
+            f'<abbr data-toggle="modal" data-target="roo-abbr-{abbr.lower()}-modal" title="{definition}">{abbr}</abbr> '
+            "is an abbreviation",
         )

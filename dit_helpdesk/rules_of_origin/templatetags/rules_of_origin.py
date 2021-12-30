@@ -129,7 +129,11 @@ def _replace_abbrs(abbr_match):
     abbr = abbr_match.group()
     abbr_definition = ABBR_DEFINITIONS[abbr]
 
-    url_element = f'<abbr title="{abbr_definition}">{abbr}</abbr>'
+    url_element = (
+        f'<abbr data-toggle="modal" data-target="roo-abbr-{abbr.lower()}-modal" title="{abbr_definition}">'
+        f"{abbr}"
+        "</abbr>"
+    )
 
     return url_element
 
