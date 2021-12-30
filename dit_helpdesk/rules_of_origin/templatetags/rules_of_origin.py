@@ -113,3 +113,29 @@ def linkify_hs_codes(value, country_code):
     processed_text = SUBTEXT_REGEX.sub(sub, value)
 
     return mark_safe(processed_text)
+
+
+ABBR_REGEX = re.compile(r"\b(CC|CTH|CTSH|MaxNOM)\b")
+
+ABBR_DEFINITIONS = {
+    "CC": "Change of Chapter",
+    "CTH": "Change in tariff heading",
+    "CTSH": "Change in tariff subheading",
+    "MaxNOM": "Maximum value of non-originating materials",
+}
+
+
+def _replace_abbrs(abbr_match):
+    abbr = abbr_match.group()
+    abbr_definition = ABBR_DEFINITIONS[abbr]
+
+    url_element = f'<abbr title="{abbr_definition}">{abbr}</abbr>'
+
+    return url_element
+
+
+@register.filter(name="annotate_abbreviations")
+def annotate_abbreviations(value):
+    processed_text = ABBR_REGEX.sub(_replace_abbrs, value)
+
+    return mark_safe(processed_text)

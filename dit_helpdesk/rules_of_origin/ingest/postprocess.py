@@ -156,7 +156,6 @@ def _replace_abbrs(abbr_match):
 
 
 def process_abbreviations_in_text(text):
-
     processed_text = ABBR_REGEX.sub(_replace_abbrs, text)
 
     return processed_text

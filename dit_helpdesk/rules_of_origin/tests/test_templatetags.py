@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from mixer.backend.django import mixer
+from parameterized import parameterized
 
 from commodities.models import Commodity
 from countries.models import Country
@@ -10,7 +11,7 @@ from hierarchy.helpers import create_nomenclature_tree
 from hierarchy.models import Chapter, Heading, SubHeading
 
 
-class TemplateTagsTestCase(TestCase):
+class LinkifyHsCodesTestCase(TestCase):
     def render_linkify_hs_codes(self, value, country_code):
         template_string = f'{{% load rules_of_origin %}}{{{{value|linkify_hs_codes:"{country_code}"}}}}'
         template = Template(template_string)
@@ -620,3 +621,32 @@ class TemplateTagsTestCase(TestCase):
             country.country_code,
         )
         self.assertEqual(result, f"Subheading {commodity_010101_link_element}")
+
+
+class AnnotateAbbreviations(TestCase):
+    def render_annotate_abbreviations(self, value):
+        template_string = "{% load rules_of_origin %}{{value|annotate_abbreviations}}"
+        template = Template(template_string)
+
+        return template.render(Context({"value": value}))
+
+    def test_no_abbreviations(self):
+        result = self.render_annotate_abbreviations("no abbreviations")
+        self.assertEqual(result, "no abbreviations")
+
+    @parameterized.expand(
+        [
+            ("CC", "Change of Chapter"),
+            ("CTH", "Change in tariff heading"),
+            ("CTSH", "Change in tariff subheading"),
+            ("MaxNOM", "Maximum value of non-originating materials"),
+        ]
+    )
+    def test_replace_abbreviation(self, abbr, definition):
+        result = self.render_annotate_abbreviations(
+            f"The abbreviation {abbr} is an abbreviation"
+        )
+        self.assertEqual(
+            result,
+            f'The abbreviation <abbr title="{definition}">{abbr}</abbr> is an abbreviation',
+        )
