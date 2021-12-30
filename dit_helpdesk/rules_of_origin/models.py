@@ -34,15 +34,12 @@ class Rule(models.Model):
 
     code = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    description_processed = models.TextField(null=True, blank=True)
     is_exclusion = models.BooleanField(default=False)
     rules_document = models.ForeignKey(
         "RulesDocument", on_delete=models.CASCADE, null=True, blank=True
     )
     rule_text = models.TextField(null=True, blank=True)
     alt_rule_text = models.TextField(null=True, blank=True)
-    rule_text_processed = models.TextField(null=True, blank=True)
-    alt_rule_text_processed = models.TextField(null=True, blank=True)
     hs_from = models.CharField(null=True, max_length=MAX_RULES_CODE_DIGITS)
     hs_from_type = models.CharField(null=True, max_length=2)
     hs_to = models.CharField(null=True, max_length=MAX_RULES_CODE_DIGITS)
@@ -74,11 +71,8 @@ class SubRule(models.Model):
     rule = models.ForeignKey("Rule", on_delete=models.CASCADE, related_name="subrules")
     order = models.IntegerField()
     description = models.TextField(null=True, blank=True)
-    description_processed = models.TextField(null=True, blank=True)
     rule_text = models.TextField(null=True, blank=True)
     alt_rule_text = models.TextField(null=True, blank=True)
-    rule_text_processed = models.TextField(null=True, blank=True)
-    alt_rule_text_processed = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ["order"]
