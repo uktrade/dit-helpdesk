@@ -57,8 +57,6 @@ NOSE_ARGS = [
     "--nologcapture",
     "--with-spec",
     "--spec-color",
-    "--with-xunit",
-    "--xunit-file=%s/unit_tests/report.xml" % TEST_OUTPUT_DIR,
 ]
 
 # Disable Django's logging setup
