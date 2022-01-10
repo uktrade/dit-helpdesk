@@ -22,6 +22,7 @@ requests-mock = "~=1.9.3"
 flake8 = "~=4.0.1"
 pinocchio = "~=0.4.2"
 parameterized = "~=0.8.1"
+freezegun = "*"
 
 [packages]
 beautifulsoup4 = "~=4.7.0"
