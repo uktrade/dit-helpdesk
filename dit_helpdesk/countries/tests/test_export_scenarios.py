@@ -36,6 +36,7 @@ class ExportScenariosTestCase(TestCase):
             content_url="gotgotgotneed.com",
             trade_agreement_title="The Very Agreeable Agreement",
             trade_agreement_type="Football Sticker Swap",
+            roo_guidance_url="igetfabianbartezineverypackforgodssake.com",
         )
         self.country.save()
 
@@ -53,6 +54,7 @@ class ExportScenariosTestCase(TestCase):
             "govuk_fta_url",
             "trade_agreement_title",
             "trade_agreement_type",
+            "roo_guidance_url",
         ]
 
         expected_row = [
@@ -64,6 +66,7 @@ class ExportScenariosTestCase(TestCase):
             "gotgotgotneed.com",
             "The Very Agreeable Agreement",
             "Football Sticker Swap",
+            "igetfabianbartezineverypackforgodssake.com",
         ]
 
         with open(test_csv_file, "r") as file:
@@ -80,9 +83,9 @@ class ExportScenariosTestCase(TestCase):
         # Expect a log in string form, 2 lines listing information without spaces
         expected_log = (
             "country_code,country_name,uk_agreement_status,eu_agreement_status,"
-            "scenario,govuk_fta_url,trade_agreement_title,trade_agreement_type\r\n"
+            "scenario,govuk_fta_url,trade_agreement_title,trade_agreement_type,roo_guidance_url\r\n"
             "XT,Test Country,False,False,STICKER_TRADES,gotgotgotneed.com,"
-            "The Very Agreeable Agreement,Football Sticker Swap\r\n"
+            "The Very Agreeable Agreement,Football Sticker Swap,igetfabianbartezineverypackforgodssake.com\r\n"
         )
 
         with patch("sys.stdout", new=StringIO()) as output:

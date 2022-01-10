@@ -51,7 +51,6 @@ DATABASES = {
 INSTALLED_APPS.append("django_nose")
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
-TEST_OUTPUT_DIR = env.str("TEST_OUTPUT_DIR")
 NOSE_ARGS = [
     "--verbosity=3",
     "--nologcapture",
