@@ -1,9 +1,11 @@
 import logging
 
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from hierarchy.helpers import delete_outdated_trees
+
+from ...models import ReloadDataTracking, ReloadDataTrackingLockedError
 
 
 logger = logging.getLogger(__name__)
@@ -20,12 +22,8 @@ class ReloadDataException(Exception):
 
 
 class Command(BaseCommand):
-    def handle(self, **options):
+    def run_steps(self):
         try:
-            # Send start signal
-            current_step = "progress_track start"
-            call_command("progress_track", "--start_reload_data")
-
             # Collect static files (Django default)
             current_step = "collectstatic"
             call_command("collectstatic", "--noinput")
@@ -98,18 +96,12 @@ class Command(BaseCommand):
             # Will delete data that is no longer needed now we have imported a new set.
             current_step = "clear_old_data"
             delete_outdated_trees()
-
-            # Send successful completion signal
-            call_command("progress_track", "--end_reload_data", "--reason=SUCCESS")
-
         except Exception as e:
+            raise ReloadDataException(current_step, str(e)) from e
 
-            reload_data_fail_arg = f"FAILURE in {current_step} - {e}"
-            # Send failure to complete signal
-            call_command(
-                "progress_track",
-                end_reload_data=True,
-                reason=reload_data_fail_arg,
-            )
-
-            raise ReloadDataException(current_step, str(e))
+    def handle(self, **options):
+        try:
+            with ReloadDataTracking.lock():
+                self.run_steps()
+        except ReloadDataTrackingLockedError:
+            raise CommandError("Already running reload data")
