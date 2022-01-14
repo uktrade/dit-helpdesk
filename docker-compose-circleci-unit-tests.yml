@@ -96,9 +96,10 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
 
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: opensearchproject/opensearch:1.2.2
     environment:
       - discovery.type=single-node
+      - plugins.security.disabled=true
       - ES_URL=http://es:9200
 
   redis:
