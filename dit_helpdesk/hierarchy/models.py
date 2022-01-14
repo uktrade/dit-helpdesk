@@ -29,6 +29,11 @@ class HierarchyQuerySet(models.QuerySet):
     def get_by_commodity_code(self, commodity_code, **kwargs):
         return self.get(**{self.model.COMMODITY_CODE_FIELD: commodity_code, **kwargs})
 
+    def filter_by_commodity_code(self, commodity_code, **kwargs):
+        return self.filter(
+            **{self.model.COMMODITY_CODE_FIELD: commodity_code, **kwargs}
+        )
+
     def get(self, *args, **kwargs):
         try:
             return super().get(*args, **kwargs)
@@ -46,6 +51,9 @@ class HierarchyManager(models.Manager):
 
     def get_by_commodity_code(self, *args, **kwargs):
         return self.get_queryset().get_by_commodity_code(*args, **kwargs)
+
+    def filter_by_commodity_code(self, *args, **kwargs):
+        return self.get_queryset().filter_by_commodity_code(*args, **kwargs)
 
 
 class RegionHierarchyManager(HierarchyManager):

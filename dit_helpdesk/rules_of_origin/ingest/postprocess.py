@@ -88,7 +88,6 @@ def _replace_hs_code(code_match):
     url = None
 
     for model in models:
-
         arg = {
             Chapter: "chapter_code",
             Heading: "heading_code",
@@ -157,7 +156,6 @@ def _replace_abbrs(abbr_match):
 
 
 def process_abbreviations_in_text(text):
-
     processed_text = ABBR_REGEX.sub(_replace_abbrs, text)
 
     return processed_text
