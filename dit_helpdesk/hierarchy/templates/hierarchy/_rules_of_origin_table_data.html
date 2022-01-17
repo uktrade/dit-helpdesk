@@ -64,4 +64,26 @@
             </details>
         {% endif %}
     {% endfor %}
+    {% if display_roo_update_notes %}
+        <div class="govuk-body govuk-!-font-size-16">
+            <h3 class="govuk-heading-s govuk-!-margin-top-4">Latest updates regarding rules of origin</h3>
+            {% if is_eu %}
+                <p>
+                    The easements on suppliers' declarations ended on 31 December 2021. You are now required to hold a <a class="govuk-link" href="https://www.gov.uk/guidance/proving-originating-status-and-claiming-a-reduced-rate-of-customs-duty-for-trade-between-the-uk-and-eu#suppliers-declarations">supplier's declaration</a> if you issue a statement of origin for your goods.
+                </p>
+            {% endif %}
+            <p>
+                HS Nomenclature changes for 2022 have recently been published by the World Customs Organisation (WCO). We are currently updating this service in line with this and earlier WCO changes.
+            </p>
+            <p>
+                If your product has previously been classified under a different commodity code, you should also consult the rules of origin for that code. Please see the
+                {% if roo_guidance_url %}
+                    <a class="govuk-link" href="{{ roo_guidance_url }}">relevant guidance page</a>
+                {% else %}
+                    relevant guidance page
+                {% endif %}
+                for further details, including the version of the HS nomenclature in which the rules of origin for this agreement were set.
+            </p>
+        </div>
+    {% endif %}
 </div>

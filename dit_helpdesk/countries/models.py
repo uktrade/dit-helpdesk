@@ -27,5 +27,7 @@ class Country(models.Model):
     scenario = models.CharField(max_length=255, null=True)
     content_url = models.URLField(null=True, blank=True)
 
+    roo_guidance_url = models.URLField(null=True, blank=True)
+
     def __str__(self):
         return f"{self.country_code} - {self.name} - {self.scenario}"
