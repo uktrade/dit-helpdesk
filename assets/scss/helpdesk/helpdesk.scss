@@ -352,3 +352,9 @@ label[for="sort"] {
   margin-top: -100px;
   padding-bottom: 100px;
 }
+
+.js-enabled abbr[data-toggle=modal] {
+  color: $govuk-link-colour;
+  cursor: pointer;
+  text-decoration: underline;
+}
