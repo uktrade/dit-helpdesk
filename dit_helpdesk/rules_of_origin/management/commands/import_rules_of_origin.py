@@ -13,7 +13,6 @@ from rules_of_origin.ingest.importer import (
     check_countries_consistency,
     RulesDocumentAlreadyExistsException,
 )
-from rules_of_origin.ingest.postprocess import postprocess_rules_of_origin
 from rules_of_origin.ingest.s3 import _get_s3_bucket
 from rules_of_origin.models import RulesDocument
 
@@ -87,6 +86,5 @@ class Command(BaseCommand):
             logger.info("Deleting rules documents…")
             RulesDocument.objects.all().delete()
             self._import_from_s3()
-            postprocess_rules_of_origin()
         else:
             self.stdout.write("S3 bucket for RoO files not provided, skipping.")

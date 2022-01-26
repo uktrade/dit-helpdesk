@@ -498,20 +498,20 @@ class GetRulesFootnotes(TestCase):
         self.assertEqual(processed_footnotes, [])
 
     def test_process_footnotes_with_footnote(self):
-        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [001].")
+        rule = mixer.blend(Rule, rule_text="This has a footnote [001].")
         note = mixer.blend(RulesDocumentFootnote, identifier="001")
 
         processed_footnotes = process_footnotes([rule], [note])
 
         self.assertEqual(processed_footnotes, [note])
         self.assertEqual(
-            rule.rule_text_processed,
+            rule.rule_text,
             'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_with_filtering(self):
 
-        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [002].")
+        rule = mixer.blend(Rule, rule_text="This has a footnote [002].")
         note_001 = mixer.blend(RulesDocumentFootnote, identifier="001")
         note_002 = mixer.blend(RulesDocumentFootnote, identifier="002")
         note_003 = mixer.blend(RulesDocumentFootnote, identifier="003")
@@ -520,24 +520,24 @@ class GetRulesFootnotes(TestCase):
 
         self.assertEqual(processed_footnotes, [note_002])
         self.assertEqual(
-            rule.rule_text_processed,
+            rule.rule_text,
             'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_alphabetical_notes(self):
-        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [a].")
+        rule = mixer.blend(Rule, rule_text="This has a footnote [a].")
         note = mixer.blend(RulesDocumentFootnote, identifier="001")
 
         processed_footnotes = process_footnotes([rule], [note])
 
         self.assertEqual(processed_footnotes, [note])
         self.assertEqual(
-            rule.rule_text_processed,
+            rule.rule_text,
             'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )
 
     def test_process_footnotes_alphabetical_notes_filtered(self):
-        rule = mixer.blend(Rule, rule_text_processed="This has a footnote [b].")
+        rule = mixer.blend(Rule, rule_text="This has a footnote [b].")
         note_001 = mixer.blend(RulesDocumentFootnote, identifier="001")
         note_002 = mixer.blend(RulesDocumentFootnote, identifier="002")
         note_003 = mixer.blend(RulesDocumentFootnote, identifier="003")
@@ -546,6 +546,6 @@ class GetRulesFootnotes(TestCase):
 
         self.assertEqual(processed_footnotes, [note_002])
         self.assertEqual(
-            rule.rule_text_processed,
+            rule.rule_text,
             'This has a footnote <sup><a href="#roo_note_1" class="govuk-link">1)</a></sup>.',
         )

@@ -47,23 +47,17 @@ def _process_rule_references(rule, footnote_processor):
     though.
     """
 
-    rule.rule_text_processed = footnote_processor.replace_all_notes_references(
-        rule.rule_text_processed
-    )
-
-    rule.alt_rule_text_processed = footnote_processor.replace_all_notes_references(
-        rule.alt_rule_text_processed
+    rule.rule_text = footnote_processor.replace_all_notes_references(rule.rule_text)
+    rule.alt_rule_text = footnote_processor.replace_all_notes_references(
+        rule.alt_rule_text
     )
 
     for subrule in rule.subrules.all():
-        subrule.rule_text_processed = footnote_processor.replace_all_notes_references(
-            subrule.rule_text_processed
+        subrule.rule_text = footnote_processor.replace_all_notes_references(
+            subrule.rule_text
         )
-
-        subrule.alt_rule_text_processed = (
-            footnote_processor.replace_all_notes_references(
-                subrule.alt_rule_text_processed
-            )
+        subrule.alt_rule_text = footnote_processor.replace_all_notes_references(
+            subrule.alt_rule_text
         )
 
 
