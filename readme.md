@@ -103,6 +103,7 @@ You will need to have the following installed:
   - Postgres
   - Elasticsearch
   - Redis
+
 ##### Frontend static asset installation
 
 First we need to install [GOV.UK Frontend][2] and
@@ -201,6 +202,24 @@ coverage -d reports html
 
 you will then be able to access the coverage report html from within your project folder's root
 from your host machine at /reports
+
+##### Updating modules
+
+You will need to install pipenv stated above. Ensure Docker is running.
+Update the version number in the Pipfile. There are 2 module lists; `dev-packages` and `packages`. The `dev-packages` are ONLY loaded in local
+docker environments, while changes to the `packages` list are not always reflected in docker builds. Remember to test any updates locally and
+on the dev environment by deploying the branch.
+
+Get into the docker container by running the following:
+```bash
+docker-compose exec helpdesk /bin/bash
+```
+
+Generate updates to the Pipfile.lock file by running the following in the container:
+```bash
+pipenv lock
+```
+Do not manually update the Pipfile.lock file! Always auto generate it for the correct hashes!
 
 ## Management commands
 
