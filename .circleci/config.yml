@@ -16,7 +16,7 @@ jobs:
 
   format_and_secrets_checks:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
     working_directory: ~/app
     steps:
       - checkout
