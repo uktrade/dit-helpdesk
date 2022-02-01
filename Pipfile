@@ -27,7 +27,7 @@ freezegun = "*"
 [packages]
 beautifulsoup4 = "~=4.7.0"
 django-redis-cache = "~=3.0.0"
-numpy = "~=1.16.0"
+numpy = "~=1.21.0"
 psycopg2-binary = "~=2.8.2"
 python-dateutil = "~=2.7.5"
 pytz = "==2018.7"
