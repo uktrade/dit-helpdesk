@@ -29,6 +29,8 @@ PATCHED_DESCRIPTIONS = {
     "6903000000": "Other refractory ceramic goods (for example, retorts, crucibles, muffles, nozzles, plugs, supports, "
     "cupels, tubes, pipes, sheaths and rods), other than those of siliceous fossil meals or of similar "
     "siliceous earths",
+    "0302310000": "Tunas (of the genus Thunnus), skipjack tuna (stripe-bellied bonito) (Katsuwonus pelamis), "
+    "excluding edible fish offal of subheadings 0302 91 to 0302 99",
 }
 
 

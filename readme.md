@@ -89,6 +89,7 @@ docker-compose exec helpdesk /bin/bash
 
 ```bash
 pipenv shell
+./manage.py migrate
 ./reload_data.sh
 ```
 
