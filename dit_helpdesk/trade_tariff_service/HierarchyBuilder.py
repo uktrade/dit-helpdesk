@@ -31,6 +31,8 @@ PATCHED_DESCRIPTIONS = {
     "siliceous earths",
     "0302310000": "Tunas (of the genus Thunnus), skipjack tuna (stripe-bellied bonito) (Katsuwonus pelamis), "
     "excluding edible fish offal of subheadings 0302 91 to 0302 99",
+    "8407901010": "Four-stroke petrol engines of a cylinder capacity of not more than 250 cm³ "
+    "for use in the manufacture of garden equipment of heading 8432, 8433, 8436 or 8508",
 }
 
 
