@@ -213,13 +213,13 @@ From within the docker shell terminal run the following command for full tests:
 ./manage.py test dit_helpdesk --settings=config.settings.test
 ```
 
-for testing a single app run i.e. the hierarchy app:
+for testing a single app run e.g. the hierarchy app:
 
 ```bash
 ./manage.py test hierarchy.tests --settings=config.settings.test
 ```
 
-for testing a single app's test module run i.e. the test_views in the the hierarchy app:
+for testing a single app's test module run e.g. the test_views in the the hierarchy app:
 
 ```bash
 ./manage.py test hierarchy.tests.test_views --settings=config.settings.test
