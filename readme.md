@@ -43,7 +43,7 @@ cd dit-helpdesk
 
 #### set environment variables
 
-copy the two development environment variables files
+Copy the two development environment variables files:
 
 ```
 cp .env.template .env
@@ -51,7 +51,8 @@ cp .env.template .env.test
 
 ```
 
-add entries where necessary (see comments for guidance)
+and add entries where necessary (see comments for guidance).
+It may be easier to create one of the files and fill in the values, then copy that to create the second file.
 
 You will need to access [Helpdesk Vault][5] to get the required environment variable secrets to use them in the file.
 To do so you will need to generate a github personal access token. This is needed to log into vault.
@@ -59,10 +60,23 @@ Go here: [Vault][6] click `Generate new token` and make sure it has these scopes
 Once you've done that, head over to [Vault][7] and login with the token. You'll need to select github
 as your login option.
 
+The values
+  * `HELPDESK_GA_GTM`
+  * `HELPDESK_GA_UA`
+  * `DEFRA_EMAIL`
+  * `DEFRA_CONTACT`
+  * `BEIS_EMAIL`
+  * `BEIS_CONTACT`
+
+are not present in Vault, but the local environment will work without them.
+
+The value for `POSTGRES_PASSWORD` is also not present in Vault. You can provide your own value for this.
+
 #### pre-commit
 
-Install pre-commit - a hook will execute Python and JS code formatters before
-commit
+Install the pre-commit hook which will execute Python and JS code formatters before commit.
+
+(If you do not already have the `pre-commit` command installed, follow the directions at https://pre-commit.com/)
 
 ```bash
 pre-commit install
@@ -78,10 +92,13 @@ docker-compose up -d
 
 ##### Initial setup run
 
-This intial set up will take about an hour (depending upon machine and internet speed) to set up and fully import
-all content, on subsequent runs it will on take a minute or so to be up and running for development.
+This initial setup will take about an hour (depending upon machine and internet speed) to set up and fully import
+all content. On subsequent runs it will on take a minute or so to be up and running for development.
 
-Run the following command to activate a shell into the docker instance for the trade helpdesk app with the command.
+Before starting setup, download the required Rules of Origin files by following the instructions given below
+in [the section on the `import_rules_of_origin` management command](#import_rules_of_origin).
+
+Run the following commands to activate a shell into the docker instance for the trade helpdesk app with the command.
 
 ```bash
 docker-compose exec helpdesk /bin/bash
@@ -94,6 +111,26 @@ pipenv shell
 ```
 
 The site will be available at http://localhost:8000/choose-country/
+
+There may be a short delay before the site is available as the `helpdesk` container waits for the
+ElaticSearch container `es` to complete initialisation. The command
+```bash
+docker-compose logs helpdesk | grep 'Development server is running'
+```
+will return success when the web server has started (until the logs are rotated).
+
+###### Ignorable errors
+
+You may see messages mentioning `NewConnectionError` while the `reload_data` script runs. These can be ignored.
+
+When a management command (including `reload_data`) completes successfully, you may see an error message that
+`Closing the transport connection timed out`. This can be ignored.
+
+##### Possible error: "Found missing descriptions in…"
+
+The setup process may fail in the `prepare_import_data` step with the error "Found missing descriptions in [UK or EU]".
+Steps for resolving this are described below in
+[the section on the `prepare_import_data` management command](#error-commodity-found-with-no-description).
 
 #### Non-Docker installation
 
@@ -176,13 +213,13 @@ From within the docker shell terminal run the following command for full tests:
 ./manage.py test dit_helpdesk --settings=config.settings.test
 ```
 
-for testing a single app run i.e. the hierarchy app:
+for testing a single app run e.g. the hierarchy app:
 
 ```bash
 ./manage.py test hierarchy.tests --settings=config.settings.test
 ```
 
-for testing a single app's test module run i.e. the test_views in the the hierarchy app:
+for testing a single app's test module run e.g. the test_views in the the hierarchy app:
 
 ```bash
 ./manage.py test hierarchy.tests.test_views --settings=config.settings.test
@@ -243,6 +280,17 @@ This will download the data for both the EU and the UK.
 This takes the information downloaded from `pull_api_update` and transforms it by building the correct parent/child relationships in the data and removes any duplication.
 
 This information is stored in json files.
+
+#### Error: `Commodity found with no description`
+This step may fail with the error `Commodity found with no description: [commodity code]` due to a missing description
+in the data downloaded from the Trade Tariff  API by `pull_api_update`.
+The team responsible for the Trade Tariff API should be notified of this so they can fix their data.
+
+In the interim, the commodity code given can be used to find the correct description from public data sources.
+This can then be added temporarily to the dict `dit_helpdesk.trade_tariff_service.HierarchyBuilder.PATCHED_DESCRIPTIONS`
+with the commodity code as the key and the description as the value. That will allow `prepare_import_data`
+to run to completion (or to the point at which another description is found to be missing).
+
 
 ### prepare_search_data
 
