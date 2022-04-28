@@ -21,6 +21,8 @@ function CookieBanner() {
       cookieString = cookieString + "; Secure";
     }
     document.cookie = cookieString;
+    window.dataLayer.push({ event: "cookies" });
+    window.dataLayer.push({ event: "gtm.dom" });
   }
 
   function getCookie(name) {
