@@ -12,14 +12,14 @@ jobs:
           name: Run tests
           command: docker-compose -f docker-compose-circleci-unit-tests.yml up --exit-code-from helpdesk
       - store_test_results:
-          path: /tmp/app/test-reports/
+          path: test-reports/
       - store_artifacts:
-          path: /tmp/app/test-reports/
+          path: test-reports/
       - run:
           name: Prepare coverage report
           command: |
             mkdir -p unit-coverage
-            cp /tmp/app/test-reports/unit_tests/coverage.xml unit-coverage/coverage.xml
+            cp test-reports/unit_tests/coverage.xml unit-coverage/coverage.xml
       - persist_to_workspace:
           root: ~/
           paths:
