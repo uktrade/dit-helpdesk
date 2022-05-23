@@ -19,7 +19,7 @@ jobs:
           name: Prepare coverage report
           command: |
             mkdir -p unit-coverage
-            cp /tmp/app/test-reports/coverage-final.json unit-coverage/unit-coverage.json
+            cp /tmp/app/test-reports/unit_tests/report.xml unit-coverage/report.xml
       - persist_to_workspace:
           root: ~/
           paths:
