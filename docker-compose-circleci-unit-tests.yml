@@ -65,7 +65,7 @@ services:
       - es
       - redis
       - s3
-    command: pipenv run coverage run manage.py test dit_helpdesk --settings=config.settings.test --noinput --with-xunit --xunit-file=/app/test-reports/unit_tests/report.xml --cover-xml --cover-xml-file=/app/test-reports/unit_tests/coverage.xml
+    command: pipenv run coverage manage.py test dit_helpdesk --settings=config.settings.test --noinput --with-xunit --xunit-file=/app/test-reports/unit_tests/report.xml && coverage xml test-reports/coverage/coverage.xml
 
   webpack:
     image: node:14
