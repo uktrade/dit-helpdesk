@@ -47,6 +47,9 @@ class ImporterTestCase(TestCase):
         self.commodity = mixer.blend(Commodity, commodity_code="0100000000")
 
     def test_import_roo(self):
+
+        # FAILING
+
         # Test that running import_rules_of_origin from SAMPLE_FTA.xml will populate
         # the Rule and RuleDocument DB tables, and that they relate to each other correctly
         call_command("import_rules_of_origin")
@@ -81,6 +84,9 @@ class ImporterTestCase(TestCase):
         self.assertEqual(footnotes.count(), 12)
 
     def test_import_roo_invalid_country(self):
+
+        # FAILING
+
         # Test outcome when SAMPLE_FTA.xml is for a country that doesn't exist
         # We expect an error to be thrown and no rules to be added to the DB
         Country.objects.all().delete()
@@ -95,6 +101,9 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates")
     def test_duplicate_country_found(self):
+
+        # FAILING
+
         with self.assertRaises(
             RulesDocumentAlreadyExistsException
         ) as duplicate_exception, self.assertLogs(
@@ -125,6 +134,9 @@ class ImporterTestCase(TestCase):
         ROO_S3_BUCKET_NAME="test-bucket-roo-import-duplicates",
     )
     def test_import_multiple_roo(self):
+
+        # FAILING
+
         # Test to ensure that GSP countries will have rules added to the DB for both their
         # trade agreement and according to the GSP
         self.country.scenario = "TEST_TA"
@@ -165,6 +177,9 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-alt-country-code")
     def test_alternative_country_code(self):
+
+        # FAILING
+
         # Test to ensure a country code in SAMPLE_FTA.xml which is a countrys alternative
         # code is still processed and its rules added to the DB
         self.country.alternative_non_trade_country_code = "XA"
@@ -206,6 +221,9 @@ class ImporterTestCase(TestCase):
         SCENARIOS_WITH_UK_TRADE_AGREEMENT=["TEST_TA", "ANDORRA"],
     )
     def test_check_countries_consistency_via_importer(self):
+
+        # FAILING
+
         self.country.scenario = "TEST_TA"
         self.country.save()
 
@@ -238,6 +256,9 @@ class ImporterTestCase(TestCase):
 
     @override_settings(ROO_S3_BUCKET_NAME="test-bucket-roo-import-gsp")
     def test_import_roo_gsp_country(self):
+
+        # FAILING
+
         # Test to ensure rules are added for countries in GSP status from files marked LDC and OBC
         # (Least Developed Countries and Other Beneficiary Countries)
         call_command("import_rules_of_origin")
