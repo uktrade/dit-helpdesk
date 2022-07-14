@@ -114,7 +114,7 @@ services:
     image: redis:3.2
 
   s3:
-    image: minio/minio:latest
+    image: minio/minio:minio/minio:RELEASE.2022-05-26T05-48-41Z
     hostname: s3
     volumes:
       - ./volumes/s3:/export/
