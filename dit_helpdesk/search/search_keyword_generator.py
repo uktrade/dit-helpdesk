@@ -31,7 +31,7 @@ class SearchKeywordGenerator:
         self.stop_words = set(stopwords.words("english"))
         self.subhead = pd.read_csv(headings_file)
         self.google_analytics_searched_words = pd.read_excel(
-            ga_search_terms_file, sheetname="Dataset1"
+            ga_search_terms_file, sheet_name="Dataset1"
         )
         self.trade_tariff_synonyms = trade_tariff_synonyms
         self.output_file = output_file
