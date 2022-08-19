@@ -233,13 +233,19 @@ for coverage reports run any of the above commands via coverage e.g.
 coverage run manage.py test dit_helpdesk --settings=config.settings.test
 ```
 
-and then the reports can be generated
+and then the reports can be generated:
 ```
-coverage -d reports html
+coverage html
 ```
+will write the reports to `test-reports/coverage_html` (configured in `.coveragerc`).
 
-you will then be able to access the coverage report html from within your project folder's root
-from your host machine at /reports
+You will then be able to access the coverage report html from within your project folder's root
+from your host machine in `test-reports/coverage_html`.
+
+To write the reports to another folder, use:
+```
+coverage -d path/to/another_folder html
+```
 
 ##### Updating modules
 
