@@ -15,58 +15,70 @@ class CoookieTemplateTagTestCase(TestCase):
 
     @override_settings(HELPDESK_GA_GTM=expected_value_with_setting)
     def test_google_tag_manager_templatetag_with_setting(self):
-        template = Template(template_string="""
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager %}
-        """)
+        """
+        )
         content = template.render(Context({}))
         self.assertIn(expected_value_with_setting, content)
-
 
     @override_settings(HELPDESK_GA_GTM=expected_value_with_setting)
     @mock.patch("cookies.templatetags.gtm.render_gtm_template")
     def test_google_tag_manager_templatetag_renders_main_template(self, mock_render):
-        template = Template(template_string="""
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager %}
-        """)
+        """
+        )
         template.render(Context({}))
         mock_render.assert_called_with("gtm.html")
 
     @override_settings(HELPDESK_GA_GTM=None)
     def test_google_tag_manager_templatetag_without_setting(self):
-        template = Template(template_string="""
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager %}
-        """)
+        """
+        )
         content = template.render(Context({}))
         self.assertIn(expected_content_for_missing_setting, content)
 
     @override_settings(HELPDESK_GA_GTM=expected_value_with_setting)
     def test_google_tag_manager_noscript_templatetag_with_setting(self):
-        template = Template(template_string="""
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager_noscript %}
-        """)
+        """
+        )
         content = template.render(Context({}))
         self.assertIn(expected_value_with_setting, content)
 
     @override_settings(HELPDESK_GA_GTM=expected_value_with_setting)
     @mock.patch("cookies.templatetags.gtm.render_gtm_template")
-    def test_google_tag_manager_noscript_templatetag_renders_main_template(self, mock_render):
-        template = Template(template_string="""
+    def test_google_tag_manager_noscript_templatetag_renders_main_template(
+        self, mock_render
+    ):
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager_noscript %}
-        """)
+        """
+        )
         template.render(Context({}))
         mock_render.assert_called_with("gtm_noscript.html")
 
     @override_settings(HELPDESK_GA_GTM=None)
     def test_google_tag_manager_noscript_templatetag_without_setting(self):
-        template = Template(template_string="""
+        template = Template(
+            template_string="""
             {% load gtm %}
             {% google_tag_manager_noscript %}
-        """)
+        """
+        )
         content = template.render(Context({}))
         self.assertIn(expected_content_for_missing_setting, content)
-

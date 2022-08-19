@@ -94,19 +94,20 @@ class CommodityTestCase(TestCase):
         )
 
     def test_short_formatted_commodity_code(self):
-        self.assertEqual(
-            self.commodity.short_formatted_commodity_code, "0101.21"
-        )
+        self.assertEqual(self.commodity.short_formatted_commodity_code, "0101.21")
 
     def test_get_chapter(self):
         chapter: Chapter = self.commodity.get_chapter()
         self.assertIsInstance(chapter, Chapter)
-        self.assertEqual(
-            chapter.chapter_code, "0100000000"
-        )
+        self.assertEqual(chapter.chapter_code, "0100000000")
 
     def test_get_hierarchy_context_ids(self):
-        chapter_id, heading_id, subheading_id, commodity_id = self.commodity.get_hierarchy_context_ids()
+        (
+            chapter_id,
+            heading_id,
+            subheading_id,
+            commodity_id,
+        ) = self.commodity.get_hierarchy_context_ids()
         self.assertEquals(chapter_id, self.chapter.id)
         self.assertEquals(heading_id, self.heading.id)
         self.assertEquals(subheading_id, self.subheading.id)
@@ -124,48 +125,50 @@ class CommodityTestCase(TestCase):
 
     def test_ancestor_data(self):
         ancestor_data = self.commodity.ancestor_data
-        expected_ancestor_data = json.dumps([
+        expected_ancestor_data = json.dumps(
             [
-                {
-                    "id": self.section.id,
-                    "description": self.section.title,
-                    "commodity_code": self.section.roman_numeral,
-                    "type": "section"
-                },
-            ],
-            [
-                {
-                    "id": self.chapter.id,
-                    "description": self.chapter.description,
-                    "commodity_code": self.chapter.commodity_code,
-                    "type": "chapter"
-                },
-            ],
-            [
-                {
-                    "id": self.heading.id,
-                    "description": self.heading.description,
-                    "commodity_code": self.heading.commodity_code,
-                    "type": "heading"
-                },
-            ],
-            [
-                {
-                    "id": self.subheading.id,
-                    "description": self.subheading.description,
-                    "commodity_code": self.subheading.commodity_code,
-                    "type": "sub_heading"
-                },
-            ],
-            [
-                {
-                    "id": self.commodity.id,
-                    "description": self.commodity.description,
-                    "commodity_code": self.commodity.commodity_code,
-                    "type": "commodity"
-                },
-            ],
-        ])
+                [
+                    {
+                        "id": self.section.id,
+                        "description": self.section.title,
+                        "commodity_code": self.section.roman_numeral,
+                        "type": "section",
+                    },
+                ],
+                [
+                    {
+                        "id": self.chapter.id,
+                        "description": self.chapter.description,
+                        "commodity_code": self.chapter.commodity_code,
+                        "type": "chapter",
+                    },
+                ],
+                [
+                    {
+                        "id": self.heading.id,
+                        "description": self.heading.description,
+                        "commodity_code": self.heading.commodity_code,
+                        "type": "heading",
+                    },
+                ],
+                [
+                    {
+                        "id": self.subheading.id,
+                        "description": self.subheading.description,
+                        "commodity_code": self.subheading.commodity_code,
+                        "type": "sub_heading",
+                    },
+                ],
+                [
+                    {
+                        "id": self.commodity.id,
+                        "description": self.commodity.description,
+                        "commodity_code": self.commodity.commodity_code,
+                        "type": "commodity",
+                    },
+                ],
+            ]
+        )
         self.maxDiff = None
         self.assertEqual(ancestor_data, expected_ancestor_data)
 
