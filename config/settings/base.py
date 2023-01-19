@@ -314,7 +314,7 @@ _CSP_REPORT_URI = f"{SENTRY_SECURITY_ENDPOINT}?sentry_key={SENTRY_KEY}&sentry_en
 CSP_REPORT_URI = (_CSP_REPORT_URI,)
 _GOOGLE_DOMAINS = (
     "www.googletagmanager.com",
-    "www.google-analytics.com",
+    "*.google-analytics.com",
     "stats.g.doubleclick.net",
     "www.google.com",
     "www.google.co.uk",
