@@ -3,6 +3,7 @@ import logging
 from core.models import ReloadDataTracking
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -41,13 +42,20 @@ class Command(BaseCommand):
             return False
 
     def check_timings(self):
-        processes = ReloadDataTracking.objects.all()
-
+        processes = ReloadDataTracking.objects.all().order_by("start_time")
         for process in processes:
-            if process.run_time is None:
-                time_taken = process.end_time - process.start_time
-                process.run_time = time_taken
+            start_time_readable = process.start_time.strftime("%d-%B-%Y")
+            reason = process.reason
+            print(str(start_time_readable) + " - " + str(reason))
+            if process.end_time is None:
+                process.end_time = timezone.now()
                 process.save()
-                logger.info(process.run_time)
-            else:
-                logger.info(process.run_time)
+
+                for process in processes:
+                    if process.run_time is None:
+                        time_taken = process.end_time - process.start_time
+                        process.run_time = time_taken
+                        process.save()
+                        logger.info(process.run_time)
+                    else:
+                        logger.info(process.run_time)
