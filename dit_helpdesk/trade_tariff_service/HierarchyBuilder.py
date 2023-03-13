@@ -37,7 +37,7 @@ PATCHED_MISSING_DESCRIPTIONS = {
 # When an item in the hierarchy has an duplicated description in the data provided by the trade-tariff-api,
 # we can manually patch it in using the following variable. Check Check-How-To-Export-Goods (CHEG)
 # or Access2Markets for true description. Follow the format of "goods_nomenclature_sid": "description"
-PATCHED_DUPLICATED_DESCRIPTIONS = {106912: "Rhenium"}
+PATCHED_DUPLICATED_DESCRIPTIONS = {106913: "Rhenium"}
 
 
 class MissingDescriptionsError(Exception):
@@ -715,80 +715,59 @@ class HierarchyBuilder:
             (sub_headings_data, "sub heading"),
             # (commodities_data, "commodity"),
         ]:
-            items_list = [
-                {"description": "initial_item", "goods_nomenclature_item_id": 1}
-            ]
             detected_duplicates = []
+            comparator_list = []
             for hierarchy_item in hierarchy_data:
-                # This section of code is run once per Nomenclature Tree
-                # So we need to ensure there is no duplicated combination of description/commodity code
-                # to ensure data is valid and can be entered into the DB
-
+                # get list of commodity codes that have duplicates
                 description = hierarchy_item["description"]
                 commodity_code = hierarchy_item["goods_nomenclature_item_id"]
+                comparitor = {
+                    "description": description,
+                    "commodity_code": commodity_code,
+                }
 
-                # Build a list of unique entries and a seperate list of duplicates
-                # Compare each heirarchy_item to the unique entries list and append to either the unique or
-                # duplicate list
-                for item in items_list:
-                    if (
-                        description == item["description"]
-                        and commodity_code == item["goods_nomenclature_item_id"]
-                    ):
-                        detected_duplicates.append(hierarchy_item)
-                    else:
-                        items_list.append(hierarchy_item)
+                if comparitor in comparator_list:
+                    detected_duplicates.append(commodity_code)
+                else:
+                    comparator_list.append(comparitor)
 
-                # For the items in the duplicated list, check if they have manual patch entries
-                for duplicate in detected_duplicates:
-                    try:
-                        patched_description = PATCHED_DUPLICATED_DESCRIPTIONS[
-                            duplicate["goods_nomenclature_item_id"]
-                        ]
-                    except KeyError:
-                        pass
-                    else:
-                        logger.warning(
-                            "Patched description on %s for %s",
-                            hierarchy_type.title(),
-                            commodity_code,
-                        )
-                        hierarchy_item.update({"description": patched_description})
-                        continue
+            for duplicate_code in detected_duplicates:
+                # Need to get the full heirarchy items from the code we have
+                item_duplicates = []
+                for hierarchy_item in hierarchy_data:
+                    if hierarchy_item["goods_nomenclature_item_id"] == duplicate_code:
+                        item_duplicates.append(hierarchy_item)
 
-                    unpatched_duplicated_descriptions.append(
-                        (commodity_code, hierarchy_type)
-                    )
+                        successful_patch = False
+                        try:
+                            patched_description = PATCHED_DUPLICATED_DESCRIPTIONS[
+                                hierarchy_item["goods_nomenclature_sid"]
+                            ]
+                        except KeyError:
+                            pass
+                        else:
+                            logger.warning(
+                                "Patched description on %s for %s",
+                                hierarchy_type.title(),
+                                hierarchy_item["goods_nomenclature_item_id"],
+                            )
+                            successful_patch = True
+                            hierarchy_item.update({"description": patched_description})
 
-                # logger.critical("***********************************")
-                # for line in sub_headings_data:
-                #    if line["goods_nomenclature_item_id"] == "8112410000":
-                #        logger.critical(str(line))
-                #    if line["goods_nomenclature_sid"] == 106912:
-                #        logger.critical("MANUALLY PATCHING THE SUBHEADING!")
-                #        #line["description"] == "Rhenium"
-                #        line.update({"description": "Rhenium"})
-                #    if line["goods_nomenclature_item_id"] == "8112410000":
-                #        logger.critical(str(line))
-
-                # logger.critical("DETECTED DUPLICATES:")
-                # for duplicate in detected_duplicates:
-                #    logger.critical("-")
-                #    logger.critical(str(duplicate))
-                #    logger.critical("-")
-                # logger.critical("UNPATCHED DUPLICATES:")
-                # for duplicate in unpatched_duplicated_descriptions:
-                #    logger.critical("-")
-                #    logger.critical(str(duplicate))
-                #    logger.critical("-")
-
-                # logger.critical("***********************************")
+                        # If duplicate was not patched, add the commodity code to error for
+                        # further investigation
+                        if successful_patch is False:
+                            unpatched_duplicated_descriptions.append(duplicate_code)
 
         if missing_descriptions:
             raise MissingDescriptionsError(missing_descriptions)
 
         if unpatched_duplicated_descriptions:
-            raise DuplicatedDescriptionsError(unpatched_duplicated_descriptions)
+            logger.warning(
+                "FOUND DUPLICATES: " + str(unpatched_duplicated_descriptions)
+            )
+            # Need to properly implement an error here
+            # raise DuplicatedDescriptionsError(unpatched_duplicated_descriptions)
 
         # serialize to filesystem
         self.write_data_to_file(
@@ -937,7 +916,6 @@ class HierarchyBuilder:
             "commodities/hierarchy_subheading_all.csv"
         )
         csv_data = csv.writer(open(csv_file_path, "a", newline=""))
-        csv_data.truncate()
         col_headings = [
             "Code",
             "Col1",
