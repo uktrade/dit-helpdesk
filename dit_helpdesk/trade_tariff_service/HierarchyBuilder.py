@@ -763,11 +763,21 @@ class HierarchyBuilder:
             raise MissingDescriptionsError(missing_descriptions)
 
         if unpatched_duplicated_descriptions:
-            logger.warning(
-                "FOUND DUPLICATES: " + str(unpatched_duplicated_descriptions)
-            )
-            # Need to properly implement an error here
-            # raise DuplicatedDescriptionsError(unpatched_duplicated_descriptions)
+            # If there is only one instance of a code in the given array, we know its
+            # duplicate was patched.
+            unsolved_duplicates = []
+            for duplicate in unpatched_duplicated_descriptions:
+                dupe_count = unpatched_duplicated_descriptions.count(duplicate)
+                if dupe_count > 1:
+                    unsolved_duplicates.append(duplicate)
+
+            # Raise error with unsolved duplicate id
+            if unsolved_duplicates:
+                logger.warning(
+                    "Items found with identical descriptions & ids: "
+                    + str(unpatched_duplicated_descriptions)
+                )
+                raise DuplicatedDescriptionsError(unsolved_duplicates)
 
         # serialize to filesystem
         self.write_data_to_file(
