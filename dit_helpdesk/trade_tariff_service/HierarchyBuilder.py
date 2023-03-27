@@ -25,20 +25,29 @@ logger.setLevel(logging.INFO)
 DEFAULT_REGION = settings.PRIMARY_REGION
 
 
-PATCHED_DESCRIPTIONS = {
-    "6903000000": "Other refractory ceramic goods (for example, retorts, crucibles, muffles, nozzles, plugs, supports, "
-    "cupels, tubes, pipes, sheaths and rods), other than those of siliceous fossil meals or of similar "
-    "siliceous earths",
-    "0302310000": "Tunas (of the genus Thunnus), skipjack tuna (stripe-bellied bonito) (Katsuwonus pelamis), "
-    "excluding edible fish offal of subheadings 0302 91 to 0302 99",
-    "8407901010": "Four-stroke petrol engines of a cylinder capacity of not more than 250 cm³ "
-    "for use in the manufacture of garden equipment of heading 8432, 8433, 8436 or 8508",
+# When an item in the hierarchy is missing a description in the data provided by the trade-tariff-api, we can manually
+# patch it in using the following variable. Check Check-How-To-Export-Goods (CHEG)
+# or Access2Markets for true description. Follow the format of "goods_nomenclature_item_id": "description"
+PATCHED_MISSING_DESCRIPTIONS = {
+    # "6903000000": "Other refractory ceramic goods (for example, retorts, crucibles, muffles, nozzles, plugs, "
+    # "supports, cupels, tubes, pipes, sheaths and rods), other than those of siliceous fossil meals or of similar "
+    # "siliceous earths",
 }
+
+# When an item in the hierarchy has an duplicated description in the data provided by the trade-tariff-api,
+# we can manually patch it in using the following variable. Check Check-How-To-Export-Goods (CHEG)
+# or Access2Markets for true description. Follow the format of "goods_nomenclature_sid": "description"
+PATCHED_DUPLICATED_DESCRIPTIONS = {106913: "Rhenium"}
 
 
 class MissingDescriptionsError(Exception):
     def __init__(self, missing_descriptions):
         self.missing_descriptions = missing_descriptions
+
+
+class DuplicatedDescriptionsError(Exception):
+    def __init__(self, duplicated_descriptions):
+        self.duplicated_descriptions = duplicated_descriptions
 
 
 class HierarchyBuilder:
@@ -662,6 +671,7 @@ class HierarchyBuilder:
             dict(t) for t in {tuple(d.items()) for d in commodities_data}
         ]
 
+        # Detect & patch missing descriptions
         missing_descriptions = []
         for hierarchy_data, hierarchy_type in [
             (chapters_data, "chapter"),
@@ -676,7 +686,7 @@ class HierarchyBuilder:
 
                 commodity_code = hierarchy_item["goods_nomenclature_item_id"]
                 try:
-                    patched_description = PATCHED_DESCRIPTIONS[commodity_code]
+                    patched_description = PATCHED_MISSING_DESCRIPTIONS[commodity_code]
                 except KeyError:
                     pass
                 else:
@@ -697,8 +707,77 @@ class HierarchyBuilder:
                     (commodity_code, hierarchy_type),
                 )
 
+        # Detect & patch duplicated descriptions
+        unpatched_duplicated_descriptions = []
+        for hierarchy_data, hierarchy_type in [
+            # (chapters_data, "chapter"),
+            # (headings_data, "heading"),
+            (sub_headings_data, "sub heading"),
+            # (commodities_data, "commodity"),
+        ]:
+            detected_duplicates = []
+            comparator_list = []
+            for hierarchy_item in hierarchy_data:
+                # get list of commodity codes that have duplicates
+                description = hierarchy_item["description"]
+                commodity_code = hierarchy_item["goods_nomenclature_item_id"]
+                comparitor = {
+                    "description": description,
+                    "commodity_code": commodity_code,
+                }
+
+                if comparitor in comparator_list:
+                    detected_duplicates.append(commodity_code)
+                else:
+                    comparator_list.append(comparitor)
+
+            for duplicate_code in detected_duplicates:
+                # Need to get the full heirarchy items from the code we have
+                item_duplicates = []
+                for hierarchy_item in hierarchy_data:
+                    if hierarchy_item["goods_nomenclature_item_id"] == duplicate_code:
+                        item_duplicates.append(hierarchy_item)
+
+                        successful_patch = False
+                        try:
+                            patched_description = PATCHED_DUPLICATED_DESCRIPTIONS[
+                                hierarchy_item["goods_nomenclature_sid"]
+                            ]
+                        except KeyError:
+                            pass
+                        else:
+                            logger.warning(
+                                "Patched description on %s for %s",
+                                hierarchy_type.title(),
+                                hierarchy_item["goods_nomenclature_item_id"],
+                            )
+                            successful_patch = True
+                            hierarchy_item.update({"description": patched_description})
+
+                        # If duplicate was not patched, add the commodity code to error for
+                        # further investigation
+                        if successful_patch is False:
+                            unpatched_duplicated_descriptions.append(duplicate_code)
+
         if missing_descriptions:
             raise MissingDescriptionsError(missing_descriptions)
+
+        if unpatched_duplicated_descriptions:
+            # If there is only one instance of a code in the given array, we know its
+            # duplicate was patched.
+            unsolved_duplicates = []
+            for duplicate in unpatched_duplicated_descriptions:
+                dupe_count = unpatched_duplicated_descriptions.count(duplicate)
+                if dupe_count > 1:
+                    unsolved_duplicates.append(duplicate)
+
+            # Raise error with unsolved duplicate id
+            if unsolved_duplicates:
+                logger.warning(
+                    "Items found with identical descriptions & ids: "
+                    + str(unpatched_duplicated_descriptions)
+                )
+                raise DuplicatedDescriptionsError(unsolved_duplicates)
 
         # serialize to filesystem
         self.write_data_to_file(
