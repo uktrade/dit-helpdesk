@@ -1,4 +1,4 @@
 application:
-  name: intranet
+  name: helpdesk-cms-poc
   process:
     - web
