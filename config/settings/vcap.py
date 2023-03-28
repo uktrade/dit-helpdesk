@@ -4,9 +4,6 @@ from .env import env
 
 VCAP_SERVICES = json.loads(env.str("VCAP_SERVICES"))
 
-ES_URL = VCAP_SERVICES["opensearch"][0]["credentials"]["uri"]
-
-
 # Copilot env key.  IF set, we turn the supplied json into a DB connection string
 # that can be consumed by dj-database-url
 DATABASE_CREDS = env.json("DATABASE_CREDENTIALS", default={})
@@ -20,6 +17,10 @@ if "redis" in VCAP_SERVICES:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 else:
     REDIS_URL = env("REDIS_ENDPOINT", default=None)
+    
+# Opensearch
+if "opensearch" in VCAP_SERVICES:
+    ES_URL = VCAP_SERVICES["opensearch"][0]["credentials"]["uri"]
 
 # COPILOT configuration
 # if not CELERY_BROKER_URL:
