@@ -22,6 +22,8 @@ else:
 # Opensearch
 if "opensearch" in VCAP_SERVICES:
     ES_URL = VCAP_SERVICES["opensearch"][0]["credentials"]["uri"]
+else:
+    ES_URL = env("ES_ENDPOINT", default=None)
 
 # COPILOT configuration
 # if not CELERY_BROKER_URL:
