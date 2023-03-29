@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
-    "elasticapm.contrib.django",
+    # "elasticapm.contrib.django",
     "formtools",
     "flags",
     "core",
