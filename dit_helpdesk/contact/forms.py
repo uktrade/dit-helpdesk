@@ -18,7 +18,7 @@ TOPIC_CHOICES = (
 TOPIC_CHOICE_HELP_TEXT = (
     "You will be redirected to Her Majesty's Revenue and Customs (HMRC) contact form",
     "Your enquiry will be sent to the Department for Environment, Food and Rural Affairs (Defra)",
-    "Your enquiry will be sent to the department for Business, Energy and Industrial Strategy (BEIS)",
+    "Your enquiry will be sent to the Department for Business and Trade (DBT)",
     "Your enquiry will be sent to the Department for Business and Trade (DBT)",
     "Your enquiry will be sent to the Department for Business and Trade (DBT)",
 )
