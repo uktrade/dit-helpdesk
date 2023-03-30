@@ -141,5 +141,6 @@ dit_helpdesk/regulations/data/test_out_product_specific_regulations.csv
 
 volumes/s3/.minio.sys
 volumes/s3/import-rules-of-origin-bucket/rules_of_origin/*.xml
+volumes/s3/import-rules-of-origin-bucket/
 
 .webpack-is-ready

@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 from trade_tariff_service.HierarchyBuilder import (
     HierarchyBuilder,
     MissingDescriptionsError,
+    DuplicatedDescriptionsError,
 )
 
 
@@ -22,6 +23,8 @@ class Command(BaseCommand):
                 builder.build_import_data()
             except MissingDescriptionsError:
                 logger.error("Found missing descriptions in %s", region)
+            except DuplicatedDescriptionsError:
+                logger.error("Found duplicated descriptions in %s", region)
 
         if has_errors:
             raise CommandError("Found errors when building import data")
