@@ -19,6 +19,7 @@ module.exports = {
     path: path.resolve("./assets/webpack_bundles/"),
     publicPath: "/static/webpack_bundles/",
     filename: "[name]-[fullhash].js",
+    chunkFormat:"array-push",
   },
 
   plugins: [
