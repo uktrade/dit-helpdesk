@@ -44,6 +44,7 @@ def _has_rules_of_origin(country):
 GSP_GENERAL_ID = "2020"
 GSP_LDC_ID = "2005"
 GSP_ENHANCED_ID = "2027"
+GSP_ELIGIBLE = "1030"
 
 ALL_GSP_IDS = [GSP_GENERAL_ID, GSP_LDC_ID, GSP_ENHANCED_ID]
 
@@ -96,6 +97,33 @@ def _is_not_in_any_gsp(country):
         gsp_country_codes += _get_geographical_area_country_codes(gsp_id)
 
     return country.country_code not in gsp_country_codes
+
+
+def _is_not_gsp_eligible(country):
+    eligible_country_codes = _get_geographical_area_country_codes(GSP_ELIGIBLE)
+
+    return country.country_code not in eligible_country_codes
+
+
+@transition_scenario("NON_PREF", "TRADE_AGREEMENT")
+def _has_rules_and_not_in_other_categories(country):
+
+    got_rules = _has_rules_of_origin(country)
+    not_gsp = _is_not_in_any_gsp(country)
+    gsp_enhanced = _is_in_gsp_enhanced_framework(country)
+    not_gsp_general = _is_not_in_gsp_general_framework(country)
+    not_gsp_eligible = _is_not_gsp_eligible(country)
+
+    if (
+        got_rules
+        and not_gsp
+        and not gsp_enhanced
+        and not_gsp_general
+        and not_gsp_eligible
+    ):
+        return True
+    else:
+        return False
 
 
 def update_scenario(country):
