@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/uktrade/dit-helpdesk#readme",
   "engines": {
-    "node": "14.x"
+    "node": "16.20.0"
   },
   "devDependencies": {
     "eslint": "^7.25.0",
