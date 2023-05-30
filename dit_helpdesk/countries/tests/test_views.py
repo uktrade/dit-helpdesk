@@ -86,11 +86,11 @@ class CountriesViewsTestCase(TestCase):
     ):
         self.assertTrue("origin_country" not in self.client.session)
         resp = self.client.post(
-            reverse("choose-country"), data={"origin_country": "au"}
+            reverse("choose-country"), data={"origin_country": "aw"}
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(
-            resp.url, reverse("search:search-commodity", kwargs={"country_code": "au"})
+            resp.url, reverse("search:search-commodity", kwargs={"country_code": "aw"})
         )
 
     def test_post_with_country_selected_and_country_not_exist(self):
