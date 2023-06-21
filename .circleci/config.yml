@@ -3,7 +3,7 @@ version: 2
 jobs:
   unit_tests:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:current
     resource_class: medium
     working_directory: /tmp/app
     steps:
@@ -35,7 +35,7 @@ jobs:
 
   server_up:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:current
     resource_class: medium
     working_directory: /tmp/app
     steps:
