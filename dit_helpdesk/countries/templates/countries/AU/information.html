@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+
+{% load humanize %}
+
+{% block title %}Information on exporting to the UK from {{ country_name }}{% endblock %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <main id="main-content" class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6 govuk-!-margin-top-6">
+                        Information on exporting to the UK from {{ country_name }}
+                    </h1>
+
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=original_country.country_code|lower %}">
+                        Search for your goods
+                    </a>
+                    {% include information_sharing_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-1">
+                        Trade Agreements
+                    </h2>
+
+                    {% include trade_agreements_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-1">
+                        Get your goods into the UK
+                    </h2>
+
+                    {% include goods_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-1">
+                        Grow your business with the UK
+                    </h2>
+
+                    {% include grow_your_business_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-l govuk-!-margin-bottom-1">
+                        Other information
+                    </h2>
+
+                    {% include other_information_template_name %}
+                </div>
+            </div>
+
+            <div class="govuk-grid-row govuk-!-margin-top-6">
+                <div class="govuk-grid-column-full">
+                    <a class="govuk-button" href="{% url "search:search-commodity" country_code=original_country.country_code|lower %}">
+                        Search for your goods
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
