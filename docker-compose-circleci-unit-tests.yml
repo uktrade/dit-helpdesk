@@ -71,7 +71,6 @@ services:
     image: node:18
     command: bash -c "
       rm -f .webpack-is-ready
-      && npm set unsafe-perm true
       && npm install
       && npm run build
       && touch .webpack-is-ready
