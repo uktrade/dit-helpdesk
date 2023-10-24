@@ -23,7 +23,7 @@ services:
     tty: true
 
   webpack:
-    image: node:16
+    image: node:18
     command: bash -c " npm set unsafe-perm true && npm install && npm run dev "
     env_file:
       - .env

@@ -76,7 +76,7 @@ services:
       true
 
   webpack:
-    image: node:16
+    image: node:18
     command: bash -c "
       rm -f .webpack-is-ready
       && npm set unsafe-perm true
