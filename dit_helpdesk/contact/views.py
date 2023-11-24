@@ -119,13 +119,13 @@ class ContactFormWizardView(SessionWizardView):
             True if form_path == "/feedback/" or form_data["category"] == "2" else False
         )
 
-        country_code = self.request.session.get("origin_country", "N/A")
+        country_code = self.request.session.get("origin_country", None)
         country_code = country_code.upper()
 
         context = {
             "country_code": country_code,
             "service_name": settings.SERVICE_NAME,
-            "location": Country.objects.get(country_code=country_code).name,
+            "location": Country.objects.get(country_code=country_code).name if country_code else "N/A",
             "email_address": form_data["email_address"],
             "name": form_data["name"],
             "message": form_data["message"],
