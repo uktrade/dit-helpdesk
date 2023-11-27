@@ -25,7 +25,7 @@ TOPIC_CHOICE_HELP_TEXT = (
 
 
 class ContactFormStepOne(forms.Form):
-    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
+    country_code = forms.CharField(widget=forms.HiddenInput, required=False)
     category = forms.ChoiceField(
         choices=CATEGORY_CHOICES, widget=forms.RadioSelect, required=True
     )
@@ -33,7 +33,7 @@ class ContactFormStepOne(forms.Form):
 
 
 class ContactFormStepTwo(forms.Form):
-    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
+    country_code = forms.CharField(widget=forms.HiddenInput, required=False)
     topic = forms.ChoiceField(
         choices=TOPIC_CHOICES, widget=forms.RadioSelect, required=True
     )
@@ -45,7 +45,7 @@ class ContactFormStepThree(forms.Form):
     name = forms.CharField(required=True)
     email_address = forms.EmailField(required=True)
     terms_and_conditions = forms.BooleanField(required=True)
-    country_code = forms.CharField(widget=forms.HiddenInput, required=True)
+    country_code = forms.CharField(widget=forms.HiddenInput, required=False)
     message = forms.CharField(widget=forms.Textarea, required=True)
     message.label = "Tell us how we can help"
     message.help_text = "Do not include personal or financial information, like your National Insurance number or credit card details."  # noqa: E501

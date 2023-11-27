@@ -3,9 +3,8 @@ import logging
 from directory_forms_api_client import helpers
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.template.loader import get_template
-from django.urls import reverse
 from formtools.wizard.views import SessionWizardView
 
 from contact.forms import (
@@ -68,14 +67,6 @@ class ContactFormWizardView(SessionWizardView):
 
     condition_dict = {"step_one": jump_to_step_two, "step_two": jump_to_step_three}
 
-    def dispatch(self, request, *args, **kwargs):
-
-        if "origin_country" not in request.session:
-            # messages.error(request, "Enter a country")
-            return redirect(reverse("choose-country") + "?select-country")
-
-        return super(ContactFormWizardView, self).dispatch(request, *args, **kwargs)
-
     def done(self, form_list, **kwargs):
 
         context = self.process_form_data(form_list, self.request.path)
@@ -127,13 +118,14 @@ class ContactFormWizardView(SessionWizardView):
             True if form_path == "/feedback/" or form_data["category"] == "2" else False
         )
 
-        country_code = self.request.session["origin_country"]
-        country_code = country_code.upper()
-
+        country_code = self.request.session.get("origin_country", None)
+        country_code = country_code.upper() if country_code else None
         context = {
             "country_code": country_code,
             "service_name": settings.SERVICE_NAME,
-            "location": Country.objects.get(country_code=country_code).name,
+            "location": Country.objects.get(country_code=country_code).name
+            if country_code
+            else "N/A",
             "email_address": form_data["email_address"],
             "name": form_data["name"],
             "message": form_data["message"],
