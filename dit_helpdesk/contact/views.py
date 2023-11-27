@@ -3,9 +3,8 @@ import logging
 from directory_forms_api_client import helpers
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.template.loader import get_template
-from django.urls import reverse
 from formtools.wizard.views import SessionWizardView
 
 from contact.forms import (
@@ -124,7 +123,9 @@ class ContactFormWizardView(SessionWizardView):
         context = {
             "country_code": country_code,
             "service_name": settings.SERVICE_NAME,
-            "location": Country.objects.get(country_code=country_code).name if country_code else "N/A",
+            "location": Country.objects.get(country_code=country_code).name
+            if country_code
+            else "N/A",
             "email_address": form_data["email_address"],
             "name": form_data["name"],
             "message": form_data["message"],
